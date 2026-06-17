@@ -19,6 +19,21 @@ Position-invariance, statement-level granularity, and an interpretable alignment
 ## Notebooks
 
 - `notebooks/01-kj-document-segmentation.ipynb` - stage 1: splits a source PDF into statements with the `sat-3l-sm` model (PyTorch, GPU), writing `data/interim/01-statements.parquet`
+- `notebooks/02-kj-mmbert-quantization.ipynb` - stage 0: quantizes the mmBERT statement encoder and emits the best model per target (CPU OpenVINO INT8, GPU torchao FP8)
+
+## Encoder quantization performance
+
+The mmBERT statement encoder is quantized for two deployment targets. All rows normalized to CPU FP as the 1.0x baseline (full detail in `docs/mmbert-quantization-solution.md`; shipped CPU model: [`stellars/mmBERT-base-openvino-int8`](https://huggingface.co/stellars/mmBERT-base-openvino-int8)).
+
+| config | ms/sentence | sentences/sec | speedup |
+|---|---|---|---|
+| CPU FP (base, full precision) | 30.6 | 33 | 1.0x |
+| CPU OpenVINO INT8 | 21.4 | 47 | 1.4x |
+| GPU bf16 eager (raw base) | 0.84 | 1196 | 37x |
+| GPU bf16 compiled | 0.44 | 2281 | 70x |
+| **GPU FP8 + compile** | **0.39** | **2588** | **79x** |
+
+GPU FP8 is ~2.2x over the raw GPU base and ~55x over the shipped CPU INT8 model, at near-lossless fidelity (GPU 0.999, CPU 0.98 vs FP32). GPU rows are throughput at batch 128 / seq 128; CPU rows are per-sentence latency at small batch, so the cross-device multiple is directional, not a like-for-like benchmark.
 
 ## Quick Start
 

@@ -1,0 +1,50 @@
+{
+  "model": "jhu-clsp/mmBERT-base",
+  "recommended_target": "gpu",
+  "cpu": {
+    "target": "cpu",
+    "toolchain": "openvino",
+    "scheme": "smoothquant_int8_per_tensor_static",
+    "artifact": "/home/lab/workspace/learning/projects/docdistance-estimator/models/02-mmbert-openvino-int8",
+    "pearson_in_domain": 0.9915822148323059,
+    "latency_ms_per_sentence": 21.399426186690107,
+    "ir_size_mb": 310.358081,
+    "smoothquant_alpha": 0.8
+  },
+  "gpu": {
+    "target": "gpu",
+    "toolchain": "torchao",
+    "scheme": "fp8_dynamic_e4m3",
+    "torchao_config": "Float8DynamicActivationFloat8WeightConfig",
+    "apply": "quantize_(model, <config>()) on the FP checkpoint, then torch.compile (needs C compiler)",
+    "pearson_in_domain": 0.9985144138336182,
+    "sent_per_s": 2588.1976890673304,
+    "speedup_vs_bf16_eager": 2.1641962926229192,
+    "speedup_vs_bf16_compiled": 1.1345363356903087
+  },
+  "smoothquant_study": {
+    "model": "jhu-clsp/mmBERT-base",
+    "alpha": 0.8,
+    "act_mode": "per_token",
+    "weight_quant": "per_channel_symmetric_int8",
+    "targets": [
+      "attn.Wqkv",
+      "attn.Wo",
+      "mlp.Wi",
+      "mlp.Wo"
+    ],
+    "mixed_precision": false,
+    "fp_component": null,
+    "n_smooth_folds": 43,
+    "fidelity_in_domain": {
+      "pearson": 0.9990524053573608,
+      "spearman": 0.9990893182812296,
+      "emb_cos": 0.998651385307312
+    },
+    "fidelity_synthetic": {
+      "pearson": 0.998033881187439,
+      "spearman": 0.9980154859909464,
+      "emb_cos": 0.9985712766647339
+    }
+  }
+}

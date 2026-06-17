@@ -1,0 +1,140 @@
+{
+  "model": "jhu-clsp/mmBERT-base",
+  "n_params_millions": 306.9,
+  "part_a_scheme_comparison": [
+    {
+      "smoothing": "naive",
+      "activations": "per_tensor",
+      "pearson": 0.9351286888122559,
+      "spearman": 0.9507722992966146,
+      "emb_cos": 0.9503544569015503
+    },
+    {
+      "smoothing": "naive",
+      "activations": "per_token",
+      "pearson": 0.9954047203063965,
+      "spearman": 0.9965676906603431,
+      "emb_cos": 0.9958449006080627
+    },
+    {
+      "smoothing": "SmoothQuant",
+      "activations": "per_tensor",
+      "pearson": 0.9426049590110779,
+      "spearman": 0.9553553682181988,
+      "emb_cos": 0.9587252140045166
+    },
+    {
+      "smoothing": "SmoothQuant",
+      "activations": "per_token",
+      "pearson": 0.9985862970352173,
+      "spearman": 0.998366406736991,
+      "emb_cos": 0.9984450340270996
+    }
+  ],
+  "part_a_alpha_sweep": [
+    {
+      "alpha": 0.4,
+      "pearson": 0.9986299276351929
+    },
+    {
+      "alpha": 0.5,
+      "pearson": 0.9985862970352173
+    },
+    {
+      "alpha": 0.6,
+      "pearson": 0.9975174069404602
+    },
+    {
+      "alpha": 0.7,
+      "pearson": 0.9988100528717041
+    },
+    {
+      "alpha": 0.8,
+      "pearson": 0.9990524053573608
+    }
+  ],
+  "part_a_best_alpha": 0.8,
+  "part_b_cpu_openvino_int8": {
+    "pearson": 0.9915822148323059,
+    "spearman": 0.9926694140991926,
+    "emb_cos": 0.9938685297966003,
+    "latency_ms_per_sentence_int8": 21.399426186690107,
+    "latency_ms_per_sentence_fp": 30.62559512545704,
+    "ir_size_mb_int8": 310.358081,
+    "ir_size_mb_fp": 614.928073
+  },
+  "part_c_gpu_sweep": {
+    "workload": {
+      "batch": 128,
+      "seq": 128
+    },
+    "results": {
+      "bf16_eager": {
+        "pearson": 0.9995980262756348,
+        "spearman": 0.9995587459130788,
+        "emb_cos": 0.9998565912246704,
+        "sent_per_s": 1195.9163306441758,
+        "ms_per_sent": 0.8361788984529994
+      },
+      "bf16_compiled": {
+        "pearson": 0.9995980262756348,
+        "spearman": 0.9995587459130788,
+        "emb_cos": 0.9998565912246704,
+        "sent_per_s": 2281.282324459482,
+        "ms_per_sent": 0.4383499531286361
+      },
+      "int8_weight_only": {
+        "pearson": 0.9996144771575928,
+        "spearman": 0.9995982625431761,
+        "emb_cos": 0.999242901802063,
+        "pearson_syn": 0.9990562796592712,
+        "sent_per_s": 33.03535927060305,
+        "ms_per_sent": 30.27059557030043,
+        "speedup_vs_bf16_eager": 0.027623470324891944,
+        "speedup_vs_bf16_compiled": 0.014481048187856503
+      },
+      "int8_dynamic_w8a8": {
+        "pearson": 0.9717385768890381,
+        "spearman": 0.9888347027547483,
+        "emb_cos": 0.995013952255249,
+        "pearson_syn": 0.9943881630897522,
+        "sent_per_s": 2052.2319978820983,
+        "ms_per_sent": 0.48727434375450684,
+        "speedup_vs_bf16_eager": 1.7160330913590514,
+        "speedup_vs_bf16_compiled": 0.899595800080705
+      },
+      "fp8_dynamic_e4m3": {
+        "pearson": 0.9985144138336182,
+        "spearman": 0.9987344477877883,
+        "emb_cos": 0.9987162351608276,
+        "pearson_syn": 0.9973229765892029,
+        "sent_per_s": 2588.1976890673304,
+        "ms_per_sent": 0.386369250009011,
+        "speedup_vs_bf16_eager": 2.1641962926229192,
+        "speedup_vs_bf16_compiled": 1.1345363356903087
+      }
+    }
+  },
+  "best_cpu": {
+    "target": "cpu",
+    "toolchain": "openvino",
+    "scheme": "smoothquant_int8_per_tensor_static",
+    "artifact": "/home/lab/workspace/learning/projects/docdistance-estimator/models/02-mmbert-openvino-int8",
+    "pearson_in_domain": 0.9915822148323059,
+    "latency_ms_per_sentence": 21.399426186690107,
+    "ir_size_mb": 310.358081,
+    "smoothquant_alpha": 0.8
+  },
+  "best_gpu": {
+    "target": "gpu",
+    "toolchain": "torchao",
+    "scheme": "fp8_dynamic_e4m3",
+    "torchao_config": "Float8DynamicActivationFloat8WeightConfig",
+    "apply": "quantize_(model, <config>()) on the FP checkpoint, then torch.compile (needs C compiler)",
+    "pearson_in_domain": 0.9985144138336182,
+    "sent_per_s": 2588.1976890673304,
+    "speedup_vs_bf16_eager": 2.1641962926229192,
+    "speedup_vs_bf16_compiled": 1.1345363356903087
+  },
+  "recommended_target": "gpu"
+}

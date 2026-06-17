@@ -2,5 +2,6 @@
 
 Background-job and notebook-execution logs for this project.
 
-- `00-mmbert-int8-smoothquant.log` - nbconvert execution log for `notebooks/00-kj-mmbert-int8-smoothquant.ipynb` (mmBERT INT8 SmoothQuant quantization and quality measurement)
 - `01-document-segmentation.log` - nbconvert execution log for `notebooks/01-kj-document-segmentation.ipynb` (SAT GPU segmentation of the source PDF into statements)
+- `02-mmbert-quantization.log` - nbconvert execution log for `notebooks/02-kj-mmbert-quantization.ipynb` (mmBERT quantization: SmoothQuant study, OpenVINO CPU INT8, torchao GPU FP8/INT8 sweep)
+- `03-mmbert-throughput-saturation.log` - nbconvert execution log for `notebooks/03-kj-mmbert-throughput-saturation.ipynb` (GPU batch-saturation throughput sweep)
