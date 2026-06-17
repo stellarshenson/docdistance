@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docdistance_estimator"
+version = "0.1.0"
+description = "Project that uses theory of From Word Embeddings To Document Distances / Optimal Transport to give meaningful distance from one document to another, useful if building agentic projects that convert or extract information from one document to another using frontier models but without the ability to calculate KL divergence from logits"
+authors = [
+    { name = "Stellars Henson \u003ckonrad.jelen+github@gmail.com\u003e" },
+]
+license = "MIT"
+readme = "README.md"
+requires-python = "~=3.13.0"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+    "loguru",
+    "tqdm",
+    "typer",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "ipykernel",
+    "ipython",
+    "nbdime",
+    "pip",
+    "pytest",
+    "pytest-cov",
+    "ruff",
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["docdistance_estimator*"]
+exclude = ["tests*"]
+
+[tool.ruff]
+line-length = 99
+src = ["src/docdistance_estimator"]
+include = ["pyproject.toml", "src/docdistance_estimator/**/*.py"]
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["docdistance_estimator"]
+force-sort-within-sections = true

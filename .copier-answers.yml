@@ -1,0 +1,27 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v1.3.9
+_src_path: https://github.com/stellarshenson/copier-data-science.git
+author_name: Stellars Henson <konrad.jelen+github@gmail.com>
+custom_config: ''
+dataset_storage: none
+dependency_file: pyproject.toml
+description: Project that uses theory of From Word Embeddings To Document Distances
+    / Optimal Transport to give meaningful distance from one document to another,
+    useful if building agentic projects that convert or extract information from one
+    document to another using frontier models but without the ability to calculate
+    KL divergence from logits
+docker_support: 'No'
+docs: none
+env_encryption: 'Yes'
+env_name: docdistance-estimator
+environment_manager: uv
+git_init: 'Yes'
+jupyter_kernel_support: 'Yes'
+linting_and_formatting: ruff
+module_name: docdistance_estimator
+open_source_license: MIT
+package_repository: 'No'
+pydata_packages: none
+python_version_choice: '3.13'
+repo_name: docdistance-estimator
+testing_framework: pytest
