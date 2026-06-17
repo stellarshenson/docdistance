@@ -1,9 +1,24 @@
 # docdistance-estimator
 
-Project that uses theory of From Word Embeddings To Document Distances / Optimal Transport to give meaningful distance from one document to another, useful if building agentic projects that convert or extract information from one document to another using frontier models but without the ability to calculate KL divergence from logits
+Compute a meaningful semantic distance between two documents using Word Mover's Distance (WMD) and Optimal Transport, following Kusner et al. 2015 (*From Word Embeddings To Document Distances*). The intended use is agentic document conversion and extraction pipelines that run through frontier models, where token-level logits are unavailable and KL divergence cannot be computed directly - WMD provides an embedding-grounded distance instead.
 
-> **Note**: Generated with copier-data-science template v1.2+
-> For template documentation, visit [copier-data-science](https://github.com/stellarshenson/copier-data-science)
+## Why this exists
+
+Whole-document cosine similarity is too coarse when two executive summaries carry the same claims in different places, in a different order, or with content added or dropped. Optimal transport lifts the comparison to individual statements: it matches each statement in one document to its best counterpart in the other regardless of position, and the transport plan itself reveals what moved, what was added, and what was dropped.
+
+## Approach
+
+The distance is computed in stages:
+
+1. **Segment** each document into atomic statements with the SAT (Segment Any Text) sentence segmenter
+2. **Embed** each statement with a contextual encoder
+3. **Compare** the two statement clouds with optimal transport (statement-level Word Mover's Distance), optionally unbalanced so added or missing statements are scored explicitly rather than force-matched
+
+Position-invariance, statement-level granularity, and an interpretable alignment are what distinguish this from a single document embedding.
+
+## Notebooks
+
+- `notebooks/01-kj-document-segmentation.ipynb` - stage 1: splits a source PDF into statements with the `sat-3l-sm` model (PyTorch, GPU), writing `data/interim/01-statements.parquet`
 
 ## Quick Start
 
@@ -27,6 +42,10 @@ make install
 - **Data**: Keep `raw/` immutable, use `interim/` for transforms, `processed/` for final datasets
 - **Source code**: Refactor reusable notebook code into `src/docdistance_estimator/` modules
 - **Models**: Store trained models in `models/` with clear naming
+
+## References
+
+- `references/papers/from-word-embeddings-to-document-distances.md` - digest of the WMD paper (Kusner et al. 2015)
 
 ## Project Organization
 
@@ -57,3 +76,5 @@ make install
         │   └── train.py   <- Model training
         └── plots.py       <- Visualization code
 ```
+
+> **Note**: Scaffolded with the [copier-data-science](https://github.com/stellarshenson/copier-data-science) template.
