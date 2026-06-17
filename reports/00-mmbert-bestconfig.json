@@ -1,0 +1,25 @@
+{
+  "model": "jhu-clsp/mmBERT-base",
+  "alpha": 0.6,
+  "act_mode": "per_token",
+  "weight_quant": "per_channel_symmetric_int8",
+  "targets": [
+    "attn.Wqkv",
+    "attn.Wo",
+    "mlp.Wi",
+    "mlp.Wo"
+  ],
+  "mixed_precision": false,
+  "fp_component": null,
+  "n_smooth_folds": 43,
+  "fidelity_in_domain": {
+    "pearson": 0.9987491965293884,
+    "spearman": 0.998700897416094,
+    "emb_cos": 0.9985739588737488
+  },
+  "fidelity_synthetic": {
+    "pearson": 0.9976884126663208,
+    "spearman": 0.997275444392009,
+    "emb_cos": 0.9985062479972839
+  }
+}

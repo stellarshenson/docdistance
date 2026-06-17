@@ -1,0 +1,111 @@
+{
+  "model": "jhu-clsp/mmBERT-base",
+  "n_params_millions": 306.9,
+  "scheme_comparison": [
+    {
+      "smoothing": "naive",
+      "activations": "per_tensor",
+      "pearson": 0.9288889169692993,
+      "spearman": 0.9460235023156741,
+      "emb_cos": 0.952616810798645
+    },
+    {
+      "smoothing": "naive",
+      "activations": "per_token",
+      "pearson": 0.9977023005485535,
+      "spearman": 0.9977890480694833,
+      "emb_cos": 0.9962295293807983
+    },
+    {
+      "smoothing": "SmoothQuant",
+      "activations": "per_tensor",
+      "pearson": 0.9397683143615723,
+      "spearman": 0.9519748179315528,
+      "emb_cos": 0.9592331051826477
+    },
+    {
+      "smoothing": "SmoothQuant",
+      "activations": "per_token",
+      "pearson": 0.9983711242675781,
+      "spearman": 0.9983188851383895,
+      "emb_cos": 0.9983804821968079
+    }
+  ],
+  "alpha_sweep": [
+    {
+      "alpha": 0.4,
+      "pearson": 0.9984486103057861
+    },
+    {
+      "alpha": 0.5,
+      "pearson": 0.9983711242675781
+    },
+    {
+      "alpha": 0.6,
+      "pearson": 0.9987491965293884
+    },
+    {
+      "alpha": 0.7,
+      "pearson": 0.9957996010780334
+    },
+    {
+      "alpha": 0.8,
+      "pearson": 0.9986021518707275
+    }
+  ],
+  "best_alpha": 0.6,
+  "component_ablation": [
+    {
+      "component": "attn.Wqkv",
+      "pearson": 0.9995400905609131
+    },
+    {
+      "component": "attn.Wo",
+      "pearson": 0.9997840523719788
+    },
+    {
+      "component": "mlp.Wi",
+      "pearson": 0.9997369050979614
+    },
+    {
+      "component": "mlp.Wo",
+      "pearson": 0.9994361400604248
+    }
+  ],
+  "most_damaging_component": "mlp.Wo",
+  "chosen_config": {
+    "model": "jhu-clsp/mmBERT-base",
+    "alpha": 0.6,
+    "act_mode": "per_token",
+    "weight_quant": "per_channel_symmetric_int8",
+    "targets": [
+      "attn.Wqkv",
+      "attn.Wo",
+      "mlp.Wi",
+      "mlp.Wo"
+    ],
+    "mixed_precision": false,
+    "fp_component": null,
+    "n_smooth_folds": 43,
+    "fidelity_in_domain": {
+      "pearson": 0.9987491965293884,
+      "spearman": 0.998700897416094,
+      "emb_cos": 0.9985739588737488
+    },
+    "fidelity_synthetic": {
+      "pearson": 0.9976884126663208,
+      "spearman": 0.997275444392009,
+      "emb_cos": 0.9985062479972839
+    }
+  },
+  "real_openvino_int8": {
+    "pearson": 0.9557241201400757,
+    "spearman": 0.9825547798586717,
+    "emb_cos": 0.9924426078796387,
+    "latency_ms_per_sentence_fp": 29.100845436914824,
+    "latency_ms_per_sentence_int8": 20.638039061850577,
+    "speedup": 1.4100586470304608,
+    "ir_size_mb_fp": 614.928073,
+    "ir_size_mb_int8": 310.358081
+  }
+}

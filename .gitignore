@@ -13,6 +13,10 @@
 /data/raw/*
 !/data/raw/.gitkeep
 
+# Models - ignore large model artifacts but keep directory via .gitkeep
+/models/*
+!/models/.gitkeep
+
 # Mac OS-specific storage files
 .DS_Store
 
