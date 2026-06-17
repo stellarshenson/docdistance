@@ -1,4 +1,4 @@
-# Executive Summary - Enterprise AI Adoption (v2)
+# Executive Summary - Enterprise AI Adoption (v2, Opus 4.8)
 
 Early adopters are widening their lead in enterprise AI while a large minority stalls. About 42% of organizations with more than 1,000 employees now run AI in production, and 59% of firms already using or exploring AI have sped up their investment over the last 24 months. A further 40%, however, remain stuck experimenting, unable to move their models into deployment.
 

@@ -1,4 +1,4 @@
-# Executive Summary - Enterprise AI Adoption (v1)
+# Executive Summary - Enterprise AI Adoption (v1, Opus 4.8)
 
 Enterprise AI adoption has split into two groups, and the gap between them is what now limits further value. Among large organizations with more than 1,000 employees, 42% have actively deployed AI, while another 40% remain in exploration or experimentation without putting a model into production. The early adopters pull ahead: 59% of companies already working with AI have accelerated their rollout or investment over the past two years. The exploring 40% stay blocked by a recurring set of barriers.
 
