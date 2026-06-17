@@ -75,7 +75,18 @@ The whole-document cosine baseline is not discarded - it is the single cheapest 
 - Unbalanced OT, transport plan exposed as the alignment
 - WCD + RWMD as prefetch-and-prune lower bounds
 
+## Implementation and results
+
+Implemented in `notebooks/04-kj-wmd-document-distance.ipynb` - segment with `sat-3l-sm`, embed with mmBERT (mean-pooled, L2-normalized), SMD by exact optimal transport - and validated on the eleven executive-summary fixtures against the gold anchor.
+
+- **Perfect tier ordinality** - zero ordering mistakes: every gold summary is closer to the reference gold than every adversarial one; the two 3-sweep golds are nearest, the gold tier holds 73-82% closeness, the adversarial sets 68-72%
+- **One distance, one verdict** - SMD is the answer, reported as a distance plus a bounded closeness `1 − SMD/√2` (1 = identical, 0 = orthogonal clouds) and a similar / not-similar call against a threshold set by the gold cluster's own spread
+- **Bounds nest in value and cost** - `WCD ≤ RWMD ≤ SMD` holds throughout; exact SMD is ~0.08 ms/pair at statement scale and entropic Sinkhorn is slower here, so exact OT is the default and Sinkhorn is dropped
+- **Boundary margin is modest** - the gap at the gold/adversarial boundary is ~0.01 SMD (mean ratio ~1.15x); the ordering is clean and correct, just not wide
+- **What SMD responds to** - the two adversarial sets are different rules with no expected order between them, and both land outside the gold band; SMD responds to shared statement content, so the info-noise set (which kept the source's numbers) sits slightly closer than the info-loss set (which stripped them) - numeric retention correlates with closeness
+- **Next** - the source-conditioned variant in `wmd-wrt-source-docdistance-solution.md` adds a grounding axis (is added content supported by the source) on top of this selection-based distance
+
 ## Status
 
-- Design only; not yet implemented
-- Planned build - stage-2 notebook `03` plus reusable `src/docdistance_estimator/distance.py` (WCD, RWMD, exact and Sinkhorn SMD)
+- Implemented and validated in `notebooks/04-kj-wmd-document-distance.ipynb`
+- Pending - lift the distance into reusable `src/docdistance_estimator/distance.py` (WCD, RWMD, exact SMD) for the pipeline

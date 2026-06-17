@@ -16,10 +16,16 @@ The distance is computed in stages:
 
 Position-invariance, statement-level granularity, and an interpretable alignment are what distinguish this from a single document embedding.
 
+## Validation
+
+The distance is implemented in `notebooks/04-kj-wmd-document-distance.ipynb` and validated on an executive-summary fixture set built from one IBM AI-adoption article - a gold tier (faithful summaries written under shared rules) plus two adversarial tiers (information loss and information noise). Statement Mover's Distance ranks every gold summary closer to the anchor than every adversarial one with zero ordering mistakes. The design and conclusions are in `docs/wmd-docdistance-solution.md`, with a source-conditioned variant (`d(A,B|S)`) in `docs/wmd-wrt-source-docdistance-solution.md`.
+
 ## Notebooks
 
 - `notebooks/01-kj-document-segmentation.ipynb` - stage 1: splits a source PDF into statements with the `sat-3l-sm` model (PyTorch, GPU), writing `data/interim/01-statements.parquet`
 - `notebooks/02-kj-mmbert-quantization.ipynb` - stage 0: quantizes the mmBERT statement encoder and emits the best model per target (CPU OpenVINO INT8, GPU torchao FP8)
+- `notebooks/03-kj-mmbert-throughput-saturation.ipynb` - GPU batch-saturation sweep for the encoder (throughput knee, per-core CPU optimum)
+- `notebooks/04-kj-wmd-document-distance.ipynb` - stage 3: the statement-level distance (WCD / RWMD / SMD), scored across the fixture set and validated against the gold anchor
 
 ## Encoder quantization performance
 
@@ -61,6 +67,8 @@ make install
 ## References
 
 - `references/papers/from-word-embeddings-to-document-distances.md` - digest of the WMD paper (Kusner et al. 2015)
+- `docs/wmd-docdistance-solution.md` - source-free distance design, implementation, and results
+- `docs/wmd-wrt-source-docdistance-solution.md` - source-conditioned distance design (`d(A,B|S)`)
 
 ## Project Organization
 
