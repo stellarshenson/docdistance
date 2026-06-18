@@ -9,7 +9,10 @@ from typer.testing import CliRunner
 from docdistance.cli import app
 
 runner = CliRunner()
-_WIDE = {"COLUMNS": "200"}  # widen so option / command names are not wrapped in the help panels
+# widen so option / command names are not wrapped, and force plain output (no ANSI) so the
+# substring assertions hold regardless of the ambient terminal - CI runners set FORCE_COLOR,
+# which otherwise makes Rich colorize the help and splits flags like "--json" with escape codes
+_WIDE = {"COLUMNS": "200", "NO_COLOR": "1", "TERM": "dumb"}
 
 
 def test_app_help_lists_subcommands():
