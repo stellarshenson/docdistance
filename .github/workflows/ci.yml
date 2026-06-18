@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# CPU-only CI - reroute torch to the PyPI CPU index so the locked CUDA-bundled
+# wheel (and its multi-GB nvidia toolkit deps) is never pulled on the runner.
+env:
+  UV_TORCH_BACKEND: cpu
+
+jobs:
+  build:
+    name: build (wheel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - name: Build wheel
+        run: uv build --wheel --out-dir dist
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel
+          path: dist/*.whl
+
+  test:
+    name: test (lint + unit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - name: Install project (dev, CPU torch)
+        run: |
+          uv venv --python 3.13
+          uv pip install -e ".[dev]"
+      - name: Lint (ruff)
+        run: make lint
+      - name: Unit tests (pytest)
+        run: make test
+
+  integration-test:
+    name: integration-test (packaged wheel)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.13"
+          enable-cache: true
+      - name: Download wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: wheel
+          path: dist
+      - name: Install built wheel into a clean env (CPU torch)
+        run: |
+          uv venv --python 3.13
+          uv pip install dist/*.whl
+      - name: Smoke - packaged console script
+        run: |
+          .venv/bin/docdistance --version
+          .venv/bin/docdistance --help
+          .venv/bin/docdistance distance --help
+      - name: Smoke - core optimal-transport distance on synthetic embeddings
+        run: |
+          .venv/bin/python - <<'PY'
+          import numpy as np
+          from docdistance import __version__, distance as d
+
+          def emb(n, dim=32, seed=0):
+              rng = np.random.default_rng(seed)
+              x = rng.standard_normal((n, dim)).astype(np.float32)
+              return x / np.linalg.norm(x, axis=1, keepdims=True)
+
+          # exact WMD/SMD path through ot.emd2 from the installed wheel
+          r = d.compute_distance(emb(9, seed=1), emb(8, seed=2))
+          assert r.verdict in ("similar", "not similar"), r.verdict
+          assert r.wcd <= r.rwmd + 1e-6 <= r.smd + 2e-6, (r.wcd, r.rwmd, r.smd)
+
+          # source-conditioned selection axis (exact OT over coverage profiles)
+          sc = d.compute_source_conditioned(emb(7, seed=3), emb(6, seed=4), emb(10, seed=5))
+          assert sc.n_statements_source == 10
+          assert sc.d_sel >= 0.0
+          print(f"docdistance {__version__} integration smoke OK - "
+                f"verdict={r.verdict} smd={r.smd:.4f} d_sel={sc.d_sel:.4f}")
+          PY
