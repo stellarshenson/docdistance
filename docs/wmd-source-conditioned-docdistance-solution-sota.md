@@ -1,8 +1,13 @@
-# WMD Document Distance With Respect to a Common Source (SOTA)
+# Source-Conditioned Document Distance d(A,B|S) (SOTA)
 
 ## Abstract
 
-A source-conditioned document distance `d(A,B|S)` for the case where two documents derive from one source - two summaries of an article, two extractions of a report. It reuses the Statement Mover's Distance skeleton[<sup>ref1</sup>](#ref1) but re-bases the transport onto the source and replaces the embedding ground cost with a grounding score, splitting a single source-blind scalar into two interpretable axes: `D_sel` (selection - does a document cover the same source content) and `D_grd` (grounding - is what it says supported by the source). The design separates the two adversarial failure modes a symmetric distance conflates, validated on the IBM AI-adoption executive-summary fixtures (batches E02/E03, [`experiments/wmd-docdistance-experiments.md`](experiments/wmd-docdistance-experiments.md)). `D_sel` ships as a metric selection axis with `0/24` ordinality violations; the relevance-gated `D_grd` closes the per-document gold intrusion; the blend orders fabrication above information-loss where the symmetric scalar inverts them. The design notebook is [`../notebooks/05-kj-source-conditioned-distance.ipynb`](../notebooks/05-kj-source-conditioned-distance.ipynb) (CPU INT8 or GPU); the library is validated end-to-end in [`../notebooks/09-kj-docdistance-api-e2e.ipynb`](../notebooks/09-kj-docdistance-api-e2e.ipynb). This is the conclusion doc; the experiments log is its evidence.
+A document distance for two documents that share a known source `S` - two summaries of an article, two extractions of a report. A symmetric `d(A,B)` is source-blind and conflates two opposite failures, so `d(A,B|S)` re-bases the Statement Mover's Distance[<sup>ref1</sup>](#ref1) onto the source and reads off two interpretable axes:
+
+- **`D_sel`** - selection: does a document cover the same source content; a metric axis, `0/24` ordinality violations
+- **`D_grd`** - grounding: is what it says supported by the source; the relevance-gated residual closes the per-document gold intrusion
+
+Their blend orders fabrication above information-loss where a source-blind scalar inverts them, and the `D_sel` pre-pass removes anisotropy by default - widening its dynamic range ~7.4x at `0` violations, with an opt-out flag. Validated on the IBM AI-adoption executive-summary fixtures (batches E02-E04, [`experiments/wmd-docdistance-experiments.md`](experiments/wmd-docdistance-experiments.md)); the design runs in [`../notebooks/05-kj-source-conditioned-distance.ipynb`](../notebooks/05-kj-source-conditioned-distance.ipynb) and the library is validated end-to-end in [`../notebooks/09-kj-docdistance-api-e2e.ipynb`](../notebooks/09-kj-docdistance-api-e2e.ipynb). This is the conclusion doc, the experiments log its evidence.
 
 ## Problem
 
@@ -40,25 +45,26 @@ Three surgical changes turn the symmetric Statement Mover's Distance into the so
 - **Selection divergence `D_sel`** - the coverage profile `cov_A(k)` is the share of source statement `k` that `A` represents (a soft nearest-source assignment, normalized to a distribution over `S`); `D_sel` is exact OT between `cov_A` and `cov_B` with the `√(2 − 2cos)` ground cost on the source-statement embeddings - same source, different picks shows up here
 - **Grounding score** - `g(a_i, s_k) = r(a_i, s_k) · P(entail)(s_k → a_i)`: the reranker relevance localizes the source evidence, the NLI entailment confirms the claim follows; premise = source statement, hypothesis = summary statement
 - **Joint-premise aggregation** - a faithful summary statement fuses several source sentences, so single-premise NLI mis-grades compression; the entailer scores the top-3 reranked source statements joined into one premise (the multi-premise SummaC pattern[<sup>ref2</sup>](#ref2)), which moved information-loss from 0.206 down to gold level (0.130) while holding fabrication at 0.232 (E02 R1 → R2)
-- **Relevance-gated residual (E03-H2)** - the shipped grounding residual is `ungrounded_gated = mean_i (1 − entail_i)·(1 − max_k r(a_i, s_k))`; gating the ungrounded mass by max reranker relevance distinguishes faithful compression (high relevance, low entailment) from fabrication (low on both), closing the per-document gold intrusion the raw entailment residual leaves open
-- **Blended scalar (E03-H5)** - `α·D_sel + (1−α)·D_grd` over the min-max axes at `α ∈ [0.6, 0.9]` orders gold < Set 1 < Set 2 with `0/28` violations and Set 2 above Set 1, the correct grounding severity
+- **Relevance-gated residual (E03-H11)** - the shipped grounding residual is `ungrounded_gated = mean_i (1 − entail_i)·(1 − max_k r(a_i, s_k))`; gating the ungrounded mass by max reranker relevance distinguishes faithful compression (high relevance, low entailment) from fabrication (low on both), closing the per-document gold intrusion the raw entailment residual leaves open
+- **Blended scalar (E03-H14)** - `α·D_sel + (1−α)·D_grd` over the min-max axes at `α ∈ [0.6, 0.9]` orders gold < Set 1 < Set 2 with `0/28` violations and Set 2 above Set 1, the correct grounding severity
 - **Metric property preserved** - the NLI / cross-encoder grounding cost is asymmetric and non-metric, but it is only ever a transport cost to a fixed reference `S`, not a distance between `A` and `B`; the outer comparison `D_sel` is metric OT over coverage profiles with a metric ground cost, so `d(A,B|S)` keeps the triangle inequality the project requires
 
 ## Performance
 
-Validated on the `data/interim/exec-summaries/ibm-ai-adoption` fixtures - 11 executive summaries of one article plus the source, in three tiers (gold faithful, Set 1 info-loss, Set 2 info-noise), scored against the gold anchor. Numbers from batches E02/E03 (CPU INT8) and nb05.
+Validated on the `data/interim/exec-summaries/ibm-ai-adoption` fixtures - 11 executive summaries of one article plus the source, in three tiers (gold faithful, Set 1 info-loss, Set 2 info-noise), scored against the gold anchor. Numbers from batches E02/E03 (CPU INT8), E04 (GPU fp16) and nb05. The `D_sel` row is the raw axis; the shipped default adds the anisotropy pre-pass (E04-H15), which widens the range ~7.4x and preserves this ordering.
 
 | axis | gold | Set 1 | Set 2 | check |
 |---|---|---|---|---|
 | `D_sel` selection | 0.023 | 0.060 | moderate | `0/24` ordinality violations |
 | `D_grd` R2 ungated | 0.084 | 0.130 | 0.232 | 2 gold intrude (per document) |
-| `D_grd` H2 relevance-gated | 0.084 | 0.141 | 0.236 | gold intrusions `2 → 0` |
+| `D_grd` H11 relevance-gated | 0.084 | 0.141 | 0.236 | gold intrusions `2 → 0` |
 | blend `α ∈ [0.6,0.9]` | low | mid | high | `0/28`, Set 2 > Set 1 |
 | symmetric SMD (baseline) | 0.287 | 0.452 | 0.406 | `0/28` but Set 1 > Set 2 (inverted) |
 
 - **Selection axis is clean** - `D_sel` ranks every adversarial above every gold with zero violations; it is the metric, ship-ready half
 - **The relevance gate is the grounding-axis fix** - it turns `D_grd` from a tier-level fabrication flag into a per-document discriminator, closing the gold intrusion at no extra cost (free re-weighting of signals already computed)
 - **The blend's win is ordering, not separability** - the symmetric SMD also clears `0/28` gold-vs-adversarial here, but inverts the severity; the conditioned blend orders fabrication above information-loss, which a source-blind scalar cannot
+- **Default resolution pre-pass (E04-H15)** - anisotropy removal (all-but-the-top, `k = 1`) over the pooled {A, B, source} statements before the coverage profile widens the `D_sel` dynamic range ~7.4x at `0` violations; resolution only, not a sharper boundary (the gold/adversarial contrast is unchanged), so it sharpens thresholding without changing the verdict - on by default on the source-conditioned path (`anisotropy=False` to opt out), the same lever the symmetric distance offers (E01-H3)
 
 ## Setup
 
@@ -85,8 +91,8 @@ Validated on the `data/interim/exec-summaries/ibm-ai-adoption` fixtures - 11 exe
 ## Limitations
 
 - **One fixture** - all evidence is one article and one degradation design; the blend's severity win needs a second source before it is trusted as a single scalar (the open gate)
-- **Grounding cost stands** - the reranker is load-bearing: the bi-encoder cosine neither shortlists faithfully (recall@10 of top-3 is 0.58) nor replaces relevance (Spearman 0.40), so the ~109 s/pair CPU cost is structural, not removable with the embeddings on hand (E03-H3/H4 refuted)
-- **Numbers are un-verifiable here** - general NLI is weak on quantitative claims and the contradiction signal is near-dead even on fabricated forecasts; a numeric verifier was defeated by the source's figure density (82 figures match fabricated numbers by coincidence), so `D_grd` rides on the ungrounded component, not contradiction (E03-H1 refuted)
+- **Grounding cost stands** - the reranker is load-bearing: the bi-encoder cosine neither shortlists faithfully (recall@10 of top-3 is 0.58) nor replaces relevance (Spearman 0.40), and E04 confirmed it from the other side - a distilled same-family `bge-reranker-base` recalls only 0.55 of the v2-m3 top-3 (Spearman 0.70) and a tiny MiniLM cross-encoder cascade, though far closer (Spearman 0.98, 2.3x), still drops 13% of the top-3 evidence at `m = 15` and adds one gold intrusion, so the ~109 s/pair cost is structural (E03-H12/H13, E04-H17/H18 refuted); a larger cascade `m` is the open lever
+- **Numbers are un-verifiable here** - general NLI is weak on quantitative claims and the contradiction signal is near-dead even on fabricated forecasts; a numeric verifier was defeated by the source's figure density (82 figures match fabricated numbers by coincidence), so `D_grd` rides on the ungrounded component, not contradiction (E03-H10 refuted)
 - **`D_grd` not yet in the library** - the shipped library covers the selection axis; the grounding axis lives in the notebooks (E02/E03, nb05) pending the cross-fixture check and a wired-in `D_grd`
 
 ## FAQ
@@ -98,21 +104,24 @@ Validated on the `data/interim/exec-summaries/ibm-ai-adoption` fixtures - 11 exe
 - **Why gate the residual by relevance?** - faithful compression has high source relevance but low single-statement entailment, fabrication has both low; gating by `1 − max_k r` keeps only genuinely off-source mass, closing the gold intrusion
 - **CPU or GPU?** - both give identical tier verdicts; run CPU INT8 where a GPU is absent (the published artifacts), GPU fp16 for the ~63x reranker speed-up
 - **Is `d(A,B|S)` still a metric?** - yes for the selection axis: the non-metric grounding cost is confined to transport against a fixed `S`, and the outer `D_sel` comparison is metric OT over coverage profiles
+- **Can it be made faster or sharper?** - sharper is the default: the `D_sel` pre-pass removes anisotropy on by default, widening its dynamic range ~7.4x at `0` violations (E04-H15; `anisotropy=False` to opt out); faster not within the chain: smaller cross-encoders break the grounding ranking, so the reranker cost stands and GPU fp16 (~63x) is the speed answer (E04-H17/H18)
 
 ## Implementation
 
 - **Selection axis (shipped)** - `coverage_profile`, `selection_divergence` and `compute_source_conditioned` in `src/docdistance/distance.py`, exposed through `DocDistance.distance_wrt_source` and the one-shot `source_conditioned_distance(a, b, source)`; returns `d_sel` plus each document's residual to the source
-- **Grounding axis (notebook)** - the reranker × NLI chain, the H2 relevance-gate and the H5 blend are implemented and validated in [`../notebooks/05-kj-source-conditioned-distance.ipynb`](../notebooks/05-kj-source-conditioned-distance.ipynb) and the E02/E03 experiment notebooks, not yet folded into the library
+- **Grounding axis (notebook)** - the reranker × NLI chain, the H11 relevance-gate and the H14 blend are implemented and validated in [`../notebooks/05-kj-source-conditioned-distance.ipynb`](../notebooks/05-kj-source-conditioned-distance.ipynb) and the E02/E03 experiment notebooks, not yet folded into the library
+- **Default resolution pre-pass** - the source-conditioned path runs the E04-H15 all-but-the-top (`k = 1`) on `D_sel` by default; pass `anisotropy=False` to `compute_source_conditioned` / `DocDistance.distance_wrt_source` (or `--no-anisotropy`) to opt out
 - **CLI** - `docdistance distance-wrt-source A B --source S` drives the selection axis with `--json` / `--gpu` / `--backend`
 - **Quantization** - `Q01` (mmBERT) and `Q02` (mDeBERTa SmoothQuant) under `notebooks/model-quantization/` own the in-project INT8 IRs
-- **Next** - wire the H2 relevance-gated `D_grd` and the H5 blend into the library after the cross-fixture validation gate
+- **Next** - wire the H11 relevance-gated `D_grd` and the H14 blend into the library after the cross-fixture validation gate; the open speed lever is a larger cascade `m` or a better-matched pre-filter (E04-H18 near-miss)
 
 ## Conclusions
 
 - **Ships** - `D_sel`, a metric selection axis, `0/24` violations, sub-second per pair on CPU INT8
-- **Ships as the grounding-axis definition** - the H2 relevance-gated ungrounded mass, a per-document discriminator at no extra cost over the R2 residual
-- **Offered with a caveat** - the H5 blended scalar (`α = 0.75`) orders the failure modes correctly where the symmetric distance inverts them, pending a second source
-- **Not shipped** - the numeric verifier (defeated by source figure density) and the two reranker-cost levers (the cross-encoder is irreplaceable)
+- **Ships as the grounding-axis definition** - the H11 relevance-gated ungrounded mass, a per-document discriminator at no extra cost over the R2 residual
+- **Offered with a caveat** - the H14 blended scalar (`α = 0.75`) orders the failure modes correctly where the symmetric distance inverts them, pending a second source
+- **Default resolution pre-pass (E04)** - anisotropy removal on the conditioned `D_sel` (`k = 1`, on by default, opt-out via `anisotropy=False`) widens dynamic range ~7.4x at `0` violations; resolution, not a sharper boundary, so it sharpens thresholding without changing the verdict - the same lever the symmetric distance offers optionally (E01-H3)
+- **Not shipped** - the numeric verifier (defeated by source figure density), the bi-encoder reranker-cost levers (E03) and the E04 cross-encoder speed levers (a distilled replacement drops half the evidence, a cascade is the closest but breaks a guardrail at `m = 15`); the cross-encoder is irreplaceable and its cost stands
 - **Net** - conditioning on the source separates selection from grounding and names why two documents diverge, the result a symmetric scalar cannot give; the selection axis is production-ready, the grounding axis is a validated heavy diagnostic awaiting cross-fixture confirmation
 
 ## Bibliography

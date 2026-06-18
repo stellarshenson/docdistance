@@ -205,9 +205,9 @@ def distance_wrt_source(
         help="force the torch backend on CUDA; errors if GPU support is not secured",
     ),
     anisotropy: bool = typer.Option(
-        False,
+        True,
         "--anisotropy/--no-anisotropy",
-        help="anisotropy removal - needs a corpus, off by default",
+        help="anisotropy removal on the conditioned selection axis - on by default (E04-H15), --no-anisotropy to opt out",
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(

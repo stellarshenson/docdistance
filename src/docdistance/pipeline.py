@@ -78,7 +78,7 @@ class DocDistance:
         b: str | Path,
         source: str | Path,
         *,
-        anisotropy: bool = False,
+        anisotropy: bool = True,
     ) -> SourceConditionedResult:
         return _core.compute_source_conditioned(
             self.embed(a), self.embed(b), self.embed(source), anisotropy=anisotropy
@@ -107,7 +107,7 @@ def source_conditioned_distance(
     source: str | Path,
     *,
     backend: str = "openvino",
-    anisotropy: bool = False,
+    anisotropy: bool = True,
     offline: bool = True,
     device: str | None = None,
 ) -> SourceConditionedResult:

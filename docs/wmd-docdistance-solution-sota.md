@@ -140,7 +140,7 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 - **Intrinsic to the fixture** - all eleven summaries describe one article and share its content, so the margin is genuinely narrow, not a defect of the distance
 - **Single source, single degradation design** - a controlled probe, not a benchmark; cross-fixture validation on a second article is pending
 - **`d'` lowered by the isotropy step** - anisotropy removal widens the margin and dynamic range but spreads the gold band, lowering the effect-size `d'` (2.70 → 2.34); ordering is unaffected
-- **Selection vs grounding not separated** - a symmetric distance cannot tell same-source-different-picks from off-source fabrication; the source-conditioned variant `d(A,B|S)` in [`wmd-wrt-source-docdistance-solution.md`](wmd-wrt-source-docdistance-solution.md) adds that axis
+- **Selection vs grounding not separated** - a symmetric distance cannot tell same-source-different-picks from off-source fabrication; the source-conditioned variant `d(A,B|S)` in [`wmd-source-conditioned-docdistance-solution-sota.md`](wmd-source-conditioned-docdistance-solution-sota.md) adds that axis
 
 ## FAQ
 

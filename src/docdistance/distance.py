@@ -206,9 +206,14 @@ def compute_source_conditioned(
     emb_b: np.ndarray,
     emb_source: np.ndarray,
     *,
-    anisotropy: bool = False,
+    anisotropy: bool = True,
 ) -> SourceConditionedResult:
-    """Assemble a :class:`SourceConditionedResult` from A, B and source statement embeddings."""
+    """Assemble a :class:`SourceConditionedResult` from A, B and source statement embeddings.
+
+    Anisotropy removal (all-but-the-top, k=1) is on by default: the source supplies the corpus the
+    shared direction is estimated from, and removing it widens the ``D_sel`` dynamic range ~7.4x at
+    0 ordinality violations (E04-H15). Pass ``anisotropy=False`` to opt out.
+    """
     n_a, n_b, n_s = len(emb_a), len(emb_b), len(emb_source)
     if anisotropy:
         fixed = all_but_the_top({"a": emb_a, "b": emb_b, "s": emb_source}, k=1)

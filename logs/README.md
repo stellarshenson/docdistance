@@ -12,4 +12,5 @@ Background-job and notebook-execution logs for this project.
 - `09-docdistance-api-e2e.log` - nbconvert execution log for `notebooks/09-kj-docdistance-api-e2e.ipynb` (docdistance library validated end-to-end through the public API on the executive-summary fixtures)
 - `E02-source-conditioned-grounding.log` - nbconvert execution of the E02 source-conditioned grounding experiment (reranker x NLI grounding axis over the fixtures, two rounds)
 - `E03-source-conditioned-improvements.log` - nbconvert execution of the E03 batch (numeric verifier, relevance-gated residual, bi-encoder cascade/replacement, blended-scalar gate over the fixtures)
+- `E04-source-conditioned-performance.log` - nbconvert execution of the E04 batch (anisotropy and coverage-temperature on the conditioned axes, distilled-reranker and cross-encoder-cascade speed levers, composite capstone; GPU fp16)
 - `gpu-grounding-benchmark.log` - GPU (RTX 5000 Ada, torch fp16) timing of the grounding chain (mmBERT + FP reranker + FP NLI) vs the CPU INT8 reference

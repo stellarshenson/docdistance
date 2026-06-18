@@ -1,0 +1,73 @@
+{
+  "device": "cuda",
+  "baseline": {
+    "d_sel_DR": 0.019349179825040176,
+    "d_sel_violations": 0,
+    "d_sel_contrast": 2.3083950389552825,
+    "d_grd_gold_intrusions": 0,
+    "symmetric_severity": "Set1>Set2"
+  },
+  "E04-H1": {
+    "aniso": 0.7356244325637817,
+    "kill_pass": true,
+    "best_k": 3,
+    "dr_ratio": 7.450009294649075,
+    "dr": 0.14415156954038566,
+    "viol": 0,
+    "contrast": 2.0360606873230025,
+    "passed": true,
+    "killed": true,
+    "verdict": "Confirmed"
+  },
+  "E04-H2": {
+    "kill_pass": true,
+    "con_range": 1.672428518079314,
+    "best_tau": null,
+    "con_ratio": null,
+    "dr": null,
+    "dr_ratio": null,
+    "viol": null,
+    "passed": false,
+    "killed": true,
+    "verdict": "Refuted"
+  },
+  "E04-H3": {
+    "kill_pass": false,
+    "recall3": 0.5468749999999999,
+    "spearman": 0.6969696969696969,
+    "speed_cut": 2.639119392193633,
+    "intrusions": 1,
+    "t_big": 1.744656585001697,
+    "t_base": 0.6610752776711403,
+    "t_mini": 0.3927791443323561,
+    "passed": false,
+    "killed": false,
+    "verdict": "Refuted (killed at gate)"
+  },
+  "E04-H4": {
+    "kill_pass": false,
+    "recall_m": 0.8671874999999999,
+    "spearman": 0.9757575757575757,
+    "call_cut": 4.666666666666667,
+    "e2e_cut": 2.2757356135573947,
+    "intrusions": 1,
+    "m": 15,
+    "passed": false,
+    "killed": false,
+    "verdict": "Refuted (killed at gate)"
+  },
+  "E04-H5": {
+    "kill_pass": false,
+    "dr_pick": "H1 anisotropy k=3",
+    "speed_pick": "baseline v2-m3",
+    "dr_ratio": 7.450009294649075,
+    "latency_cut": 1.0,
+    "dsel_viol": 0,
+    "intrusions": 0,
+    "severity": "Set2>Set1",
+    "sym_severity": "Set1>Set2",
+    "passed": false,
+    "killed": false,
+    "verdict": "Refuted (killed at gate)"
+  }
+}
