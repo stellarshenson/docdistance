@@ -48,10 +48,10 @@ def _read(doc: str | Path) -> str:
 class DocDistance:
     """Reusable pipeline - construct once (models load here), then call :meth:`distance` per pair."""
 
-    def __init__(self, backend: str = "openvino", offline: bool = True):
+    def __init__(self, backend: str = "openvino", offline: bool = True, device: str | None = None):
         self.backend = backend
         self.segmenter = Segmenter(offline=offline)
-        self.encoder = load_encoder(backend, offline=offline)
+        self.encoder = load_encoder(backend, offline=offline, device=device)
 
     def embed(self, doc: str | Path) -> np.ndarray:
         """Segment then embed a document into L2-normalized statement vectors ``[n, dim]``."""
@@ -93,9 +93,10 @@ def document_distance(
     anisotropy: bool = False,
     threshold: float = DEFAULT_THRESHOLD,
     offline: bool = True,
+    device: str | None = None,
 ) -> DistanceResult:
     """Symmetric Statement Mover's Distance between documents ``a`` and ``b`` (loads models, then scores)."""
-    return DocDistance(backend=backend, offline=offline).distance(
+    return DocDistance(backend=backend, offline=offline, device=device).distance(
         a, b, anisotropy=anisotropy, threshold=threshold
     )
 
@@ -108,8 +109,9 @@ def source_conditioned_distance(
     backend: str = "openvino",
     anisotropy: bool = False,
     offline: bool = True,
+    device: str | None = None,
 ) -> SourceConditionedResult:
     """Source-conditioned distance d(A, B | S): selection divergence + each document's distance to S."""
-    return DocDistance(backend=backend, offline=offline).distance_wrt_source(
+    return DocDistance(backend=backend, offline=offline, device=device).distance_wrt_source(
         a, b, source, anisotropy=anisotropy
     )

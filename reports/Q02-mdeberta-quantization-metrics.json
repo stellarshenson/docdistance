@@ -1,0 +1,29 @@
+{
+  "model": "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli",
+  "method": "openvino-nncf-smoothquant",
+  "best_alpha": 0.7,
+  "size_mb": 318.135992,
+  "fp32_mb": 1151.416604,
+  "entail_parity_pearson": 0.992684006690979,
+  "dgrd_parity_pearson": 0.983435604702927,
+  "tier_means_fp": {
+    "gold": 0.13591542750601265,
+    "adv1": 0.14642895087128754,
+    "adv2": 0.1783741047865256
+  },
+  "tier_means_int8": {
+    "gold": 0.13534374866645688,
+    "adv1": 0.16812093486035945,
+    "adv2": 0.19846715421688205
+  },
+  "violations_fp": 12,
+  "violations_int8": 11,
+  "severity_fp": "interleaved",
+  "severity_int8": "interleaved",
+  "ordering_fp": true,
+  "ordering_int8": true,
+  "verdict_preserved": true,
+  "faithful": true,
+  "calibration": "source top-3 joint premise x summary statement, exec-summary fixtures",
+  "n_calib": 128
+}

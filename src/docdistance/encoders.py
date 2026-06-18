@@ -32,10 +32,33 @@ MAX_TOKENS = 128
 
 _INSTALL_HINT = "model not found in cache - run:  docdistance install"
 _EXTRA_HINT = "model dependencies missing - reinstall:  pip install --force-reinstall docdistance"
+_GPU_HINT = (
+    "GPU requested (--gpu) but GPU support is not secured - install the extra and a CUDA build:\n"
+    "  pip install 'docdistance[gpu]'   (needs a CUDA-capable torch wheel + an NVIDIA driver)"
+)
 
 
 class ModelsNotInstalled(RuntimeError):
     """A required model is missing from the cache - run ``docdistance install``."""
+
+
+class GpuNotAvailable(RuntimeError):
+    """``--gpu`` was requested but the GPU extra is missing or no CUDA device is visible."""
+
+
+def require_gpu() -> None:
+    """Raise :class:`GpuNotAvailable` unless the ``[gpu]`` extra is installed AND a CUDA device is visible.
+
+    The ``--gpu`` flag must fail loudly rather than silently fall back to CPU - this is the gate.
+    ``accelerate`` is the ``[gpu]`` extra sentinel; ``torch.cuda.is_available()`` is the hardware check.
+    """
+    try:
+        import accelerate  # noqa: F401  - the [gpu] extra sentinel
+        import torch
+    except ModuleNotFoundError as exc:
+        raise GpuNotAvailable(_GPU_HINT) from exc
+    if not torch.cuda.is_available():
+        raise GpuNotAvailable(_GPU_HINT)
 
 
 def _require_models_extra() -> None:
@@ -179,12 +202,12 @@ class TorchEncoder:
         return np.concatenate(out, 0)
 
 
-def load_encoder(backend: str = "openvino", offline: bool = True):
-    """Factory: return an encoder for ``backend`` in {openvino, torch}."""
+def load_encoder(backend: str = "openvino", offline: bool = True, device: str | None = None):
+    """Factory: return an encoder for ``backend`` in {openvino, torch}; ``device`` forces a torch device."""
     if backend == "openvino":
         return OpenVINOEncoder(offline=offline)
     if backend == "torch":
-        return TorchEncoder(offline=offline)
+        return TorchEncoder(offline=offline, device=device)
     raise ValueError(f"unknown backend {backend!r}; choose 'openvino' or 'torch'")
 
 

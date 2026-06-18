@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docdistance"
-version = "1.0.14"
+version = "1.0.15"
 description = "Project that uses theory of From Word Embeddings To Document Distances / Optimal Transport to give meaningful distance from one document to another, useful if building agentic projects that convert or extract information from one document to another using frontier models but without the ability to calculate KL divergence from logits"
 authors = [
     { name = "Stellars Henson \u003ckonrad.jelen+github@gmail.com\u003e" },
@@ -67,6 +67,21 @@ dev = [
     "twine",
     "matplotlib",
     "seaborn",
+]
+# GPU support - the torch backend on CUDA; accelerate is the sentinel the --gpu flag checks for.
+# A CUDA-capable torch wheel (cu12x/cu13x) must already be present; pip cannot select it via an extra.
+gpu = [
+    "accelerate",
+]
+# Quantization toolchain - OpenVINO/NNCF SmoothQuant for the INT8 model-quantization notebooks
+# (Q01 mmBERT, Q02 mDeBERTa). optimum-intel pins transformers to the 5.0.x line.
+quant = [
+    "optimum-intel[openvino]",
+    "nncf",
+    "datasets",
+]
+all = [
+    "docdistance[dev,gpu,quant]",
 ]
 
 [tool.setuptools]

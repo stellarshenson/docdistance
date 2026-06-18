@@ -70,6 +70,20 @@ def _run(fn):
         raise typer.Exit(1)
 
 
+def _resolve_gpu(gpu: bool, backend: "Backend") -> tuple[str, str | None]:
+    """Map ``--gpu`` to (backend, device): force the torch backend on CUDA, erroring if not secured."""
+    if not gpu:
+        return backend.value, None
+    from docdistance.encoders import GpuNotAvailable, require_gpu
+
+    try:
+        require_gpu()
+    except GpuNotAvailable as exc:
+        _err.print(f"[bold red]error:[/bold red] {exc}")
+        raise typer.Exit(1)
+    return "torch", "cuda"
+
+
 def _emit_distance(r, json_out: bool, result_only: bool) -> None:
     if result_only:
         typer.echo(str(r.smd))
@@ -137,6 +151,11 @@ def distance(
     backend: Backend = typer.Option(
         Backend.openvino, "--backend", help="statement encoder backend"
     ),
+    gpu: bool = typer.Option(
+        False,
+        "--gpu",
+        help="force the torch backend on CUDA; errors if GPU support is not secured",
+    ),
     anisotropy: bool = typer.Option(
         False,
         "--anisotropy/--no-anisotropy",
@@ -157,9 +176,10 @@ def distance(
     configure_logging(verbose)
     from docdistance.pipeline import document_distance
 
+    backend_value, device = _resolve_gpu(gpu, backend)
     result = _run(
         lambda: document_distance(
-            a, b, backend=backend.value, anisotropy=anisotropy, threshold=threshold
+            a, b, backend=backend_value, anisotropy=anisotropy, threshold=threshold, device=device
         )
     )
     _emit_distance(result, json_out, result_only)
@@ -179,6 +199,11 @@ def distance_wrt_source(
     backend: Backend = typer.Option(
         Backend.openvino, "--backend", help="statement encoder backend"
     ),
+    gpu: bool = typer.Option(
+        False,
+        "--gpu",
+        help="force the torch backend on CUDA; errors if GPU support is not secured",
+    ),
     anisotropy: bool = typer.Option(
         False,
         "--anisotropy/--no-anisotropy",
@@ -194,9 +219,10 @@ def distance_wrt_source(
     configure_logging(verbose)
     from docdistance.pipeline import source_conditioned_distance
 
+    backend_value, device = _resolve_gpu(gpu, backend)
     result = _run(
         lambda: source_conditioned_distance(
-            a, b, source, backend=backend.value, anisotropy=anisotropy
+            a, b, source, backend=backend_value, anisotropy=anisotropy, device=device
         )
     )
     _emit_wrt_source(result, json_out, result_only)

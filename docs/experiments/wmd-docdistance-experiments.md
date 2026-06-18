@@ -1,6 +1,6 @@
 # WMD Document-Distance Experiments - tier contrast and source conditioning
 
-Experiments log for the mmBERT Statement Mover's Distance from `../wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers to widen the source-free gold/adversarial gap in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted. Batch E02 builds and tests the source-conditioned two-axis distance (selection `D_sel` + grounding `D_grd`) from `../wmd-wrt-source-docdistance-solution.md` in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb): selection axis confirmed, grounding axis confirmed at the tier level once aggregated to a joint premise. Batch E03 pre-registers five source-conditioned improvement hypotheses - a numeric-aware verifier, a relevance-gated residual, two reranker-cost levers, and a blended-scalar gate - against one acceptance gate: a clean win over the symmetric distance for common-source documents; not yet run.
+Experiments log for the mmBERT Statement Mover's Distance from `../wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers to widen the source-free gold/adversarial gap in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted. Batch E02 builds and tests the source-conditioned two-axis distance (selection `D_sel` + grounding `D_grd`) from `../wmd-wrt-source-docdistance-solution.md` in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb): selection axis confirmed, grounding axis confirmed at the tier level once aggregated to a joint premise. Batch E03 ran five source-conditioned improvement hypotheses in [`notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb`](../../notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb): the relevance-gated residual (H2) and the blended scalar (H5) confirmed, the numeric verifier (H1) and both reranker-cost levers (H3 cascade, H4 replacement) refuted - the cross-encoder reranker is load-bearing and the gate is met on correct failure-mode ordering, not on raw per-document ordinality where the symmetric scalar already passes this single fixture.
 
 - **Branch / artefacts** - baseline `notebooks/04-kj-wmd-document-distance.ipynb`; E01 execution [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb); design `../wmd-docdistance-solution-sota.md`
 - **Data** - `data/interim/exec-summaries/ibm-ai-adoption/` (one source article, eleven summaries)
@@ -30,11 +30,11 @@ Five levers, one promoted (E01-H2 anisotropy removal), five variants refuted. Th
 | E02-H1 | selection axis | coverage-profile OT over S | Set 1 D_sel > gold | gold 0.023, Set 1 0.060, 0 viol | Confirmed |
 | E02-H2 | grounding axis | reranker × NLI, joint premise | Set 2 D_grd > Set 1, gold | R2 Set 2 0.232 vs Set 1 0.130, 2 gold intrude | Partially confirmed |
 | E02-H3 | two-axis output | (D_sel, D_grd) plane | splits Set 1 / Set 2 | symmetric 0.452 ≈ 0.406, 2D splits | Confirmed |
-| E03-H1 | grounding residual | numeric-aware verifier | Set 2 ≥ 2x gold, gold ≤ 0.05 | (pending) | pending |
-| E03-H2 | residual definition | relevance-gated ungrounded mass | gold intrusion 2 → 0 | (pending) | pending |
-| E03-H3 | pipeline | bi-encoder cascade pre-filter | reranker 66s → ≤10s, Spearman ≥ 0.95 | (pending) | pending |
-| E03-H4 | scorer | bi-encoder relevance replaces cross-encoder | end-to-end 109s → ≤45s | (pending) | pending |
-| E03-H5 | output | blended scalar vs symmetric | 0 violations, clean win | (pending) | pending |
+| E03-H1 | grounding residual | numeric-aware verifier | Set 2 ≥ 2x gold, gold ≤ 0.05 | Set 2 2.0x gold, gold 0.080 > 0.05 | Refuted |
+| E03-H2 | residual definition | relevance-gated ungrounded mass | gold intrusion 2 → 0 | intrusions 2 → 0, Set 2 held +2% | Confirmed |
+| E03-H3 | pipeline | bi-encoder cascade pre-filter | reranker 66s → ≤10s, Spearman ≥ 0.95 | recall@m 0.58, Spearman 0.55, cut 82% | Refuted |
+| E03-H4 | scorer | bi-encoder relevance replaces cross-encoder | end-to-end 109s → ≤45s | 0.9s but Spearman 0.40, intrusions 2 → 5 | Refuted |
+| E03-H5 | output | blended scalar vs symmetric | 0 violations, clean win | blend Set2>Set1 at α∈[0.6,0.9], symmetric inverts | Confirmed |
 
 E02 is a separate goal from E01 - not widening the symmetric gap but splitting the distance into selection and grounding axes when both documents share a source. The source-conditioned distance separates the two adversarial failure modes the symmetric scalar conflates; the selection axis is clean and the grounding axis works at the tier level once aggregated.
 
@@ -204,9 +204,12 @@ Full source-conditioned chain, one document pair, CPU INT8, single-pair latency 
 - **selection + symmetric** - sub-ms (D_sel transport 0.8 ms, SMD 0.6 ms), negligible
 - **end-to-end** - 109 s/pair, ~1000x the symmetric SMD; the grounding axis is a heavy diagnostic, not a cheap metric
 
-## E03 - experiment batch 3: source-conditioned improvements (pre-registered, not yet run)
+## E03 - experiment batch 3: source-conditioned improvements
 
-Five pre-registered levers to turn the E02 grounding axis from a tier-level flag into a per-document metric and to cut its cost, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture. Three target quality (the grounding weaknesses E02 exposed), two target performance (the reranker bottleneck). Verdicts pending - no run yet.
+Five levers to turn the E02 grounding axis from a tier-level flag into a per-document metric and to cut its cost, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture, executed in [`notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb`](../../notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb). Three target quality (the grounding weaknesses E02 exposed), two target performance (the reranker bottleneck). Two confirmed (H2, H5), three refuted (H1, H3, H4).
+
+- **Headline** - the relevance-gate (H2) closes the per-document gold intrusion (2 → 0) and the blend (H5) then orders the two failure modes correctly (Set 2 fabrication above Set 1 info-loss) where the symmetric scalar inverts them; number-aware verification (H1) and both reranker-cost levers (H3, H4) do not survive this fixture
+- **Load-bearing reranker** - neither a bi-encoder cosine pre-filter (H3, recall@10 of top-3 only 0.58) nor a cosine replacement (H4, relevance Spearman 0.40) preserves the grounding ranking; the 60% reranker cost is structural to this design
 
 - **Aim** - improve the quality and performance of the source-conditioned distance `d(A,B|S)`
 - **Quality targets** - the four E02 grounding weaknesses: gold intrusion (2 golds in Set 2's band), dead contradiction signal, per-document noise, number blindness
@@ -230,7 +233,8 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Prediction** - Set 2 numeric residual ≥ 2x gold; gold ≤ 0.05; Set 1 low here, its loss shows on `D_sel`
 - **Acceptance bar** - Set 2 ≥ 2x gold AND gold ≤ 0.05 AND fires where the NLI contradiction signal was dead
 - **Kill-gate** - numeric density: figures must appear in ≥ 30% of statements (probe the fixture first); sparse → kill before any build
-- **Verdict** - pending
+- **Result** - density 58% (gate passed); top-k aligned numeric residual Set 2 0.163 = 2.0x gold 0.080, gold 0.080 > the 0.05 bar (faithful golds sonnet 0.31, haiku 0.14 inflate - real figures whose aligned source is not the top-k); whole-source matching keeps gold low (0.018) but collapses Set 2 to 0.051 because the 82-figure source matches fabricated numbers by coincidence; NLI contradiction confirmed dead (gold 0.055, Set 2 0.007)
+- **Verdict** - Refuted; the signal is orthogonal to the dead contradiction and the direction is right (Set 2 2x gold), but localized matching breaks the gold ≤ 0.05 bar and whole-source matching is defeated by the source's figure density - number-aware verification fails this fixture both ways
 
 ### E03-H2 Relevance-gated ungrounded residual
 
@@ -240,7 +244,8 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Prediction** - gold intrusion 2 → 0; gold tier mean below 0.13; Set 2 held ≈ 0.21-0.23
 - **Acceptance bar** - per-document ordinality gold < Set 2 restored (0 intrusions) AND Set 2 within 10% of R2
 - **Kill-gate** - the intruding golds must actually have high max-relevance (probe: their max `r` ≥ 0.6); if not, the intrusion is real divergence the gate cannot fix
-- **Verdict** - pending
+- **Result** - kill-gate passed (intruding golds v2 mean max `r` 0.898, haiku 0.752); gating drops both below the Set 2 floor (haiku 0.230 → 0.053, v2 0.285 → 0.216), gold intrusions 2 → 0, gold tier mean 0.120 → 0.084, Set 2 0.232 → 0.236 (+2%, held within 10%); the v2 margin is thin (0.216 vs the 0.220 floor)
+- **Verdict** - Confirmed; the one quality lever that lands - the per-document gold intrusion is closed while Set 2 holds, though the v2 margin is narrow
 
 ### E03-H3 Bi-encoder cascade pre-filter
 
@@ -250,7 +255,8 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Prediction** - reranker 66 s → ≤ 10 s; end-to-end 109 s → ≤ 60 s; tier means within 5%; Spearman ≥ 0.95
 - **Acceptance bar** - Spearman(`D_grd` vs full grid) ≥ 0.95 AND latency cut ≥ 40% AND tier separation preserved
 - **Kill-gate** - bi-encoder top-m must contain the reranker top-k (recall@m ≥ 0.95 on a probe); else the shortlist drops the true evidence
-- **Verdict** - pending
+- **Result** - kill-gate failed: recall@10 of the reranker top-3 is 0.576, so the cosine shortlist drops 42% of the true evidence; D_grd Spearman vs the full grid is 0.545 (bar 0.95), even though the latency cut is 82% (reranker 63.9 s → 11.7 s), better than predicted
+- **Verdict** - Refuted (killed at gate); a fast shortlist that changes the answer - the bi-encoder cosine is a poor pre-filter for this cross-encoder
 
 ### E03-H4 Bi-encoder relevance replaces cross-encoder
 
@@ -260,7 +266,8 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Prediction** - end-to-end 109 s → ≤ 45 s; Set 2 still isolated; no new gold intrusion vs the cross-encoder design
 - **Acceptance bar** - end-to-end ≤ 45 s AND Set 2 isolated at tier mean AND no new intrusion
 - **Kill-gate** - probe bi-encoder vs cross-encoder relevance Spearman on a sample; ≥ 0.70 to proceed; below → the cross-encoder carries irreplaceable compression / paraphrase signal → fall back to the H3 cascade
-- **Verdict** - pending
+- **Result** - kill-gate failed: bi-vs-cross relevance Spearman 0.397 (bar 0.70); dropping the reranker collapses the chain to 0.9 s but corrupts grounding - gold intrusions rise 2 → 5, and Set 1 falls below gold at the tier mean (gold 0.120, Set 1 0.105, Set 2 0.208)
+- **Verdict** - Refuted (killed at gate); the strongest result of the cost pair - the cross-encoder relevance is irreplaceable by the bi-encoder cosine, the H3 fallback also failed
 
 ### E03-H5 Blended conditioned scalar vs symmetric
 
@@ -270,7 +277,8 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Prediction** - at some α the blend gives gold < Set 1, Set 2 at 0 violations with Set 1 / Set 2 linearly separable; symmetric SMD stays mis-ordered (Set 1 > Set 2)
 - **Acceptance bar** - the batch gate: 0 per-document violations gold vs each tier AND Set 1 / Set 2 separated, where symmetric cannot → clean win
 - **Kill-gate** - conditional on H1 or H2 landing; if neither quality lever clears its bar, `D_grd` stays a tier flag and the blend cannot beat symmetric per document → record "gate not met, conditioned remains tier-level"
-- **Verdict** - pending
+- **Result** - H2 landed (H1 did not), so the improved grounding is the H2 relevance-gated ungrounded mass; min-max each axis, blend `α·D_sel + (1−α)·D_grd`; at `α ∈ [0.60, 0.90]` the blend gives 0/28 per-document violations AND Set 2 above Set 1 (correct grounding severity); the symmetric SMD reaches 0/28 violations too but inverts the severity (Set 1 0.452 > Set 2 0.406)
+- **Verdict** - Confirmed (clean win on severity ordering); the blend orders the two failure modes correctly where the symmetric scalar inverts them, but the win is the ordering and the axis attribution, not raw gold-vs-adversarial ordinality - the symmetric scalar also clears 0/28 on this single fixture, so cross-fixture validation is required before generalizing
 
 ### Pre-registration table (E03)
 
@@ -282,6 +290,28 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 | E03-H4 bi-encoder relevance | scorer | end-to-end → ≤ 45 s, Set 2 isolated | ≤ 45 s AND Set 2 isolated AND no new intrusion | bi vs cross relevance Spearman ≥ 0.70 |
 | E03-H5 blended vs symmetric | output | 0 violations, Set 1 / Set 2 split | the batch gate (clean win) | H1 or H2 must clear their bar |
 
+### Results table (E03)
+
+Tier means and the pre-registered measure for each lever; gold is the anchor tier, Set 1 info-loss, Set 2 info-noise.
+
+| hypothesis | gold | Set 1 | Set 2 | measure | bar | verdict |
+|---|---|---|---|---|---|---|
+| E03-H1 numeric (top-k aligned) | 0.080 | 0.000 | 0.163 | Set 2 2.0x gold, gold > 0.05 | Set 2 ≥ 2x gold AND gold ≤ 0.05 | Refuted |
+| E03-H2 D_grd relevance-gated | 0.084 | 0.141 | 0.236 | intrusions 2 → 0, Set 2 +2% | 0 intrusions AND Set 2 ±10% | Confirmed |
+| E03-H3 D_grd cascade | 0.080 | 0.195 | 0.156 | Spearman 0.545, recall@m 0.58 | Spearman ≥ 0.95 | Refuted |
+| E03-H4 D_grd bi-encoder | 0.120 | 0.105 | 0.208 | Spearman 0.40, intrusions 2 → 5 | Spearman ≥ 0.70, no new intrusion | Refuted |
+| E03-H5 blend `α∈[0.6,0.9]` | - | - | - | blend 0/28 Set2>Set1; symmetric 0/28 Set1>Set2 | 0 violations AND correct severity | Confirmed |
+
+### Benchmarks (E03)
+
+CPU INT8, the 11-document reranker grid plus the per-lever micro-benchmarks; the heavy stage is unchanged from E02.
+
+- **per-document signal build** - ~48 s/document (the reranker full grid over `n_summary × 70` pairs), 534 s for all 11 documents; the dominant cost, as in E02
+- **H3 cascade reranker** - full grid 910 pairs 63.9 s → cosine top-10 shortlist 130 pairs 11.7 s, an 82% latency cut, but the ranking shifts (Spearman 0.545) so the cut does not ship
+- **H4 reranker-free chain** - 0.9 s end-to-end (embed + cosine + joint-premise NLI, no reranker), ~120x faster than the 109 s E02 chain, but grounding is corrupted (5 gold intrusions)
+- **H2 / H5 post-processing** - sub-ms on the already-computed signals; the relevance-gate and the blend add no measurable cost over the R2 grounding axis
+- **Reading** - the only cheap, faithful win is the relevance-gate (free re-weighting of existing signals); the two levers that actually remove the reranker cost both break the grounding ranking
+
 ## Lessons learned
 
 - **Baseline near the ceiling for ordering** - perfect ordinality and `d' = 2.70` leave little room; resolution (dynamic range), not the normalized boundary, is the axis with room
@@ -292,17 +322,25 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Conditioning on the source separates failure modes (E02)** - the symmetric distance cannot tell info-loss from fabrication; re-basing the transport onto `S` and adding a grounding axis does, the source-conditioned design's central claim confirmed
 - **Single-premise NLI mis-grades compression (E02)** - a faithful summary statement fuses several source sentences, so no single source premise entails it; top-k joint-premise aggregation is required, not optional (R1 muddied, R2 fixed it)
 - **General NLI is weak on numbers (E02)** - the contradiction signal barely fires even on fabricated forecasts, so the grounding residual rides on the ungrounded component - a numeric-aware verifier is the open gap
+- **Relevance, not entailment, separates compression from fabrication (E03)** - gating the ungrounded mass by max reranker relevance closes the gold intrusion the entailment residual could not, because faithful compression has high relevance and low entailment while fabrication has both low
+- **Number density defeats the numeric verifier (E03)** - on an 82-figure source, whole-source matching lets fabricated numbers match by coincidence (Set 2 collapses to 0.05) while top-k localized matching flags faithful restatements whose aligned source is elsewhere (gold rises to 0.08); the same density that makes numbers the adversarial signal makes them un-verifiable here
+- **The cross-encoder reranker is load-bearing (E03)** - the bi-encoder cosine neither shortlists faithfully (recall@10 of top-3 is 0.58) nor replaces relevance (Spearman 0.40); the 60% reranker cost is structural to the grounding design, not removable with the embeddings already on hand
+- **Separability is not correct ordering (E03)** - the symmetric SMD separates Set 1 from Set 2 on this fixture but inverts the severity (info-loss read as more divergent than fabrication); the conditioned blend's win is the correct ordering and the axis attribution, which a single source-blind scalar cannot give regardless of separability
 
 ## Conclusions
 
 - **Ships** - baseline exact SMD: metric, 0.08 ms/pair, perfect ordinality
 - **Optional** - anisotropy removal (k=1) as a resolution pre-pass, ~2x latency, `d'` caveat noted
 - **Thin margin is intrinsic** - all eleven summaries describe one article and share its content, so the boundary is genuinely narrow
-- **Source-conditioned axes (E02)** - `D_sel` ships as the selection axis (clean, metric, sub-ms, 0 violations); `D_grd` (R2 joint premise) is a tier-level fabrication flag, ~109 s/pair, pending a numeric-aware verifier before it is a per-document metric
+- **Source-conditioned axes (E02)** - `D_sel` ships as the selection axis (clean, metric, sub-ms, 0 violations); `D_grd` (R2 joint premise) is a tier-level fabrication flag, ~109 s/pair - E03 turned it into a per-document metric with the H2 relevance-gate, not the numeric verifier E02 expected
+- **Grounding axis fix (E03)** - the H2 relevance-gated ungrounded mass closes the per-document gold intrusion (2 → 0) at no extra cost, turning `D_grd` from a tier flag into a per-document discriminator on this fixture; ship it as the grounding-axis definition
+- **Blended scalar (E03)** - the H5 blend `α·D_sel + (1−α)·D_grd` (`α ∈ [0.6, 0.9]`) orders the two failure modes correctly (Set 2 fabrication above Set 1 info-loss) where the symmetric scalar inverts them - a single interpretable conditioned scalar; the win is severity ordering and attribution, and needs a second source before it is trusted
+- **Not shipped (E03)** - the numeric verifier (defeated by source figure density) and the two reranker-cost levers (cosine neither shortlists nor replaces the cross-encoder); the ~109 s/pair grounding cost stands
 
 ## Next steps
 
-- **Batch E03 (anisotropy continuation)** - sweep the anisotropy `k` further, test a gentle numeric weight tuned to preserve `V` stacked on anisotropy removal; nothing else from E01 is worth compounding
-- **Batch E03 (source-conditioned improvements, pre-registered)** - five hypotheses now pre-registered above (numeric verifier, relevance-gated residual, bi-encoder cascade / replacement, blended-scalar gate); awaiting a run notebook; the gate is a clean win over the symmetric distance for common-source documents
-- **Cross-fixture check** - both batches hold on one article; re-run on a second source before trusting the anisotropy gain or the grounding separation
-- **Refuted, do not revisit** - salience / numeric weighting (breaks ordinality on number-heavy sources), angular cost (null), unbalanced residual (worse, slow, non-metric), tail aggregation (noise at this statement count), single-premise grounding (mis-grades compression, superseded by R2 joint premise)
+- **Promote the E03 winners** - wire the H2 relevance-gated ungrounded mass into the grounding axis as `D_grd`, and expose the H5 blend (`α ≈ 0.75`) as the single source-conditioned scalar; the per-document intrusion is closed and the failure modes order correctly
+- **Cross-fixture check (now the gate)** - the H5 win is severity ordering and attribution on one article, where the symmetric scalar also clears 0/28 gold-vs-adv; re-run E02/E03 on a second source before claiming the blend beats symmetric in general
+- **Anisotropy continuation (parked, E01 lineage)** - still open: sweep the anisotropy `k` further and test a gentle numeric weight tuned to preserve `V` stacked on anisotropy removal; source-free, unrelated to the E03 grounding work
+- **Open grounding cost** - the ~109 s/pair reranker stage stands; E03 showed the bi-encoder cannot remove it without breaking the ranking, so a faithful speed-up needs a different lever (e.g. a distilled cross-encoder), not the embeddings on hand
+- **Refuted, do not revisit** - salience / numeric weighting (breaks ordinality on number-heavy sources), angular cost (null), unbalanced residual (worse, slow, non-metric), tail aggregation (noise at this statement count), single-premise grounding (mis-grades compression, superseded by R2 joint premise), numeric verifier (defeated by source figure density, E03-H1), bi-encoder cascade / replacement (cosine neither shortlists nor replaces the cross-encoder, E03-H3/H4)
