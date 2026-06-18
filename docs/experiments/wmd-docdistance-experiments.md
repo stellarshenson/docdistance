@@ -1,6 +1,6 @@
-# WMD Document-Distance Experiments - raising tier contrast
+# WMD Document-Distance Experiments - tier contrast and source conditioning
 
-Experiments log for widening the gold/adversarial gap of the source-free Statement Mover's Distance (SMD) from `../wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted.
+Experiments log for the mmBERT Statement Mover's Distance from `../wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers to widen the source-free gold/adversarial gap in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted. Batch E02 builds and tests the source-conditioned two-axis distance (selection `D_sel` + grounding `D_grd`) from `../wmd-wrt-source-docdistance-solution.md` in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb): selection axis confirmed, grounding axis confirmed at the tier level once aggregated to a joint premise.
 
 - **Branch / artefacts** - baseline `notebooks/04-kj-wmd-document-distance.ipynb`; E01 execution [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb); design `../wmd-docdistance-solution-sota.md`
 - **Data** - `data/interim/exec-summaries/ibm-ai-adoption/` (one source article, eleven summaries)
@@ -27,6 +27,11 @@ Five levers, one promoted (E01-H2 anisotropy removal), five variants refuted. Th
 | E01-H3 | cost function | angular distance `arccos` | margin up, metric kept | `d'` flat (2.72), margin down | Refuted (null) |
 | E01-H4 | OT formulation | unbalanced residual | widest margin (≥ +0.040) | worse than baseline, ~120x slower | Refuted |
 | E01-H5 | aggregation | tail-aware plan statistic | margin up | `V = 3`, margin sharply negative | Refuted |
+| E02-H1 | selection axis | coverage-profile OT over S | Set 1 D_sel > gold | gold 0.023, Set 1 0.060, 0 viol | Confirmed |
+| E02-H2 | grounding axis | reranker × NLI, joint premise | Set 2 D_grd > Set 1, gold | R2 Set 2 0.232 vs Set 1 0.130, 2 gold intrude | Partially confirmed |
+| E02-H3 | two-axis output | (D_sel, D_grd) plane | splits Set 1 / Set 2 | symmetric 0.452 ≈ 0.406, 2D splits | Confirmed |
+
+E02 is a separate goal from E01 - not widening the symmetric gap but splitting the distance into selection and grounding axes when both documents share a source. The source-conditioned distance separates the two adversarial failure modes the symmetric scalar conflates; the selection axis is clean and the grounding axis works at the tier level once aggregated.
 
 **Baseline performance** (notebook 04, SMD against the reference gold)
 
@@ -139,6 +144,61 @@ Latency per document-pair, exact baseline SMD = 1x, measured on the RTX 5000 Ada
 - **E01-H5 tail** - 0.06 ms/pair, cheapest, reuses the balanced plan
 - **E01-H4 unbalanced** - 9.4 ms/pair (~120x), the majorization-minimization solver dominates
 
+## E02 - experiment batch 2: source-conditioned grounding axis
+
+A different question from E01 - not widening the symmetric gap, but splitting the distance into two axes when both documents derive from one source `S`. Tests the design in [`../wmd-wrt-source-docdistance-solution.md`](../wmd-wrt-source-docdistance-solution.md), executed in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb). Two axes - selection `D_sel` (coverage-profile OT over `S`, already shipped) and grounding `D_grd` (reranker × NLI residual, the deferred build). Pipeline adds `bge-reranker-v2-m3` and `mdeberta-mnli-xnli`, both OpenVINO INT8 on CPU.
+
+- **Anchor** - `gold` (Opus 3-sweep); every summary scored `d(anchor, X | S)` on both axes plus the symmetric SMD baseline
+- **Two rounds of grounding** - R1 single-premise (SummaC max over source), R2 top-k joint premise (`k = 3`, the design's aggregation)
+- **Source** - 70 statements; the grounding sweep scores every (summary statement × source statement) pair through both cross-encoders
+
+### E02-H1 Selection axis separates information loss
+
+- **Hypothesis** - because info-loss strips source figures, `D_sel` will rank Set 1 above gold while gold stays clustered (selection axis carries omission)
+- **Result** - D_sel gold 0.023, Set 1 0.060 (2.6x), Set 2 0.073; every adversarial above every gold, `0` ordinality violations on the selection axis
+- **Verdict** - Confirmed; D_sel cleanly separates both adversarial tiers from gold, info-loss included
+
+### E02-H2 Grounding axis isolates fabrication (aggregation required)
+
+- **Hypothesis** - because info-noise fabricates unsupported claims, `D_grd` will rank Set 2 above gold and above Set 1, once grounding is aggregated over evidence (R2) not single-premise (R1)
+- **Result R1** (single-premise) - gold 0.097, Set 1 0.206, Set 2 0.233; faithful info-loss almost level with fabrication, axis muddied
+- **Result R2** (joint premise) - gold 0.120, Set 1 0.130, Set 2 0.232; aggregation drops info-loss to gold level while holding fabrication (1.8x over gold), but two gold summaries (haiku 0.230, v2 0.285) intrude into Set 2's range
+- **Verdict** - Partially confirmed; R2 isolates Set 2 at the tier mean and beats R1, but the axis is a tier-level fabrication flag, not a clean per-document discriminator; contradiction mass is near-zero across tiers (numeric-entailment weakness), so the residual rides on the ungrounded component
+
+### E02-H3 Two axes separate what the symmetric scalar conflates
+
+- **Hypothesis** - the 2D `(D_sel, D_grd)` plane will place Set 1 and Set 2 in distinct regions the symmetric SMD conflates
+- **Result** - symmetric SMD conflates and even mis-orders by severity (Set 1 0.452 ≈ Set 2 0.406, gold 0.287); the 2D plane places info-loss (high selection, low grounding) and info-noise (high selection, high grounding) in distinct regions
+- **Verdict** - Confirmed (tier level); the grounding axis is what distinguishes the two failure modes
+
+### Round comparison - R1 vs R2
+
+| round | grounding | gold | Set 1 | Set 2 | Set 1 vs gold | reading |
+|---|---|---|---|---|---|---|
+| R1 | single-premise max | 0.097 | 0.206 | 0.233 | 2.1x | faithful info-loss muddied with fabrication |
+| R2 | top-3 joint premise | 0.120 | 0.130 | 0.232 | 1.1x | info-loss pulled to gold, fabrication held |
+
+R2 promoted; single-premise NLI mis-grades a compressive faithful summary because no single source statement entails a claim fused from several - the documented SummaC failure. Fusing each statement's top-`k` reranked source into one premise fixes it.
+
+### Results table (E02, tier means)
+
+| axis | gold | Set 1 (info-loss) | Set 2 (info-noise) | separates? |
+|---|---|---|---|---|
+| D_sel (selection) | 0.023 | 0.060 | 0.073 | yes, 0 violations |
+| D_grd R1 (grounding) | 0.097 | 0.206 | 0.233 | Set 2 ≈ Set 1, muddied |
+| D_grd R2 (grounding) | 0.120 | 0.130 | 0.232 | Set 2 isolated at tier mean |
+| SMD (symmetric baseline) | 0.287 | 0.452 | 0.406 | conflates Set 1 / Set 2 |
+
+### Benchmarks (E02)
+
+Full source-conditioned chain, one document pair, CPU INT8, single-pair latency over 13 × 70 = 910 grounding pairs.
+
+- **reranker sweep** - 66.1 s/pair (60.5%), `bge-reranker-v2-m3` over every (summary, source) statement pair, 14 pairs/s
+- **NLI sweep R1** - 42.0 s/pair (38.5%), full grid `mdeberta-mnli-xnli`
+- **NLI joint premise R2** - 0.73 s/pair (0.7%), one call per summary statement, reuses the reranker top-k
+- **selection + symmetric** - sub-ms (D_sel transport 0.8 ms, SMD 0.6 ms), negligible
+- **end-to-end** - 109 s/pair, ~1000x the symmetric SMD; the grounding axis is a heavy diagnostic, not a cheap metric
+
 ## Lessons learned
 
 - **Baseline near the ceiling for ordering** - perfect ordinality and `d' = 2.70` leave little room; resolution (dynamic range), not the normalized boundary, is the axis with room
@@ -146,15 +206,20 @@ Latency per document-pair, exact baseline SMD = 1x, measured on the RTX 5000 Ada
 - **Number-aware weighting is self-defeating on number-heavy sources** - both the faithful and the info-noise tiers carry the article's percentages, so up-weighting numbers pulls adversarial summaries toward gold
 - **A wider mean gap is not a wider boundary** - E01-H1 raises `R` while the boundary margin turns negative; `V` catches what `R` hides
 - **Heavier machinery did not pay** - unbalanced OT (non-metric, ~120x) and tail aggregation (noise at ~12 statements) both underperform the cheap exact mean
+- **Conditioning on the source separates failure modes (E02)** - the symmetric distance cannot tell info-loss from fabrication; re-basing the transport onto `S` and adding a grounding axis does, the source-conditioned design's central claim confirmed
+- **Single-premise NLI mis-grades compression (E02)** - a faithful summary statement fuses several source sentences, so no single source premise entails it; top-k joint-premise aggregation is required, not optional (R1 muddied, R2 fixed it)
+- **General NLI is weak on numbers (E02)** - the contradiction signal barely fires even on fabricated forecasts, so the grounding residual rides on the ungrounded component - a numeric-aware verifier is the open gap
 
 ## Conclusions
 
 - **Ships** - baseline exact SMD: metric, 0.08 ms/pair, perfect ordinality
 - **Optional** - anisotropy removal (k=1) as a resolution pre-pass, ~2x latency, `d'` caveat noted
 - **Thin margin is intrinsic** - all eleven summaries describe one article and share its content, so the boundary is genuinely narrow
+- **Source-conditioned axes (E02)** - `D_sel` ships as the selection axis (clean, metric, sub-ms, 0 violations); `D_grd` (R2 joint premise) is a tier-level fabrication flag, ~109 s/pair, pending a numeric-aware verifier before it is a per-document metric
 
 ## Next steps
 
-- **Batch E02 (only the survivor)** - sweep the anisotropy `k` further, test a gentle numeric weight tuned to preserve `V` stacked on anisotropy removal; nothing else is worth compounding
-- **Cross-fixture check** - the result holds on one article; re-run on a second source before trusting the anisotropy gain
-- **Refuted, do not revisit** - salience / numeric weighting (breaks ordinality on number-heavy sources), angular cost (null), unbalanced residual (worse, slow, non-metric), tail aggregation (noise at this statement count)
+- **Numeric-aware grounding (E02 follow-up)** - the contradiction signal is dead on quantitative claims; add a numeric verifier (extract-and-compare figures) alongside NLI before `D_grd` is a per-document metric, not just a tier flag
+- **Batch E03 (anisotropy continuation)** - sweep the anisotropy `k` further, test a gentle numeric weight tuned to preserve `V` stacked on anisotropy removal; nothing else from E01 is worth compounding
+- **Cross-fixture check** - both batches hold on one article; re-run on a second source before trusting the anisotropy gain or the grounding separation
+- **Refuted, do not revisit** - salience / numeric weighting (breaks ordinality on number-heavy sources), angular cost (null), unbalanced residual (worse, slow, non-metric), tail aggregation (noise at this statement count), single-premise grounding (mis-grades compression, superseded by R2 joint premise)
