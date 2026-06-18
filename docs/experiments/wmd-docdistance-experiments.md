@@ -1,8 +1,8 @@
 # WMD Document-Distance Experiments - raising tier contrast
 
-Experiments log for widening the gold/adversarial gap of the source-free Statement Mover's Distance (SMD) from `../wmd-docdistance-solution.md`. Batch E01 ran five pre-registered levers in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted.
+Experiments log for widening the gold/adversarial gap of the source-free Statement Mover's Distance (SMD) from `../wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H2 anisotropy removal), four refuted.
 
-- **Branch / artefacts** - baseline `notebooks/04-kj-wmd-document-distance.ipynb`; E01 execution [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb); design `../wmd-docdistance-solution.md`
+- **Branch / artefacts** - baseline `notebooks/04-kj-wmd-document-distance.ipynb`; E01 execution [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb); design `../wmd-docdistance-solution-sota.md`
 - **Data** - `data/interim/exec-summaries/ibm-ai-adoption/` (one source article, eleven summaries)
 
 ## Problem overview

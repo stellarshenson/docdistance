@@ -18,7 +18,7 @@ Position-invariance, statement-level granularity, and an interpretable alignment
 
 ## Validation
 
-The distance is implemented in `notebooks/04-kj-wmd-document-distance.ipynb` and validated on an executive-summary fixture set built from one IBM AI-adoption article - a gold tier (faithful summaries written under shared rules) plus two adversarial tiers (information loss and information noise). Statement Mover's Distance ranks every gold summary closer to the anchor than every adversarial one with zero ordering mistakes. The design and conclusions are in `docs/wmd-docdistance-solution.md`, with a source-conditioned variant (`d(A,B|S)`) in `docs/wmd-wrt-source-docdistance-solution.md`.
+The distance is implemented in `notebooks/04-kj-wmd-document-distance.ipynb` and validated on an executive-summary fixture set built from one IBM AI-adoption article - a gold tier (faithful summaries written under shared rules) plus two adversarial tiers (information loss and information noise). Statement Mover's Distance ranks every gold summary closer to the anchor than every adversarial one with zero ordering mistakes. The design and conclusions are in `docs/wmd-docdistance-solution-sota.md`, with a source-conditioned variant (`d(A,B|S)`) in `docs/wmd-wrt-source-docdistance-solution.md`.
 
 ## Notebooks
 
@@ -67,7 +67,7 @@ make install
 ## References
 
 - `references/papers/from-word-embeddings-to-document-distances.md` - digest of the WMD paper (Kusner et al. 2015)
-- `docs/wmd-docdistance-solution.md` - source-free distance design, implementation, and results
+- `docs/wmd-docdistance-solution-sota.md` - source-free distance design, implementation, and results
 - `docs/wmd-wrt-source-docdistance-solution.md` - source-conditioned distance design (`d(A,B|S)`)
 
 ## Project Organization

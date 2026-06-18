@@ -1,6 +1,6 @@
 # WMD Document Distance With Respect to a Common Source
 
-Design for measuring the distance between two documents `A` and `B` when both are known to derive from one source `S` - a source-conditioned distance `d(A, B | S)`. It is a variant of the symmetric design in `wmd-docdistance-solution.md`: the optimal-transport skeleton is reused, but the transport is re-based onto the source and the ground cost becomes a grounding score from an entailer and a cross-encoder. The motivating case is two executive summaries of the same article.
+Design for measuring the distance between two documents `A` and `B` when both are known to derive from one source `S` - a source-conditioned distance `d(A, B | S)`. It is a variant of the symmetric design in `wmd-docdistance-solution-sota.md`: the optimal-transport skeleton is reused, but the transport is re-based onto the source and the ground cost becomes a grounding score from an entailer and a cross-encoder. The motivating case is two executive summaries of the same article.
 
 ## Why condition on the source
 
@@ -42,7 +42,7 @@ A hybrid: the cross-encoder finds the alignment, the entailer grades it. Cosine 
 
 Three surgical changes turn the symmetric Statement Mover's Distance into the source-conditioned one.
 
-| base SMD (`wmd-docdistance-solution.md`) | this design |
+| base SMD (`wmd-docdistance-solution-sota.md`) | this design |
 |---|---|
 | transport `A → B` | transport `A → S` and `B → S` |
 | cost `c(i,j) = √(2 − 2cos)` on mmBERT | cost `c(a_i, s_k) = 1 − g(a_i, s_k)` from reranker + NLI |
@@ -97,5 +97,5 @@ The two-axis output is expected to place the `data/interim/exec-summaries/ibm-ai
 ## Status
 
 - Design only; not yet implemented
-- Builds on `wmd-docdistance-solution.md` - same OT skeleton, re-based onto the source
+- Builds on `wmd-docdistance-solution-sota.md` - same OT skeleton, re-based onto the source
 - Planned build - a source-conditioned mode in `src/docdistance_estimator/distance.py` plus a notebook scoring the fixture matrix on both axes
