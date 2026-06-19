@@ -104,6 +104,17 @@ class Segmenter:
             return [s.strip() for s in self._sat.split(text) if s.strip()]
 
 
+def _length_order(tok, sents: list[str]) -> list[int]:
+    """Indices of ``sents`` ordered by tokenized length (length-bucketing, E06-H25).
+
+    Sorting same-length statements together makes each ``padding=True`` batch pad near its own
+    length instead of the global max; with O(L^2) attention that cuts the padded-token compute.
+    The encoders scatter results back to the input order, so embeddings stay row-aligned to ``sents``.
+    """
+    lengths = [len(ids) for ids in tok(sents, truncation=True, max_length=MAX_TOKENS)["input_ids"]]
+    return sorted(range(len(sents)), key=lengths.__getitem__)
+
+
 class OpenVINOEncoder:
     """mmBERT INT8 OpenVINO encoder (CPU). Mean-pooled, L2-normalized statement embeddings."""
 
@@ -134,9 +145,11 @@ class OpenVINOEncoder:
         logger.debug("loaded OpenVINO INT8 encoder from {}", src)
 
     def encode(self, sents: list[str]) -> np.ndarray:
+        order = _length_order(self._tok, sents)  # length-bucket: pad near each batch's own length
+        ordered = [sents[j] for j in order]
         out = []
-        for i in range(0, len(sents), EMBED_BATCH):
-            batch = sents[i : i + EMBED_BATCH]
+        for i in range(0, len(ordered), EMBED_BATCH):
+            batch = ordered[i : i + EMBED_BATCH]
             enc = self._tok(
                 batch, padding=True, truncation=True, max_length=MAX_TOKENS, return_tensors="np"
             )
@@ -149,7 +162,10 @@ class OpenVINOEncoder:
                     np.float32
                 )
             )
-        return np.concatenate(out, 0)
+        emb = np.concatenate(out, 0)
+        result = np.empty_like(emb)
+        result[order] = emb  # scatter back to input order - row i maps to sents[i]
+        return result
 
 
 class TorchEncoder:
@@ -183,10 +199,12 @@ class TorchEncoder:
 
     def encode(self, sents: list[str]) -> np.ndarray:
         torch = self._torch
+        order = _length_order(self._tok, sents)  # length-bucket: pad near each batch's own length
+        ordered = [sents[j] for j in order]
         out = []
         with torch.no_grad():
-            for i in range(0, len(sents), EMBED_BATCH):
-                batch = sents[i : i + EMBED_BATCH]
+            for i in range(0, len(ordered), EMBED_BATCH):
+                batch = ordered[i : i + EMBED_BATCH]
                 enc = self._tok(
                     batch,
                     padding=True,
@@ -199,7 +217,10 @@ class TorchEncoder:
                 pooled = (hidden * mask).sum(1) / mask.sum(1).clamp(min=1)
                 pooled = torch.nn.functional.normalize(pooled, dim=1)
                 out.append(pooled.cpu().numpy().astype(np.float32))
-        return np.concatenate(out, 0)
+        emb = np.concatenate(out, 0)
+        result = np.empty_like(emb)
+        result[order] = emb  # scatter back to input order - row i maps to sents[i]
+        return result
 
 
 def load_encoder(backend: str = "openvino", offline: bool = True, device: str | None = None):

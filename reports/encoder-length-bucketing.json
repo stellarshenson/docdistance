@@ -1,0 +1,12 @@
+{
+  "n_statements": 299,
+  "embed_batch": 64,
+  "waste_input": 2.5940433079595,
+  "waste_bucketed": 1.2676077156159928,
+  "volume_reclaimed": 0.5113390313390314,
+  "max_abs_delta": 0.007280170917510986,
+  "mean_cosine": 0.9999882578849792,
+  "ms_input": 4853.748345980421,
+  "ms_bucketed": 3260.9444800182246,
+  "cpu_cut": 0.32815954854380935
+}

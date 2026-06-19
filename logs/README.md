@@ -14,3 +14,7 @@ Background-job and notebook-execution logs for this project.
 - `E03-source-conditioned-improvements.log` - nbconvert execution of the E03 batch (numeric verifier, relevance-gated residual, bi-encoder cascade/replacement, blended-scalar gate over the fixtures)
 - `E04-source-conditioned-performance.log` - nbconvert execution of the E04 batch (anisotropy and coverage-temperature on the conditioned axes, distilled-reranker and cross-encoder-cascade speed levers, composite capstone; GPU fp16)
 - `gpu-grounding-benchmark.log` - GPU (RTX 5000 Ada, torch fp16) timing of the grounding chain (mmBERT + FP reranker + FP NLI) vs the CPU INT8 reference
+- `E05-source-conditioned-cpu-speed.log` - nbconvert execution of the E05 batch (CPU-speed scorer hunt: smaller multilingual cross-encoders, late-interaction, learned-sparse, length-bucketing, source clustering)
+- `E06-scorer-env-setup.log` - isolated venv install for the E06 trained scorers (`pylate` + `FlagEmbedding`, CPU torch, transformers 5.3)
+- `E06-scorer-probe.log` - API + cache probe of the trained scorers (`jina-colbert-v2` MaxSim, `bge-m3` sparse) in the isolated venv
+- `E06-execution.log` - nbconvert execution of the E06 batch (trained multilingual ColBERT/sparse scorers and the reserved length-bucketing CPU-speed win)

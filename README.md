@@ -38,15 +38,25 @@ Three stages; the transport plan is the interpretable by-product.
 
 ## Which distance
 
-Pick by what the comparison must tell you.
+Two methods, picked by what the comparison must tell you.
 
-- **One similarity number, fast** - the symmetric distance: sub-millisecond, a true metric, separates faithful from degraded documents
-- **Why two documents of one source diverge** - the source-conditioned distance `d(A, B | S)`: a selection axis (cheap, metric) and a grounding axis (a heavy diagnostic) that name whether the difference is dropped content or unsupported content
-- **Caveat** - the source-conditioned gain is interpretation and correct ordering of the failure modes, not a higher pass rate; validate on your own sources before relying on it
+- **Method 1 - symmetric distance (robust, fast)** - the production default: sub-millisecond, a true metric, separates faithful from degraded documents with one source-blind scalar
+- **Method 2 - source-conditioned `d(A, B | S)` (slower, experimental)** - re-bases the comparison on a shared source `S` and splits it into a selection axis (cheap, metric) and a grounding axis (a heavy cross-encoder × NLI diagnostic, ~seconds on GPU and far slower on CPU) that name whether the difference is dropped content or unsupported content
+- **Caveat** - Method 2 is experimental: its gain is interpretation and the correct ordering of the failure modes, not a higher pass rate, and it is validated on a single fixture; reach for Method 1 for a robust similarity number, Method 2 only when you need to know *why* two documents of a shared source diverge - validate on your own sources first
 
 ## Usage
 
-The library is the product; install once, then call it.
+The quickest way to a result is the CLI - install once, then run it.
+
+```bash
+make install                                   # environment, package, Jupyter kernel
+docdistance install                            # download + cache the models (once)
+docdistance distance a.md b.md                 # rich, coloured verdict
+docdistance distance a.md b.md --json          # machine-readable JSON
+docdistance distance a.md b.md --result-only   # bare SMD scalar, for scripts
+```
+
+The same thing is one function from Python:
 
 ```python
 from docdistance import document_distance
@@ -54,13 +64,6 @@ from docdistance import document_distance
 result = document_distance("report_v1.md", "report_v2.md")
 print(result.closeness)  # 0..1 similarity, 1 - SMD/sqrt(2)
 print(result.verdict)    # "similar" | "not similar"
-```
-
-```bash
-make install                                   # environment, package, Jupyter kernel
-docdistance install                            # download + cache the models (once)
-docdistance distance a.md b.md                 # rich, coloured verdict
-docdistance distance a.md b.md --json          # machine-readable JSON
 ```
 
 - **Offline after install** - distance calls run fully offline once the models are cached
