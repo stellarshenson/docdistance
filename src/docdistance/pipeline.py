@@ -45,6 +45,55 @@ def _read(doc: str | Path) -> str:
     raise TypeError(f"document must be str or Path, got {type(doc).__name__}")
 
 
+def _align_statements(
+    sents: list[str], emb: np.ndarray, src_sents: list[str], src_emb: np.ndarray, top_k: int
+) -> list[dict]:
+    """Per statement, its top-``k`` source statements by soft coverage weight."""
+    align = _core.coverage_alignment(emb, src_emb)  # [n, n_source], rows sum to 1
+    k = min(top_k, align.shape[1])
+    out = []
+    for i, row in enumerate(align):
+        top = np.argsort(row)[::-1][:k]
+        matches = [
+            {
+                "source_index": int(j),
+                "source_text": src_sents[j],
+                "weight": round(float(row[j]), 4),
+            }
+            for j in top
+        ]
+        out.append({"index": i, "text": sents[i], "matches": matches})
+    return out
+
+
+def _build_source_map(
+    sa: list[str],
+    ea: np.ndarray,
+    sb: list[str],
+    eb: np.ndarray,
+    ss: list[str],
+    es: np.ndarray,
+    *,
+    anisotropy: bool = True,
+    top_k: int = 3,
+) -> dict:
+    """A JSON-serializable map: each statement of A and B → its top-``k`` source statements.
+
+    Anisotropy removal is applied the same way as the source-conditioned distance (over the pooled
+    A/B/S statements), so the map reflects the same geometry the selection axis is scored on.
+    """
+    if anisotropy:
+        fixed = _core.all_but_the_top({"a": ea, "b": eb, "s": es}, k=1)
+        ea, eb, es = fixed["a"], fixed["b"], fixed["s"]
+    return {
+        "top_k": top_k,
+        "anisotropy": anisotropy,
+        "n_statements": {"a": len(sa), "b": len(sb), "source": len(ss)},
+        "a": _align_statements(sa, ea, ss, es, top_k),
+        "b": _align_statements(sb, eb, ss, es, top_k),
+    }
+
+
 class DocDistance:
     """Reusable pipeline - construct once (models load here), then call :meth:`distance` per pair."""
 
@@ -53,12 +102,16 @@ class DocDistance:
         self.segmenter = Segmenter(offline=offline)
         self.encoder = load_encoder(backend, offline=offline, device=device)
 
-    def embed(self, doc: str | Path) -> np.ndarray:
-        """Segment then embed a document into L2-normalized statement vectors ``[n, dim]``."""
+    def embed_statements(self, doc: str | Path) -> tuple[list[str], np.ndarray]:
+        """Segment a document and embed it, returning both the statement texts and their vectors."""
         statements = self.segmenter.split(_read(doc))
         if not statements:
             raise ValueError("document produced no statements")
-        return self.encoder.encode(statements)
+        return statements, self.encoder.encode(statements)
+
+    def embed(self, doc: str | Path) -> np.ndarray:
+        """Segment then embed a document into L2-normalized statement vectors ``[n, dim]``."""
+        return self.embed_statements(doc)[1]
 
     def distance(
         self,
@@ -83,6 +136,23 @@ class DocDistance:
         return _core.compute_source_conditioned(
             self.embed(a), self.embed(b), self.embed(source), anisotropy=anisotropy
         )
+
+    def distance_wrt_source_with_map(
+        self,
+        a: str | Path,
+        b: str | Path,
+        source: str | Path,
+        *,
+        anisotropy: bool = True,
+        top_k: int = 3,
+    ) -> tuple[SourceConditionedResult, dict]:
+        """The source-conditioned result and the statement-to-source alignment map, sharing one encode pass."""
+        sa, ea = self.embed_statements(a)
+        sb, eb = self.embed_statements(b)
+        ss, es = self.embed_statements(source)
+        result = _core.compute_source_conditioned(ea, eb, es, anisotropy=anisotropy)
+        smap = _build_source_map(sa, ea, sb, eb, ss, es, anisotropy=anisotropy, top_k=top_k)
+        return result, smap
 
 
 def document_distance(

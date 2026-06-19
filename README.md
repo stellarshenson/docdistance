@@ -49,58 +49,39 @@ Both compare two documents; they differ in what the answer tells you and what yo
 The quickest way to a result is the CLI - install once, then run it.
 
 ```bash
-make install                                   # environment, package, Jupyter kernel
+pip install docdistance                        # from PyPI
 docdistance install                            # download + cache the models (once)
+docdistance --help                             # full reference (or <command> --help)
 
 # method 1 - symmetric distance (robust, fast, the default)
-docdistance distance a.md b.md                 # rich, coloured verdict
-docdistance distance a.md b.md --json          # machine-readable JSON
-docdistance distance a.md b.md --result-only   # bare SMD scalar, for scripts
+docdistance distance a.md b.md                 # rich verdict (add --json for machine-readable)
 
 # method 2 - source-conditioned d(A,B|S) (slower, experimental)
-docdistance distance-wrt-source a.md b.md --source s.md          # rich, two-axis verdict
-docdistance distance-wrt-source a.md b.md -s s.md --json         # machine-readable JSON
+docdistance distance-wrt-source a.md b.md --source s.md                       # two-axis verdict
+docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   # + statement → source map
 ```
 
-### CLI reference
-
-| Command | Does | Key flags |
-|---|---|---|
-| `docdistance install` | download + cache the models, once | `--backend openvino\|torch\|both` |
-| `docdistance distance A B` | method 1 - symmetric SMD distance + verdict | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--json`, `--result-only` |
-| `docdistance distance-wrt-source A B -s S` | method 2 - source-conditioned `d(A,B\|S)` | `--source/-s` (required), `--backend`, `--gpu`, `--json`, `--result-only` |
-
-`A` / `B` / `S` are file paths or raw text. Run `docdistance --help` or `docdistance <command> --help` for the full flag list; the [API reference](docs/api-reference.md) covers the library.
-
-The same thing is one function from Python:
+Or from Python:
 
 ```python
-from docdistance import document_distance
+from docdistance import document_distance, source_conditioned_distance
 
-result = document_distance("report_v1.md", "report_v2.md")
-print(result.closeness)  # 0..1 similarity, 1 - SMD/sqrt(2)
-print(result.verdict)    # "similar" | "not similar"
+r = document_distance("report_v1.md", "report_v2.md")           # method 1
+print(r.closeness, r.verdict)               # 0..1 closeness, "similar" | "not similar"
+
+s = source_conditioned_distance("sum_a.md", "sum_b.md", source="article.md")  # method 2
+print(s.d_sel, s.residual_a, s.residual_b)  # selection divergence + each doc's distance to S
 ```
 
-### Source-conditioned - why two documents of one source diverge
+### Reading the result
 
-When A and B share a known source `S`, the symmetric distance tells you *how far* apart they are but not *why*. The source-conditioned distance `d(A, B | S)` re-bases both onto `S` and splits the difference into a selection axis (what each picked from the source) and a grounding axis (how far each drifts from it) - so dropped content reads differently from unsupported content. Reach for it to audit a summary or extraction against its source; it is slower and experimental, so validate on your own sources.
+- **Method 1 - closeness 0..1** - `1.0` identical, `0.0` unrelated. Good (same meaning): closeness near 1, verdict `similar` (default cutoff `0.725`, set with `--threshold`). Bad (meaning changed): closeness falls toward 0, verdict flips to `not similar`
+- **Method 2 - two distances, lower is closer** - `d_sel` near 0 means A and B drew on the same source content, high means they picked different parts; a low `residual` means a document stays grounded in `S`, a high one flags drift (dropped or unsupported content). Good: both residuals and `d_sel` low. Bad: a residual spikes for the document that drifted
 
-```bash
-docdistance distance-wrt-source summary_a.md summary_b.md --source article.md
-```
-
-```python
-from docdistance import source_conditioned_distance
-
-r = source_conditioned_distance("summary_a.md", "summary_b.md", source="article.md")
-print(r.d_sel)                     # how differently A and B select from the source
-print(r.residual_a, r.residual_b)  # each summary's distance to the source
-```
-
+- **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on
 - **Offline after install** - distance calls run fully offline once the models are cached
 - **Backend** - `--backend openvino|torch`, default `openvino` (CPU INT8)
-- **Full API and flags** - `docdistance --help` and the SOTA docs
+- **Full reference** - the [CLI reference](docs/cli-reference.md) and the [API reference](docs/api-reference.md)
 
 ## Documentation
 

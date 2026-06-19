@@ -95,6 +95,22 @@ def all_but_the_top(emb: dict[str, np.ndarray], k: int = 1) -> dict[str, np.ndar
 COVERAGE_TEMPERATURE = 0.1
 
 
+def coverage_alignment(
+    X: np.ndarray, S: np.ndarray, temperature: float = COVERAGE_TEMPERATURE
+) -> np.ndarray:
+    """Per-statement soft assignment of ``X`` over the source ``S``; shape ``[n_X, n_S]``, each row sums to 1.
+
+    Row ``i`` is statement ``i``'s ``softmax(-cost / temperature)`` distribution over the source
+    statements - the alignment map of which source content each statement covers. The row-max is the
+    soft nearest source. :func:`coverage_profile` is the mean of this matrix over ``X``.
+    """
+    C = cost_matrix(X, S)
+    A = np.exp(
+        -(C - C.min(1, keepdims=True)) / temperature
+    )  # subtract row-min for numerical stability
+    return A / A.sum(1, keepdims=True)
+
+
 def coverage_profile(
     X: np.ndarray, S: np.ndarray, temperature: float = COVERAGE_TEMPERATURE
 ) -> np.ndarray:
@@ -105,12 +121,7 @@ def coverage_profile(
     transport constraint), so it carries no per-document signal; this soft nearest-source histogram
     varies by document and captures which source content each one covers.
     """
-    C = cost_matrix(X, S)
-    A = np.exp(
-        -(C - C.min(1, keepdims=True)) / temperature
-    )  # subtract row-min for numerical stability
-    A = A / A.sum(1, keepdims=True)
-    return A.mean(0)
+    return coverage_alignment(X, S, temperature).mean(0)
 
 
 def selection_divergence(cov_a: np.ndarray, cov_b: np.ndarray, S: np.ndarray) -> float:

@@ -58,6 +58,15 @@ def test_coverage_profile_is_a_distribution():
     assert (cov >= -1e-9).all()
 
 
+def test_coverage_alignment_rows_sum_to_one_and_mean_is_profile():
+    X, S = _emb(8, seed=9), _emb(11, seed=10)
+    align = d.coverage_alignment(X, S)
+    assert align.shape == (8, 11)
+    assert np.allclose(align.sum(1), 1.0, atol=1e-6)
+    assert (align >= -1e-9).all()
+    assert np.allclose(align.mean(0), d.coverage_profile(X, S), atol=1e-6)
+
+
 def test_selection_divergence_identity_and_symmetry():
     S = _emb(10, seed=11)
     cov_a = d.coverage_profile(_emb(7, seed=12), S)

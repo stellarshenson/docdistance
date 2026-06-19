@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from enum import Enum
 import json
+from pathlib import Path
 
 from rich.console import Console
 from rich.panel import Panel
@@ -190,6 +191,7 @@ def distance(
     epilog="[bold]Examples[/bold]\n\n"
     "  docdistance distance-wrt-source summary_a.md summary_b.md --source article.md\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --json\n"
+    "  docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   [dim]# statement → source map[/dim]\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --result-only   [dim]# D_sel,res_a,res_b[/dim]",
 )
 def distance_wrt_source(
@@ -209,6 +211,12 @@ def distance_wrt_source(
         "--anisotropy/--no-anisotropy",
         help="anisotropy removal on the conditioned selection axis - on by default (E04-H15), --no-anisotropy to opt out",
     ),
+    source_map_json: str = typer.Option(
+        None,
+        "--source-map-json",
+        help="also write a statement → source alignment map (which source statements each A/B statement covers) to this JSON file",
+        metavar="FILE",
+    ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
         False, "--result-only", help="bare comma-separated D_sel,residual_a,residual_b to stdout"
@@ -217,14 +225,30 @@ def distance_wrt_source(
 ):
     """Source-conditioned distance d(A, B | S) - selection divergence plus each document's distance to S."""
     configure_logging(verbose)
-    from docdistance.pipeline import source_conditioned_distance
 
     backend_value, device = _resolve_gpu(gpu, backend)
-    result = _run(
-        lambda: source_conditioned_distance(
-            a, b, source, backend=backend_value, anisotropy=anisotropy, device=device
+    if source_map_json:
+        from docdistance.pipeline import DocDistance
+
+        result, smap = _run(
+            lambda: DocDistance(backend=backend_value, device=device).distance_wrt_source_with_map(
+                a, b, source, anisotropy=anisotropy
+            )
         )
-    )
+        Path(source_map_json).write_text(json.dumps(smap, indent=2))
+        _err.print(
+            f"[green]source map written:[/green] {source_map_json} "
+            f"(A {smap['n_statements']['a']} + B {smap['n_statements']['b']} statements → "
+            f"top-{smap['top_k']} of {smap['n_statements']['source']} source)"
+        )
+    else:
+        from docdistance.pipeline import source_conditioned_distance
+
+        result = _run(
+            lambda: source_conditioned_distance(
+                a, b, source, backend=backend_value, anisotropy=anisotropy, device=device
+            )
+        )
     _emit_wrt_source(result, json_out, result_only)
 
 

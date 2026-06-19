@@ -53,6 +53,7 @@ def test_wrt_source_help_has_source_option():
     assert res.exit_code == 0
     assert "--source" in res.output
     assert "--result-only" in res.output
+    assert "--source-map-json" in res.output
 
 
 def test_install_help_has_backend():
