@@ -1,8 +1,8 @@
-# SUMMAC: Re-Visiting NLI-based Models for Inconsistency Detection in Summarization - Digest
+# SummaC: Re-Visiting NLI-based Models for Inconsistency Detection in Summarization - Digest
 
 **Authors**: Philippe Laban (UC Berkeley), Tobias Schnabel (Microsoft), Paul N. Bennett (Microsoft), Marti A. Hearst (UC Berkeley)
 **Venue**: Transactions of the ACL (TACL) 2022 - arXiv:2111.09525, 18 Nov 2021
-**Source**: `[paper] SUMMAC - Re-Visiting NLI-based Models for Inconsistency Detection in Summarization.pdf`
+**Source**: `[paper] SummaC - Re-Visiting NLI-based Models for Inconsistency Detection in Summarization.pdf`
 
 ## Overview
 
@@ -17,7 +17,7 @@ Modern summarizers are fluent but frequently unfaithful - some state-of-the-art 
 - The fix is granularity, not a better NLI model - split both texts into sentences and score all pairs
 - `SummaC_ZS` (zero-shot) and `SummaC_Conv` (one trained convolution layer) are the two model variants, both built on the same NLI pair matrix
 - `SummaC_Conv` scores 74.4% balanced accuracy overall, `SummaC_ZS` 72.1%, vs 69.4% for QuestEval, the best method not using NLI
-- Evaluated on the new SUMMAC Benchmark - the six largest inconsistency datasets standardized to one binary task
+- Evaluated on the new SummaC Benchmark - the six largest inconsistency datasets standardized to one binary task
 - Balanced accuracy is the primary metric because class balance ranges from 6% to 91% positive across datasets
 - Throughput ≈ 430 documents/minute on one GPU - roughly 10x faster than question-answer-generation (QAG) methods
 - The best NLI backbone is a BERT-Large model trained on MNLI + VitaminC; NLI progress transfers directly to SummaC gains
@@ -31,7 +31,7 @@ The first step, common to both models, builds an **NLI pair matrix**. The docume
 
 `SummaC_Conv` replaces the brittle max with the whole distribution. Each column of the matrix is binned into a fixed `H`-bin histogram (`H = 50`, bin width 0.02), and a learned 1-D convolution of kernel size `H` compiles each histogram into a per-sentence score, averaged for the final score. The convolution is trained end-to-end on a 10,000-pair subsample of the FactCC synthetic data (cross-entropy, Adam, batch 32, learning rate 1e-2). Looking at the full distribution rather than the extremum makes it robust to NLI noise, which is the source of its gain over `SummaC_ZS`.
 
-## The SUMMAC Benchmark
+## The SummaC Benchmark
 
 The authors standardize the six largest summary-consistency datasets - CoGenSumm, XSumFaith, Polytope, FactCC, SummEval, FRANK - into one binary `(document, summary, label)` classification task with fixed validation/test splits. Documents come from CNN/DM and XSum news. Because positive-class rates vary so widely (6% to 91%), the primary metric is **balanced accuracy** (the average of true-positive rate and true-negative rate, so majority-class voting scores 50%), with per-dataset thresholds tuned on the validation split and ROC-AUC as a secondary metric.
 

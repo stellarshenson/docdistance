@@ -92,5 +92,6 @@ The SOTA documents explain how it works in detail; this README only introduces i
 - `docs/mmbert-quantization-solution.md` - the INT8 / FP8 statement encoder
 - [*From Word Embeddings To Document Distances*](references/papers/%5Bpaper%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.pdf) - Kusner et al. 2015, the WMD theory ([digest](references/papers/from-word-embeddings-to-document-distances.md))
 - [*All-but-the-Top: Simple and Effective Postprocessing for Word Representations*](references/papers/%5Bpaper%5D%20All-but-the-Top%3A%20Simple%20and%20Effective%20Postprocessing%20for%20Word%20Representations.pdf) - Mu & Viswanath, ICLR 2018, the anisotropy postprocessing ([digest](references/papers/all-but-the-top-simple-and-effective-postprocessing-for-word-representations.md))
+- [*SummaC: Re-Visiting NLI-based Models for Inconsistency Detection in Summarization*](references/papers/%5Bpaper%5D%20SummaC%20-%20Re-Visiting%20NLI-based%20Models%20for%20Inconsistency%20Detection%20in%20Summarization.pdf) - Laban et al., TACL 2022, the multi-premise NLI grounding pattern behind the source-conditioned grounding axis ([digest](references/papers/summac-re-visiting-nli-based-models-for-inconsistency-detection-in-summarization.md))
 
 > **Note**: Scaffolded with the [copier-data-science](https://github.com/stellarshenson/copier-data-science) template.
