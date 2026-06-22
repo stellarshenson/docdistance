@@ -29,14 +29,16 @@ Symmetric Statement Mover's Distance between two documents - the exact metric, o
 | `--gpu` | off | force the torch backend on CUDA; errors if GPU support is not secured |
 | `--anisotropy / --no-anisotropy` | `--no-anisotropy` | all-but-the-top anisotropy removal; needs a corpus, off for a bare pair |
 | `--threshold FLOAT` | `0.725` | closeness cutoff for the similar / not-similar verdict |
+| `--transport-map-json FILE` | off | also write the optimal-transport map (which B statements each A statement's mass flows to, with weights and match cost) to `FILE` |
 | `--json` | off | machine-readable JSON to stdout |
 | `--result-only` | off | bare SMD scalar to stdout, no clutter |
 | `--verbose`, `-v` | off | DEBUG logging to stderr |
 
 - **Default output** - a rich panel: SMD, closeness, verdict + threshold, the `WCD ≤ RWMD ≤ SMD` bounds, statement counts, anisotropy on/off
 - **`--json`** - the result dict: `smd`, `wcd`, `rwmd`, `closeness`, `threshold`, `verdict`, `anisotropy`, `n_statements_a`, `n_statements_b`
+- **`--transport-map-json`** - writes a separate JSON file (the result still prints as usual): `{smd, anisotropy, n_statements, flows}`, where `flows` is a per-A-statement list of `{index, text, matches}` and each match is `{target_index, target_text, weight, cost}` - the B statements that statement's transport mass flows to, `weight` the fraction of its mass (sums to 1 per statement), `cost` the ground distance of the match; the exact OT coupling behind the SMD, so a human or a machine can read which statement aligns to which
 - **`--result-only`** - the bare SMD float, for scripts
-- **Reading it** - closeness `1.0` identical, `0.0` unrelated; near 1 with verdict `similar` is a faithful match, falling toward 0 with `not similar` means the meaning changed
+- **Reading it** - closeness `1.0` identical, `0.0` unrelated; near 1 with verdict `similar` is a faithful match, falling toward 0 with `not similar` means the meaning changed; the transport map names *which* statement of B each statement of A maps to and how good the match is (low `cost`)
 
 ## distance-wrt-source
 
@@ -71,6 +73,7 @@ docdistance install --backend openvino         # cache CPU INT8 only
 docdistance distance report_v1.md report_v2.md
 docdistance distance "first text" "second text"            # raw text, not files
 docdistance distance a.md b.md --json                      # machine-readable
+docdistance distance a.md b.md --transport-map-json map.json   # + statement → statement map
 docdistance distance a.md b.md --result-only               # bare SMD scalar
 docdistance distance a.md b.md --threshold 0.8             # stricter verdict
 docdistance distance a.md b.md --gpu                       # torch on CUDA

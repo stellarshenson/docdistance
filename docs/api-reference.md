@@ -15,6 +15,7 @@ a leading markdown `# ` title line in a file is stripped so the title is not cou
 | `source_conditioned_distance` | `(a, b, source, *, backend="openvino", anisotropy=True, offline=True, device=None)` | `SourceConditionedResult` | `d(A, B | S)`; selection divergence + each document's distance to `S` |
 | `DocDistance` | `DocDistance(backend="openvino", offline=True, device=None)` | pipeline | construct once (models load here), then score many pairs |
 | `DocDistance.distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `DistanceResult` | symmetric distance on the loaded models |
+| `DocDistance.distance_with_map` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(DistanceResult, dict)` | the distance plus the optimal-transport statement map, one encode pass |
 | `DocDistance.distance_wrt_source` | `(a, b, source, *, anisotropy=True)` | `SourceConditionedResult` | source-conditioned distance on the loaded models |
 | `DocDistance.embed` | `(doc)` | `ndarray [n, dim]` | segment then embed into L2-normalized statement vectors |
 
@@ -31,6 +32,7 @@ loading. Use these when you hold the embeddings already.
 | Symbol | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `smd` | `(X, Y)` | `float` | the distance: exact Statement Mover's Distance via the network-simplex LP |
+| `transport_plan` | `(X, Y)` | `ndarray [n_X, n_Y]` | the exact OT coupling behind `smd`: `T[i,j]` = mass moved from `X[i]` to `Y[j]`, marginals `1/n_X` / `1/n_Y` |
 | `wcd` | `(X, Y)` | `float` | lower bound: mean-pooled cloud distance (whole-doc cosine) |
 | `rwmd` | `(X, Y)` | `float` | lower bound: one-sided relaxation, greedy nearest-statement |
 | `closeness` | `(d)` | `float` | map a distance to 0..1 similarity, `1 − d/√2` |
@@ -74,7 +76,7 @@ the bare scalar. Logs go to stderr, so stdout carries only the result.
 | Command | Purpose | Key options |
 | --- | --- | --- |
 | `install` | download + cache the models (the only command that fetches) | `--backend openvino\|torch\|both` |
-| `distance A B` | symmetric SMD between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--json`, `--result-only` |
+| `distance A B` | symmetric SMD between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--transport-map-json`, `--json`, `--result-only` |
 | `distance-wrt-source A B --source S` | source-conditioned `d(A, B | S)` | `--source/-s` (required), `--backend`, `--gpu`, `--json`, `--result-only` |
 
 ## Examples
@@ -109,6 +111,22 @@ r = source_conditioned_distance("summary_a.md", "summary_b.md", source="article.
 print(r.d_sel)                       # how differently A and B select from the source
 print(r.residual_a, r.residual_b)    # each summary's distance to the source
 ```
+
+Transport map - the interpretable statement-to-statement alignment behind the distance:
+
+```python
+from docdistance import DocDistance
+
+dd = DocDistance()
+result, tmap = dd.distance_with_map("report_v1.md", "report_v2.md")
+print(result.smd)                                 # the distance
+for flow in tmap["flows"]:                        # each statement of A
+    best = flow["matches"][0]                     # the B statement it maps to (most mass)
+    print(flow["text"], "->", best["target_text"], best["weight"], best["cost"])
+```
+
+The low-level `transport_plan(X, Y)` returns the raw `[n_X, n_Y]` coupling if you hold the embeddings
+and want the matrix directly; `distance_with_map` is the text-aware wrapper that pairs it with statements.
 
 Low-level, on embeddings you already hold:
 

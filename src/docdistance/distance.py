@@ -44,6 +44,18 @@ def smd(X: np.ndarray, Y: np.ndarray) -> float:
     return float(ot.emd2(*_ab(X, Y), cost_matrix(X, Y)))
 
 
+def transport_plan(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    """The exact optimal-transport coupling behind :func:`smd`; shape ``[n_X, n_Y]`` - the transport map.
+
+    ``T[i, j]`` is the probability mass moved from statement ``X[i]`` to statement ``Y[j]``. Row ``i``
+    sums to the source marginal ``1/n_X`` and column ``j`` to ``1/n_Y``, and ``(T * cost_matrix(X, Y)).sum()``
+    equals ``smd(X, Y)``. The network-simplex solution is sparse (at most ``n_X + n_Y − 1`` nonzeros), so
+    most statements map to one or a few others - the interpretable statement-to-statement alignment the
+    distance is built from.
+    """
+    return ot.emd(*_ab(X, Y), cost_matrix(X, Y))
+
+
 def wcd(X: np.ndarray, Y: np.ndarray) -> float:
     """Lower bound: distance between the mean-pooled statement clouds (whole-doc cosine)."""
     return float(np.linalg.norm(X.mean(0) - Y.mean(0)))

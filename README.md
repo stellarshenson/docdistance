@@ -55,6 +55,7 @@ docdistance --help                             # full reference (or <command> --
 
 # method 1 - symmetric distance (robust, fast, the default)
 docdistance distance a.md b.md                 # rich verdict (add --json for machine-readable)
+docdistance distance a.md b.md --transport-map-json map.json   # + statement → statement map
 
 # method 2 - source-conditioned d(A,B|S) (slower, experimental)
 docdistance distance-wrt-source a.md b.md --source s.md                       # two-axis verdict
@@ -78,6 +79,7 @@ print(s.d_sel, s.residual_a, s.residual_b)  # selection divergence + each doc's 
 - **Method 1 - closeness 0..1** - `1.0` identical, `0.0` unrelated. Good (same meaning): closeness near 1, verdict `similar` (default cutoff `0.725`, set with `--threshold`). Bad (meaning changed): closeness falls toward 0, verdict flips to `not similar`
 - **Method 2 - two distances, lower is closer** - `d_sel` near 0 means A and B drew on the same source content, high means they picked different parts; a low `residual` means a document stays grounded in `S`, a high one flags drift (dropped or unsupported content). Good: both residuals and `d_sel` low. Bad: a residual spikes for the document that drifted
 
+- **Transport map** - add `--transport-map-json map.json` to `distance` to also write the optimal-transport map: for every statement of A, which statements of B its mass flows to, with the `weight` (fraction of that statement's mass) and the match `cost` - the interpretable statement-to-statement alignment behind the distance, readable by a human or a machine (the same map is returned in Python by `DocDistance.distance_with_map`)
 - **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on
 - **Offline after install** - distance calls run fully offline once the models are cached
 - **Backend** - `--backend openvino|torch`, default `openvino` (CPU INT8)

@@ -30,6 +30,7 @@ def test_distance_help_has_flags_and_examples():
     assert "--result-only" in res.output
     assert "--backend" in res.output
     assert "--gpu" in res.output
+    assert "--transport-map-json" in res.output
     assert "Examples" in res.output
 
 

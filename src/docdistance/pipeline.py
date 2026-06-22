@@ -94,6 +94,57 @@ def _build_source_map(
     }
 
 
+def _statement_flows(
+    sa: list[str], sb: list[str], plan: np.ndarray, cost: np.ndarray, eps: float = 1e-9
+) -> list[dict]:
+    """Per A statement, the B statements its transport mass flows to, by descending row-normalized weight."""
+    out = []
+    for i, row in enumerate(plan):
+        total = row.sum()
+        matches = [
+            {
+                "target_index": int(j),
+                "target_text": sb[j],
+                "weight": round(
+                    float(row[j] / total), 4
+                ),  # fraction of this statement's mass to B[j]
+                "cost": round(float(cost[i, j]), 4),  # ground distance of the match
+            }
+            for j in np.argsort(row)[::-1]
+            if row[j] > eps
+        ]
+        out.append({"index": i, "text": sa[i], "matches": matches})
+    return out
+
+
+def _build_transport_map(
+    sa: list[str],
+    ea: np.ndarray,
+    sb: list[str],
+    eb: np.ndarray,
+    *,
+    anisotropy: bool = False,
+) -> dict:
+    """A JSON-serializable transport map: each statement of A → the B statements its OT mass flows to.
+
+    The exact optimal-transport coupling behind the symmetric distance - ``weight`` is the fraction of
+    statement A[i]'s mass landing on B[j], ``cost`` the ground distance of that match. Anisotropy removal
+    is applied the same way as :func:`~docdistance.distance.compute_distance`, so the map reflects the
+    same geometry the distance is scored on.
+    """
+    if anisotropy:
+        fixed = _core.all_but_the_top({"a": ea, "b": eb}, k=1)
+        ea, eb = fixed["a"], fixed["b"]
+    plan = _core.transport_plan(ea, eb)
+    cost = _core.cost_matrix(ea, eb)
+    return {
+        "smd": round(float((plan * cost).sum()), 6),
+        "anisotropy": anisotropy,
+        "n_statements": {"a": len(sa), "b": len(sb)},
+        "flows": _statement_flows(sa, sb, plan, cost),
+    }
+
+
 class DocDistance:
     """Reusable pipeline - construct once (models load here), then call :meth:`distance` per pair."""
 
@@ -124,6 +175,21 @@ class DocDistance:
         return _core.compute_distance(
             self.embed(a), self.embed(b), anisotropy=anisotropy, threshold=threshold
         )
+
+    def distance_with_map(
+        self,
+        a: str | Path,
+        b: str | Path,
+        *,
+        anisotropy: bool = False,
+        threshold: float = DEFAULT_THRESHOLD,
+    ) -> tuple[DistanceResult, dict]:
+        """The symmetric distance result and the optimal-transport statement map, sharing one encode pass."""
+        sa, ea = self.embed_statements(a)
+        sb, eb = self.embed_statements(b)
+        result = _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
+        tmap = _build_transport_map(sa, ea, sb, eb, anisotropy=anisotropy)
+        return result, tmap
 
     def distance_wrt_source(
         self,

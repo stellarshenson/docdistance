@@ -34,6 +34,18 @@ def test_lower_bound_nesting():
     assert r <= s + 1e-6
 
 
+def test_transport_plan_marginals_and_realizes_smd():
+    """The coupling has uniform marginals 1/n and its cost-weighted sum equals SMD."""
+    X, Y = _emb(7, seed=11), _emb(9, seed=12)
+    T = d.transport_plan(X, Y)
+    assert T.shape == (7, 9)
+    assert (T >= -1e-9).all()
+    assert np.allclose(T.sum(1), 1.0 / 7, atol=1e-6)  # row (source) marginal
+    assert np.allclose(T.sum(0), 1.0 / 9, atol=1e-6)  # column (target) marginal
+    realized = float((T * d.cost_matrix(X, Y)).sum())
+    assert realized == pytest.approx(d.smd(X, Y), abs=1e-6)
+
+
 def test_closeness_range():
     assert d.closeness(0.0) == pytest.approx(1.0)
     assert d.closeness(d.SMD_MAX) == pytest.approx(0.0)

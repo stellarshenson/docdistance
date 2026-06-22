@@ -144,6 +144,7 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
     "  docdistance distance report_v1.md report_v2.md\n"
     '  docdistance distance "first text" "second text" --backend torch\n'
     "  docdistance distance a.md b.md --json\n"
+    "  docdistance distance a.md b.md --transport-map-json map.json   [dim]# statement → statement map[/dim]\n"
     "  docdistance distance a.md b.md --result-only"
 )
 def distance(
@@ -167,6 +168,12 @@ def distance(
         "--threshold",
         help="closeness cutoff for the similar / not-similar verdict",
     ),
+    transport_map_json: str = typer.Option(
+        None,
+        "--transport-map-json",
+        help="also write the optimal-transport map (which B statements each A statement's mass flows to, with weights) to this JSON file",
+        metavar="FILE",
+    ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
         False, "--result-only", help="bare SMD scalar to stdout, no clutter"
@@ -175,14 +182,34 @@ def distance(
 ):
     """Symmetric distance between two documents - the exact Statement Mover's Distance."""
     configure_logging(verbose)
-    from docdistance.pipeline import document_distance
 
     backend_value, device = _resolve_gpu(gpu, backend)
-    result = _run(
-        lambda: document_distance(
-            a, b, backend=backend_value, anisotropy=anisotropy, threshold=threshold, device=device
+    if transport_map_json:
+        from docdistance.pipeline import DocDistance
+
+        result, tmap = _run(
+            lambda: DocDistance(backend=backend_value, device=device).distance_with_map(
+                a, b, anisotropy=anisotropy, threshold=threshold
+            )
         )
-    )
+        Path(transport_map_json).write_text(json.dumps(tmap, indent=2))
+        _err.print(
+            f"[green]transport map written:[/green] {transport_map_json} "
+            f"(A {tmap['n_statements']['a']} → B {tmap['n_statements']['b']} statements)"
+        )
+    else:
+        from docdistance.pipeline import document_distance
+
+        result = _run(
+            lambda: document_distance(
+                a,
+                b,
+                backend=backend_value,
+                anisotropy=anisotropy,
+                threshold=threshold,
+                device=device,
+            )
+        )
     _emit_distance(result, json_out, result_only)
 
 
