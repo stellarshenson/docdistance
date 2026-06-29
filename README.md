@@ -119,12 +119,23 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 - **smd** - the distance the map realizes; `weight × cost` summed over all flows equals it
 - **Reading it** - a statement mapped to its counterpart at `weight 1.0` and low `cost` is preserved; high cost or scattered weights flag a statement with no clean equivalent in B
 
+## Structure distance (experimental)
+
+SMD is position-invariant by design - reorder a document's statements and it barely moves. A research axis adds a second, structure-sensitive distance for telling *content drift* from *rearrangement*. It is a confirmed experiment result (batch E08), not yet wired into the CLI or library.
+
+- **Position-augmented Wasserstein** - the same statement transport, but the ground cost fuses semantic distance and normalized statement position: `M̃ = √((1−λ)·d_sem² + λ·d_pos²)`, balanced by `λ`. It is *combined with* SMD, not orthogonal to it - `λ=0` is exactly SMD (pure content), `λ>0` turns on order-sensitivity; the positional term reads the statement's index, not its embedding
+- **A true metric, wide range** - the ℓ2 combination of two metrics is a metric, so the distance keeps the triangle inequality (0% violations), is monotone in how much was rearranged, and is defined on unequal-length pairs
+- **Two axes side by side** - report SMD (semantic, order-invariant) and position-augmented Wasserstein (structure-aware); when content is preserved (SMD ≈ 0) but the structural distance is high, the arrangement changed
+- **Structural mapping** - the transport plan is the structural alignment; each statement's induced target position and displacement name the movers - the structural analogue of the transport map
+- **Design and evidence** - the [structure-distance SOTA](docs/wmd-structure-distance-sota.md), the [experiments log](docs/experiments/wmd-structure-distance-experiments.md) (E07 the barycentric read, E08 the metric formulation), and the end-to-end notebook `notebooks/12-kj-structure-distance-e2e.ipynb`
+
 ## Documentation
 
 The SOTA documents explain how it works in detail; this README only introduces it.
 
 - `docs/wmd-docdistance-solution-sota.md` - source-free distance: design, mechanism, performance, validation
 - `docs/wmd-source-conditioned-docdistance-solution-sota.md` - source-conditioned distance `d(A,B|S)`: two axes (selection + grounding), design, performance, limitations
+- `docs/wmd-structure-distance-sota.md` - structure-sensitive distance (experimental): position-augmented Wasserstein, theory, the structural mapping, limitations
 - `docs/mmbert-quantization-solution.md` - the INT8 / FP8 statement encoder
 - [*From Word Embeddings To Document Distances*](references/papers/%5Bpaper%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.pdf) - Kusner et al. 2015, the WMD theory ([digest](references/papers/%5Bpaper%20digest%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.md))
 - [*All-but-the-Top: Simple and Effective Postprocessing for Word Representations*](references/papers/%5Bpaper%5D%20All-but-the-Top%3A%20Simple%20and%20Effective%20Postprocessing%20for%20Word%20Representations.pdf) - Mu & Viswanath, ICLR 2018, the anisotropy postprocessing ([digest](references/papers/%5Bpaper%20digest%5D%20All-but-the-Top%3A%20Simple%20and%20Effective%20Postprocessing%20for%20Word%20Representations.md))

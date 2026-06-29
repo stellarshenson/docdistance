@@ -1,0 +1,157 @@
+{
+  "results": {
+    "E08-H44": {
+      "lam_head": 0.25,
+      "smd_recovery_max_abs": 1.3479277915194599e-12,
+      "mono_rho": 1.0,
+      "mono_inv": 0,
+      "triangle_viol": 0.0,
+      "range_ratio": 6.684544863384785,
+      "range_by_lambda": {
+        "0.0": 2.6698258433167977e-05,
+        "0.1": 4.122926856660036,
+        "0.25": 6.684544863384785,
+        "0.5": 8.766819498446791
+      },
+      "range_footrule": 6.376085188368328,
+      "range_offdiag": 7.406104792146716,
+      "lam_clearing_both_e07": [
+        0.5
+      ]
+    },
+    "E08-H45": {
+      "alpha_sweep": 0.5,
+      "alpha_curve": {
+        "0.0": 0.00021175988593309065,
+        "0.25": 0.010092243318155534,
+        "0.5": 0.019972726752870328,
+        "0.75": 0.023897860527437444,
+        "1.0": 4.609408093309802e-17
+      },
+      "alpha_star": 0.75,
+      "mono_rho": 0.4285714285714286,
+      "mono_inv": 1,
+      "triangle_viol": 0.0,
+      "range_ratio": 0.3970829833909074,
+      "pure_shift_fgw": 1.586032892321652e-17,
+      "pure_shift_paug": 0.13431653323824636,
+      "peak_bin": 4,
+      "collapse_at_full_scramble": true,
+      "fgw_per_bin_sweep_alpha": [
+        0.004895642357948533,
+        0.03067370164188395,
+        0.0454027804053615,
+        0.055665877285138284,
+        0.05595086356197585,
+        0.019999511879377162
+      ]
+    },
+    "E08-H46": {
+      "mono_rho": 1.0,
+      "mono_inv": 0,
+      "triangle_viol_equal_len": 0.0,
+      "range_ratio": 6.1582880921614205,
+      "range_h1": 6.684544863384785,
+      "range_h2": 0.3970829833909074,
+      "narrower_than_h1": true
+    },
+    "E08-H47": {
+      "entropy_median_raw": 0.12878289326884168,
+      "entropy_median_offline": 0.12989669405182738,
+      "entropy_median_perpair": 0.13513581548453527,
+      "smd_fidelity_pearson": 0.9406274894267547,
+      "naive_margin_raw": 0.004617604617604614,
+      "naive_margin_offline": -0.008625025767882911,
+      "dynrange_raw": 0.132194792757789,
+      "dynrange_offline": 0.1412797910673046
+    },
+    "E08-H48": {
+      "mono_rho_weighted": 1.0,
+      "mono_inv_weighted": 0,
+      "triangle_viol": 0.06666666666666667,
+      "range_ratio_weighted": 7.186356733317109,
+      "range_ratio_unweighted": 8.093335156699027,
+      "range_offdiag": 7.406104792146716
+    },
+    "range_ratios": {
+      "E08-H44 posaug (lam=.25)": 6.684544863384785,
+      "E08-H45 positional FGW": 0.3970829833909074,
+      "E08-H46 opt-assign footrule": 6.1582880921614205,
+      "E08-H48 anti-mass weighted": 7.186356733317109,
+      "E08-H48 anti-mass unweighted": 8.093335156699027,
+      "E07 tau footrule": 6.376085188368328,
+      "E07 off-diagonal mass": 7.406104792146716
+    },
+    "floor_sd": {
+      "paug0.25": 0.032047768598996704,
+      "fgw": 0.020003713108430084,
+      "oaf": 0.13813156177828223,
+      "antiW": 0.020662398050090663,
+      "anti": 0.044200401878007035,
+      "footrule": 0.13341320370098816,
+      "offdiag": 0.11191441585818271
+    },
+    "adjacent_k1": {
+      "paug0.25": 0.02387726137430835,
+      "fgw": 0.012056377798988856,
+      "oaf": 0.0905612244897959,
+      "antiW": 0.011559430794965669,
+      "anti": 0.04030849619967135,
+      "footrule": 0.0905612244897959,
+      "offdiag": 0.13113179337669148
+    }
+  },
+  "verdicts": {
+    "E08-H44": {
+      "verdict": "Kept",
+      "detail": "lam=0 reproduces SMD (max|delta|=1.3e-12); true metric (triangle 0.0%); Spearman 1.00/0 inv; range ratio scales with lambda {0.0: 0.0, 0.1: 4.1, 0.25: 6.7, 0.5: 8.8}; clears both E07 baselines (footrule 6.4, off-diag 7.4) at lambda [0.5] - selection deferred"
+    },
+    "E08-H45": {
+      "verdict": "Reported",
+      "detail": "rises mid-range (unlike E07-H35 flat) but COLLAPSES at full scramble - peak at bin 4, drops to bin 5 (Spearman 0.43/1 inv); the GW isometry-invariance reasserts at extreme reorder (alpha=1 -> 0). triangle 0.0% (a metric); shift-invariant (pure-shift FGW 0.0000 ~0, posaug reads 0.134); interior alpha*=0.75; range ratio 0.4 (low, the collapse not the floor)"
+    },
+    "E08-H46": {
+      "verdict": "Reported",
+      "detail": "equal-length triangle violations 0.0% (a true metric on S_n, unlike the tau-footrule); Spearman 1.00/0 inv; range ratio 6.2 - narrower than H1 posaug (6.7) as designed, but wider than H2 FGW (0.4) which collapsed at full scramble"
+    },
+    "E08-H47": {
+      "verdict": "Exploratory",
+      "detail": "row-entropy raw 0.129 -> offline 0.130 (perpair 0.135); NOT sharpened - raw T already concentrated; SMD fidelity Pearson 0.94 (held); naive margin +0.005 -> -0.009"
+    },
+    "E08-H48": {
+      "verdict": "Reported",
+      "detail": "weighted Spearman 1.00/0 inv; triangle 6.7% vs tau-footrule's 3.5%; range ratio weighted 7.2 / unweighted 8.1 vs off-diag 7.4, H1 6.7, H2 0.4"
+    }
+  },
+  "config": {
+    "n_bins": 6,
+    "per_bin": 12,
+    "bases": [
+      "gold",
+      "gold-2",
+      "v1",
+      "v2",
+      "opus",
+      "sonnet",
+      "haiku"
+    ],
+    "lambdas": [
+      0.0,
+      0.1,
+      0.25,
+      0.5
+    ],
+    "alphas": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "alpha_sweep": 0.5,
+    "lam_head": 0.25,
+    "chance_footrule": 0.6615850340136055,
+    "device": "NVIDIA RTX 5000 Ada Generation",
+    "regime": "byte-identical reorder upper bound + cross-summary diffuse (paraphrase-floor proxy)"
+  }
+}

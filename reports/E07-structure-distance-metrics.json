@@ -1,6 +1,6 @@
 {
   "results": {
-    "E07-H2": {
+    "E07-H29": {
       "dsmd_max": 0.0003831272208896865
     },
     "T_sparsity": {
@@ -8,11 +8,11 @@
       "diffuse_median_entropy": 0.12878289326884168,
       "gate_pass": true
     },
-    "E07-H11": {
+    "E07-H38": {
       "footrule_top_bin": 0.9412151765468092,
       "above_chance": true
     },
-    "E07-H12": {
+    "E07-H39": {
       "mono": {
         "offdiag": [
           1.0,
@@ -42,40 +42,40 @@
         ]
       }
     },
-    "E07-H13": {
+    "E07-H40": {
       "reorder_gated": 0.38175988030066454,
       "diffcontent_ungated": 0.23817848817611523,
       "diffcontent_gated": 0.2365826375829978,
       "diffcontent_smd": 0.42211493843841164
     },
-    "E07-H14": {
+    "E07-H41": {
       "example_base": "gold",
       "footrule": 0.4897959183673469,
       "top_mover_disp": 13.0
     },
-    "E07-H16": {
+    "E07-H43": {
       "reorder_semantic": 0.9998502631486735,
       "reorder_structure": 0.4129818594104308
     },
-    "E07-H3": {
+    "E07-H30": {
       "pp_top": 0.5070714999286429,
       "smd_flat_max": 0.0003831272208896865
     },
-    "E07-H4": {
+    "E07-H31": {
       "aligned_band": 0.9999999999999999,
       "reordered_band": 0.36548927263212966
     },
-    "E07-H7": {
+    "E07-H34": {
       "gw_reorder_mean": -8.556810319827944e-11,
       "gw_cross_mean": 0.01343874124309711
     },
-    "E07-H8": {
+    "E07-H35": {
       "fgw_reorder_range": [
         1.5260099277963901e-09,
         0.00024686509485555286
       ]
     },
-    "E07-H5": {
+    "E07-H32": {
       "mass_by_k": {
         "0": 0.0,
         "1": 0.0740188383045526,
@@ -83,88 +83,88 @@
         "3": 0.22205651491365777
       }
     },
-    "E07-H9": {
+    "E07-H36": {
       "rho": 0.5438686641960769,
       "ci": [
         0.31232492390838107,
         0.7108628157138126
       ]
     },
-    "E07-H10": {
+    "E07-H37": {
       "triangle_violation_rate": 0.035,
-      "ms_smd": 0.07633712026290596,
-      "ms_tau": 0.3702385409269482,
-      "ms_gw": 0.4338988976087421
+      "ms_smd": 0.08307620068080723,
+      "ms_tau": 0.33040946000255644,
+      "ms_gw": 0.426583195803687
     }
   },
   "verdicts": {
-    "E07-H2": {
+    "E07-H29": {
       "verdict": "Kept (sanity)",
       "detail": "max |dSMD|=0.0004 <= 0.01; SMD provably blind to reorder"
     },
-    "E07-H1": {
+    "E07-H28": {
       "verdict": "Deferred",
       "detail": "needs >=10 real agentic conversion pairs (none exist); synthetic gap above demonstrates the precondition in principle"
     },
-    "E07-H11-gate": {
+    "E07-H38-gate": {
       "verdict": "Pass",
       "detail": "byte-identical T entropy 0.00 (sharp) vs cross-summary median 0.13; T stays usably concentrated in the realistic regime"
     },
-    "E07-H11": {
+    "E07-H38": {
       "verdict": "Kept (upper bound)",
       "detail": "tau footrule rises to 0.94 at full reorder vs naive 0.94; separates and recovers position on sharp T"
     },
-    "E07-H12": {
+    "E07-H39": {
       "verdict": "Ship-gate (upper bound)",
       "detail": "rank normalizers monotone by construction (Spearman~1.0); off-diagonal mass saturates fast as flagged; all in [0,1]; final normalizer choice deferred to a 2nd-article fixture"
     },
-    "E07-H13": {
+    "E07-H40": {
       "verdict": "Kept (exploratory)",
       "detail": "diff-content structure reads 0.24 gated (ungated 0.24, SMD=0.42 carries the content) vs reorder 0.38 - the axis already separates content from structure; tier cells differ in arrangement too (caveat)"
     },
-    "E07-H14": {
+    "E07-H41": {
       "verdict": "Kept",
       "detail": "per-statement induced position accounts for the structure number; movers are nameable"
     },
-    "E07-H16": {
+    "E07-H43": {
       "verdict": "Kept",
       "detail": "reorder cell sits at high semantic (1.00) / low structure (0.41) closeness - a structure-only failure a single blend hides"
     },
-    "E07-H3": {
+    "E07-H30": {
       "verdict": "Kept",
       "detail": "positional penalty monotone (Spearman 1.00, 0 inversions), SMD uncorrupted (max |dSMD| 0.0004)"
     },
-    "E07-H4": {
+    "E07-H31": {
       "verdict": "Kept (kill-gate noted)",
       "detail": "SMD plan already near-diagonal on aligned pairs (1.00) and off-diagonal on reorder (0.37); OPW regularizer would add little on aligned pairs as predicted - full OPW solver deferred"
     },
-    "E07-H7": {
+    "E07-H34": {
       "verdict": "Confirmed (reorder-invariant)",
       "detail": "GW~0.0000 on reorder vs 0.0134 on cross-summary - GW is a relational, not order, instrument as the design states"
     },
-    "E07-H8": {
+    "E07-H35": {
       "verdict": "Confirmed",
       "detail": "FGW stays 0.0000..0.0002 across alpha on a reorder (=SMD), adds nothing; only the cross-summary pair varies with alpha"
     },
-    "E07-H5": {
+    "E07-H32": {
       "verdict": "Kept",
       "detail": "cross-block mass 0 at no-swap, rises to 0.222 at k=3; bounded [0,1] on paragraph-unit summaries"
     },
-    "E07-H15": {
+    "E07-H42": {
       "verdict": "Kept",
       "detail": "the cross-block mass IS the bounded [0,1] section variant; >=0 same-block, rises on swap"
     },
-    "E07-H6": {
+    "E07-H33": {
       "verdict": "Deferred (exploratory)",
       "detail": "hierarchical two-level HOTT transport not implemented this batch"
     },
-    "E07-H9": {
+    "E07-H36": {
       "verdict": "Exploratory",
       "detail": "Pearson rho=0.54 (95% CI [0.31,0.71]) - CI half-width exceeds the 0.3 margin, not confirmable on one article"
     },
-    "E07-H10": {
+    "E07-H37": {
       "verdict": "Reported",
-      "detail": "tau-structure triangle-inequality violation rate 4% (it is a derived disorder, not claimed a metric - only GW/FGW are); cost tau 0.37ms vs SMD 0.08ms vs GW 0.43ms per pair"
+      "detail": "tau-structure triangle-inequality violation rate 4% (it is a derived disorder, not claimed a metric - only GW/FGW are); cost tau 0.33ms vs SMD 0.08ms vs GW 0.43ms per pair"
     }
   },
   "config": {
