@@ -55,7 +55,7 @@ Steps 1-3 produce the WMD dataset; steps 4-6 add the structure dataset. Notebook
 
 - **Source PDFs** (`data/external/`) - fetched by `download-fixtures.py` from the recorded URLs; gitignored binaries, provenance and licence in the matching `*_origin.md`
 - **Source articles** (`data/interim/.../source-article.md`) - one curated readable markdown per article; Wergeland is pdfplumber per-column extraction then hand-review, IBM is the curated press-release text; committed canonical inputs
-- **Exec-summary corpus (AWS Bedrock)** - generated from the IBM source article: 7 gold-tier under the gold rules across opus 4.5 / sonnet 4.6 / haiku 4.5, plus 4 adversarial. Models resolve from `.env` (`BEDROCK_MODEL_*`, kolomolo, eu-central-1); the prompts are baked into notebook 11; generation is cache-backed. This corpus is the WMD dataset and the base material for the structure dataset
+- **Exec-summary corpus (AWS Bedrock)** - generated from the IBM source article: 7 gold-tier under the gold rules across opus 4.6 / sonnet 4.6 / haiku 4.5, plus 4 adversarial. Models resolve from `.env` (`BEDROCK_MODEL_*`, kolomolo, eu-central-1); the prompts are baked into notebook 11; generation is cache-backed. This corpus is the WMD dataset and the base material for the structure dataset
 
 ## From source article to summaries - the gold rules
 
@@ -63,7 +63,7 @@ The corpus is created by **converting the source article into executive summarie
 
 - **The gold rules** - a strict contract: lead with the problem, quantified findings ordered by significance, one actionable recommendation, active voice, plain language, no hedging; deliberately clean, declarative sentences that segment into atomic statements
 - **Why a contract** - two summaries written from the same source under the same rules are semantically close, so the distance metric is validated against a **known-near pair**; the rules produce that near-pair on purpose
-- **Gold-tier corpus (7)** - the source article is summarised under the gold rules by three models (opus 4.5, sonnet 4.6, haiku 4.5) plus repeated opus samples; model diversity and sampling diversity give a spread of faithful summaries that should all read as near
+- **Gold-tier corpus (7)** - the source article is summarised under the gold rules by three models (opus 4.6, sonnet 4.6, haiku 4.5) plus repeated opus samples; model diversity and sampling diversity give a spread of faithful summaries that should all read as near
 - **Adversarial corpus (4)** - the same article is summarised in two degraded styles that deliberately violate the rules: **adv1** hedged, vague and passive; **adv2** jargon and information overload; same content, bad style - the grounding-intrusion distractors that must not score as gold-near
 - **Generation** - AWS Bedrock applies these prompts (baked into notebook 11) to the source article; output is cached per variant, so a rebuild only generates what is missing
 
