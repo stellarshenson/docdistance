@@ -1,0 +1,264 @@
+{
+  "seed": 0,
+  "n_bins": 6,
+  "swap_ks": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    11,
+    15,
+    20,
+    28,
+    40
+  ],
+  "seeds_per_k": 14,
+  "base_docs": [
+    "gold",
+    "gold-2",
+    "v1",
+    "v2",
+    "opus",
+    "sonnet",
+    "haiku",
+    "werg-a",
+    "werg-b",
+    "werg-c"
+  ],
+  "ibm_bases": [
+    "gold",
+    "gold-2",
+    "v1",
+    "v2",
+    "opus",
+    "sonnet",
+    "haiku"
+  ],
+  "werg_bases": [
+    "werg-a",
+    "werg-b",
+    "werg-c"
+  ],
+  "section_k": [
+    1,
+    2,
+    3
+  ],
+  "section_seeds": 10,
+  "anchor": "gold",
+  "articles": {
+    "ibm": "data/interim/exec-summaries/ibm-ai-adoption",
+    "wergeland": "data/interim/ai-society-wergeland"
+  },
+  "paraphrase": {
+    "backtranslation": {
+      "en_de": "Helsinki-NLP/opus-mt-en-de",
+      "de_en": "Helsinki-NLP/opus-mt-de-en",
+      "beams": 5
+    },
+    "ab_regen_pairs": [
+      [
+        "gold",
+        "gold-2"
+      ],
+      [
+        "v1",
+        "v2"
+      ],
+      [
+        "adv1-a",
+        "adv1-b"
+      ],
+      [
+        "adv2-a",
+        "adv2-b"
+      ]
+    ]
+  },
+  "block_unit": {
+    "summary": "paragraph",
+    "source": "heading",
+    "wergeland": "paragraph"
+  },
+  "doc_counts": {
+    "gold": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "gold-2": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "v1": {
+      "n": 13,
+      "n_blocks": 4,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "v2": {
+      "n": 12,
+      "n_blocks": 4,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "opus": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "sonnet": {
+      "n": 13,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "haiku": {
+      "n": 15,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "adv1-a": {
+      "n": 14,
+      "n_blocks": 5,
+      "tier": "adv1",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "adv1-b": {
+      "n": 9,
+      "n_blocks": 4,
+      "tier": "adv1",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "adv2-a": {
+      "n": 14,
+      "n_blocks": 5,
+      "tier": "adv2",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "adv2-b": {
+      "n": 12,
+      "n_blocks": 6,
+      "tier": "adv2",
+      "kind": "summary",
+      "article": "ibm"
+    },
+    "source": {
+      "n": 62,
+      "n_blocks": 13,
+      "tier": "source",
+      "kind": "source",
+      "article": "ibm"
+    },
+    "werg-a": {
+      "n": 11,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "wergeland"
+    },
+    "werg-b": {
+      "n": 13,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "wergeland"
+    },
+    "werg-c": {
+      "n": 14,
+      "n_blocks": 3,
+      "tier": "gold",
+      "kind": "summary",
+      "article": "wergeland"
+    },
+    "gold~bt": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "gold-2~bt": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "v1~bt": {
+      "n": 13,
+      "n_blocks": 4,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "v2~bt": {
+      "n": 12,
+      "n_blocks": 4,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "opus~bt": {
+      "n": 14,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "sonnet~bt": {
+      "n": 13,
+      "n_blocks": 6,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "haiku~bt": {
+      "n": 15,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "ibm"
+    },
+    "werg-a~bt": {
+      "n": 11,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "wergeland"
+    },
+    "werg-b~bt": {
+      "n": 13,
+      "n_blocks": 5,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "wergeland"
+    },
+    "werg-c~bt": {
+      "n": 14,
+      "n_blocks": 3,
+      "tier": "gold",
+      "kind": "paraphrase",
+      "article": "wergeland"
+    }
+  },
+  "note": "two articles (IBM exec-summaries + Wergeland AI-in-society sections); reorder pool is the byte-identical scramble upper bound; paraphrase regime = opus-mt back-translation (per-statement 1:1 reword, ~bt variants) + same-model a/b regenerations - the content-invariance controls replacing E10's embedding-jitter proxy"
+}
