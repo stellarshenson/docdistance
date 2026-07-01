@@ -3,7 +3,7 @@
 Two entry styles:
 
 - :class:`DocDistance` - load the models once, score many pairs (the pipeline-integration entry)
-- :func:`document_distance` / :func:`source_conditioned_distance` - one-shot convenience that loads
+- :func:`semantic_distance` / :func:`source_conditioned_distance` - one-shot convenience that loads
   and scores in a single call
 
 Inputs are raw text or a path to a text/markdown file (auto-detected). A leading markdown ``# `` title
@@ -23,6 +23,7 @@ from docdistance.distance import (
     SMD_MAX,
     DistanceResult,
     SourceConditionedResult,
+    StructuralResult,
 )
 from docdistance.encoders import Segmenter, load_encoder, load_nli, load_reranker
 
@@ -122,7 +123,7 @@ def _statement_flows(
     return out
 
 
-def _build_transport_map(
+def _build_semantic_details(
     sa: list[str],
     ea: np.ndarray,
     sb: list[str],
@@ -133,24 +134,30 @@ def _build_transport_map(
     """A JSON-serializable transport map: each statement of A → the B statements its OT mass flows to.
 
     The exact optimal-transport coupling behind the symmetric distance - ``weight`` is the fraction of
-    statement A[i]'s mass landing on B[j], ``cost`` the ground distance of that match. Anisotropy removal
-    is applied the same way as :func:`~docdistance.distance.compute_distance`, so the map reflects the
-    same geometry the distance is scored on.
+    statement A[i]'s mass landing on B[j], ``cost`` the ground distance of that match. Each flow carries
+    a ``changed`` flag: whether its best-match (highest-weight) ground cost exceeds ``DIFF_CHANGED_COST``.
+    Anisotropy removal is applied the same way as :func:`~docdistance.distance.compute_distance`, so the
+    map reflects the same geometry the distance is scored on.
     """
     if anisotropy:
         fixed = _core.all_but_the_top({"a": ea, "b": eb}, k=1)
         ea, eb = fixed["a"], fixed["b"]
     plan = _core.transport_plan(ea, eb)
     cost = _core.cost_matrix(ea, eb)
+    flows = _statement_flows(sa, sb, plan, cost)
+    for flow in flows:
+        matches = flow["matches"]
+        # flows are weight-descending, so matches[0] is the best (highest-weight) match
+        flow["changed"] = bool(matches and matches[0]["cost"] > DIFF_CHANGED_COST)
     return {
         "smd": round(float((plan * cost).sum()), 6),
         "anisotropy": anisotropy,
         "n_statements": {"a": len(sa), "b": len(sb)},
-        "flows": _statement_flows(sa, sb, plan, cost),
+        "flows": flows,
     }
 
 
-def _build_diff(
+def _build_structural_details(
     sa: list[str],
     ea: np.ndarray,
     sb: list[str],
@@ -158,13 +165,13 @@ def _build_diff(
     *,
     anisotropy: bool = False,
 ) -> dict:
-    """A JSON-serializable semantic + structural diff: per A statement, its aligned B statement.
+    """A JSON-serializable structural (order) projection: per A statement, its aligned B statement + displacement.
 
     Content (``smd``) and structure (``order_gap``, the E11-H55 OPW order-gap) are reported separately;
     ``structure_closeness`` is the shipped SOTA readout ``closeness(order_gap)`` on the SMD scale
-    (1 = same order). Each statement carries its crisp exact-EMD ``target``, ``semantic_gap`` (ground
-    cost of the match) and rank ``displacement`` from that alignment (the per-statement signal comes from
-    the crisp coupling, not the soft OPW plan). Anisotropy removal is applied as in :func:`_build_transport_map`.
+    (1 = same order). Each statement carries its crisp exact-EMD ``target`` and rank ``displacement`` from
+    that alignment (the per-statement signal comes from the crisp coupling, not the soft OPW plan).
+    Anisotropy removal is applied as in :func:`_build_semantic_details`.
     """
     if anisotropy:
         fixed = _core.all_but_the_top({"a": ea, "b": eb}, k=1)
@@ -172,24 +179,20 @@ def _build_diff(
     cost = _core.cost_matrix(ea, eb)
     plan = _core.transport_plan(ea, eb)
     align = _core.order_alignment(ea, eb)  # crisp exact-EMD alignment (diagonal tie-break)
-    order = np.argsort(np.argsort(align))
-    disp = order - np.arange(len(order))  # rank shift; 0 = in place
+    disp = _core.structure_displacement(ea, eb)  # rank shift; 0 = in place
     d_smd = float((plan * cost).sum())
     order_gap = _core.opw_gap(ea, eb)
     statements = []
     for i in range(len(sa)):
         j = int(align[i])
-        gap = round(float(cost[i, j]), 4)
         statements.append(
             {
                 "index": i,
                 "text": sa[i],
                 "target_index": j,
                 "target_text": sb[j],
-                "semantic_gap": gap,  # 0 = identical meaning, higher = content drifted
                 "displacement": int(disp[i]),  # position shift; 0 = in place
                 "moved": bool(disp[i] != 0),
-                "changed": bool(gap > DIFF_CHANGED_COST),
             }
         )
     return {
@@ -268,7 +271,7 @@ class DocDistance:
         ]
         return R, self._nli.entail(premises, doc_sents)
 
-    def distance(
+    def semantic_distance(
         self,
         a: str | Path,
         b: str | Path,
@@ -281,7 +284,7 @@ class DocDistance:
             self.embed(a), self.embed(b), anisotropy=anisotropy, threshold=threshold
         )
 
-    def distance_with_map(
+    def semantic_distance_with_details(
         self,
         a: str | Path,
         b: str | Path,
@@ -294,24 +297,37 @@ class DocDistance:
         sa, ea = self.embed_statements(a)
         sb, eb = self.embed_statements(b)
         result = _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
-        tmap = _build_transport_map(sa, ea, sb, eb, anisotropy=anisotropy)
-        return result, tmap
+        details = _build_semantic_details(sa, ea, sb, eb, anisotropy=anisotropy)
+        return result, details
 
-    def distance_with_diff(
+    def structural_distance(
         self,
         a: str | Path,
         b: str | Path,
         *,
         anisotropy: bool = False,
         threshold: float = DEFAULT_THRESHOLD,
-    ) -> tuple[DistanceResult, dict]:
-        """The symmetric distance result and the semantic + structural diff, sharing one encode pass."""
+    ) -> StructuralResult:
+        settings.require_ready("wmd")
+        emb_a = self.embed(a)
+        emb_b = self.embed(b)
+        return _core.compute_structural(emb_a, emb_b, anisotropy=anisotropy, threshold=threshold)
+
+    def structural_distance_with_details(
+        self,
+        a: str | Path,
+        b: str | Path,
+        *,
+        anisotropy: bool = False,
+        threshold: float = DEFAULT_THRESHOLD,
+    ) -> tuple[StructuralResult, dict]:
+        """The structural (order) distance result and the per-statement displacement details, sharing one encode pass."""
         settings.require_ready("wmd")
         sa, ea = self.embed_statements(a)
         sb, eb = self.embed_statements(b)
-        result = _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
-        diff = _build_diff(sa, ea, sb, eb, anisotropy=anisotropy)
-        return result, diff
+        result = _core.compute_structural(ea, eb, anisotropy=anisotropy, threshold=threshold)
+        details = _build_structural_details(sa, ea, sb, eb, anisotropy=anisotropy)
+        return result, details
 
     def distance_wrt_source(
         self,
@@ -370,7 +386,7 @@ class DocDistance:
         return result, smap
 
 
-def document_distance(
+def semantic_distance(
     a: str | Path,
     b: str | Path,
     *,
@@ -381,7 +397,23 @@ def document_distance(
     device: str | None = None,
 ) -> DistanceResult:
     """Symmetric Statement Mover's Distance between documents ``a`` and ``b`` (loads models, then scores)."""
-    return DocDistance(backend=backend, offline=offline, device=device).distance(
+    return DocDistance(backend=backend, offline=offline, device=device).semantic_distance(
+        a, b, anisotropy=anisotropy, threshold=threshold
+    )
+
+
+def structural_distance(
+    a: str | Path,
+    b: str | Path,
+    *,
+    backend: str = "openvino",
+    anisotropy: bool = False,
+    threshold: float = DEFAULT_THRESHOLD,
+    offline: bool = True,
+    device: str | None = None,
+) -> StructuralResult:
+    """Structural (order) distance between documents ``a`` and ``b`` (loads models, then scores)."""
+    return DocDistance(backend=backend, offline=offline, device=device).structural_distance(
         a, b, anisotropy=anisotropy, threshold=threshold
     )
 

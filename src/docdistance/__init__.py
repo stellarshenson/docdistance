@@ -5,9 +5,11 @@ from docdistance.bootstrap import init
 from docdistance.distance import (
     DistanceResult,
     SourceConditionedResult,
+    StructuralResult,
     closeness,
     compute_distance,
     compute_source_conditioned,
+    compute_structural,
     grounding_blend,
     grounding_residual,
     opw_cost,
@@ -22,8 +24,9 @@ from docdistance.distance import (
 )
 from docdistance.pipeline import (
     DocDistance,
-    document_distance,
+    semantic_distance,
     source_conditioned_distance,
+    structural_distance,
 )
 from docdistance.settings import NotInitializedError
 
@@ -36,12 +39,15 @@ __all__ = [
     "DocDistance",
     "DistanceResult",
     "SourceConditionedResult",
+    "StructuralResult",
     "NotInitializedError",
     "init",
-    "document_distance",
+    "semantic_distance",
+    "structural_distance",
     "source_conditioned_distance",
     "compute_distance",
     "compute_source_conditioned",
+    "compute_structural",
     "grounding_residual",
     "grounding_blend",
     "smd",

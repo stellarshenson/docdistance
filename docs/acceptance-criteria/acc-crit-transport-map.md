@@ -1,6 +1,6 @@
 # Acceptance Criteria - Transport Map
 
-Optional interpretable output exposing the exact optimal-transport coupling behind the symmetric Statement Mover's Distance - for each statement of A, the statements of B its transport mass flows to, with the mass fraction and the ground cost of each match. Surfaced as the CLI flag `--transport-map-json FILE` and the Python method `DocDistance.distance_with_map`; the raw coupling is `transport_plan(X, Y)`. See [Structure Diff](acc-crit-structure-diff.md) for the structural (order) companion that pairs this content map with the OPW order-gap.
+Optional interpretable output exposing the exact optimal-transport coupling behind the symmetric Statement Mover's Distance - for each statement of A, the statements of B its transport mass flows to, with the mass fraction and the ground cost of each match. Surfaced as the CLI flag `--details-json FILE` and the Python method `DocDistance.semantic_distance_with_details`; the raw coupling is `transport_plan(X, Y)`. See [Structure Diff](acc-crit-structure-diff.md) for the structural (order) companion that pairs this content map with the OPW order-gap.
 
 - [x] **Core plan** - `transport_plan(X, Y)` returns the exact `ot.emd` coupling, shape `[n_X, n_Y]`, pure numpy, no model load
   - log: 2026-06-22 implemented (v1.0.16)
@@ -8,9 +8,9 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Realizes SMD** - `(transport_plan(X,Y) * cost_matrix(X,Y)).sum()` equals `smd(X, Y)` within `1e-6`
   - log: 2026-06-22 implemented (v1.0.16)
-- [x] **Map builder** - `_build_transport_map(sa, ea, sb, eb, *, anisotropy=False)` returns `{smd, anisotropy, n_statements, flows}`, pure, no model load
+- [x] **Map builder** - `_build_semantic_details(sa, ea, sb, eb, *, anisotropy=False)` returns `{smd, anisotropy, n_statements, flows}`, pure, no model load
   - log: 2026-06-22 implemented (v1.0.16)
-- [x] **Flows shape** - `flows` is one entry per A statement `{index, text, matches}`, `len(flows) == n_a`
+- [x] **Flows shape** - `flows` is one entry per A statement `{index, text, matches, changed}`, `len(flows) == n_a`
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Match shape** - each match is `{target_index, target_text, weight, cost}`
   - log: 2026-06-22 implemented (v1.0.16)
@@ -20,6 +20,8 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Match ordering** - matches per statement sorted by descending weight
   - log: 2026-06-22 implemented (v1.0.16)
+- [x] **Changed flag** - `changed` = the A statement's best (lowest-`cost`) match has `cost` above the change cutoff (best-match cost > cutoff); `true` flags a statement whose aligned meaning drifted
+  - log: 2026-07-01 added with the semantic/structural split (v1.1.2)
 - [x] **Sparse** - only nonzero flows kept (raw mass below `1e-9` dropped); network-simplex sparsity keeps the map compact
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Interpretable** - statement texts inline (`text`, `target_text`), so a human reads the mapping directly and a machine consumes the JSON without the embedding arrays
@@ -28,9 +30,9 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **map.smd matches** - the `smd` field of the written map equals the printed SMD of the same pair
   - log: 2026-06-22 verified on ibm-ai-adoption fixtures (v1.0.16)
-- [x] **API method** - `DocDistance.distance_with_map(a, b, *, anisotropy=False, threshold=0.725)` returns `(DistanceResult, dict)` sharing one encode pass
+- [x] **API method** - `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` returns `(DistanceResult, dict)` sharing one encode pass
   - log: 2026-06-22 implemented (v1.0.16)
-- [x] **CLI flag** - `distance --transport-map-json FILE` writes the map JSON to `FILE`
+- [x] **CLI flag** - `distance-semantic --details-json FILE` writes the map JSON to `FILE`
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **CLI result preserved** - the distance result still prints to stdout as usual when the flag is set
   - log: 2026-06-22 implemented (v1.0.16)
@@ -49,7 +51,7 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
 
 ## API
 
-- CLI `docdistance distance A B --transport-map-json FILE` -> writes `FILE`, still prints the result; stderr note `transport map written: FILE (A n -> B m statements)`
-- Python `DocDistance.distance_with_map(a, b, *, anisotropy=False, threshold=0.725)` -> `(DistanceResult, map)`
+- CLI `docdistance distance-semantic A B --details-json FILE` -> writes `FILE`, still prints the result; stderr note `transport map written: FILE (A n -> B m statements)`
+- Python `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` -> `(DistanceResult, map)`
 - Python `transport_plan(X, Y)` -> `ndarray [n_X, n_Y]` (raw coupling, embeddings in hand)
-- Map shape: `{smd: float, anisotropy: bool, n_statements: {a, b}, flows: [{index, text, matches: [{target_index, target_text, weight, cost}]}]}`
+- Map shape: `{smd: float, anisotropy: bool, n_statements: {a, b}, flows: [{index, text, matches: [{target_index, target_text, weight, cost}], changed}]}`

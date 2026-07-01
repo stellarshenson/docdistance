@@ -21,15 +21,15 @@ The following workspace rules are STRICTLY ENFORCED for this project:
 
 ## Project Context
 
-`docdistance-estimator` computes meaningful semantic distance between two documents using the
+`docdistance` computes meaningful semantic distance between two documents using the
 Word Mover's Distance (WMD) / Optimal Transport theory from Kusner et al. 2015 (`From Word
 Embeddings To Document Distances`). The intended use is agentic document conversion and extraction
 pipelines that operate through frontier models, where token-level logits are unavailable and KL
 divergence cannot be computed directly - WMD provides an embedding-grounded distance instead.
 
 **Technology Stack**:
-- Python 3.13, `uv` environment manager, environment name `docdistance-estimator`
-- Package layout under `src/docdistance_estimator/` (config, dataset, features, modeling, plots)
+- Python 3.13, `uv` environment manager, environment name `docdistance`
+- Package layout under `src/docdistance/` (config, dataset, features, modeling, plots)
 - `typer` CLI, `loguru` logging, `tqdm` progress, `python-dotenv` for secrets
 - `ruff` for linting and formatting, `pytest` for tests
 - Scaffolded from copier-data-science template v1.3.9; secrets via encrypted `.env`

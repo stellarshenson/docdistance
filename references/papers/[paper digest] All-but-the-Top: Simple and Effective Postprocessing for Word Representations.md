@@ -2,7 +2,7 @@
 
 **Authors**: Jiaqi Mu, Pramod Viswanath (University of Illinois at Urbana-Champaign)
 **Venue**: ICLR 2018
-**Source**: `[paper] All-but-the-Top: Simple and Effective Postprocessing for Word Representations.pdf`
+**Source**: [All-but-the-Top: Simple and Effective Postprocessing for Word Representations](https://arxiv.org/abs/1702.01417)
 
 ## Overview
 

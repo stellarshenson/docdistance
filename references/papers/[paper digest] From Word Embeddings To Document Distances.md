@@ -2,7 +2,7 @@
 
 **Authors**: Matt J. Kusner, Yu Sun, Nicholas I. Kolkin, Kilian Q. Weinberger (Washington University in St. Louis)
 **Venue**: ICML 2015 (JMLR W&CP vol. 37)
-**Source**: `[paper] From Word Embeddings To Document Distances.pdf`
+**Source**: [From Word Embeddings To Document Distances](https://proceedings.mlr.press/v37/kusnerb15.html)
 
 ## Overview
 

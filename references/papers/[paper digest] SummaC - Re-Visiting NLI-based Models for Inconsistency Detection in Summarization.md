@@ -2,7 +2,7 @@
 
 **Authors**: Philippe Laban (UC Berkeley), Tobias Schnabel (Microsoft), Paul N. Bennett (Microsoft), Marti A. Hearst (UC Berkeley)
 **Venue**: Transactions of the ACL (TACL) 2022 - arXiv:2111.09525, 18 Nov 2021
-**Source**: `[paper] SummaC - Re-Visiting NLI-based Models for Inconsistency Detection in Summarization.pdf`
+**Source**: [SummaC: Re-Visiting NLI-based Models for Inconsistency Detection in Summarization](https://arxiv.org/abs/2111.09525)
 
 ## Overview
 

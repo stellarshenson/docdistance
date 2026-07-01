@@ -2,7 +2,7 @@
 
 **Authors**: Vincent A. Cicirello (Computer Science, Stockton University)
 **Venue**: 2019 technical report (arXiv 1905.02752, cs.DM; published EAI Transactions on Industrial Networks and Intelligent Systems, 2020)
-**Source**: `[paper] Kendall Tau Sequence Distance - Extending Kendall Tau from Ranks to Sequences.pdf`
+**Source**: [Kendall Tau Sequence Distance: Extending Kendall Tau from Ranks to Sequences](https://arxiv.org/abs/1905.02752)
 
 ## Overview
 

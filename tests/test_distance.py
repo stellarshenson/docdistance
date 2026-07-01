@@ -97,6 +97,27 @@ def test_compute_distance_result():
     assert set(r.to_dict()) >= {"smd", "closeness", "verdict", "threshold"}
 
 
+def test_compute_structural_result():
+    """compute_structural assembles a StructuralResult: order-gap axis, closeness readout, str verdict."""
+    r = d.compute_structural(_emb(9, seed=14), _emb(8, seed=15))
+    assert isinstance(r.verdict, str) and r.verdict in ("similar", "not similar")
+    assert r.order_gap >= 0.0
+    assert 0.0 <= r.structure_closeness <= 1.0
+    assert r.smd >= 0.0
+    assert r.n_statements_a == 9 and r.n_statements_b == 8
+    assert set(r.to_dict()) == {
+        "smd",
+        "order_gap",
+        "structure_closeness",
+        "threshold",
+        "verdict",
+        "anisotropy",
+        "n_statements_a",
+        "n_statements_b",
+    }
+    assert d.StructuralResult(**r.to_dict()) == r  # to_dict round-trips
+
+
 def test_compute_source_conditioned_result():
     r = d.compute_source_conditioned(_emb(7, seed=16), _emb(6, seed=17), _emb(10, seed=18))
     assert r.n_statements_source == 10

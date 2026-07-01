@@ -2,7 +2,7 @@
 
 **Authors**: Matheus Werner, Eduardo Laber (Departamento de Informática, PUC-Rio, Rio de Janeiro, Brazil)
 **Venue**: arXiv:1912.00509v2 [cs.CL], 8 May 2020 (ECAI 2020)
-**Source**: `[paper] Speeding up Word Mover's Distance and its variants via properties of distances between embeddings.pdf`
+**Source**: [Speeding up Word Mover's Distance and its variants via properties of distances between embeddings](https://arxiv.org/abs/1912.00509)
 
 ## Overview
 

@@ -2,7 +2,7 @@
 
 **Authors**: Bing Su (Institute of Software, Chinese Academy of Sciences), Gang Hua (Microsoft Research)
 **Venue**: CVPR 2017 - IEEE Conference on Computer Vision and Pattern Recognition (extended as Order-Preserving Optimal Transport, TPAMI 2018)
-**Source**: `[paper] Order-Preserving Wasserstein Distance for Sequence Matching.pdf`
+**Source**: [Order-Preserving Wasserstein Distance for Sequence Matching](https://openaccess.thecvf.com/content_cvpr_2017/html/Su_Order-Preserving_Wasserstein_Distance_CVPR_2017_paper.html)
 
 ## Overview
 

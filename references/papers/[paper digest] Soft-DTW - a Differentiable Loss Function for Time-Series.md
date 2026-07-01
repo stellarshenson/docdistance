@@ -2,7 +2,7 @@
 
 **Authors**: Marco Cuturi (CREST, ENSAE, Université Paris-Saclay), Mathieu Blondel (NTT Communication Science Laboratories)
 **Venue**: ICML 2017 - 34th International Conference on Machine Learning, PMLR 70
-**Source**: `[paper] Soft-DTW - a Differentiable Loss Function for Time-Series.pdf`
+**Source**: [Soft-DTW: a Differentiable Loss Function for Time-Series](https://arxiv.org/abs/1703.01541)
 
 ## Overview
 

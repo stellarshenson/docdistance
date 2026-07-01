@@ -2,7 +2,7 @@
 
 **Authors**: Mathieu Blondel, Arthur Mensch, Jean-Philippe Vert (Google Research, Brain team; École Normale Supérieure)
 **Venue**: AISTATS 2021 - 24th International Conference on Artificial Intelligence and Statistics, PMLR 130
-**Source**: `[paper] Differentiable Divergences Between Time Series.pdf`
+**Source**: [Differentiable Divergences Between Time Series](https://arxiv.org/abs/2010.08354)
 
 ## Overview
 

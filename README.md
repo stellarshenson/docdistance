@@ -5,6 +5,20 @@
 [![Total PyPI downloads](https://static.pepy.tech/badge/docdistance)](https://pepy.tech/project/docdistance)
 [![Brought To You By HUMES Institute](https://img.shields.io/badge/Brought%20To%20You%20By-HUMES%20Institute-C19A6B?style=flat)](https://humes.pl/en/)
 
+## Overview
+
+docdistance measures how far apart two documents are - in meaning and in order - and points to exactly which sentences changed. It is built for pipelines where an AI model rewrites, converts, extracts, or summarizes a document and you need to check, automatically, whether the result still says the same thing.
+
+## Features
+
+- **Two kinds of distance** - one for meaning (did the content change?), one for order (was the same content rearranged?)
+- **Points to what changed** - a per-statement diff that tells a reworded sentence apart from one that only moved, not just a single score
+- **Source-aware option** - compare two documents against a shared source to see which one drifted, and whether it dropped or invented content
+- **No model internals needed** - works from the text alone, so it runs on frontier-model output where token probabilities are unavailable
+- **Runs anywhere** - CPU-only by default (OpenVINO INT8), sub-millisecond for the meaning score, no GPU required
+- **CLI or Python** - `docdistance distance-semantic a.md b.md`, or `from docdistance import semantic_distance`
+- **Interpretable by design** - every score comes with the statement-to-statement alignment behind it
+
 Semantic distance between two documents via Statement Mover's Distance - optimal transport over mmBERT statement embeddings, after Kusner et al. 2015 ([*From Word Embeddings To Document Distances*](references/papers/%5Bpaper%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.pdf)). A thin frontend to the library; the SOTA docs carry the mechanics, benchmarks, and validation.
 
 <p align="center">
@@ -22,8 +36,9 @@ A document distance grounded in embeddings and optimal transport, not surface ov
 
 - **WMD** - Word Mover's Distance (Kusner et al. 2015) casts document similarity as optimal transport between embedded tokens
 - **SMD** - this project lifts it to statements: segment, embed, transport between the two statement clouds
-- **Beyond cosine** - whole-document cosine collapses when the same claims sit in a different place or order; statement-level transport is position-invariant
-- **Metric** - the ground cost `√(2 − 2cos)` on L2-normalized embeddings is a metric, so the document distance is one too
+- **Beyond cosine** - whole-document cosine collapses when the same claims sit in a different place or order; statement-level content transport is position-invariant, so `distance-semantic` scores meaning regardless of where a claim sits
+- **Structure** - order is not discarded, it is resolved on a separate axis: the OPW order-gap, the extra transport cost an order-preserving plan pays over the content-optimal one - near `0` when content already lines up in order, larger on a genuine reorder; `distance-structural` reports `structure_closeness = 1 − order_gap/√2` (a score, not a metric)
+- **Metric** - the content ground cost `√(2 − 2cos)` on L2-normalized embeddings is a metric, so the semantic document distance is one too
 - **Logit-free** - an embedding-grounded alternative where token probabilities (KL divergence) are unavailable, as in frontier-model pipelines
 
 ## Method
@@ -41,10 +56,10 @@ Three stages; the transport plan is the interpretable by-product.
 
 Three reads over the same two documents; they differ in what the answer tells you and what you must supply.
 
-- **Method 1 - symmetric distance (robust, fast)** - answers *how far apart are A and B?* as one number (a 0..1 closeness plus a similar / not-similar verdict). Sub-millisecond, needs only the two documents, and is a true metric - the distance is symmetric and obeys the triangle inequality, so the numbers are consistent enough to threshold, rank and cache. The production default; use it whenever you need a reliable similarity score - dedup, drift detection, "did this conversion change the meaning?"
-- **Structural read (what moved vs what was reworded)** - shipped, and it rides on the same Method 1 pass with no extra model and no source: `--diff-json` / `distance_with_diff` return a per-statement diff where `semantic_gap` names what changed in MEANING and `displacement` names what MOVED in order, plus a whole-document `structure_closeness` (0..1, `1` = same order) via the OPW order-gap. Use it to localize an edit - which statements were reworded, which were only rearranged (see [Structure distance](#structure-distance-experimental) below, and a worked [map + diff interpretation](docs/example-map-interpretations.md))
+- **Method 1 - semantic distance (robust, fast)** - `distance-semantic` answers *how far apart are A and B in meaning?* as one number (a 0..1 closeness plus a similar / not-similar verdict). Sub-millisecond, needs only the two documents, and is a true metric - the distance is symmetric and obeys the triangle inequality, so the numbers are consistent enough to threshold, rank and cache. The production default; use it whenever you need a reliable similarity score - dedup, drift detection, "did this conversion change the meaning?"
+- **Structural read (what moved vs what stayed put)** - `distance-structural` is a first-class command, no extra model and no source: it returns a per-statement order projection where `displacement` / `moved` name what MOVED in arrangement, plus a whole-document `order_gap` and `structure_closeness` (0..1, `1` = same order) via the OPW order-gap. Pair it with `distance-semantic`'s content details (`changed`) to tell a reword from a pure rearrangement (see [Structure distance](#structure-distance) below, and a worked [map + diff interpretation](docs/example-map-interpretations.md))
 - **Method 2 - source-conditioned `d(A, B | S)` (slower, experimental)** - answers *why do A and B differ, given a shared source S?* You supply `S`, and instead of one number it returns two axes: a selection axis (did A and B pick different parts of the source?) and a grounding axis (did one drift from the source - dropped content vs unsupported or fabricated content?). It runs a cross-encoder × NLI pass (~seconds on GPU, far slower on CPU). Use it to audit a summary or an extraction against its source, when "how far" is not enough and you need to name the failure
-- **Which to pick** - default to Method 1 for a similarity number, add the structural diff when you need to see *what* changed and where, and reach for Method 2 only when you hold the shared source and need to know *why* two documents derived from it diverge. Method 2's value is interpretation and ordering the failure modes correctly, not a higher pass rate, and it is validated on a single fixture so far - validate on your own sources first. (Three distances for two documents: we started with one, and optimal transport turned out to be a slippery slope.)
+- **Which to pick** - default to Method 1 for a similarity number, add the structural read when you need to see *what* moved and where, and reach for Method 2 only when you hold the shared source and need to know *why* two documents derived from it diverge. Method 2's value is interpretation and ordering the failure modes correctly, not a higher pass rate, and it is validated on a single fixture so far - validate on your own sources first. (Three distances for two documents: we started with one, and optimal transport turned out to be a slippery slope.)
 
 ## Usage
 
@@ -56,10 +71,13 @@ docdistance init wmd                           # provision the symmetric-distanc
 docdistance init wmd-wrt-source                # + the reranker + NLI grounding models
 docdistance --help                             # full reference (or <command> --help)
 
-# method 1 - symmetric distance (robust, fast, the default)
-docdistance distance a.md b.md                 # rich verdict (add --json for machine-readable)
-docdistance distance a.md b.md --transport-map-json map.json   # + statement → statement map
-docdistance distance a.md b.md --diff-json diff.json           # + interpretable semantic + structural diff
+# method 1 - semantic distance (robust, fast, the default)
+docdistance distance-semantic a.md b.md                 # rich verdict (add --json for machine-readable)
+docdistance distance-semantic a.md b.md --details-json details.json   # + statement → statement content alignment
+
+# structural read - order / arrangement distance
+docdistance distance-structural a.md b.md                 # order-gap verdict (add --json for machine-readable)
+docdistance distance-structural a.md b.md --details-json details.json   # + per-statement order projection
 
 # method 2 - source-conditioned d(A,B|S) (slower, runs the reranker × NLI grounding)
 docdistance distance-wrt-source a.md b.md --source s.md                       # two-axis verdict
@@ -72,15 +90,18 @@ Or from Python:
 
 ```python
 import docdistance
-from docdistance import document_distance, source_conditioned_distance
+from docdistance import semantic_distance, structural_distance, source_conditioned_distance
 
 docdistance.init("wmd")                                         # provision once (writes docdistance.json)
-r = document_distance("report_v1.md", "report_v2.md")           # method 1
+r = semantic_distance("report_v1.md", "report_v2.md")           # method 1 - content
 print(r.closeness, r.verdict)               # 0..1 closeness, "similar" | "not similar"
 
+sr = structural_distance("report_v1.md", "report_v2.md")        # structural read - order
+print(sr.structure_closeness, sr.order_gap, sr.verdict)   # 0..1 structure readout, order-gap, verdict
+
 from docdistance import DocDistance
-result, diff = DocDistance().distance_with_diff("report_v1.md", "report_v2.md")   # method 1 + interpretable diff
-print(diff["smd"], diff["order_gap"], diff["structure_closeness"])   # semantic distance, structural order-gap, 0..1 structure readout
+result, details = DocDistance().structural_distance_with_details("report_v1.md", "report_v2.md")   # StructuralResult + order details
+print(details["smd"], details["order_gap"], details["structure_closeness"])   # semantic distance, structural order-gap, 0..1 structure readout
 
 docdistance.init("wmd-wrt-source")                              # + reranker + NLI grounding models
 s = source_conditioned_distance("sum_a.md", "sum_b.md", source="article.md")  # method 2
@@ -92,7 +113,7 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 - **Method 1 - closeness 0..1** - `1.0` identical, `0.0` unrelated. Good (same meaning): closeness near 1, verdict `similar` (default cutoff `0.725`, set with `--threshold`). Bad (meaning changed): closeness falls toward 0, verdict flips to `not similar`
 - **Method 2 - two axes, lower is closer** - `d_sel` near 0 means A and B drew on the same source content, high means they picked different parts; `grd_a` / `grd_b` are each document's reranker x NLI grounding residual (E03-H11 relevance-gated ungrounded mass) - low means it stays grounded in `S`, high flags drift (dropped or unsupported content). Good: both grounding residuals and `d_sel` low. Bad: a grounding residual spikes for the document that drifted
 
-- **Transport map** - add `--transport-map-json map.json` to `distance` to also write the optimal-transport map: for every statement of A, which statements of B its mass flows to, with the `weight` (fraction of that statement's mass) and the match `cost` - the interpretable statement-to-statement alignment behind the distance, readable by a human or a machine (the same map is returned in Python by `DocDistance.distance_with_map`)
+- **Transport map** - add `--details-json details.json` to `distance-semantic` to also write the optimal-transport map: for every statement of A, which statements of B its mass flows to, with the `weight` (fraction of that statement's mass) and the match `cost` - the interpretable statement-to-statement alignment behind the distance, readable by a human or a machine (the same map is returned in Python by `DocDistance.semantic_distance_with_details`)
 - **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on
 - **Offline after init** - distance calls run fully offline once `docdistance init <mode>` has provisioned the mode (from HuggingFace, S3, or a local mirror) and written `docdistance.json`
 - **Backend** - `--backend openvino|torch`, default `openvino` (CPU INT8)
@@ -100,7 +121,7 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 
 ### Transport map output
 
-`--transport-map-json` writes the exact optimal-transport coupling behind the distance - for each statement of A, the statements of B its probability mass moves to (one flow shown, a clean 1:1 match):
+`distance-semantic --details-json` writes the exact optimal-transport coupling behind the content distance - for each statement of A, the statements of B its probability mass moves to (one flow shown, a clean 1:1 match):
 
 ```json
 {
@@ -113,7 +134,8 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
       "text": "Among large organizations with more than 1,000 …",
       "matches": [
         { "target_index": 1, "target_text": "About 42% of organizations with more than 1,000 …", "weight": 1.0, "cost": 0.2237 }
-      ]
+      ],
+      "changed": false
     }
   ]
 }
@@ -122,12 +144,13 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 - **flows** - one entry per statement of A; `index` / `text` name it, `matches` are the B statements its mass lands on
 - **weight** - fraction of that statement's mass to the target, sums to 1 per statement; a lone `1.0` is a clean 1:1 match, several smaller weights mean the statement splits across B
 - **cost** - ground distance `√(2 − 2cos)` of the matched pair; low = semantically close, high = a forced move
+- **changed** - per flow, `true` once its best-match `cost` clears the change cutoff `(1 − threshold)·√2`; the statement's content drifted rather than staying within tolerance
 - **smd** - the distance the map realizes; `weight × cost` summed over all flows equals it
 - **Reading it** - a statement mapped to its counterpart at `weight 1.0` and low `cost` is preserved; high cost or scattered weights flag a statement with no clean equivalent in B
 
-### Diff output
+### Order details output
 
-`--diff-json` writes an interpretable document diff - for every statement of A, its aligned B statement with two independent axes side by side: a semantic gap (did the MEANING change?) and an order displacement (did it MOVE?):
+`distance-structural --details-json` writes the order projection - for every statement of A, its aligned B statement and the order displacement that names what MOVED:
 
 ```json
 {
@@ -142,30 +165,27 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
       "text": "Among large organizations with more than 1,000 …",
       "target_index": 0,
       "target_text": "About 42% of organizations with more than 1,000 …",
-      "semantic_gap": 0.2237,
       "displacement": 0,
-      "moved": false,
-      "changed": false
+      "moved": false
     }
   ]
 }
 ```
 
 - **statements** - one entry per statement of A; `index` / `text` name it, `target_index` / `target_text` are its aligned counterpart in B (crisp exact-EMD alignment, not the soft OPW plan)
-- **semantic_gap** - ground cost √(2 − 2cos) of the aligned pair; `0` = identical meaning, higher = content drifted. `changed` flips true once it clears the change cutoff `DIFF_CHANGED_COST = (1 − threshold)·√2`
 - **displacement** - rank shift of the statement from its aligned position; `0` = in place, nonzero = relocated, and `moved` mirrors it as a boolean
-- **smd** - the top-level semantic distance (content only), order-invariant - the same number `distance` reports
+- **smd** - the top-level semantic distance (content only), order-invariant - the same number `distance-semantic` reports
 - **order_gap** - the H55 OPW structural distance (order-gap = OPW cost − SMD), translation-invariant and `>= 0`; `0` = same order
 - **structure_closeness** - `1 − order_gap/√2`, the shipped SOTA 0..1 readout on the same scale as SMD closeness; `1` = same order, falling toward `0` as the arrangement diverges
-- **Reading it** - `semantic_gap` isolates what changed in MEANING, `displacement` isolates what MOVED in order; a statement with `semantic_gap` near 0 but a large `displacement` was preserved yet relocated, while a high `semantic_gap` at `displacement` 0 was rewritten in place
+- **Reading it** - `displacement` isolates what MOVED in order; a statement at `displacement` 0 kept its place while a large `displacement` was relocated. To tell a reword from a pure rearrangement, read it beside `distance-semantic`'s content `changed`
 
-## Structure distance (experimental)
+## Structure distance
 
-SMD is position-invariant by design - reorder a document's statements and it barely moves. A second, structure-sensitive number tells *content drift* from *rearrangement*, and it now ships inside the interpretable diff (`distance_with_diff`, `--diff-json`), reported beside SMD. The shipped mechanism is the OPW order-gap (E11-H55); the earlier position-augmented Wasserstein metric was stress-tested against it and dropped.
+SMD is position-invariant by design - reorder a document's statements and it barely moves. A second, structure-sensitive number tells *content drift* from *rearrangement*, and it ships as its own command (`structural_distance`, `distance-structural --details-json`), reported beside SMD. The shipped mechanism is the OPW order-gap (E11-H55); the earlier position-augmented Wasserstein metric was stress-tested against it and dropped.
 
 - **OPW order-gap (H55, shipped)** - `order_gap = OPW − SMD`, the order-preserving Wasserstein cost minus the order-free SMD. Subtracting SMD cancels the content component, so only the extra cost the order constraint forces remains - a faithful reword with order kept reads ~0, a reorder with content kept reads large. Reported as `structure_closeness = 1 − order_gap/√2` on the library's 0..1 closeness scale, the same readout as semantic closeness (`1` = same order)
 - **Content-invariant, translation-invariant** - the reword reads 0.5% of a full-scramble distance (the dropped metric leaked 73.5%), it is monotone in displacement (Spearman 1.00), and it reads fractional statement rank `i/N`, not absolute position, so a uniform shift (a header inserted, everything offset, relative order intact) is invisible. A translation-invariant score, `order_gap >= 0`, not a metric - the entropic OPW carries ~4.5% triangle violations, never invoked for a pairwise arrangement read
-- **Two axes side by side** - the diff pairs semantic distance (SMD, order-invariant) with the structural order-gap; when meaning is preserved (SMD ≈ 0) but `structure_closeness` falls, the arrangement changed and nothing else. Per statement, `semantic_gap` names what changed in MEANING and `displacement` names what MOVED in order - the structural analogue of the transport map, folded into the same diff
+- **Two axes side by side** - read the structural order-gap beside the semantic distance (SMD, order-invariant); when meaning is preserved (SMD ≈ 0) but `structure_closeness` falls, the arrangement changed and nothing else. `distance-structural`'s per-statement `displacement` names what MOVED in order, and `distance-semantic`'s per-flow `changed` names what changed in MEANING - the structural analogue of the transport map
 - **The metric that was dropped** - position-augmented Wasserstein (E08-H44) is a true metric, but fuses semantic and positional cost into one distance `√((1−λ)·d_sem² + λ·d_pos²)`, so a faithful reword reads as far as a real reorder (E11) - a metric on the wrong quantity. E11 chose the order-gap and dropped it
 - **Design and evidence** - the [structure-distance SOTA](docs/solution/wmd-structure-distance-sota.md), the [experiments log](docs/experiments/wmd-structure-distance-experiments.md) (E07 the barycentric read, E08 the metric formulation, E10-H55 the order-gap mechanism, E11 the decision), and the end-to-end notebook `notebooks/12-kj-structure-distance-e2e.ipynb`
 
@@ -184,8 +204,8 @@ The SOTA documents explain how it works in detail; this README only introduces i
 
 - `docs/solution/wmd-docdistance-solution-sota.md` - source-free distance: design, mechanism, performance, validation
 - `docs/solution/wmd-source-conditioned-docdistance-solution-sota.md` - source-conditioned distance `d(A,B|S)`: two axes (selection + grounding), design, performance, limitations
-- `docs/solution/wmd-structure-distance-sota.md` - structure-sensitive distance (experimental): the OPW order-gap (`OPW − SMD`) and `structure_closeness`, shipped in the diff; theory, the structural mapping, limitations
-- `docs/example-map-interpretations.md` - a worked, grounded example: reading the `--diff-json` / `--transport-map-json` outputs to localize what changed between two documents (blind-recovery of four known edits)
+- `docs/solution/wmd-structure-distance-sota.md` - structure-sensitive distance: the OPW order-gap (`OPW − SMD`) and `structure_closeness`, shipped as `distance-structural`; theory, the structural mapping, limitations
+- `docs/example-map-interpretations.md` - a worked, grounded example: reading the `--details-json` outputs of `distance-semantic` and `distance-structural` to localize what changed between two documents (blind-recovery of four known edits)
 - `docs/mmbert-quantization-solution.md` - the INT8 / FP8 statement encoder
 - [*From Word Embeddings To Document Distances*](references/papers/%5Bpaper%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.pdf) - Kusner et al. 2015, the WMD theory ([digest](references/papers/%5Bpaper%20digest%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.md))
 - [*All-but-the-Top: Simple and Effective Postprocessing for Word Representations*](references/papers/%5Bpaper%5D%20All-but-the-Top%3A%20Simple%20and%20Effective%20Postprocessing%20for%20Word%20Representations.pdf) - Mu & Viswanath, ICLR 2018, the anisotropy postprocessing ([digest](references/papers/%5Bpaper%20digest%5D%20All-but-the-Top%3A%20Simple%20and%20Effective%20Postprocessing%20for%20Word%20Representations.md))

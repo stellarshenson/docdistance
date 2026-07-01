@@ -2,7 +2,7 @@
 
 **Authors**: Fabian Lim, Laura Wynter, Shiau Hong Lim (IBM Research, Singapore)
 **Venue**: ICML 2022 - 39th International Conference on Machine Learning, PMLR 162
-**Source**: `[paper] Order Constraints in Optimal Transport.pdf`
+**Source**: [Order Constraints in Optimal Transport](https://arxiv.org/abs/2110.07275)
 
 ## Overview
 

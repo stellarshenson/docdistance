@@ -158,7 +158,7 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 - **Experiments** - `docs/experiments/wmd-docdistance-experiments.md` (batch E01: five contrast levers, one promoted, four refuted)
 - **Functions** - `smd` (`ot.emd2`), `wcd` (centroid norm), `rwmd` (one-sided relaxation), `closeness` (`1 − SMD/√2`), `all_but_the_top` (anisotropy); pairwise verdict threshold is a heuristic closeness cutoff, calibrate per corpus
 - **References** - WMD (Kusner et al. 2015) and all-but-the-top postprocessing (Mu & Viswanath, ICLR 2018); digests under `../references/papers/`
-- **Library** - shipped as the `docdistance` package: `src/docdistance/distance.py` (pure-numpy OT core), `encoders.py` (SAT + mmBERT INT8 / torch backends), `pipeline.py` (`document_distance`, `source_conditioned_distance`, the reusable `DocDistance` class), and a `docdistance` CLI (`distance`, `distance-wrt-source`, `install`)
+- **Library** - shipped as the `docdistance` package: `src/docdistance/distance.py` (pure-numpy OT core), `encoders.py` (SAT + mmBERT INT8 / torch backends), `pipeline.py` (`semantic_distance`, `source_conditioned_distance`, the reusable `DocDistance` class), and a `docdistance` CLI (`distance`, `distance-wrt-source`, `install`)
 - **Library validation** - `notebooks/09-kj-docdistance-api-e2e.ipynb` reproduces the `0/24` ordinality through the public API and confirms openvino-vs-torch backend agreement (Pearson 0.9991)
 
 ## Conclusions

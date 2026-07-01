@@ -1,9 +1,9 @@
-"""Offline tests for the structure-diff feature (OPW order-gap + per-statement semantic/structural diff).
+"""Offline tests for the structural (order) feature (OPW order-gap + per-statement displacement).
 
-No models load - the OPW plan/gap, the crisp alignment and ``_build_diff`` all take synthetic
-L2-normalized embedding arrays, so the whole battery runs in the lightweight uv ``.venv``. Covers
-the core OPW math, order vs content sensitivity, the crisp alignment/displacement recovery and the
-JSON-serializable diff dict shape.
+No models load - the OPW plan/gap, the crisp alignment and ``_build_structural_details`` all take
+synthetic L2-normalized embedding arrays, so the whole battery runs in the lightweight uv ``.venv``.
+Covers the core OPW math, order vs content sensitivity, the crisp alignment/displacement recovery and
+the JSON-serializable structural details dict shape.
 """
 
 import json
@@ -13,7 +13,7 @@ import pytest
 
 from docdistance import distance as d
 from docdistance import pipeline
-from docdistance.pipeline import DIFF_CHANGED_COST, _build_diff
+from docdistance.pipeline import _build_structural_details
 
 
 def _emb(n, dim=32, seed=0):
@@ -125,13 +125,13 @@ def test_displacement_recovers_a_cyclic_shift():
     assert (disp != 0).all()
 
 
-# --- _build_diff dict shape and semantics --------------------------------------------------------
+# --- _build_structural_details dict shape and semantics ------------------------------------------
 
 
-def test_build_diff_top_level_keys():
+def test_build_structural_details_top_level_keys():
     sa, ea = [f"a{i}" for i in range(5)], _emb(5, seed=11)
     sb, eb = [f"b{i}" for i in range(4)], _emb(4, seed=12)
-    diff = _build_diff(sa, ea, sb, eb)
+    diff = _build_structural_details(sa, ea, sb, eb)
     assert set(diff) == {
         "smd",
         "order_gap",
@@ -146,10 +146,10 @@ def test_build_diff_top_level_keys():
     assert diff["order_gap"] >= 0.0
 
 
-def test_build_diff_statement_records_and_json_serializable():
+def test_build_structural_details_statement_records_and_json_serializable():
     sa, ea = [f"a{i}" for i in range(5)], _emb(5, seed=13)
     sb, eb = [f"b{i}" for i in range(5)], _emb(5, seed=14)
-    diff = _build_diff(sa, ea, sb, eb)
+    diff = _build_structural_details(sa, ea, sb, eb)
     assert len(diff["statements"]) == len(sa)
     for i, st in enumerate(diff["statements"]):
         assert set(st) == {
@@ -157,73 +157,61 @@ def test_build_diff_statement_records_and_json_serializable():
             "text",
             "target_index",
             "target_text",
-            "semantic_gap",
             "displacement",
             "moved",
-            "changed",
         }
         assert st["index"] == i and st["text"] == sa[i]
         assert 0 <= st["target_index"] < len(sb)
         assert st["target_text"] == sb[st["target_index"]]
-        assert st["semantic_gap"] >= 0.0
         assert st["moved"] == (st["displacement"] != 0)
-        assert st["changed"] == (st["semantic_gap"] > DIFF_CHANGED_COST)
     json.dumps(diff)  # whole dict round-trips through JSON
 
 
-def test_build_diff_structure_closeness_matches_core_and_range():
+def test_build_structural_details_structure_closeness_matches_core_and_range():
     sa, ea = [f"a{i}" for i in range(6)], _emb(6, seed=15)
     sb, eb = [f"b{i}" for i in range(6)], _emb(6, seed=16)
-    diff = _build_diff(sa, ea, sb, eb)
+    diff = _build_structural_details(sa, ea, sb, eb)
     assert 0.0 <= diff["structure_closeness"] <= 1.0
     assert diff["structure_closeness"] == pytest.approx(d.closeness(diff["order_gap"]), abs=1e-6)
 
 
-def test_build_diff_identical_is_closeness_one_and_gaps_zero():
+def test_build_structural_details_identical_is_closeness_one_and_gaps_zero():
     s, e = [f"s{i}" for i in range(6)], _emb(6, seed=17)
-    diff = _build_diff(s, e, s, e)
+    diff = _build_structural_details(s, e, s, e)
     assert diff["smd"] == pytest.approx(0.0, abs=1e-5)
     assert diff["structure_closeness"] == pytest.approx(1.0, abs=1e-6)
     for st in diff["statements"]:
         assert st["target_index"] == st["index"]  # each statement aligns to its twin
-        assert st["semantic_gap"] == pytest.approx(0.0, abs=1e-4)
         assert st["displacement"] == 0
         assert st["moved"] is False
-        assert st["changed"] is False
 
 
-def test_build_diff_structure_closeness_decreases_as_order_gap_grows():
+def test_build_structural_details_structure_closeness_decreases_as_order_gap_grows():
     """A real reorder drops closeness below 1, and a larger displacement drops it further."""
     s, e = [f"s{i}" for i in range(10)], _emb(10, seed=18)
     swap = np.arange(10)
     swap[0], swap[1] = 1, 0
-    diff_swap = _build_diff(s, e, [s[i] for i in swap], e[swap])
-    diff_reverse = _build_diff(s, e, s[::-1], e[::-1])
+    diff_swap = _build_structural_details(s, e, [s[i] for i in swap], e[swap])
+    diff_reverse = _build_structural_details(s, e, s[::-1], e[::-1])
     assert diff_swap["structure_closeness"] < 1.0
     assert diff_reverse["structure_closeness"] < 1.0
     assert diff_swap["structure_closeness"] > diff_reverse["structure_closeness"]
 
 
-def test_build_diff_semantic_gap_pins_the_changed_statement():
-    """Replacing one B row with a far vector spikes that statement's semantic_gap alone; order intact."""
+def test_build_structural_details_content_edit_leaves_order_intact():
+    """Replacing one B row with a far vector changes content only; every statement stays in place."""
     n, k = 6, 2
     s, e = [f"s{i}" for i in range(n)], _emb(n, seed=19)
     eb = e.copy()
     eb[k] = _emb(1, seed=999)[0]  # a far-away random statement in place of the twin
-    diff = _build_diff(s, e, s, eb)
-    gaps = [st["semantic_gap"] for st in diff["statements"]]
-    others = gaps[:k] + gaps[k + 1 :]
-    assert gaps[k] > 0.5  # the swapped-in statement drifts far
-    assert gaps[k] > max(others) + 0.4  # well above every untouched statement
+    diff = _build_structural_details(s, e, s, eb)
     for st in diff["statements"]:
         assert st["displacement"] == 0  # content changed, order did not
-    for j, g in enumerate(gaps):
-        if j != k:
-            assert g == pytest.approx(0.0, abs=1e-2)  # untouched statements stay grounded
+        assert st["moved"] is False
 
 
-def test_distance_with_diff_returns_result_and_diff(monkeypatch):
-    """distance_with_diff shares one encode pass and returns the DistanceResult plus the diff dict."""
+def test_structural_distance_with_details_returns_result_and_details(monkeypatch):
+    """structural_distance_with_details shares one encode pass and returns the StructuralResult plus the details dict."""
     from docdistance import settings
 
     settings.reset()
@@ -236,8 +224,9 @@ def test_distance_with_diff_returns_result_and_diff(monkeypatch):
     monkeypatch.setattr(dd, "_ensure_base", lambda: None)
     monkeypatch.setattr(dd, "embed_statements", lambda doc: docs[doc])
 
-    result, diff = dd.distance_with_diff("A", "B")
+    result, diff = dd.structural_distance_with_details("A", "B")
     assert result.verdict in ("similar", "not similar")
+    assert result.order_gap >= 0.0
     assert set(diff) == {
         "smd",
         "order_gap",
@@ -248,6 +237,7 @@ def test_distance_with_diff_returns_result_and_diff(monkeypatch):
     }
     assert diff["n_statements"] == {"a": 5, "b": 4}
     assert result.smd == pytest.approx(diff["smd"], abs=1e-5)
+    assert result.order_gap == pytest.approx(diff["order_gap"], abs=1e-5)
     settings.reset()
 
 
@@ -297,8 +287,8 @@ def test_displacement_zero_on_identical_doc_with_duplicate_statements():
         assert np.array_equal(d.structure_displacement(X, X), np.zeros(5, dtype=int))
 
 
-def test_build_diff_duplicate_content_edit_does_not_leak_displacement():
-    """Regression: rewriting a statement to duplicate another's content spikes only its gap, no leak.
+def test_build_structural_details_duplicate_content_edit_does_not_leak_displacement():
+    """Regression: rewriting a statement to duplicate another's content invents no displacement, no leak.
 
     The edited statement's new embedding equals another statement's, so the exact-EMD alignment had a
     tie; before the tie-break it mapped the edited and duplicated rows across each other, reporting
@@ -312,9 +302,7 @@ def test_build_diff_duplicate_content_edit_does_not_leak_displacement():
     eb[1] = base[3]  # statement 1 rewritten to restate statement 3's content
     sa = [f"a{i}" for i in range(5)]
     sb = [f"b{i}" for i in range(5)]
-    diff = _build_diff(sa, ea, sb, eb)
+    diff = _build_structural_details(sa, ea, sb, eb)
     for st in diff["statements"]:
         assert st["displacement"] == 0  # only content changed, nothing moved
-    gaps = [st["semantic_gap"] for st in diff["statements"]]
-    assert gaps[1] > 0.5  # the edited statement's semantic_gap spikes
-    assert max(gaps[:1] + gaps[2:]) == pytest.approx(0.0, abs=1e-2)  # no leak into neighbours
+        assert st["moved"] is False

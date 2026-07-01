@@ -1,8 +1,9 @@
 """docdistance command-line interface.
 
-Three subcommands - ``init`` (provision a mode's models from local / S3 / HuggingFace, the only one
-that downloads), ``distance`` (symmetric SMD) and ``distance-wrt-source`` (source-conditioned). A
-mode must be ``init``'d before its distance runs, else the command exits 1 with a clear message.
+Four subcommands - ``init`` (provision a mode's models from local / S3 / HuggingFace, the only one
+that downloads), ``distance-semantic`` (symmetric SMD), ``distance-structural`` (order-gap) and
+``distance-wrt-source`` (source-conditioned). A mode must be ``init``'d before its distance runs,
+else the command exits 1 with a clear message.
 Human output is rich and coloured; ``--json`` emits machine-readable JSON and ``--result-only`` the
 bare result. Logs go to stderr (loguru, ``--verbose`` for DEBUG), so stdout carries only the result.
 """
@@ -110,6 +111,35 @@ def _emit_distance(r, json_out: bool, result_only: bool) -> None:
     )
 
 
+def _emit_structural(r, json_out: bool, result_only: bool) -> None:
+    if result_only:
+        _out.print(str(r.structure_closeness))
+        return
+    if json_out:
+        _out.print(json.dumps(r.to_dict(), indent=2))
+        return
+    color = "green" if r.verdict == "similar" else "red"
+    grid = Table.grid(padding=(0, 2))
+    grid.add_column(style="bold cyan")
+    grid.add_column()
+    grid.add_row("structure closeness", f"{r.structure_closeness * 100:.1f}%")
+    grid.add_row("order gap", f"{r.order_gap:.4f}")
+    grid.add_row("SMD (content)", f"{r.smd:.4f}")
+    grid.add_row(
+        "verdict", f"[{color}]{r.verdict}[/{color}]  (threshold {r.threshold:.2f} closeness)"
+    )
+    grid.add_row("statements", f"{r.n_statements_a} vs {r.n_statements_b}")
+    grid.add_row("anisotropy", "on" if r.anisotropy else "off")
+    _out.print(
+        Panel(
+            grid,
+            title="[bold]Document structure distance[/bold]",
+            border_style=color,
+            expand=False,
+        )
+    )
+
+
 def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
     if result_only:
         if r.grd_a is not None:
@@ -155,15 +185,16 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
 
 
 @app.command(
+    name="distance-semantic",
     epilog="[bold]Examples[/bold]\n\n"
-    "  docdistance distance report_v1.md report_v2.md\n"
-    '  docdistance distance "first text" "second text" --backend torch\n'
-    "  docdistance distance a.md b.md --json\n"
-    "  docdistance distance a.md b.md --transport-map-json map.json   [dim]# statement → statement map[/dim]\n"
-    "  docdistance distance a.md b.md --diff-json diff.json   [dim]# semantic + structural diff[/dim]\n"
-    "  docdistance distance a.md b.md --result-only"
+    "  docdistance distance-semantic report_v1.md report_v2.md\n"
+    '  docdistance distance-semantic "first text" "second text" --backend torch\n'
+    "  docdistance distance-semantic a.md b.md --json\n"
+    "  docdistance distance-semantic a.md b.md --details-json content.json   [dim]# statement → statement content alignment[/dim]\n"
+    "  docdistance distance-structural a.md b.md --details-json order.json   [dim]# per-statement displacement / moved[/dim]\n"
+    "  docdistance distance-semantic a.md b.md --result-only",
 )
-def distance(
+def distance_semantic(
     a: str = typer.Argument(..., help="first document - a file path or raw text"),
     b: str = typer.Argument(..., help="second document - a file path or raw text"),
     backend: Backend = typer.Option(
@@ -184,17 +215,11 @@ def distance(
         "--threshold",
         help="closeness cutoff for the similar / not-similar verdict",
     ),
-    transport_map_json: str = typer.Option(
+    details_json: str = typer.Option(
         None,
-        "--transport-map-json",
-        help="also write the optimal-transport map (which B statements each A statement's mass flows to, with weights) to this JSON file",
+        "--details-json",
         metavar="FILE",
-    ),
-    diff_json: str = typer.Option(
-        None,
-        "--diff-json",
-        help="also write a semantic + structural diff (per A statement: aligned B statement, semantic gap, order displacement) to this JSON file",
-        metavar="FILE",
+        help="write per-statement content-alignment details (transport map) to FILE",
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
@@ -206,38 +231,24 @@ def distance(
     configure_logging(verbose)
 
     backend_value, device = _resolve_gpu(gpu, backend)
-    if transport_map_json:
+    if details_json:
         from docdistance.pipeline import DocDistance
 
-        result, tmap = _run(
-            lambda: DocDistance(backend=backend_value, device=device).distance_with_map(
-                a, b, anisotropy=anisotropy, threshold=threshold
-            )
+        result, details = _run(
+            lambda: DocDistance(
+                backend=backend_value, device=device
+            ).semantic_distance_with_details(a, b, anisotropy=anisotropy, threshold=threshold)
         )
-        Path(transport_map_json).write_text(json.dumps(tmap, indent=2))
+        Path(details_json).write_text(json.dumps(details, indent=2))
         _err.print(
-            f"[green]transport map written:[/green] {transport_map_json} "
-            f"(A {tmap['n_statements']['a']} → B {tmap['n_statements']['b']} statements)"
-        )
-    elif diff_json:
-        from docdistance.pipeline import DocDistance
-
-        result, diff = _run(
-            lambda: DocDistance(backend=backend_value, device=device).distance_with_diff(
-                a, b, anisotropy=anisotropy, threshold=threshold
-            )
-        )
-        Path(diff_json).write_text(json.dumps(diff, indent=2))
-        _err.print(
-            f"[green]diff written:[/green] {diff_json} "
-            f"(smd={diff['smd']}, order_gap={diff['order_gap']}, "
-            f"structure_closeness={diff['structure_closeness']})"
+            f"[green]details written:[/green] {details_json} "
+            f"(A {details['n_statements']['a']} → B {details['n_statements']['b']} statements)"
         )
     else:
-        from docdistance.pipeline import document_distance
+        from docdistance.pipeline import semantic_distance
 
         result = _run(
-            lambda: document_distance(
+            lambda: semantic_distance(
                 a,
                 b,
                 backend=backend_value,
@@ -247,6 +258,79 @@ def distance(
             )
         )
     _emit_distance(result, json_out, result_only)
+
+
+@app.command(
+    name="distance-structural",
+    epilog="[bold]Examples[/bold]\n\n"
+    "  docdistance distance-structural a.md b.md --details-json order.json   [dim]# per-statement displacement / moved[/dim]\n"
+    "  docdistance distance-structural a.md b.md --result-only",
+)
+def distance_structural(
+    a: str = typer.Argument(..., help="first document - a file path or raw text"),
+    b: str = typer.Argument(..., help="second document - a file path or raw text"),
+    backend: Backend = typer.Option(
+        Backend.openvino, "--backend", help="statement encoder backend"
+    ),
+    gpu: bool = typer.Option(
+        False,
+        "--gpu",
+        help="force the torch backend on CUDA; errors if GPU support is not secured",
+    ),
+    anisotropy: bool = typer.Option(
+        False,
+        "--anisotropy/--no-anisotropy",
+        help="all-but-the-top anisotropy removal - needs a corpus, off by default for a pair",
+    ),
+    threshold: float = typer.Option(
+        DEFAULT_THRESHOLD,
+        "--threshold",
+        help="closeness cutoff for the similar / not-similar verdict",
+    ),
+    details_json: str = typer.Option(
+        None,
+        "--details-json",
+        metavar="FILE",
+        help="write per-statement structural details (displacement / moved) to FILE",
+    ),
+    json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
+    result_only: bool = typer.Option(
+        False, "--result-only", help="bare structure_closeness scalar to stdout, no clutter"
+    ),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG logging to stderr"),
+):
+    """Structural (order) distance between two documents - the E11-H55 OPW order-gap."""
+    configure_logging(verbose)
+
+    backend_value, device = _resolve_gpu(gpu, backend)
+    if details_json:
+        from docdistance.pipeline import DocDistance
+
+        result, details = _run(
+            lambda: DocDistance(
+                backend=backend_value, device=device
+            ).structural_distance_with_details(a, b, anisotropy=anisotropy, threshold=threshold)
+        )
+        Path(details_json).write_text(json.dumps(details, indent=2))
+        _err.print(
+            f"[green]details written:[/green] {details_json} "
+            f"(order_gap={details['order_gap']}, "
+            f"structure_closeness={details['structure_closeness']})"
+        )
+    else:
+        from docdistance.pipeline import structural_distance
+
+        result = _run(
+            lambda: structural_distance(
+                a,
+                b,
+                backend=backend_value,
+                anisotropy=anisotropy,
+                threshold=threshold,
+                device=device,
+            )
+        )
+    _emit_structural(result, json_out, result_only)
 
 
 @app.command(

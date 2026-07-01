@@ -1,7 +1,7 @@
 # CLI reference
 
-`docdistance <command>`: three commands - `init` (provision a mode's models), `distance` (symmetric SMD),
-and `distance-wrt-source` (source-conditioned `d(A,B|S)`). Human output is rich and coloured; `--json` is
+`docdistance <command>`: four commands - `init` (provision a mode's models), `distance-semantic` (symmetric content SMD),
+`distance-structural` (symmetric order distance), and `distance-wrt-source` (source-conditioned `d(A,B|S)`). Human output is rich and coloured; `--json` is
 machine-readable, `--result-only` is the bare scalar. Logs go to stderr, so stdout carries only the result.
 
 - **Init** - `pip install docdistance`, then `docdistance init <mode>` once to provision that mode's models
@@ -28,9 +28,9 @@ Provision a mode's models from local / S3 / HuggingFace and write `docdistance.j
 - **Resolution** - per model: an `s3://` prefix, then a local dir, then the HuggingFace Hub (the always-available fallback); the source served is recorded per model in `docdistance.json`
 - **Readiness** - a distance run whose mode is not init'd exits 1 with `mode '<mode>' is not initialized - run:  docdistance init <mode>`
 
-## distance
+## distance-semantic
 
-Symmetric Statement Mover's Distance between two documents - the exact metric, one scalar.
+Symmetric Statement Mover's Distance between two documents - the exact content metric, one scalar.
 
 | Flag | Default | Effect |
 | --- | --- | --- |
@@ -38,18 +38,37 @@ Symmetric Statement Mover's Distance between two documents - the exact metric, o
 | `--gpu` | off | force the torch backend on CUDA; errors if GPU support is not secured |
 | `--anisotropy / --no-anisotropy` | `--no-anisotropy` | all-but-the-top anisotropy removal; needs a corpus, off for a bare pair |
 | `--threshold FLOAT` | `0.725` | closeness cutoff for the similar / not-similar verdict |
-| `--transport-map-json FILE` | off | also write the optimal-transport map (which B statements each A statement's mass flows to, with weights and match cost) to `FILE` |
-| `--diff-json FILE` | off | also write an interpretable diff (per statement: a semantic gap and a structural displacement) to `FILE` |
+| `--details-json FILE` | off | also write the content alignment (which B statements each A statement's mass flows to, with weights, match cost, and a per-flow changed flag) to `FILE` |
 | `--json` | off | machine-readable JSON to stdout |
 | `--result-only` | off | bare SMD scalar to stdout, no clutter |
 | `--verbose`, `-v` | off | DEBUG logging to stderr |
 
 - **Default output** - a rich panel: SMD, closeness, verdict + threshold, the `WCD ≤ RWMD ≤ SMD` bounds, statement counts, anisotropy on/off
 - **`--json`** - the result dict: `smd`, `wcd`, `rwmd`, `closeness`, `threshold`, `verdict`, `anisotropy`, `n_statements_a`, `n_statements_b`
-- **`--transport-map-json`** - writes a separate JSON file (the result still prints as usual): `{smd, anisotropy, n_statements, flows}`, where `flows` is a per-A-statement list of `{index, text, matches}` and each match is `{target_index, target_text, weight, cost}` - the B statements that statement's transport mass flows to, `weight` the fraction of its mass (sums to 1 per statement), `cost` the ground distance of the match; the exact OT coupling behind the SMD, so a human or a machine can read which statement aligns to which
-- **`--diff-json`** - writes a separate JSON file (the result still prints as usual): `{smd, order_gap, structure_closeness, anisotropy, n_statements, statements}`, where `smd` is the semantic distance, `order_gap` the E11-H55 OPW structural distance (translation-invariant, `>= 0`) and `structure_closeness` = `1 - order_gap / sqrt(2)` the shipped SOTA 0..1 structure readout on the SMD-closeness scale (1 = same order); `statements` is a per-A-statement list of `{index, text, target_index, target_text, semantic_gap, displacement, moved, changed}` - `semantic_gap` the aligned-pair ground cost (0 = identical meaning, higher = content drifted), `displacement` the rank shift of that statement (0 = in place), `moved` = `displacement != 0`, `changed` = `semantic_gap` past the changed-cost cutoff `(1 - threshold) * sqrt(2)`; this pins down precisely what changed in MEANING (`semantic_gap`) versus what MOVED in order (`displacement`), statement by statement
+- **`--details-json`** - writes a separate JSON file (the result still prints as usual): `{smd, anisotropy, n_statements, flows}`, where `flows` is a per-A-statement list of `{index, text, matches, changed}` and each match is `{target_index, target_text, weight, cost}` - the B statements that statement's transport mass flows to, `weight` the fraction of its mass (sums to 1 per statement), `cost` the ground distance of the match (the semantic gap of the aligned pair), `changed` = the statement's best-match `cost` past the changed-cost cutoff; the exact OT coupling behind the SMD, so a human or a machine can read which statement aligns to which and what drifted in MEANING
 - **`--result-only`** - the bare SMD float, for scripts
-- **Reading it** - closeness `1.0` identical, `0.0` unrelated; near 1 with verdict `similar` is a faithful match, falling toward 0 with `not similar` means the meaning changed; the transport map names *which* statement of B each statement of A maps to and how good the match is (low `cost`)
+- **Reading it** - closeness `1.0` identical, `0.0` unrelated; near 1 with verdict `similar` is a faithful match, falling toward 0 with `not similar` means the meaning changed; the content alignment names *which* statement of B each statement of A maps to and how good the match is (low `cost`)
+
+## distance-structural
+
+Symmetric statement-order distance between two documents - the E11-H55 OPW order-gap, translation-invariant, with a `structure_closeness` readout on the SMD-closeness scale.
+
+| Flag | Default | Effect |
+| --- | --- | --- |
+| `--backend openvino\|torch` | `openvino` | statement encoder backend |
+| `--gpu` | off | force the torch backend on CUDA; errors if GPU support is not secured |
+| `--anisotropy / --no-anisotropy` | `--no-anisotropy` | all-but-the-top anisotropy removal; needs a corpus, off for a bare pair |
+| `--threshold FLOAT` | `0.725` | closeness cutoff for the similar / not-similar verdict |
+| `--details-json FILE` | off | also write the order details (per statement: its aligned target and rank displacement) to `FILE` |
+| `--json` | off | machine-readable JSON to stdout |
+| `--result-only` | off | bare order_gap scalar to stdout, no clutter |
+| `--verbose`, `-v` | off | DEBUG logging to stderr |
+
+- **Default output** - a rich panel: order_gap, structure_closeness, verdict + threshold, statement counts, anisotropy on/off
+- **`--json`** - the result dict: `smd`, `order_gap`, `structure_closeness`, `threshold`, `verdict`, `anisotropy`, `n_statements_a`, `n_statements_b`
+- **`--details-json`** - writes a separate JSON file (the result still prints as usual): `{smd, order_gap, structure_closeness, anisotropy, n_statements, statements}`, where `order_gap` is the E11-H55 OPW structural distance (translation-invariant, `>= 0`) and `structure_closeness` = `1 - order_gap / sqrt(2)` the shipped SOTA 0..1 structure readout on the SMD-closeness scale (1 = same order); `statements` is a per-A-statement list of `{index, text, target_index, target_text, displacement, moved}` - `displacement` the rank shift of that statement (0 = in place), `moved` = `displacement != 0`; this pins down precisely what MOVED in order, statement by statement
+- **`--result-only`** - the bare order_gap float, for scripts
+- **Reading it** - structure_closeness `1.0` same order, `0.0` fully reordered; the order details name *which* statement of B each statement of A maps to and how far it MOVED (`displacement`)
 
 ## distance-wrt-source
 
@@ -83,17 +102,22 @@ docdistance init wmd-wrt-source                # + the reranker + NLI grounding 
 docdistance init wmd-wrt-source --source s3://your-bucket --aws-profile NAME
 docdistance init wmd --source /path/to/models  # from a local mirror
 
-# method 1 - symmetric distance
-docdistance distance report_v1.md report_v2.md
-docdistance distance "first text" "second text"            # raw text, not files
-docdistance distance a.md b.md --json                      # machine-readable
-docdistance distance a.md b.md --transport-map-json map.json   # + statement → statement map
-docdistance distance a.md b.md --diff-json diff.json           # + semantic + structural diff
-docdistance distance a.md b.md --result-only               # bare SMD scalar
-docdistance distance a.md b.md --threshold 0.8             # stricter verdict
-docdistance distance a.md b.md --gpu                       # torch on CUDA
+# method 1 - semantic (content) distance
+docdistance distance-semantic report_v1.md report_v2.md
+docdistance distance-semantic "first text" "second text"          # raw text, not files
+docdistance distance-semantic a.md b.md --json                    # machine-readable
+docdistance distance-semantic a.md b.md --details-json content.json   # + statement → statement content map
+docdistance distance-semantic a.md b.md --result-only             # bare SMD scalar
+docdistance distance-semantic a.md b.md --threshold 0.8           # stricter verdict
+docdistance distance-semantic a.md b.md --gpu                     # torch on CUDA
 
-# method 2 - source-conditioned d(A,B|S)
+# method 2 - structural (order) distance
+docdistance distance-structural report_v1.md report_v2.md
+docdistance distance-structural a.md b.md --json                  # machine-readable
+docdistance distance-structural a.md b.md --details-json order.json   # + per-statement order displacement
+docdistance distance-structural a.md b.md --result-only           # bare order_gap scalar
+
+# method 3 - source-conditioned d(A,B|S)
 docdistance distance-wrt-source sum_a.md sum_b.md --source article.md
 docdistance distance-wrt-source a.md b.md -s s.md --json
 docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   # + statement → source map

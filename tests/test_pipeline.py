@@ -1,6 +1,6 @@
 """Pure-logic tests for the pipeline's statement-map builders.
 
-No models load - ``_build_source_map`` and ``_build_transport_map`` take statement texts and
+No models load - ``_build_source_map`` and ``_build_semantic_details`` take statement texts and
 pre-computed embeddings, so the map shape and content are exercised on synthetic arrays in the
 lightweight uv ``.venv``.
 """
@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from docdistance import pipeline, settings
-from docdistance.pipeline import _build_source_map, _build_transport_map
+from docdistance.pipeline import _build_semantic_details, _build_source_map
 
 
 def _emb(n: int, dim: int = 32, seed: int = 0) -> np.ndarray:
@@ -48,7 +48,7 @@ def test_source_map_top_k_clamped_to_source_size():
 def test_transport_map_structure_and_weights():
     sa, ea = [f"a{i}" for i in range(5)], _emb(5, seed=11)
     sb, eb = [f"b{i}" for i in range(4)], _emb(4, seed=12)
-    m = _build_transport_map(sa, ea, sb, eb, anisotropy=False)
+    m = _build_semantic_details(sa, ea, sb, eb, anisotropy=False)
 
     assert m["n_statements"] == {"a": 5, "b": 4}
     assert m["smd"] >= 0.0 and m["anisotropy"] is False
@@ -56,6 +56,7 @@ def test_transport_map_structure_and_weights():
     first = m["flows"][0]
     assert first["index"] == 0 and first["text"] == "a0"
     assert first["matches"]  # every statement sends its mass somewhere
+    assert isinstance(first["changed"], bool)  # per-flow content-edit flag
     weights = [mt["weight"] for mt in first["matches"]]
     assert weights == sorted(weights, reverse=True)  # descending weight
     assert sum(weights) == pytest.approx(1.0, abs=1e-3)  # row-normalized fractions
@@ -63,26 +64,29 @@ def test_transport_map_structure_and_weights():
         assert 0 <= mt["target_index"] < 4
         assert mt["target_text"] == sb[mt["target_index"]]
         assert mt["cost"] >= 0.0  # ground distance of the match
+    for flow in m["flows"]:
+        assert isinstance(flow["changed"], bool)
 
 
 def test_transport_map_anisotropy_flag_recorded():
     sa, ea = [f"a{i}" for i in range(4)], _emb(4, seed=13)
     sb, eb = [f"b{i}" for i in range(4)], _emb(4, seed=14)
-    m = _build_transport_map(sa, ea, sb, eb, anisotropy=True)
+    m = _build_semantic_details(sa, ea, sb, eb, anisotropy=True)
     assert m["anisotropy"] is True
     assert len(m["flows"]) == 4
 
 
 def test_transport_map_identical_maps_each_to_itself():
-    """Identical documents: each statement maps to its twin at full weight and zero cost."""
+    """Identical documents: each statement maps to its twin at full weight and zero cost, changed False."""
     s, e = [f"s{i}" for i in range(5)], _emb(5, seed=21)
-    m = _build_transport_map(s, e, s, e, anisotropy=False)
+    m = _build_semantic_details(s, e, s, e, anisotropy=False)
     assert m["smd"] == pytest.approx(0.0, abs=1e-5)
     for flow in m["flows"]:
         best = flow["matches"][0]
         assert best["target_index"] == flow["index"]  # statement -> itself
         assert best["weight"] == pytest.approx(1.0, abs=1e-3)
         assert best["cost"] == pytest.approx(0.0, abs=1e-4)
+        assert flow["changed"] is False  # a zero-cost twin match is not a content edit
 
 
 def test_distance_requires_init(monkeypatch, tmp_path):
@@ -91,7 +95,7 @@ def test_distance_requires_init(monkeypatch, tmp_path):
     monkeypatch.setenv("DOCDISTANCE_HOME", str(tmp_path))  # empty home, no docdistance.json
     dd = pipeline.DocDistance()  # lazy: constructs without loading models
     with pytest.raises(settings.NotInitializedError):
-        dd.distance("hello world", "goodbye world")
+        dd.semantic_distance("hello world", "goodbye world")
     settings.reset()
 
 

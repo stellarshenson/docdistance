@@ -341,6 +341,23 @@ class DistanceResult:
 
 
 @dataclass
+class StructuralResult:
+    """Structural (order) distance result. ``order_gap`` is the E11-H55 OPW order-gap; ``structure_closeness`` its readout."""
+
+    smd: float
+    order_gap: float
+    structure_closeness: float
+    threshold: float
+    verdict: str
+    anisotropy: bool
+    n_statements_a: int
+    n_statements_b: int
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+@dataclass
 class SourceConditionedResult:
     """Source-conditioned result: the selection axis, each document's grounding residual, distances to S.
 
@@ -392,6 +409,39 @@ def compute_distance(
         wcd=wcd(emb_a, emb_b),
         rwmd=rwmd(emb_a, emb_b),
         closeness=close,
+        threshold=threshold,
+        verdict=verdict(close, threshold),
+        anisotropy=anisotropy,
+        n_statements_a=n_a,
+        n_statements_b=n_b,
+    )
+
+
+def compute_structural(
+    emb_a: np.ndarray,
+    emb_b: np.ndarray,
+    *,
+    anisotropy: bool = False,
+    threshold: float = DEFAULT_THRESHOLD,
+) -> StructuralResult:
+    """Assemble a :class:`StructuralResult` from two statement-embedding arrays.
+
+    The structural (order) axis: content is reported via ``smd``, structure via the E11-H55 OPW
+    ``order_gap``, and ``structure_closeness = closeness(order_gap)`` is the SMD-scale readout
+    (1 = same order). ``anisotropy`` is off by default for the same reason as
+    :func:`compute_distance`.
+    """
+    n_a, n_b = len(emb_a), len(emb_b)
+    if anisotropy:
+        fixed = all_but_the_top({"a": emb_a, "b": emb_b}, k=1)
+        emb_a, emb_b = fixed["a"], fixed["b"]
+    d = smd(emb_a, emb_b)
+    gap = opw_gap(emb_a, emb_b)
+    close = closeness(gap)
+    return StructuralResult(
+        smd=d,
+        order_gap=gap,
+        structure_closeness=close,
         threshold=threshold,
         verdict=verdict(close, threshold),
         anisotropy=anisotropy,

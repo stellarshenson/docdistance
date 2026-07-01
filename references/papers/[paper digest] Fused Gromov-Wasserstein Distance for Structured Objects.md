@@ -2,7 +2,7 @@
 
 **Authors**: Titouan Vayer, Laetitia Chapel, Rémi Flamary, Romain Tavenard, Nicolas Courty (Univ. Bretagne-Sud / Univ. Côte d'Azur / Univ. Rennes, CNRS, IRISA)
 **Venue**: 2019 (arXiv 1811.02834, stat.ML; published in Algorithms, MDPI)
-**Source**: `[paper] Fused Gromov-Wasserstein Distance for Structured Objects.pdf`
+**Source**: [Fused Gromov-Wasserstein Distance for Structured Objects](https://arxiv.org/abs/1811.02834)
 
 ## Overview
 

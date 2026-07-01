@@ -1,7 +1,7 @@
 # API reference
 
-The `docdistance` public API: a one-shot function per distance, a reusable pipeline for many pairs, two
-result objects, and a three-command CLI. Everything below is exported from the top-level `docdistance`
+The `docdistance` public API: a one-shot function per distance, a reusable pipeline for many pairs, three
+result objects, and a four-command CLI. Everything below is exported from the top-level `docdistance`
 package; the SOTA docs carry the mechanics.
 
 ## Library - high-level
@@ -12,12 +12,14 @@ a leading markdown `# ` title line in a file is stripped so the title is not cou
 | Symbol | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `init` | `(mode="wmd", *, source=None, backend="openvino", aws_profile=None, aws_endpoint_url=None, aws_region=None, home=None)` | `dict` | provision a mode's models from local / S3 / HuggingFace; writes `docdistance.json`, returns a per-model source summary |
-| `document_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.725, offline=True, device=None)` | `DistanceResult` | symmetric SMD; loads models then scores in one call |
+| `semantic_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.725, offline=True, device=None)` | `DistanceResult` | symmetric SMD; loads models then scores in one call |
+| `structural_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.725, offline=True, device=None)` | `StructuralResult` | symmetric OPW order-gap; loads models then scores in one call |
 | `source_conditioned_distance` | `(a, b, source, *, backend="openvino", anisotropy=True, offline=True, device=None)` | `SourceConditionedResult` | `d(A, B | S)`; selection axis + reranker x NLI grounding residuals |
 | `DocDistance` | `DocDistance(backend="openvino", offline=True, device=None)` | pipeline | construct once, models load lazily on first use, then score many pairs |
-| `DocDistance.distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `DistanceResult` | symmetric distance on the loaded models |
-| `DocDistance.distance_with_map` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(DistanceResult, dict)` | the distance plus the optimal-transport statement map, one encode pass |
-| `DocDistance.distance_with_diff` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(DistanceResult, dict)` | the distance plus the interpretable semantic + structural diff, one encode pass |
+| `DocDistance.semantic_distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `DistanceResult` | symmetric distance on the loaded models |
+| `DocDistance.semantic_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(DistanceResult, dict)` | the distance plus the content alignment details, one encode pass |
+| `DocDistance.structural_distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `StructuralResult` | structural OPW order-gap distance on the loaded models |
+| `DocDistance.structural_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(StructuralResult, dict)` | the structural distance plus the order details, one encode pass |
 | `DocDistance.distance_wrt_source` | `(a, b, source, *, anisotropy=True)` | `SourceConditionedResult` | source-conditioned distance, runs the reranker x NLI grounding |
 | `DocDistance.distance_wrt_source_with_map` | `(a, b, source, *, anisotropy=True, top_k=3)` | `(SourceConditionedResult, dict)` | the conditioned result plus the statement → source map, one encode pass |
 | `DocDistance.embed` | `(doc)` | `ndarray [n, dim]` | segment then embed into L2-normalized statement vectors |
@@ -56,7 +58,7 @@ loading. Use these when you hold the embeddings already.
 
 ## Result objects
 
-Both are dataclasses with a `to_dict()` method (the shape the CLI `--json` emits).
+All are dataclasses with a `to_dict()` method (the shape the CLI `--json` emits).
 
 `DistanceResult`:
 
@@ -65,6 +67,18 @@ Both are dataclasses with a `to_dict()` method (the shape the CLI `--json` emits
 | `smd` | `float` | the distance |
 | `wcd`, `rwmd` | `float` | the two lower bounds |
 | `closeness` | `float` | `1 − smd/√2`, 0..1 |
+| `threshold` | `float` | the verdict cutoff used |
+| `verdict` | `str` | `"similar"` or `"not similar"` |
+| `anisotropy` | `bool` | whether all-but-the-top was applied |
+| `n_statements_a`, `n_statements_b` | `int` | statement counts |
+
+`StructuralResult`:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `smd` | `float` | the semantic distance |
+| `order_gap` | `float` | H55 OPW structural distance, translation-invariant, `≥ 0` |
+| `structure_closeness` | `float` | `1 − order_gap/√2`, 0..1 (1 = same order) |
 | `threshold` | `float` | the verdict cutoff used |
 | `verdict` | `str` | `"similar"` or `"not similar"` |
 | `anisotropy` | `bool` | whether all-but-the-top was applied |
@@ -90,7 +104,8 @@ the bare scalar. Logs go to stderr, so stdout carries only the result.
 | Command | Purpose | Key options |
 | --- | --- | --- |
 | `init [MODE]` | provision a mode's models from local / S3 / HuggingFace (the only command that fetches); writes `docdistance.json` | `--source`, `--backend`, `--aws-profile`, `--aws-endpoint-url`, `--region`, `--home` |
-| `distance A B` | symmetric SMD between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--transport-map-json`, `--diff-json`, `--json`, `--result-only` |
+| `distance-semantic A B` | Statement Mover's Distance content closeness between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--details-json`, `--json`, `--result-only` |
+| `distance-structural A B` | structural OPW order-gap distance between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--details-json`, `--json`, `--result-only` |
 | `distance-wrt-source A B --source S` | source-conditioned `d(A, B | S)` | `--source/-s` (required), `--backend`, `--gpu`, `--source-map-json`, `--json`, `--result-only` |
 
 ## Examples
@@ -99,10 +114,10 @@ One-shot symmetric distance:
 
 ```python
 import docdistance
-from docdistance import document_distance
+from docdistance import semantic_distance
 
 docdistance.init("wmd")                     # provision once (writes docdistance.json)
-r = document_distance("report_v1.md", "report_v2.md")
+r = semantic_distance("report_v1.md", "report_v2.md")
 print(r.closeness)   # 0..1 similarity, 1 - smd/sqrt(2)
 print(r.verdict)     # "similar" | "not similar"
 print(r.smd, r.wcd, r.rwmd)
@@ -115,7 +130,7 @@ from docdistance import DocDistance
 
 dd = DocDistance(backend="openvino")        # construct once; models load lazily on first call
 for a, b in pairs:
-    print(dd.distance(a, b).closeness)      # no reload per call
+    print(dd.semantic_distance(a, b).closeness)  # no reload per call
 ```
 
 Source-conditioned distance `d(A, B | S)`:
@@ -136,7 +151,7 @@ Transport map - the interpretable statement-to-statement alignment behind the di
 from docdistance import DocDistance
 
 dd = DocDistance()
-result, tmap = dd.distance_with_map("report_v1.md", "report_v2.md")
+result, tmap = dd.semantic_distance_with_details("report_v1.md", "report_v2.md")
 print(result.smd)                                 # the distance
 for flow in tmap["flows"]:                        # each statement of A
     best = flow["matches"][0]                     # the B statement it maps to (most mass)
@@ -144,35 +159,35 @@ for flow in tmap["flows"]:                        # each statement of A
 ```
 
 The low-level `transport_plan(X, Y)` returns the raw `[n_X, n_Y]` coupling if you hold the embeddings
-and want the matrix directly; `distance_with_map` is the text-aware wrapper that pairs it with statements.
+and want the matrix directly; `semantic_distance_with_details` is the text-aware wrapper that pairs it with statements.
 
-Semantic + structural diff - what changed in MEANING vs what MOVED in order:
+Structural diff - what MOVED in order:
 
 ```python
 from docdistance import DocDistance
 
 dd = DocDistance()
-result, diff = dd.distance_with_diff("report_v1.md", "report_v2.md")
+result, details = dd.structural_distance_with_details("report_v1.md", "report_v2.md")
 
-print(diff["smd"])                  # semantic distance: how far the meaning drifted
-print(diff["order_gap"])            # H55 OPW structural distance, translation-invariant, >= 0
-print(diff["structure_closeness"])  # 1 - order_gap/sqrt(2): the 0..1 order readout (1 = same order)
+print(details["smd"])                  # semantic distance: how far the meaning drifted
+print(details["order_gap"])            # H55 OPW structural distance, translation-invariant, >= 0
+print(details["structure_closeness"])  # 1 - order_gap/sqrt(2): the 0..1 order readout (1 = same order)
 
-for st in diff["statements"]:       # one record per statement of A
+for st in details["statements"]:       # one record per statement of A
     print(st["text"], "->", st["target_text"])
-    print("  semantic_gap", st["semantic_gap"], "changed" if st["changed"] else "same meaning")
     print("  displacement", st["displacement"], "moved" if st["moved"] else "in place")
 ```
 
-Each statement carries two independent readings. `semantic_gap` is the aligned-pair ground cost - `0`
-means identical meaning, higher means the content drifted. `displacement` is that statement's rank shift
-under the crisp alignment - `0` means it stayed in place, nonzero means it moved. The axes are
-orthogonal: a statement can keep its meaning yet move (`semantic_gap ≈ 0`, `displacement ≠ 0`), or hold
-its position yet change (`semantic_gap` high, `displacement = 0`). The `changed` flag fires when
-`semantic_gap` clears `DIFF_CHANGED_COST` (the `(1 − threshold)·√2` content cutoff); `moved` fires on
-any nonzero displacement. At the top level, `smd` is the whole-document semantic distance and `order_gap`
-its structural counterpart, with `structure_closeness = 1 − order_gap/√2` reading order on the same 0..1
-scale as `closeness`. The same dict is what the CLI writes with `distance --diff-json FILE`.
+Each statement in the order details carries the structural reading. `displacement` is that statement's
+rank shift under the crisp alignment - `0` means it stayed in place, nonzero means it moved; `moved`
+fires on any nonzero displacement. The content reading lives in the companion `semantic_distance_with_details`
+flows, where `cost` is the aligned-pair ground cost - `0` means identical meaning, higher means the content
+drifted - and `changed` fires when the best-match `cost` clears `DIFF_CHANGED_COST` (the `(1 − threshold)·√2`
+content cutoff). The axes are orthogonal: a statement can keep its meaning yet move (`cost ≈ 0`,
+`displacement ≠ 0`), or hold its position yet change (`cost` high, `displacement = 0`). At the top level,
+`smd` is the whole-document semantic distance and `order_gap` its structural counterpart, with
+`structure_closeness = 1 − order_gap/√2` reading order on the same 0..1 scale as `closeness`. The same dict
+is what the CLI writes with `distance-structural --details-json FILE`.
 
 Low-level, on embeddings you already hold:
 
@@ -190,8 +205,9 @@ CLI:
 ```bash
 docdistance init wmd                                             # provision the symmetric models once
 docdistance init wmd-wrt-source                                  # + reranker + NLI grounding models
-docdistance distance a.md b.md                                   # rich, coloured verdict
-docdistance distance a.md b.md --json                            # machine-readable
-docdistance distance a.md b.md --result-only                     # bare SMD scalar
+docdistance distance-semantic a.md b.md                          # rich, coloured verdict
+docdistance distance-semantic a.md b.md --json                   # machine-readable
+docdistance distance-semantic a.md b.md --result-only            # bare SMD scalar
+docdistance distance-structural a.md b.md                        # structural OPW order-gap
 docdistance distance-wrt-source sum_a.md sum_b.md -s article.md  # source-conditioned
 ```

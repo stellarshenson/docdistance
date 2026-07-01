@@ -2,7 +2,7 @@
 
 **Authors**: Ilya S. Smirnov, Ivan P. Yamshchikov (LEYA Lab, Yandex; HSE University, Russia)
 **Venue**: COMPLEXIS 2022 - 7th International Conference on Complexity, Future Information Systems and Risk, SciTePress, pp. 92-97 (DOI 10.5220/0011096900003197)
-**Source**: `[paper] Moving Other Way - Exploring Word Mover Distance Extensions.pdf`
+**Source**: [Moving Other Way: Exploring Word Mover Distance Extensions](https://arxiv.org/abs/2202.03119)
 
 ## Overview
 
