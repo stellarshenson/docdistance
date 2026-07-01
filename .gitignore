@@ -20,6 +20,9 @@
 # Local provisioning state written by `docdistance init` (absolute paths, per-machine)
 /docdistance.json
 
+# Notebook-execution scratch (per-run logs + .tsv tallies from headless validation drivers)
+/logs/notebook-execution/
+
 # Mac OS-specific storage files
 .DS_Store
 
