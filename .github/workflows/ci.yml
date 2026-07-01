@@ -73,7 +73,8 @@ jobs:
         run: |
           .venv/bin/docdistance --version
           .venv/bin/docdistance --help
-          .venv/bin/docdistance distance --help
+          .venv/bin/docdistance distance-semantic --help
+          .venv/bin/docdistance distance-structural --help
       - name: Smoke - core optimal-transport distance on synthetic embeddings
         run: |
           .venv/bin/python - <<'PY'

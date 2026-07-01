@@ -9,6 +9,10 @@
 
 docdistance measures how far apart two documents are - in meaning and in order - and points to exactly which sentences changed. It is built for pipelines where an AI model rewrites, converts, extracts, or summarizes a document and you need to check, automatically, whether the result still says the same thing.
 
+<p align="center">
+  <img src=".resources/docdistance-banner.svg" alt="docdistance" width="100%">
+</p>
+
 ## Features
 
 - **Two kinds of distance** - one for meaning (did the content change?), one for order (was the same content rearranged?)
@@ -20,10 +24,6 @@ docdistance measures how far apart two documents are - in meaning and in order -
 - **Interpretable by design** - every score comes with the statement-to-statement alignment behind it
 
 Semantic distance between two documents via Statement Mover's Distance - optimal transport over mmBERT statement embeddings, after Kusner et al. 2015 ([*From Word Embeddings To Document Distances*](references/papers/%5Bpaper%5D%20From%20Word%20Embeddings%20To%20Document%20Distances.pdf)). A thin frontend to the library; the SOTA docs carry the mechanics, benchmarks, and validation.
-
-<p align="center">
-  <img src=".resources/docdistance-banner.svg" alt="docdistance" width="100%">
-</p>
 
 - **Input** - two documents, raw text or a file path
 - **Output** - an SMD distance, a 0..1 closeness, a verdict, and the statement alignment
@@ -59,7 +59,9 @@ Three reads over the same two documents; they differ in what the answer tells yo
 - **Method 1 - semantic distance (robust, fast)** - `distance-semantic` answers *how far apart are A and B in meaning?* as one number (a 0..1 closeness plus a similar / not-similar verdict). Sub-millisecond, needs only the two documents, and is a true metric - the distance is symmetric and obeys the triangle inequality, so the numbers are consistent enough to threshold, rank and cache. The production default; use it whenever you need a reliable similarity score - dedup, drift detection, "did this conversion change the meaning?"
 - **Structural read (what moved vs what stayed put)** - `distance-structural` is a first-class command, no extra model and no source: it returns a per-statement order projection where `displacement` / `moved` name what MOVED in arrangement, plus a whole-document `order_gap` and `structure_closeness` (0..1, `1` = same order) via the OPW order-gap. Pair it with `distance-semantic`'s content details (`changed`) to tell a reword from a pure rearrangement (see [Structure distance](#structure-distance) below, and a worked [map + diff interpretation](docs/example-map-interpretations.md))
 - **Method 2 - source-conditioned `d(A, B | S)` (slower, experimental)** - answers *why do A and B differ, given a shared source S?* You supply `S`, and instead of one number it returns two axes: a selection axis (did A and B pick different parts of the source?) and a grounding axis (did one drift from the source - dropped content vs unsupported or fabricated content?). It runs a cross-encoder × NLI pass (~seconds on GPU, far slower on CPU). Use it to audit a summary or an extraction against its source, when "how far" is not enough and you need to name the failure
-- **Which to pick** - default to Method 1 for a similarity number, add the structural read when you need to see *what* moved and where, and reach for Method 2 only when you hold the shared source and need to know *why* two documents derived from it diverge. Method 2's value is interpretation and ordering the failure modes correctly, not a higher pass rate, and it is validated on a single fixture so far - validate on your own sources first. (Three distances for two documents: we started with one, and optimal transport turned out to be a slippery slope.)
+- **Which to pick** - default to Method 1 for a similarity number, add the structural read when you need to see *what* moved and where, and reach for Method 2 only when you hold the shared source and need to know *why* two documents derived from it diverge. Method 2's value is interpretation and ordering the failure modes correctly, not a higher pass rate, and it is validated on a single fixture so far - validate on your own sources first.
+
+*A tool for measuring how far a document has drifted from its source, written by authors who could not stop the scope drifting from one distance to three. The irony is not lost on us - merely, and optimally, transported.*
 
 ## Usage
 

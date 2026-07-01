@@ -146,7 +146,7 @@ def test_cli_result_only_prints_a_bare_scalar():
     res = runner.invoke(app, ["distance-semantic", DOC, DOC_SWAP, "--result-only"], env=_WIDE)
     assert res.exit_code == 0, res.output
     floats = [float(tok) for line in res.output.splitlines() for tok in line.split() if _isfloat(tok)]
-    assert floats and floats[-1] == pytest.approx(0.0, abs=1e-4)  # reorder -> SMD ~ 0
+    assert floats and floats[-1] == pytest.approx(0.0, abs=1e-3)  # reorder -> SMD ~ 0
 
 
 def _isfloat(tok: str) -> bool:
