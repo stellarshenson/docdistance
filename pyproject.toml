@@ -118,6 +118,9 @@ include = ["pyproject.toml", "src/docdistance/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]
+# typer.Option / typer.Argument in argument defaults is the documented Typer
+# idiom for declaring CLI parameters, not the mutable-default bug B008 targets
+ignore = ["B008"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["docdistance"]

@@ -73,7 +73,7 @@ def _run(fn):
         raise typer.Exit(1)
 
 
-def _resolve_gpu(gpu: bool, backend: "Backend") -> tuple[str, str | None]:
+def _resolve_gpu(gpu: bool, backend: Backend) -> tuple[str, str | None]:
     """Map ``--gpu`` to (backend, device): force the torch backend on CUDA, erroring if not secured."""
     if not gpu:
         return backend.value, None

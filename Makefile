@@ -9,6 +9,7 @@ PROJECT_NAME = docdistance
 MODULE_NAME = docdistance
 PYTHON_VERSION = 3.13
 PYTHON_INTERPRETER = python
+RUFF_VERSION = 0.16.2
 
 # Set SKIP_VERSION_INCREMENT=1 to skip auto-bumping the patch version in install/build
 SKIP_VERSION_INCREMENT ?= 0
@@ -78,16 +79,18 @@ clean:
 	@echo "$(OK_STYLE)>>> .env.enc file successfully created$(NO_STYLE)"
 
 ## Lint using ruff (use `make format` to do formatting)
+# ruff is pinned: unpinned uvx resolves the latest release, and a release that
+# widens the default rule set turns CI red on source that never changed
 lint:
 	@echo "$(MSG_PREFIX) linting the sourcecode"
-	uvx ruff format --check
-	uvx ruff check
+	uvx ruff@$(RUFF_VERSION) format --check
+	uvx ruff@$(RUFF_VERSION) check
 
 ## Format source code with ruff
 format:
 	@echo "$(MSG_PREFIX) formatting the sourcecode"
-	uvx ruff check --fix
-	uvx ruff format
+	uvx ruff@$(RUFF_VERSION) check --fix
+	uvx ruff@$(RUFF_VERSION) format
 ## Run tests
 test:
 	@echo "$(MSG_PREFIX) checking for tests"
