@@ -4,6 +4,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/docdistance.svg)](https://pypi.org/project/docdistance/)
 [![Total PyPI downloads](https://static.pepy.tech/badge/docdistance)](https://pepy.tech/project/docdistance)
 [![Built With copier-data-science](https://img.shields.io/badge/Built%20With-copier--data--science-019ca5?style=flat)](https://github.com/stellarshenson/copier-data-science)
+[![Read On Medium](https://img.shields.io/badge/Read%20On-Medium-000000?style=flat&logo=medium&logoColor=white)](https://medium.com/towards-artificial-intelligence/docdistance-a-way-to-measure-distance-between-documents-229d4f762eaf)
 [![Brought To You By HUMES Institute](https://img.shields.io/badge/Brought%20To%20You%20By-HUMES%20Institute-C19A6B?style=flat)](https://humes.pl/en/)
 
 ## Overview

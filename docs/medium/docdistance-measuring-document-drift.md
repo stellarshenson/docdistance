@@ -1,15 +1,16 @@
 ---
-title: "Did the Rewrite Change the Meaning? A Way to Measure It"
+title: "Docdistance - a way to measure distance between documents"
 subtitle: "One cosine score tells you two documents differ. It does not tell you where, or by how much. Here is a method that tells you both."
-author: "Stellars Henson"
+author: 'Konrad "Stellars" Jelen'
 date: 2026-08-11
+status: published
 tags: ["Optimal Transport", "Wasserstein Distance", "NLP", "LLM Evaluation", "Embeddings", "Data Science"]
-canonical_url: ""
-publication: "Medium"
+canonical_url: "https://medium.com/towards-artificial-intelligence/docdistance-a-way-to-measure-distance-between-documents-229d4f762eaf"
+publication: "Medium - Towards Artificial Intelligence"
 read_time: "20 min read"
 ---
 
-# Did the Rewrite Change the Meaning? A Way to Measure It
+# Docdistance - a way to measure distance between documents
 
 ![Cover](images/article-cover-alpha-titled.png)
 

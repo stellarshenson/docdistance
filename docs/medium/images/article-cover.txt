@@ -18,3 +18,16 @@ theme - dark cover #0a1a24 at 0.62 alpha, light and transparent covers white at 
 The transparent cover takes the light band so it never reads as an opaque bar on a light
 page; #4099b3 holds 3.27:1 over that band against either background.
 Files: article-cover{,-light,-alpha}.png and article-cover{,-light,-alpha}-titled.png
+
+
+## v3 - 2026-08-11 - retitled to the published title
+No new generation. The article was published as "Docdistance - a way to measure distance
+between documents" (Medium / Towards Artificial Intelligence), so the three titled covers
+were re-rasterised from the untitled bases - the previous title was burned-in pixels and
+would otherwise have contradicted the published piece.
+Geometry and type unchanged from v2: band full width y 239-482, title #4099b3 52px centred
+at y 322, subtitle #da8230 40px centred at y 388, DejaVu Sans Bold; band tone dark #0a1a24
+at 0.62 alpha, light and transparent white at 0.80.
+Text split follows the published title's own break: "Docdistance" on the title line,
+"a way to measure distance between documents" on the subtitle line.
+Files rewritten: article-cover{,-light,-alpha}-titled.png. Untitled bases untouched.
