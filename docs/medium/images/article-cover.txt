@@ -1,0 +1,20 @@
+## v1 - 2026-08-11 15:51
+model: stability.stable-image-core-v1:1 (us-west-2)
+note: amazon.nova-canvas-v1:0 and titan-image-generator v1/v2 are gated on this account; Stable Image Core used instead
+Abstract digital art, dark teal-black background, cyan and warm orange colour scheme. Two constellations of glowing points on either side of the frame, linked by delicate threads of light carrying mass between them, suggesting flow and transport across a gently curved field. Subtle grid mesh, drifting particles, depth of field. Technical but artistic. No text, no UI elements, no charts. 16:9 aspect ratio. High quality, 4K.
+
+
+## v2 - 2026-08-11 21:52 - three themes from the v1 render
+No new generation. The v1 prompt with "bright off-white background" substituted was tried at
+seeds 3 / 12 / 27 and came back dark every time (corner luminance 10-15 of 255) - the glow
+prompt overrides the background instruction. Light and transparent are therefore derived from
+the v1 render itself, so all three themes are the same image:
+  alpha = max(R,G,B)/255, lifted by gamma 0.75, floored at the exact-reconstruction value
+  rgb   = original / alpha              (unpremultiply of glow-over-black)
+  light = that RGBA composited onto white
+Titled variants share the signature band geometry and type: full width, y 239-482,
+title #4099b3 52px, subtitle #da8230 40px, DejaVu Sans Bold. Only the band tone follows the
+theme - dark cover #0a1a24 at 0.62 alpha, light and transparent covers white at 0.80 alpha.
+The transparent cover takes the light band so it never reads as an opaque bar on a light
+page; #4099b3 holds 3.27:1 over that band against either background.
+Files: article-cover{,-light,-alpha}.png and article-cover{,-light,-alpha}-titled.png

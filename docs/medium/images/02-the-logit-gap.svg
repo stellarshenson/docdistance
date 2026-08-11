@@ -1,0 +1,281 @@
+<!--
+  02-the-logit-gap.svg - Why the exact measurement is unavailable, not wrong
+  Shows: header with role legend; a "token probabilities" probe blocked at a seal band;
+         source document to a sealed frontier model to the output document; an orange
+         consequence strip; a cyan payoff band naming the only input the method may use.
+  Intent: teach that KL divergence is the correct tool and is locked away, because a
+          frontier model behind an API never returns token-level logits. The two
+          documents, as plain text, are the entire remaining input.
+  Theme: docdistance deck - plate #0a1a24, cyan #0096d1 / #5cc8e0 / #1a5a6e (what you
+         have), orange #da8230 / #d4a04a (what is unavailable).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 545" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0e2c3a; }
+    .fg-2 { fill: #1d3b49; }
+    .fg-3 { fill: #3a5c6c; }
+    .fg-4 { fill: #517485; }
+    .accent-1 { fill: #229fd1; }
+    .accent-2 { fill: #157186; }
+    .warn-1 { fill: #c06e1c; }
+    .warn-2 { fill: #a37524; }
+    .plate { fill: transparent; }
+    .card-cy { fill: #0096d1; fill-opacity: 0.05; stroke: #298dad; stroke-width: 1; }
+    .bar-cy { fill: #229fd1; }
+    .card-or { fill: #cf7725; fill-opacity: 0.05; stroke: #c06e1c; stroke-width: 1; stroke-opacity: 0.55; }
+    .bar-or { fill: #c06e1c; }
+    .chip-cy { fill: #229fd1; fill-opacity: 0.16; stroke: #157186; stroke-width: 0.8; stroke-opacity: 0.7; }
+    .chip-or { fill: #c06e1c; fill-opacity: 0.16; stroke: #c06e1c; stroke-width: 0.8; stroke-opacity: 0.85; }
+    .swatch-cy { fill: #229fd1; }
+    .swatch-or { fill: #c06e1c; }
+    .arrow-stroke { stroke: #157186; }
+    .arrow-fill { fill: #157186; }
+    .arrow-stroke-or { stroke: #c06e1c; }
+    .arrow-fill-or { fill: #c06e1c; }
+    .barrier { fill: #c06e1c; }
+    .icon-line { fill: none; stroke: #157186; stroke-width: 1.5; stroke-linejoin: round; }
+    .icon-hint { fill: none; stroke: #298dad; stroke-width: 1.5; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e6f3f9; }
+      .fg-2 { fill: #b6d4e2; }
+      .fg-3 { fill: #93b5c5; }
+      .fg-4 { fill: #7a9dae; }
+      .accent-1 { fill: #2eabdd; }
+      .accent-2 { fill: #79d5ea; }
+      .warn-1 { fill: #e3913f; }
+      .warn-2 { fill: #dbad5c; }
+      .plate { fill: #0a1a24; }
+      .card-cy { fill: #0096d1; fill-opacity: 0.05; stroke: #1f6b83; stroke-width: 1; }
+      .bar-cy { fill: #2eabdd; }
+      .card-or { fill: #da8230; fill-opacity: 0.05; stroke: #e3913f; stroke-width: 1; stroke-opacity: 0.55; }
+      .bar-or { fill: #e3913f; }
+      .chip-cy { fill: #2eabdd; fill-opacity: 0.16; stroke: #79d5ea; stroke-width: 0.8; stroke-opacity: 0.7; }
+      .chip-or { fill: #e3913f; fill-opacity: 0.16; stroke: #e3913f; stroke-width: 0.8; stroke-opacity: 0.85; }
+      .swatch-cy { fill: #2eabdd; }
+      .swatch-or { fill: #e3913f; }
+      .arrow-stroke { stroke: #79d5ea; }
+      .arrow-fill { fill: #79d5ea; }
+      .arrow-stroke-or { stroke: #e3913f; }
+      .arrow-fill-or { fill: #e3913f; }
+      .barrier { fill: #e3913f; }
+      .icon-line { fill: none; stroke: #79d5ea; stroke-width: 1.5; stroke-linejoin: round; }
+      .icon-hint { fill: none; stroke: #1f6b83; stroke-width: 1.5; stroke-linejoin: round; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 545 (doc-flow band, extended to carry five stacked rows)
+    Outer margins: 30 left/right, 15 bottom
+
+    Row A  header        y=0..90    kicker y=25, title y=60, subtitle y=85; legend at x=1450
+    Row B  probe card    y=100..180 (x=660..1140, w=480, h=80)
+    Row C  blocked lane  y=180..220 probe arrow on x=900; seal band y=220..230 (child of card-model)
+    Row D  pipeline row  y=230..380 h=150, connector midline y=305
+    Row E  consequence   y=400..455 h=55, full width
+    Row F  payoff band   y=475..530 h=55, full width
+
+    Pipeline columns (gap=75, equal widths 530):
+    col-1 source   x=30..560
+    col-2 model    x=635..1165   (centre x=900)
+    col-3 output   x=1240..1770
+
+    Card interior: text x = card.x + 20; kicker y+25, title y+50, body y+70 / y+90,
+    chip y+105..y+130 (h=25). Icon slot 20x20 top-right, 20px padding on both axes.
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-stack: card-source, card-model, card-output (gap=75)
+    v-align: card-source.top = card-model.top = card-output.top
+    h-align: card-probe.centre-x = card-model.centre-x = seal-barrier.centre-x = 900
+    contain: card-model > seal-barrier (the lid belongs to the box it seals)
+    v-stack: header, card-probe, pipeline row, card-consequence, card-payoff
+    contain: card-source > icon-source, chip-source
+    contain: card-model > icon-sealed, chip-model
+    contain: card-output > icon-output, chip-output
+    flow: card-source to card-model to card-output (cyan, permitted)
+    flow: card-probe to card-model (orange, stopped on seal-barrier)
+  === -->
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="545" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="545" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="545" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="30" y1="0" x2="30" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="560" y1="0" x2="560" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="635" y1="0" x2="635" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="900" y1="0" x2="900" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="1165" y1="0" x2="1165" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="1240" y1="0" x2="1240" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="1770" y1="0" x2="1770" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="100" x2="1800" y2="100" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="180" x2="1800" y2="180" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="220" x2="1800" y2="220" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="230" x2="1800" y2="230" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="305" x2="1800" y2="305" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="380" x2="1800" y2="380" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="400" x2="1800" y2="400" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="455" x2="1800" y2="455" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="475" x2="1800" y2="475" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="530" x2="1800" y2="530" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fixed dark plate: the deck ships dark in both colour schemes -->
+    <rect id="plate" class="plate" x="0" y="0" width="1800" height="545" fill="transparent"/>
+  </g>
+
+  <g id="nodes"><!-- cards, plus the seal band the probe dies on -->
+
+    <g id="card-probe">
+      <path id="card-probe-body" class="card-or" d="M660.0,100.0 H1140.0 V177.0 Q1140.0,180.0 1137.0,180.0 H663.0 Q660.0,180.0 660.0,177.0 Z"/>
+      <rect id="accent-bar-probe" class="bar-or" x="660" y="100" width="480" height="5" opacity="0.6"/>
+    </g>
+
+    <g id="card-source">
+      <path id="card-source-body" class="card-cy" d="M30.0,230.0 H560.0 V377.0 Q560.0,380.0 557.0,380.0 H33.0 Q30.0,380.0 30.0,377.0 Z"/>
+      <rect id="accent-bar-source" class="bar-cy" x="30" y="230" width="530" height="5" opacity="0.6"/>
+    </g>
+
+    <g id="card-model">
+      <path id="card-model-body" class="card-cy" d="M635.0,230.0 H1165.0 V377.0 Q1165.0,380.0 1162.0,380.0 H638.0 Q635.0,380.0 635.0,377.0 Z"/>
+      <rect id="accent-bar-model" class="bar-cy" x="635" y="230" width="530" height="5" opacity="0.6"/>
+      <g id="seal-barrier"><!-- the lid: sits on this box's own top edge, where the probe stops -->
+        <rect id="barrier-bar" class="barrier" x="760" y="220" width="280" height="10" rx="5" opacity="0.9"/>
+      </g>
+    </g>
+
+    <g id="card-output">
+      <path id="card-output-body" class="card-cy" d="M1240.0,230.0 H1770.0 V377.0 Q1770.0,380.0 1767.0,380.0 H1243.0 Q1240.0,380.0 1240.0,377.0 Z"/>
+      <rect id="accent-bar-output" class="bar-cy" x="1240" y="230" width="530" height="5" opacity="0.6"/>
+    </g>
+
+    <g id="card-consequence">
+      <path id="card-consequence-body" class="card-or" d="M30.0,400.0 H1770.0 V452.0 Q1770.0,455.0 1767.0,455.0 H33.0 Q30.0,455.0 30.0,452.0 Z"/>
+      <rect id="accent-bar-consequence" class="bar-or" x="30" y="400" width="1740" height="5" opacity="0.6"/>
+    </g>
+
+    <g id="card-payoff">
+      <path id="card-payoff-body" class="card-cy" d="M30.0,475.0 H1770.0 V527.0 Q1770.0,530.0 1767.0,530.0 H33.0 Q30.0,530.0 30.0,527.0 Z"/>
+      <rect id="accent-bar-payoff" class="bar-cy" x="30" y="475" width="1740" height="5" opacity="0.6"/>
+    </g>
+
+  </g>
+
+  <g id="connectors"><!-- tool-generated: two permitted hops, one probe stopped short -->
+    <!-- straight connector: len=65px start_angle=180.0deg end_angle=0.0deg -->
+    <path class="arrow-stroke" d="M565.00,305.00 L620.00,305.00" fill="none" stroke-width="1.6" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill" points="630.00,305.00 620.00,298.00 620.00,312.00" opacity="0.85"/>
+    <!-- straight connector: len=65px start_angle=180.0deg end_angle=0.0deg -->
+    <path class="arrow-stroke" d="M1170.00,305.00 L1225.00,305.00" fill="none" stroke-width="1.6" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill" points="1235.00,305.00 1225.00,298.00 1225.00,312.00" opacity="0.85"/>
+    <!-- straight connector: len=30px start_angle=-90.0deg end_angle=90.0deg -->
+    <path class="arrow-stroke-or" d="M900.00,185.00 L900.00,205.00" fill="none" stroke-width="1.6" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill-or" points="900.00,215.00 907.00,205.00 893.00,205.00" opacity="0.85"/>
+  </g>
+
+  <g id="content" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+
+    <g id="header">
+      <text class="accent-2" x="30" y="25" font-size="10" font-weight="700" letter-spacing="2.4">THE CONSTRAINT</text>
+      <text class="fg-1" x="30" y="60" font-size="20" font-weight="700" letter-spacing="0.4">The right measurement is locked inside the model</text>
+      <text class="fg-3" x="30" y="85" font-size="11">KL divergence &#8212; the standard measure of how far one probability distribution has moved from another &#8212; is the right tool here.</text>
+      <g id="legend">
+        <rect class="swatch-cy" x="1450" y="30" width="12" height="12" rx="2"/>
+        <text class="fg-3" x="1475" y="40" font-size="10">cyan = what you actually have</text>
+        <rect class="swatch-or" x="1450" y="50" width="12" height="12" rx="2"/>
+        <text class="fg-3" x="1475" y="60" font-size="10">orange = what the API will not give you</text>
+      </g>
+    </g>
+
+    <g id="text-probe">
+      <text class="warn-1" x="680" y="125" font-size="11" font-weight="700" letter-spacing="1.2">TOKEN PROBABILITIES  &#183;  &#8220;LOGITS&#8221;</text>
+      <text class="fg-3" x="680" y="145" font-size="9.5">the model&#8217;s own score for every word it could write next,</text>
+      <text class="fg-3" x="680" y="165" font-size="9.5">at every position. The exact measure runs on these.</text>
+    </g>
+
+    <g id="text-blocked">
+      <text class="warn-1" x="920" y="205" font-size="10.5" font-weight="700">&#10005; blocked</text>
+    </g>
+
+    <g id="text-hop-1">
+      <text class="fg-4" x="600" y="295" font-size="9" text-anchor="middle">text in</text>
+    </g>
+    <g id="text-hop-2">
+      <text class="fg-4" x="1200" y="295" font-size="9" text-anchor="middle">text out</text>
+    </g>
+
+    <g id="text-source">
+      <text class="accent-2" x="50" y="255" font-size="9" font-weight="700" letter-spacing="1.6">INPUT</text>
+      <text class="fg-1" x="50" y="280" font-size="14" font-weight="700">Source document</text>
+      <text class="fg-2" x="50" y="300" font-size="9.5">Plain text. You can read it, split it into statements,</text>
+      <text class="fg-2" x="50" y="320" font-size="9.5">count it, and turn every statement into a vector.</text>
+    </g>
+
+    <g id="text-model">
+      <text class="accent-2" x="655" y="255" font-size="9" font-weight="700" letter-spacing="1.6">FRONTIER MODEL  &#183;  BEHIND AN API</text>
+      <text class="fg-1" x="655" y="280" font-size="14" font-weight="700">A sealed box</text>
+      <text class="fg-2" x="655" y="300" font-size="9.5">Text goes in. Text comes out. Nothing about the model&#8217;s</text>
+      <text class="fg-2" x="655" y="320" font-size="9.5">internal scoring crosses that boundary.</text>
+    </g>
+
+    <g id="text-output">
+      <text class="accent-2" x="1260" y="255" font-size="9" font-weight="700" letter-spacing="1.6">OUTPUT</text>
+      <text class="fg-1" x="1260" y="280" font-size="14" font-weight="700">The model&#8217;s document</text>
+      <text class="fg-2" x="1260" y="300" font-size="9.5">Plain text as well. Same access, and the same nothing</text>
+      <text class="fg-2" x="1260" y="320" font-size="9.5">underneath: no scores arrived with the words.</text>
+    </g>
+
+    <g id="chip-source">
+      <rect class="chip-cy" x="50" y="335" width="120" height="25" rx="3"/>
+      <text class="accent-2" x="110" y="350" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.6">YOU HAVE THIS</text>
+    </g>
+    <g id="chip-model">
+      <rect class="chip-or" x="655" y="335" width="170" height="25" rx="3"/>
+      <text class="warn-2" x="740" y="350" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.6">YOU CANNOT HAVE THIS</text>
+    </g>
+    <g id="chip-output">
+      <rect class="chip-cy" x="1260" y="335" width="120" height="25" rx="3"/>
+      <text class="accent-2" x="1320" y="350" font-size="9.5" font-weight="700" text-anchor="middle" letter-spacing="0.6">YOU HAVE THIS</text>
+    </g>
+
+    <g id="text-consequence">
+      <text class="warn-2" x="50" y="435" font-size="15" font-weight="700">KL divergence needs those numbers. You cannot have them.</text>
+      <text class="fg-3" x="1750" y="435" font-size="10.5" text-anchor="end">Not a bad measure that was rejected. A correct measure that is locked away.</text>
+    </g>
+
+    <g id="text-payoff">
+      <text class="accent-2" x="50" y="510" font-size="15" font-weight="700">What you actually have: two documents, as text.</text>
+      <text class="fg-2" x="1750" y="510" font-size="10.5" text-anchor="end">That is the entire input the method is allowed &#8212; no probabilities, no logits, no model internals.</text>
+    </g>
+
+    <g id="icon-source" transform="translate(520, 250)">
+      <path class="icon-line" d="M0.0,0.0 L14.0,0.0 L20.0,6.0 L20.0,20.0 L0.0,20.0 Z"/>
+      <path class="icon-hint" d="M14.0,0.0 L14.0,6.0 L20.0,6.0 Z"/>
+    </g>
+
+    <g id="icon-sealed" transform="translate(1125, 253)">
+      <path class="icon-line" d="M0.0,0.0 L14.8,0.0 L14.8,17.0 L0.0,17.0 Z"/>
+      <path class="icon-line" d="M0.0,0.0 L5.196,-3.0 L19.996,-3.0 L14.8,0.0 Z"/>
+      <path class="icon-hint" d="M14.8,0.0 L19.996,-3.0 L19.996,14.0 L14.8,17.0 Z"/>
+    </g>
+
+    <g id="icon-output" transform="translate(1730, 250)">
+      <path class="icon-line" d="M0.0,0.0 L14.0,0.0 L20.0,6.0 L20.0,20.0 L0.0,20.0 Z"/>
+      <path class="icon-hint" d="M14.0,0.0 L14.0,6.0 L20.0,6.0 Z"/>
+    </g>
+
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

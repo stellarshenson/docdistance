@@ -1,0 +1,431 @@
+<!--
+  13-drift-to-rules.svg - closed feedback loop from a transport map to a ruleset
+  Shows: the pair of documents, the transport map, two typed findings (fidelity in orange,
+         ordering in light orange), one rule card per finding, the accumulating ruleset,
+         the generating agent that closes the loop, a contrast panel for the single scalar
+         score, and the three things a rule needs before it can be written.
+  Intent: figure 13 of the docdistance article; argues that a plan carries which claim,
+          by how much, and what type, while one number carries none of the three.
+  Theme: docdistance dark deck. plate 0a1a24, cyan 0096d1 (mechanism), light cyan 5cc8e0,
+         dim cyan 1a5a6e (strokes only, never text), orange da8230 (fidelity failure),
+         light orange d4a04a (ordering failure and caution).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 950" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0e2c3a; }
+    .fg-2 { fill: #172e39; }
+    .fg-3 { fill: #405d69; }
+    .fg-4 { fill: #5c7a87; }
+    .accent-1 { fill: #21a2d5; }
+    .accent-2 { fill: #177387; }
+    .warn-1 { fill: #b9691d; }
+    .warn-2 { fill: #a17323; }
+    .plate { fill: transparent; }
+    .card { fill: #21a2d5; fill-opacity: 0.05; stroke: #2b8cab; stroke-width: 1; }
+    .card-warn { fill: #b9691d; fill-opacity: 0.05; stroke: #b9691d; stroke-width: 1; }
+    .card-caution { fill: #a17323; fill-opacity: 0.05; stroke: #a17323; stroke-width: 1; }
+    .slot { fill: #21a2d5; fill-opacity: 0.03; stroke: #2b8cab; stroke-width: 1; stroke-dasharray: 5 4; }
+    .bar-mech { fill: #21a2d5; fill-opacity: 0.6; }
+    .bar-warn { fill: #b9691d; fill-opacity: 0.6; }
+    .bar-caution { fill: #a17323; fill-opacity: 0.6; }
+    .chip-warn { fill: #b9691d; fill-opacity: 0.16; stroke: #b9691d; stroke-width: 1; }
+    .chip-caution { fill: #a17323; fill-opacity: 0.16; stroke: #a17323; stroke-width: 1; }
+    .seg-warn { fill: #b9691d; }
+    .edge-warn { fill: #b9691d; }
+    .edge-caution { fill: #a17323; }
+    .glyph-mech { fill: none; stroke: #21a2d5; stroke-width: 1.2; }
+    .glyph-fold { fill: none; stroke: #21a2d5; stroke-width: 0.8; stroke-dasharray: 2 2; }
+    .rule-line { fill: #2b8cab; }
+    .dot-mech { fill: #21a2d5; }
+    .dot-caution { fill: #a17323; }
+    .arrow-stroke { fill: none; stroke: #21a2d5; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+    .arrow-fill { fill: #21a2d5; }
+    .arrow-stroke-warn { fill: none; stroke: #b9691d; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+    .arrow-fill-warn { fill: #b9691d; }
+    .arrow-stroke-caution { fill: none; stroke: #a17323; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+    .arrow-fill-caution { fill: #a17323; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #eef7fb; }
+      .fg-2 { fill: #c6dde8; }
+      .fg-3 { fill: #96b3bf; }
+      .fg-4 { fill: #7896a3; }
+      .accent-1 { fill: #2aabde; }
+      .accent-2 { fill: #78d4e8; }
+      .warn-1 { fill: #e29246; }
+      .warn-2 { fill: #dcae5e; }
+      .plate { fill: #071219; }
+      .card { fill: #2aabde; fill-opacity: 0.05; stroke: #216c84; stroke-width: 1; }
+      .card-warn { fill: #e29246; fill-opacity: 0.05; stroke: #e29246; stroke-width: 1; }
+      .card-caution { fill: #dcae5e; fill-opacity: 0.05; stroke: #dcae5e; stroke-width: 1; }
+      .slot { fill: #2aabde; fill-opacity: 0.03; stroke: #216c84; stroke-width: 1; stroke-dasharray: 5 4; }
+      .bar-mech { fill: #2aabde; fill-opacity: 0.6; }
+      .bar-warn { fill: #e29246; fill-opacity: 0.6; }
+      .bar-caution { fill: #dcae5e; fill-opacity: 0.6; }
+      .chip-warn { fill: #e29246; fill-opacity: 0.16; stroke: #e29246; stroke-width: 1; }
+      .chip-caution { fill: #dcae5e; fill-opacity: 0.16; stroke: #dcae5e; stroke-width: 1; }
+      .seg-warn { fill: #e29246; }
+      .edge-warn { fill: #e29246; }
+      .edge-caution { fill: #dcae5e; }
+      .glyph-mech { fill: none; stroke: #2aabde; stroke-width: 1.2; }
+      .glyph-fold { fill: none; stroke: #2aabde; stroke-width: 0.8; stroke-dasharray: 2 2; }
+      .rule-line { fill: #216c84; }
+      .dot-mech { fill: #2aabde; }
+      .dot-caution { fill: #dcae5e; }
+      .arrow-stroke { fill: none; stroke: #2aabde; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+      .arrow-fill { fill: #2aabde; }
+      .arrow-stroke-warn { fill: none; stroke: #e29246; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+      .arrow-fill-warn { fill: #e29246; }
+      .arrow-stroke-caution { fill: none; stroke: #dcae5e; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+      .arrow-fill-caution { fill: #dcae5e; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 950 (doc-flow drawn as a closed loop)
+    Outer margins: 40 left/right. Header band y=0..90. Footer baseline y=920.
+
+    Columns (channel gaps hold the connectors):
+    col-1: x=40..240    w=200   gap 100 (straight)
+    col-2: x=340..600   w=260   gap 100 (manifold fan out)
+    col-3: x=700..1100  w=400   gap 60  (straight)
+    col-4: x=1160..1480 w=320   gap 100 (manifold fan in)
+    col-5: x=1580..1760 w=180
+
+    Rows:
+    row-A: y=110..330  h=220   (fidelity finding + fidelity rule)
+    row-B: y=380..600  h=220   (ordering finding + ordering rule)
+    mid-band centre y=355      (pair, transport map, ruleset all centred here)
+    return band: y=630..710    (agent, return leg at y=670)
+    base band:   y=730..890    (contrast panel, teach panel)
+
+    Card padding 15px, every text origin and rect edge snapped to the 5px grid.
+    Kicker at card.y+30, title at card.y+60, body rhythm 20px, footnote rhythm 15px.
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    flow: card-pair to card-map to (card-find-fidelity, card-find-order)
+    h-stack: card-find-fidelity, card-rule-fidelity (gap=60)
+    h-stack: card-find-order, card-rule-order (gap=60)
+    v-align: card-find-fidelity.left = card-find-order.left
+    v-align: card-rule-fidelity.left = card-rule-order.left
+    merge: (card-rule-fidelity, card-rule-order) to card-ruleset
+    loop: card-ruleset to card-agent to card-pair
+    h-align: card-pair.center = card-map.center = card-ruleset.center (y=355)
+    h-stack: card-contrast, card-teach (gap=60)
+    contain: card-find-fidelity > split-weight-bar
+    contain: card-find-order > order-track
+  === -->
+
+  <rect x="0" y="0" width="1800" height="950" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="950" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="950" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="950" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="240" y1="0" x2="240" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="340" y1="0" x2="340" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="690" y1="0" x2="690" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="700" y1="0" x2="700" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="750" y1="0" x2="750" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="1100" y1="0" x2="1100" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="1160" y1="0" x2="1160" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="1480" y1="0" x2="1480" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="1580" y1="0" x2="1580" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="950" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="110" x2="1800" y2="110" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="230" x2="1800" y2="230" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="330" x2="1800" y2="330" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="355" x2="1800" y2="355" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="380" x2="1800" y2="380" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="480" x2="1800" y2="480" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="600" x2="1800" y2="600" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="630" x2="1800" y2="630" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="670" x2="1800" y2="670" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="710" x2="1800" y2="710" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="730" x2="1800" y2="730" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="890" x2="1800" y2="890" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+    <g id="deck-plate">
+      <rect class="plate" x="0" y="0" width="1800" height="950"/>
+    </g>
+  </g>
+
+  <g id="nodes"><!-- cards, circles, hexes - the shapes connectors attach to -->
+    <g id="card-pair">
+      <rect class="card" x="40" y="230" width="200" height="250" rx="3"/>
+      <rect class="bar-mech" x="40" y="230" width="200" height="5"/>
+    </g>
+    <g id="card-map">
+      <rect class="card" x="340" y="230" width="260" height="250" rx="3"/>
+      <rect class="bar-mech" x="340" y="230" width="260" height="5"/>
+    </g>
+    <g id="card-find-fidelity">
+      <rect class="card-warn" x="700" y="110" width="400" height="220" rx="3"/>
+      <rect class="bar-warn" x="700" y="110" width="400" height="5"/>
+    </g>
+    <g id="card-find-order">
+      <rect class="card-caution" x="700" y="380" width="400" height="220" rx="3"/>
+      <rect class="bar-caution" x="700" y="380" width="400" height="5"/>
+    </g>
+    <g id="card-rule-fidelity">
+      <rect class="card" x="1160" y="110" width="320" height="220" rx="3"/>
+      <rect class="bar-mech" x="1160" y="110" width="320" height="5"/>
+    </g>
+    <g id="card-rule-order">
+      <rect class="card" x="1160" y="380" width="320" height="220" rx="3"/>
+      <rect class="bar-mech" x="1160" y="380" width="320" height="5"/>
+    </g>
+    <g id="card-ruleset">
+      <rect class="card" x="1580" y="110" width="180" height="490" rx="3"/>
+      <rect class="bar-mech" x="1580" y="110" width="180" height="5"/>
+    </g>
+    <g id="card-agent">
+      <rect class="card" x="40" y="630" width="200" height="80" rx="3"/>
+      <rect class="bar-mech" x="40" y="630" width="200" height="5"/>
+    </g>
+    <g id="card-contrast">
+      <rect class="card-caution" x="40" y="730" width="650" height="160" rx="3"/>
+      <rect class="bar-caution" x="40" y="730" width="650" height="5"/>
+    </g>
+    <g id="card-teach">
+      <rect class="card" x="750" y="730" width="1010" height="160" rx="3"/>
+      <rect class="bar-mech" x="750" y="730" width="1010" height="5"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- every arrow / strand / spine, tool-generated only -->
+    <g id="conn-pair-to-map">
+      <!-- straight connector: len=68px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M256.00,355.00 L314.00,355.00"/>
+      <polygon class="arrow-fill" points="324.00,355.00 314.00,350.00 314.00,360.00"/>
+    </g>
+    <g id="conn-map-to-findings">
+      <!-- manifold connector: shape=l-chamfer starts=1 ends=2 -->
+      <path class="arrow-stroke" d="M616.00,355.00 L628.00,355.00"/>
+      <path class="arrow-stroke" d="M628.00,355.00 L652.00,355.00"/>
+      <path class="arrow-stroke-warn" d="M652.00,355.00 L652.00,222.00 L654.00,220.00 L674.00,220.00"/>
+      <polygon class="arrow-fill-warn" points="684.00,220.00 674.00,215.00 674.00,225.00"/>
+      <path class="arrow-stroke-caution" d="M652.00,355.00 L652.00,488.00 L654.00,490.00 L674.00,490.00"/>
+      <polygon class="arrow-fill-caution" points="684.00,490.00 674.00,485.00 674.00,495.00"/>
+    </g>
+    <g id="conn-find-fidelity-to-rule">
+      <!-- straight connector: len=28px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M1116.00,220.00 L1134.00,220.00"/>
+      <polygon class="arrow-fill" points="1144.00,220.00 1134.00,215.00 1134.00,225.00"/>
+    </g>
+    <g id="conn-find-order-to-rule">
+      <!-- straight connector: len=28px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M1116.00,490.00 L1134.00,490.00"/>
+      <polygon class="arrow-fill" points="1144.00,490.00 1134.00,485.00 1134.00,495.00"/>
+    </g>
+    <g id="conn-rules-to-ruleset">
+      <!-- manifold connector: shape=straight starts=2 ends=1 -->
+      <path class="arrow-stroke" d="M1495.65,332.45 L1524.00,355.00"/>
+      <path class="arrow-stroke" d="M1495.65,377.55 L1524.00,355.00"/>
+      <path class="arrow-stroke" d="M1524.00,355.00 L1544.00,355.00"/>
+      <path class="arrow-stroke" d="M1544.00,355.00 L1550.00,355.00"/>
+      <polygon class="arrow-fill" points="1560.00,355.00 1550.00,350.00 1550.00,360.00"/>
+    </g>
+    <g id="conn-ruleset-to-agent">
+      <!-- l-chamfer connector: len=1464px start_angle=-90.0deg end_angle=180.0deg -->
+      <path class="arrow-stroke" d="M1670.00,616.00 L1670.00,664.00 L1664.00,670.00 L266.00,670.00"/>
+      <polygon class="arrow-fill" points="256.00,670.00 266.00,675.00 266.00,665.00"/>
+    </g>
+    <g id="conn-agent-to-pair">
+      <!-- straight connector: len=118px start_angle=90.0deg end_angle=-90.0deg -->
+      <path class="arrow-stroke" d="M140.00,614.00 L140.00,506.00"/>
+      <polygon class="arrow-fill" points="140.00,496.00 135.00,506.00 145.00,506.00"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- icons, labels, text - never behind nodes -->
+
+    <g id="header">
+      <text class="fg-1" x="40" y="50" font-size="22" font-weight="700" font-family="Segoe UI, Arial, sans-serif">from drift to rules</text>
+      <text class="fg-3" x="40" y="80" font-size="13" font-family="Segoe UI, Arial, sans-serif">a transport map names which claim moved, by how much, and what kind of failure it was, so every finding becomes a rule the agent can follow</text>
+    </g>
+
+    <g id="text-pair">
+      <text class="accent-1" x="55" y="260" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">WHAT GOES IN</text>
+      <path class="glyph-mech" d="M55.0,280.0 L83.0,280.0 L90.0,287.0 L90.0,325.0 L55.0,325.0 Z"/>
+      <path class="glyph-fold" d="M83.0,280.0 L83.0,287.0 L90.0,287.0 Z"/>
+      <text class="fg-1" x="100" y="300" font-size="11" font-weight="600" font-family="Segoe UI, Arial, sans-serif">source</text>
+      <text class="fg-1" x="100" y="315" font-size="11" font-weight="600" font-family="Segoe UI, Arial, sans-serif">document</text>
+      <path class="glyph-mech" d="M55.0,350.0 L83.0,350.0 L90.0,357.0 L90.0,395.0 L55.0,395.0 Z"/>
+      <path class="glyph-fold" d="M83.0,350.0 L83.0,357.0 L90.0,357.0 Z"/>
+      <text class="fg-1" x="100" y="370" font-size="11" font-weight="600" font-family="Segoe UI, Arial, sans-serif">generated</text>
+      <text class="fg-1" x="100" y="385" font-size="11" font-weight="600" font-family="Segoe UI, Arial, sans-serif">output</text>
+      <text class="fg-3" x="55" y="430" font-size="9" font-family="Segoe UI, Arial, sans-serif">no model internals</text>
+      <text class="fg-3" x="55" y="445" font-size="9" font-family="Segoe UI, Arial, sans-serif">needed, only the text</text>
+    </g>
+
+    <g id="text-map">
+      <text class="accent-1" x="355" y="260" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">THE MECHANISM</text>
+      <text class="fg-1" x="355" y="285" font-size="14" font-weight="700" font-family="Segoe UI, Arial, sans-serif">the transport map</text>
+      <circle class="dot-mech" cx="360" cy="315" r="3"/>
+      <text class="fg-2" x="375" y="320" font-size="11" font-family="Segoe UI, Arial, sans-serif">which claim moved</text>
+      <circle class="dot-mech" cx="360" cy="340" r="3"/>
+      <text class="fg-2" x="375" y="345" font-size="11" font-family="Segoe UI, Arial, sans-serif">how much of it moved</text>
+      <circle class="dot-mech" cx="360" cy="365" r="3"/>
+      <text class="fg-2" x="375" y="370" font-size="11" font-family="Segoe UI, Arial, sans-serif">how far it had to go</text>
+      <text class="fg-3" x="355" y="410" font-size="9" font-family="Segoe UI, Arial, sans-serif">one row per statement,</text>
+      <text class="fg-3" x="355" y="425" font-size="9" font-family="Segoe UI, Arial, sans-serif">with its weight and its cost,</text>
+      <text class="fg-3" x="355" y="440" font-size="9" font-family="Segoe UI, Arial, sans-serif">never a single total</text>
+    </g>
+
+    <g id="text-find-fidelity">
+      <text class="warn-1" x="715" y="140" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">FINDING 1 · FIDELITY</text>
+      <text class="fg-1" x="715" y="170" font-size="14" font-weight="700" font-family="Segoe UI, Arial, sans-serif">a claim was dropped or invented</text>
+      <text class="fg-2" x="715" y="195" font-size="11" font-family="Segoe UI, Arial, sans-serif">its weight split three ways at high cost</text>
+      <text class="fg-2" x="715" y="215" font-size="11" font-family="Segoe UI, Arial, sans-serif">no single counterpart anywhere in the source</text>
+      <g id="split-weight-bar">
+        <text class="fg-3" x="790" y="240" font-size="9" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">0.40</text>
+        <text class="fg-3" x="930" y="240" font-size="9" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">0.35</text>
+        <text class="fg-3" x="1040" y="240" font-size="9" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">0.25</text>
+        <rect class="seg-warn" x="715" y="245" width="145" height="20" rx="2"/>
+        <rect class="seg-warn" x="865" y="245" width="125" height="20" rx="2"/>
+        <rect class="seg-warn" x="995" y="245" width="90" height="20" rx="2"/>
+      </g>
+      <text class="fg-3" x="715" y="290" font-size="9" font-family="Segoe UI, Arial, sans-serif">one claim’s weight, spread across three unrelated targets</text>
+      <text class="fg-3" x="715" y="305" font-size="9" font-family="Segoe UI, Arial, sans-serif">nothing in the source carries it</text>
+    </g>
+
+    <g id="text-find-order">
+      <text class="warn-2" x="715" y="410" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">FINDING 2 · ORDERING</text>
+      <text class="fg-1" x="715" y="440" font-size="14" font-weight="700" font-family="Segoe UI, Arial, sans-serif">a claim only moved</text>
+      <text class="fg-2" x="715" y="465" font-size="11" font-family="Segoe UI, Arial, sans-serif">it matched cleanly, one target, low cost</text>
+      <text class="fg-2" x="715" y="485" font-size="11" font-family="Segoe UI, Arial, sans-serif">but it sits twelve positions from where it belonged</text>
+      <text class="warn-2" x="900" y="505" font-size="9" font-weight="600" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">twelve positions</text>
+      <g id="displacement-span">
+        <rect class="edge-caution" x="780" y="515" width="240" height="2"/>
+        <rect class="edge-caution" x="779" y="510" width="2" height="12"/>
+        <rect class="edge-caution" x="1019" y="510" width="2" height="12"/>
+      </g>
+      <g id="order-track">
+        <rect class="rule-line" x="715" y="530" width="370" height="2"/>
+        <circle class="dot-mech" cx="780" cy="530" r="5"/>
+        <circle class="dot-caution" cx="1020" cy="530" r="5"/>
+        <text class="fg-3" x="780" y="550" font-size="9" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">belonged here</text>
+        <text class="fg-3" x="1020" y="550" font-size="9" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">landed here</text>
+      </g>
+      <text class="fg-3" x="715" y="580" font-size="9" font-family="Segoe UI, Arial, sans-serif">the words survived, the running order did not</text>
+    </g>
+
+    <g id="text-rule-fidelity">
+      <rect class="chip-warn" x="1175" y="130" width="80" height="20" rx="2"/>
+      <text class="warn-1" x="1215" y="145" font-size="9" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">FIDELITY</text>
+      <text class="accent-1" x="1265" y="145" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">RULE</text>
+      <text class="fg-1" x="1175" y="180" font-size="13" font-weight="700" font-family="Segoe UI, Arial, sans-serif">every claim in the output</text>
+      <text class="fg-1" x="1175" y="200" font-size="13" font-weight="700" font-family="Segoe UI, Arial, sans-serif">must trace to one claim</text>
+      <text class="fg-1" x="1175" y="220" font-size="13" font-weight="700" font-family="Segoe UI, Arial, sans-serif">in the source</text>
+      <text class="fg-2" x="1175" y="250" font-size="11" font-family="Segoe UI, Arial, sans-serif">no split across targets.</text>
+      <text class="fg-2" x="1175" y="270" font-size="11" font-family="Segoe UI, Arial, sans-serif">no claim without a source.</text>
+      <text class="fg-3" x="1175" y="300" font-size="9" font-family="Segoe UI, Arial, sans-serif">writable because the plan named</text>
+      <text class="fg-3" x="1175" y="315" font-size="9" font-family="Segoe UI, Arial, sans-serif">the claim and the size of the miss</text>
+    </g>
+
+    <g id="text-rule-order">
+      <rect class="chip-caution" x="1175" y="400" width="80" height="20" rx="2"/>
+      <text class="warn-2" x="1215" y="415" font-size="9" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">ORDERING</text>
+      <text class="accent-1" x="1270" y="415" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">RULE</text>
+      <text class="fg-1" x="1175" y="450" font-size="13" font-weight="700" font-family="Segoe UI, Arial, sans-serif">keep the running order</text>
+      <text class="fg-1" x="1175" y="470" font-size="13" font-weight="700" font-family="Segoe UI, Arial, sans-serif">of the source</text>
+      <text class="fg-2" x="1175" y="500" font-size="11" font-family="Segoe UI, Arial, sans-serif">rewording a claim is allowed.</text>
+      <text class="fg-2" x="1175" y="520" font-size="11" font-family="Segoe UI, Arial, sans-serif">relocating one is not.</text>
+      <text class="fg-3" x="1175" y="560" font-size="9" font-family="Segoe UI, Arial, sans-serif">writable because the plan kept</text>
+      <text class="fg-3" x="1175" y="575" font-size="9" font-family="Segoe UI, Arial, sans-serif">moved apart from changed</text>
+    </g>
+
+    <g id="text-ruleset">
+      <text class="accent-1" x="1595" y="140" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">THE RULESET</text>
+      <text class="fg-3" x="1595" y="160" font-size="9" font-family="Segoe UI, Arial, sans-serif">one rule per finding</text>
+      <g id="ruleset-chip-1">
+        <rect class="card" x="1595" y="180" width="150" height="35" rx="2"/>
+        <rect class="edge-warn" x="1595" y="180" width="3" height="35"/>
+        <text class="fg-2" x="1610" y="200" font-size="10" font-family="Segoe UI, Arial, sans-serif">fidelity rule</text>
+      </g>
+      <g id="ruleset-chip-2">
+        <rect class="card" x="1595" y="230" width="150" height="35" rx="2"/>
+        <rect class="edge-caution" x="1595" y="230" width="3" height="35"/>
+        <text class="fg-2" x="1610" y="250" font-size="10" font-family="Segoe UI, Arial, sans-serif">ordering rule</text>
+      </g>
+      <g id="ruleset-slot-3">
+        <rect class="slot" x="1595" y="280" width="150" height="35" rx="2"/>
+        <text class="fg-4" x="1670" y="300" font-size="11" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">…</text>
+      </g>
+      <g id="ruleset-slot-4">
+        <rect class="slot" x="1595" y="330" width="150" height="35" rx="2"/>
+        <text class="fg-4" x="1670" y="350" font-size="11" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">…</text>
+      </g>
+      <text class="fg-3" x="1595" y="400" font-size="9" font-family="Segoe UI, Arial, sans-serif">it grows by one rule</text>
+      <text class="fg-3" x="1595" y="415" font-size="9" font-family="Segoe UI, Arial, sans-serif">every run</text>
+      <text class="accent-2" x="1595" y="565" font-size="9" font-weight="600" font-family="Segoe UI, Arial, sans-serif">carried into the</text>
+      <text class="accent-2" x="1595" y="580" font-size="9" font-weight="600" font-family="Segoe UI, Arial, sans-serif">next generation</text>
+    </g>
+
+    <g id="text-agent">
+      <text class="accent-1" x="55" y="655" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">THE LOOP CLOSES</text>
+      <text class="fg-1" x="55" y="680" font-size="12" font-weight="700" font-family="Segoe UI, Arial, sans-serif">the generating agent</text>
+      <text class="fg-3" x="55" y="700" font-size="9" font-family="Segoe UI, Arial, sans-serif">reads the ruleset, writes again</text>
+    </g>
+
+    <g id="label-return-leg">
+      <text class="accent-2" x="900" y="655" font-size="10" font-weight="600" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">the ruleset feeds the next run</text>
+    </g>
+
+    <g id="text-contrast">
+      <text class="warn-2" x="55" y="760" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">THE ALTERNATIVE · ONE NUMBER</text>
+      <rect class="chip-caution" x="55" y="775" width="130" height="40" rx="3"/>
+      <text class="warn-2" x="120" y="800" font-size="18" font-weight="700" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">worse</text>
+      <text class="fg-2" x="200" y="790" font-size="11" font-family="Segoe UI, Arial, sans-serif">that is the whole content of a</text>
+      <text class="fg-2" x="200" y="810" font-size="11" font-family="Segoe UI, Arial, sans-serif">single similarity score.</text>
+      <text class="warn-2" x="55" y="845" font-size="11" font-weight="700" font-family="Segoe UI, Arial, sans-serif">×</text>
+      <text class="fg-3" x="70" y="845" font-size="11" font-family="Segoe UI, Arial, sans-serif">which claim</text>
+      <text class="warn-2" x="250" y="845" font-size="11" font-weight="700" font-family="Segoe UI, Arial, sans-serif">×</text>
+      <text class="fg-3" x="265" y="845" font-size="11" font-family="Segoe UI, Arial, sans-serif">by how much</text>
+      <text class="warn-2" x="450" y="845" font-size="11" font-weight="700" font-family="Segoe UI, Arial, sans-serif">×</text>
+      <text class="fg-3" x="465" y="845" font-size="11" font-family="Segoe UI, Arial, sans-serif">what type</text>
+      <text class="fg-2" x="55" y="875" font-size="10" font-family="Segoe UI, Arial, sans-serif">no location, no size, no type, so there is nothing here to write a rule from</text>
+    </g>
+
+    <g id="text-teach">
+      <text class="accent-1" x="765" y="760" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">WHAT A RULE NEEDS</text>
+      <text class="fg-3" x="960" y="760" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">WHICH CLAIM</text>
+      <text class="fg-3" x="1230" y="760" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">BY HOW MUCH</text>
+      <text class="fg-3" x="1500" y="760" font-size="9" font-weight="600" letter-spacing="1" font-family="Segoe UI, Arial, sans-serif">WHAT TYPE OF FAILURE</text>
+      <rect class="rule-line" x="765" y="775" width="980" height="1"/>
+      <text class="warn-2" x="765" y="805" font-size="11" font-weight="700" font-family="Segoe UI, Arial, sans-serif">one number</text>
+      <text class="warn-2" x="960" y="805" font-size="11" font-family="Segoe UI, Arial, sans-serif">not named</text>
+      <text class="warn-2" x="1230" y="805" font-size="11" font-family="Segoe UI, Arial, sans-serif">not measured</text>
+      <text class="warn-2" x="1500" y="805" font-size="11" font-family="Segoe UI, Arial, sans-serif">not distinguished</text>
+      <rect class="rule-line" x="765" y="820" width="980" height="1"/>
+      <text class="accent-2" x="765" y="850" font-size="11" font-weight="700" font-family="Segoe UI, Arial, sans-serif">the transport map</text>
+      <text class="accent-2" x="960" y="850" font-size="11" font-family="Segoe UI, Arial, sans-serif">the exact statement</text>
+      <text class="accent-2" x="1230" y="850" font-size="11" font-family="Segoe UI, Arial, sans-serif">its weight and its cost</text>
+      <text class="accent-2" x="1500" y="850" font-size="11" font-family="Segoe UI, Arial, sans-serif">dropped, or merely moved</text>
+      <text class="fg-3" x="765" y="880" font-size="9" font-family="Segoe UI, Arial, sans-serif">a score answers ‘did it get worse’. a plan answers ‘what do I change’.</text>
+    </g>
+
+    <g id="footer">
+      <text class="fg-4" x="40" y="920" font-size="10" font-family="Segoe UI, Arial, sans-serif">the mechanism, not a measured gain - this loop is not benchmarked</text>
+    </g>
+
+  </g>
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

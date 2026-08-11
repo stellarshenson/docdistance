@@ -1,0 +1,318 @@
+<!--
+  04-earth-mover-intuition.svg - hero explanatory figure for the Wasserstein section
+  Shows: header band; an isometric meaning-space plane carrying four solid sand piles
+         (document A) and five dashed target piles (document B); five lofted flow arcs whose
+         stroke width encodes how much sand moves and whose length encodes how far it travels,
+         with one pile forking across two destinations; a plain-words idea card and a legend card.
+  Intent: make the earth mover's distance click physically for a reader who has never met
+          optimal transport. No formula appears anywhere on the canvas.
+  Theme: docdistance dark deck - ground #0a1a24, cyan #0096d1, light cyan #5cc8e0,
+         dim cyan #1a5a6e, orange #da8230, light orange #d4a04a
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 700" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0a303e; }
+    .fg-2 { fill: #112c37; }
+    .fg-3 { fill: #2b4e5c; }
+    .fg-4 { fill: #416979; }
+    .accent-1 { fill: #157a90; }
+    .accent-2 { fill: #a8761f; }
+    .plate { fill: transparent; }
+    .bg-node { fill: #157a90; fill-opacity: 0.16; }
+    .bg-link { stroke: #157a90; stroke-opacity: 0.12; fill: none; }
+    .plane-fill { fill: #20bbf5; fill-opacity: 0.07; stroke: #2c8aaa; stroke-width: 1.4; }
+    .plane-grid { stroke: #2c8aaa; stroke-width: 0.9; stroke-opacity: 0.7; fill: none; }
+    .pad { fill: transparent; fill-opacity: 0.6; }
+    .pile-base { fill: #2c8aaa; }
+    .pile-lit { fill: #157a90; fill-opacity: 0.62; stroke: #157a90; stroke-width: 1; }
+    .pile-mid { fill: #20bbf5; fill-opacity: 0.62; stroke: #157a90; stroke-width: 1; }
+    .pile-ridge { stroke: #0a3b48; stroke-width: 1.3; stroke-opacity: 0.85; }
+    .ghost-pad { fill: none; stroke: #157a90; stroke-width: 1.1; stroke-dasharray: 5 4; stroke-opacity: 0.65; }
+    .ghost-face { fill: #157a90; fill-opacity: 0.07; stroke: #157a90; stroke-width: 1.2; stroke-dasharray: 5 4; stroke-opacity: 0.8; }
+    .flow-cheap-stroke { stroke: #a8761f; stroke-opacity: 0.78; }
+    .flow-cheap-fill { fill: #a8761f; fill-opacity: 0.9; }
+    .flow-costly-stroke { stroke: #c97017; stroke-opacity: 0.85; }
+    .flow-costly-fill { fill: #c97017; fill-opacity: 0.95; }
+    .card { fill: #0096d1; fill-opacity: 0.06; stroke: #2c8aaa; stroke-width: 1; }
+    .bar-1 { fill: #20bbf5; }
+    .bar-2 { fill: #157a90; }
+    .rule { stroke: #2c8aaa; stroke-width: 1; }
+    .callout-box { fill: transparent; stroke: #2c8aaa; stroke-width: 1; }
+    .callout-box-warm { fill: transparent; stroke: #ae7129; stroke-width: 1; }
+    .leader { stroke: #a8761f; stroke-width: 1.2; stroke-opacity: 0.85; fill: none; }
+    .leader-dot { fill: #a8761f; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #f2fafd; }
+      .fg-2 { fill: #cae5ef; }
+      .fg-3 { fill: #a3c6d4; }
+      .fg-4 { fill: #86aebe; }
+      .accent-1 { fill: #6fd4ea; }
+      .accent-2 { fill: #e0ae57; }
+      .plate { fill: #0a1a24; }
+      .bg-node { fill: #6fd4ea; fill-opacity: 0.16; }
+      .bg-link { stroke: #6fd4ea; stroke-opacity: 0.12; fill: none; }
+      .plane-fill { fill: #0aa5df; fill-opacity: 0.07; stroke: #24708a; stroke-width: 1.4; }
+      .plane-grid { stroke: #24708a; stroke-width: 0.9; stroke-opacity: 0.7; fill: none; }
+      .pad { fill: #04131b; fill-opacity: 0.6; }
+      .pile-base { fill: #24708a; }
+      .pile-lit { fill: #6fd4ea; fill-opacity: 0.62; stroke: #6fd4ea; stroke-width: 1; }
+      .pile-mid { fill: #0aa5df; fill-opacity: 0.62; stroke: #6fd4ea; stroke-width: 1; }
+      .pile-ridge { stroke: #b7e8f5; stroke-width: 1.3; stroke-opacity: 0.85; }
+      .ghost-pad { fill: none; stroke: #6fd4ea; stroke-width: 1.1; stroke-dasharray: 5 4; stroke-opacity: 0.65; }
+      .ghost-face { fill: #6fd4ea; fill-opacity: 0.07; stroke: #6fd4ea; stroke-width: 1.2; stroke-dasharray: 5 4; stroke-opacity: 0.8; }
+      .flow-cheap-stroke { stroke: #e0ae57; stroke-opacity: 0.78; }
+      .flow-cheap-fill { fill: #e0ae57; fill-opacity: 0.9; }
+      .flow-costly-stroke { stroke: #e88f36; stroke-opacity: 0.85; }
+      .flow-costly-fill { fill: #e88f36; fill-opacity: 0.95; }
+      .card { fill: #0096d1; fill-opacity: 0.06; stroke: #24708a; stroke-width: 1; }
+      .bar-1 { fill: #0aa5df; }
+      .bar-2 { fill: #6fd4ea; }
+      .rule { stroke: #24708a; stroke-width: 1; }
+      .callout-box { fill: #0e2432; stroke: #24708a; stroke-width: 1; }
+      .callout-box-warm { fill: #0e2432; stroke: #a76d27; stroke-width: 1; }
+      .leader { stroke: #e0ae57; stroke-width: 1.2; stroke-opacity: 0.85; fill: none; }
+      .leader-dot { fill: #e0ae57; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 700
+    Outer margins: 40 left / right, 40 top, 60 bottom
+    Header band: y=0..97, title baseline y=50, subtitle baseline y=78, accent bar y=92 h=5
+    Scene column: x=40..1180, isometric meaning-space plane (tilt 40, width 800, depth 380)
+      plane corners: front-left 70,640  front-right 870,640  back-left 361.1,395.7  back-right 1161.1,395.7
+      pile bases sit on plane parameter points, u along width and v along depth
+    Card column: x=1200..1760 w=560
+      card-idea   y=100..340 h=240
+      card-legend y=360..640 h=280, vertical gap 20
+      legend rows: glyph 420, glyph 464, rule 506, swatch 552, swatch 608
+    Caption baseline y=672
+  === -->
+
+  <!-- TOPOLOGY:
+    contain: shape-plane > shape-pile-a1..a4, shape-pile-b1..b5
+    flow: shape-pile-a1 to shape-pile-b1, a2 to b2, a3 to b3, a3 to b4, a4 to b5
+    v-stack: card-idea, card-legend (gap=20)
+    h-align: card-idea.left = card-legend.left
+  -->
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40.0" y1="0" x2="40.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1180.0" y1="0" x2="1180.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1200.0" y1="0" x2="1200.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1760.0" y1="0" x2="1760.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="95.0" x2="1800" y2="95.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="640.0" x2="1800" y2="640.0" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- ground plate, star field, meaning-space plane -->
+    <rect class="plate" x="0" y="0" width="1800" height="700" fill="transparent"/>
+    <g id="starfield">
+      
+      <circle class="bg-node" cx="601.9" cy="120.3" r="3.4"/>
+      <circle class="bg-node" cx="1155.4" cy="68.7" r="1.1"/>
+      <circle class="bg-node" cx="960.7" cy="261.6" r="3.1"/>
+      <circle class="bg-node" cx="152.1" cy="354.9" r="1.7"/>
+      <circle class="bg-node" cx="117.4" cy="306.3" r="1.4"/>
+      <circle class="bg-node" cx="172.2" cy="80.7" r="1.3"/>
+      <circle class="bg-node" cx="772.3" cy="565.1" r="1.8"/>
+      <circle class="bg-node" cx="263.5" cy="167.9" r="3.0"/>
+      <circle class="bg-node" cx="1030.5" cy="282.0" r="2.5"/>
+    </g>
+    <g id="shape-plane" class="shape">
+      <path class="plane-fill" d="M70.0,640.0 L870.0,640.0 L1161.1,395.7 L361.1,395.7 Z"/>
+      <path class="plane-grid" fill="none" d="M230.00,640.00 L521.10,395.74 M390.00,640.00 L681.10,395.74 M550.00,640.00 L841.10,395.74 M710.00,640.00 L1001.10,395.74 M142.77,578.94 L942.77,578.94 M215.55,517.87 L1015.55,517.87 M288.32,456.81 L1088.32,456.81"/>
+    </g>
+  </g>
+
+  <g id="nodes"><!-- header band, sand piles, target positions, cards -->
+    <g id="header">
+      <text class="fg-1" x="40" y="50" font-size="23" font-weight="700" letter-spacing="0.5" font-family="Segoe UI, Arial, sans-serif">Distance as the cost of moving sand</text>
+      <text class="fg-3" x="40" y="80" font-size="13.5" font-family="Segoe UI, Arial, sans-serif">each document is a handful of small piles standing in meaning space, and turning one into the other means moving the sand</text>
+      <rect class="bar-1" x="40" y="90" width="1140" height="5" opacity="0.6"/>
+    </g>
+
+    <g id="piles-b"><!-- document B: the positions the sand has to reach -->
+      <g id="shape-pile-b1" class="shape">
+        <ellipse class="ghost-pad" cx="295.47" cy="614.84" rx="42.0" ry="10.5"/>
+        <path class="ghost-face" d="M295.47,579.34 L253.47,625.34 L295.47,606.94 Z"/>
+        <path class="ghost-face" d="M295.47,579.34 L337.47,625.34 L295.47,606.94 Z"/>
+      </g>
+      <g id="shape-pile-b2" class="shape">
+        <ellipse class="ghost-pad" cx="672.34" cy="420.94" rx="36.0" ry="9.0"/>
+        <path class="ghost-face" d="M672.34,389.94 L636.34,429.94 L672.34,413.94 Z"/>
+        <path class="ghost-face" d="M672.34,389.94 L708.34,429.94 L672.34,413.94 Z"/>
+      </g>
+      <g id="shape-pile-b3" class="shape">
+        <ellipse class="ghost-pad" cx="502.04" cy="580.51" rx="23.0" ry="5.75"/>
+        <path class="ghost-face" d="M502.04,560.26 L479.04,586.26 L502.04,575.86 Z"/>
+        <path class="ghost-face" d="M502.04,560.26 L525.04,586.26 L502.04,575.86 Z"/>
+      </g>
+      <g id="shape-pile-b4" class="shape">
+        <ellipse class="ghost-pad" cx="705.73" cy="517.26" rx="22.0" ry="5.5"/>
+        <path class="ghost-face" d="M705.73,497.76 L683.73,522.76 L705.73,512.76 Z"/>
+        <path class="ghost-face" d="M705.73,497.76 L727.73,522.76 L705.73,512.76 Z"/>
+      </g>
+      <g id="shape-pile-b5" class="shape">
+        <ellipse class="ghost-pad" cx="1072.34" cy="422.44" rx="30.0" ry="7.5"/>
+        <path class="ghost-face" d="M1072.34,395.94 L1042.34,429.94 L1072.34,416.34 Z"/>
+        <path class="ghost-face" d="M1072.34,395.94 L1102.34,429.94 L1072.34,416.34 Z"/>
+      </g>
+    </g>
+    <g id="piles-a"><!-- document A: the sand you start with, drawn back to front -->
+      <g id="shape-pile-a4" class="shape">
+        <ellipse class="pad" cx="497.81" cy="407.78" rx="30.0" ry="7.5"/>
+        <path class="pile-base" d="M467.81,415.28 L527.81,415.28 L497.81,401.67999999999995 Z"/>
+        <path class="pile-lit" d="M497.81,381.28 L467.81,415.28 L497.81,401.67999999999995 Z"/>
+        <path class="pile-mid" d="M497.81,381.28 L527.81,415.28 L497.81,401.67999999999995 Z"/>
+        <line class="pile-ridge" x1="497.81" y1="381.28" x2="497.81" y2="401.68"/>
+      </g>
+      <g id="shape-pile-a2" class="shape">
+        <ellipse class="pad" cx="298.48" cy="479.56" rx="36.0" ry="9.0"/>
+        <path class="pile-base" d="M262.48,488.56 L334.48,488.56 L298.48,472.56 Z"/>
+        <path class="pile-lit" d="M298.48,448.56 L262.48,488.56 L298.48,472.56 Z"/>
+        <path class="pile-mid" d="M298.48,448.56 L334.48,488.56 L298.48,472.56 Z"/>
+        <line class="pile-ridge" x1="298.48" y1="448.56" x2="298.48" y2="472.56"/>
+      </g>
+      <g id="shape-pile-a3" class="shape">
+        <ellipse class="pad" cx="398.79" cy="543.57" rx="34.0" ry="8.5"/>
+        <path class="pile-base" d="M364.79,552.07 L432.79,552.07 L398.79,536.87 Z"/>
+        <path class="pile-lit" d="M398.79,514.07 L364.79,552.07 L398.79,536.87 Z"/>
+        <path class="pile-mid" d="M398.79,514.07 L432.79,552.07 L398.79,536.87 Z"/>
+        <line class="pile-ridge" x1="398.79" y1="514.07" x2="398.79" y2="536.87"/>
+      </g>
+      <g id="shape-pile-a1" class="shape">
+        <ellipse class="pad" cx="178.4" cy="585.53" rx="42.0" ry="10.5"/>
+        <path class="pile-base" d="M136.4,596.03 L220.4,596.03 L178.4,577.63 Z"/>
+        <path class="pile-lit" d="M178.4,550.03 L136.4,596.03 L178.4,577.63 Z"/>
+        <path class="pile-mid" d="M178.4,550.03 L220.4,596.03 L178.4,577.63 Z"/>
+        <line class="pile-ridge" x1="178.4" y1="550.03" x2="178.4" y2="577.63"/>
+      </g>
+    </g>
+
+    <g id="card-idea">
+      <path class="card" d="M1200,100 H1760 V330 Q1760,340 1750,340 H1210 Q1200,340 1200,330 Z"/>
+      <rect class="bar-1" x="1200" y="100" width="560" height="5" opacity="0.6"/>
+      <text class="accent-1" x="1225" y="140" font-size="13" font-weight="700" letter-spacing="0.6" font-family="Segoe UI, Arial, sans-serif">THE WHOLE IDEA</text>
+      <text class="fg-2" x="1225" y="190" font-size="19" font-family="Segoe UI, Arial, sans-serif">A short move is cheap.</text>
+      <text class="fg-2" x="1225" y="225" font-size="19" font-family="Segoe UI, Arial, sans-serif">A long move is expensive.</text>
+      <text class="fg-1" x="1225" y="275" font-size="20" font-weight="700" font-family="Segoe UI, Arial, sans-serif">The distance is the total cost</text>
+      <text class="fg-1" x="1225" y="305" font-size="20" font-weight="700" font-family="Segoe UI, Arial, sans-serif">of the cheapest possible plan.</text>
+    </g>
+
+    <g id="card-legend">
+      <path class="card" d="M1200,360 H1760 V630 Q1760,640 1750,640 H1210 Q1200,640 1200,630 Z"/>
+      <rect class="bar-2" x="1200" y="360" width="560" height="5" opacity="0.6"/>
+      <text class="accent-1" x="1225" y="400" font-size="13" font-weight="700" letter-spacing="0.6" font-family="Segoe UI, Arial, sans-serif">HOW TO READ THE PICTURE</text>
+      <g id="legend-row-pile">
+        <g id="shape-glyph-legend-solid" class="shape">
+          <ellipse class="pad" cx="1250.0" cy="434.75" rx="17.0" ry="4.25"/>
+          <path class="pile-base" d="M1233.0,439.0 L1267.0,439.0 L1250.0,431.4 Z"/>
+          <path class="pile-lit" d="M1250.0,420.0 L1233.0,439.0 L1250.0,431.4 Z"/>
+          <path class="pile-mid" d="M1250.0,420.0 L1267.0,439.0 L1250.0,431.4 Z"/>
+        </g>
+        <text class="fg-2" x="1290" y="435" font-size="12.5" font-family="Segoe UI, Arial, sans-serif">a pile is one statement, standing where its meaning sits</text>
+      </g>
+      <g id="legend-row-ghost">
+        <g id="shape-glyph-legend-ghost" class="shape">
+          <ellipse class="ghost-pad" cx="1250.0" cy="478.75" rx="17.0" ry="4.25"/>
+          <path class="ghost-face" d="M1250.0,464.0 L1233.0,483.0 L1250.0,475.4 Z"/>
+          <path class="ghost-face" d="M1250.0,464.0 L1267.0,483.0 L1250.0,475.4 Z"/>
+        </g>
+        <text class="fg-2" x="1290" y="480" font-size="12.5" font-family="Segoe UI, Arial, sans-serif">a dashed pile is a place document B has to fill</text>
+      </g>
+      <line class="rule" x1="1225" y1="505" x2="1735" y2="505"/>
+      <text class="fg-2" x="1330" y="550" font-size="12.5" font-family="Segoe UI, Arial, sans-serif">how thick it is • how much sand moves</text>
+      <text class="fg-2" x="1440" y="605" font-size="12.5" font-family="Segoe UI, Arial, sans-serif">how long it is • how far, so what it costs</text>
+    </g>
+  </g>
+
+  <g id="connectors" data-connector-pattern="mixed"><!-- the transport plan; every arc tool-routed -->
+    <g id="flow-a1-b1">
+      <path class="flow-cheap-stroke" d="M185.76,543.26 L186.38,542.72 L189.01,540.54 L191.62,538.48 L194.21,536.54 L196.79,534.73 L199.35,533.04 L201.88,531.46 L204.40,530.00 L206.90,528.65 L209.38,527.42 L211.83,526.30 L214.27,525.28 L216.68,524.37 L219.07,523.57 L221.43,522.86 L223.78,522.26 L226.09,521.76 L228.39,521.36 L230.65,521.05 L232.89,520.84 L235.11,520.72 L237.29,520.69 L239.46,520.78 L241.62,521.02 L243.76,521.39 L245.90,521.89 L248.01,522.53 L250.11,523.31 L252.20,524.22 L254.27,525.26 L256.33,526.43 L258.38,527.74 L260.40,529.17 L262.41,530.73 L264.41,532.41 L266.38,534.22 L268.34,536.16 L270.29,538.22 L272.21,540.40 L274.12,542.70 L276.01,545.12 L277.88,547.66 L278.05,547.90" fill="none" stroke-width="15" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="291.22,570.29 296.71,538.56 262.65,555.42"/>
+    </g>
+    <g id="flow-a2-b2">
+      <path class="flow-cheap-stroke" d="M304.21,440.36 L306.72,436.82 L310.87,431.13 L315.04,425.55 L319.22,420.09 L323.42,414.76 L327.64,409.54 L331.87,404.45 L336.12,399.48 L340.39,394.64 L344.67,389.93 L348.97,385.35 L353.28,380.89 L357.61,376.57 L361.96,372.38 L366.32,368.32 L370.70,364.40 L375.09,360.61 L379.50,356.96 L383.93,353.46 L388.37,350.09 L392.82,346.86 L397.29,343.78 L401.78,340.84 L406.28,338.05 L410.79,335.41 L415.32,332.92 L419.86,330.57 L424.42,328.38 L428.99,326.34 L433.57,324.45 L438.17,322.72 L442.79,321.14 L447.41,319.73 L452.05,318.47 L456.71,317.38 L461.37,316.44 L466.05,315.67 L470.74,315.07 L475.45,314.63 L480.17,314.35 L484.90,314.25 L489.65,314.29 L494.41,314.41 L499.20,314.63 L504.01,314.95 L508.83,315.36 L513.67,315.87 L518.53,316.48 L523.41,317.19 L528.31,318.00 L533.23,318.92 L538.17,319.95 L543.12,321.09 L548.09,322.33 L553.08,323.69 L558.08,325.16 L563.11,326.75 L568.15,328.46 L573.21,330.28 L578.28,332.23 L583.37,334.30 L588.48,336.49 L593.60,338.81 L598.74,341.26 L603.90,343.84 L609.07,346.55 L614.26,349.39 L619.47,352.36 L624.69,355.48 L629.92,358.73 L635.17,362.12 L640.44,365.66 L645.72,369.33 L647.08,370.31" fill="none" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="664.60,383.61 657.41,357.37 637.43,382.36"/>
+    </g>
+    <g id="flow-a3-b3">
+      <path class="flow-cheap-stroke" d="M408.71,512.80 L409.80,512.69 L412.49,512.43 L415.16,512.20 L417.80,512.01 L420.42,511.83 L423.00,511.69 L425.56,511.57 L428.08,511.46 L430.57,511.38 L433.02,511.32 L435.44,511.27 L437.82,511.23 L440.16,511.20 L442.46,511.19 L444.72,511.18 L446.94,511.17 L449.12,511.17 L451.25,511.18 L453.36,511.33 L455.46,511.64 L457.53,512.10 L459.59,512.71 L461.64,513.48 L463.66,514.38 L465.66,515.42 L467.65,516.59 L469.61,517.88 L471.55,519.30 L473.47,520.84 L475.37,522.49 L477.24,524.25 L479.09,526.11 L480.91,528.06 L482.71,530.11 L484.48,532.25 L486.23,534.48 L487.94,536.78 L489.63,539.16 L489.91,539.57" fill="none" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="497.32,551.45 499.02,534.33 481.67,544.29"/>
+    </g>
+    <g id="flow-a3-b4">
+      <path class="flow-cheap-stroke" d="M406.03,507.17 L406.77,506.48 L410.76,502.82 L414.77,499.25 L418.77,495.78 L422.78,492.40 L426.79,489.12 L430.81,485.94 L434.84,482.85 L438.86,479.85 L442.90,476.96 L446.93,474.16 L450.97,471.46 L455.02,468.86 L459.07,466.36 L463.12,463.96 L467.18,461.67 L471.24,459.47 L475.31,457.38 L479.38,455.39 L483.46,453.50 L487.54,451.72 L491.62,450.04 L495.71,448.47 L499.80,447.01 L503.90,445.65 L508.00,444.40 L512.11,443.26 L516.22,442.22 L520.33,441.30 L524.45,440.49 L528.57,439.78 L532.70,439.19 L536.83,438.71 L540.96,438.34 L545.10,438.09 L549.25,437.95 L553.39,437.92 L557.55,437.99 L561.70,438.14 L565.86,438.37 L570.03,438.68 L574.20,439.09 L578.38,439.58 L582.56,440.15 L586.74,440.82 L590.93,441.57 L595.12,442.41 L599.32,443.34 L603.52,444.36 L607.73,445.48 L611.94,446.68 L616.16,447.98 L620.38,449.37 L624.61,450.85 L628.84,452.43 L633.07,454.10 L637.31,455.87 L641.55,457.74 L645.80,459.70 L650.05,461.76 L654.31,463.92 L658.57,466.18 L662.84,468.54 L667.11,470.99 L671.38,473.55 L675.66,476.22 L679.94,478.98 L684.23,481.85 L687.32,483.99" fill="none" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="697.83,491.63 692.96,476.58 682.04,490.89"/>
+    </g>
+    <g id="flow-a4-b5">
+      <path class="flow-costly-stroke" d="M501.90,372.15 L503.47,368.69 L506.42,362.38 L509.46,356.10 L512.58,349.88 L515.79,343.76 L519.08,337.76 L522.45,331.93 L525.91,326.28 L529.46,320.86 L533.10,315.70 L536.82,310.83 L540.63,306.28 L544.53,302.08 L548.51,298.26 L552.59,294.87 L556.76,291.92 L561.02,289.45 L565.44,287.14 L570.03,284.86 L574.80,282.61 L579.73,280.39 L584.82,278.21 L590.06,276.06 L595.45,273.95 L600.96,271.87 L606.61,269.83 L612.37,267.83 L618.25,265.87 L624.23,263.95 L630.31,262.08 L636.48,260.25 L642.74,258.47 L649.07,256.73 L655.47,255.04 L661.94,253.40 L668.46,251.81 L675.02,250.27 L681.63,248.79 L688.26,247.36 L694.93,245.98 L701.61,244.66 L708.30,243.40 L714.99,242.20 L721.68,241.06 L728.36,239.98 L735.02,238.96 L741.66,238.01 L748.26,237.12 L754.82,236.30 L761.33,235.55 L767.79,234.86 L774.18,234.25 L780.51,233.70 L786.75,233.23 L792.92,232.84 L798.99,232.52 L804.96,232.27 L810.83,232.10 L816.58,232.01 L822.22,232.01 L827.82,232.17 L833.41,232.50 L838.99,233.00 L844.55,233.67 L850.09,234.50 L855.62,235.50 L861.13,236.66 L866.63,237.98 L872.11,239.46 L877.58,241.09 L883.03,242.88 L888.47,244.81 L893.89,246.90 L899.29,249.13 L904.67,251.50 L910.04,254.02 L915.40,256.67 L920.73,259.47 L926.05,262.39 L931.35,265.45 L936.64,268.65 L941.90,271.96 L947.15,275.41 L952.39,278.98 L957.60,282.67 L962.80,286.48 L967.97,290.40 L973.13,294.44 L978.28,298.60 L983.40,302.86 L988.51,307.24 L993.59,311.71 L998.66,316.30 L1003.71,320.98 L1008.74,325.76 L1013.75,330.64 L1018.74,335.61 L1023.71,340.68 L1028.67,345.84 L1033.60,351.08 L1038.51,356.41 L1043.41,361.83 L1048.28,367.32 L1053.13,372.90 L1053.13,372.90" fill="none" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-costly-fill" points="1066.02,388.19 1064.07,363.86 1042.48,381.70"/>
+    </g>
+    <g id="legend-flow-thick">
+      <path class="flow-cheap-stroke" d="M1231.37,549.32 L1232.21,548.92 L1235.31,547.55 L1238.41,546.29 L1241.52,545.15 L1244.62,544.12 L1247.72,543.21 L1250.83,542.41 L1253.93,541.73 L1257.03,541.16 L1260.14,540.70 L1263.24,540.36 L1266.34,540.13 L1269.45,540.01 L1272.55,540.01 L1275.66,540.13 L1278.76,540.36 L1281.86,540.70 L1284.97,541.16 L1285.97,541.34" fill="none" stroke-width="15" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="1310.63,549.32 1295.37,520.96 1278.98,555.24"/>
+    </g>
+    <g id="legend-flow-long">
+      <path class="flow-cheap-stroke" d="M1231.84,606.64 L1235.09,605.92 L1239.64,604.95 L1244.18,604.03 L1248.73,603.17 L1253.27,602.35 L1257.82,601.58 L1262.36,600.86 L1266.91,600.19 L1271.45,599.57 L1276.00,599.00 L1280.55,598.48 L1285.09,598.01 L1289.64,597.59 L1294.18,597.21 L1298.73,596.89 L1303.27,596.62 L1307.82,596.40 L1312.36,596.22 L1316.91,596.10 L1321.45,596.02 L1326.00,596.00 L1330.55,596.02 L1335.09,596.10 L1339.64,596.22 L1344.18,596.40 L1348.73,596.62 L1353.27,596.89 L1357.82,597.21 L1362.36,597.59 L1366.91,598.01 L1371.45,598.48 L1376.00,599.00 L1380.55,599.57 L1385.09,600.19 L1389.64,600.86 L1394.18,601.58 L1398.73,602.35 L1403.27,603.17 L1407.44,603.96" fill="none" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="flow-cheap-fill" points="1420.16,606.64 1409.43,595.02 1405.50,612.59"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- scene labels and caption -->
+    <g id="label-doc-a">
+      <g id="shape-glyph-doc-a" class="shape">
+          <ellipse class="pad" cx="80.0" cy="423.75" rx="17.0" ry="4.25"/>
+          <path class="pile-base" d="M63.0,428.0 L97.0,428.0 L80.0,420.4 Z"/>
+          <path class="pile-lit" d="M80.0,409.0 L63.0,428.0 L80.0,420.4 Z"/>
+          <path class="pile-mid" d="M80.0,409.0 L97.0,428.0 L80.0,420.4 Z"/>
+        </g>
+      <text class="accent-1" x="110" y="420" font-size="15" font-weight="700" letter-spacing="0.4" font-family="Segoe UI, Arial, sans-serif">document A</text>
+      <text class="fg-3" x="110" y="440" font-size="12" font-family="Segoe UI, Arial, sans-serif">the sand you start with</text>
+    </g>
+    <g id="label-doc-b">
+      <g id="shape-glyph-doc-b" class="shape">
+          <ellipse class="ghost-pad" cx="977.0" cy="595.75" rx="17.0" ry="4.25"/>
+          <path class="ghost-face" d="M977.0,581.0 L960.0,600.0 L977.0,592.4 Z"/>
+          <path class="ghost-face" d="M977.0,581.0 L994.0,600.0 L977.0,592.4 Z"/>
+        </g>
+      <text class="accent-1" x="1010" y="595" font-size="15" font-weight="700" letter-spacing="0.4" font-family="Segoe UI, Arial, sans-serif">document B</text>
+      <text class="fg-3" x="1010" y="615" font-size="12" font-family="Segoe UI, Arial, sans-serif">the positions it must reach</text>
+    </g>
+    <text class="fg-4" x="70" y="665" font-size="12.5" font-family="Segoe UI, Arial, sans-serif">meaning space • statements that say similar things stand near each other, so a short move is a small change in meaning</text>
+  </g>
+
+  <g id="callouts"><!-- annotations, topmost; leader geometry from the callouts solver -->
+    <g id="callout-cheap">
+      <line class="leader" x1="190.0" y1="500.0" x2="236.9" y2="520.7"/>
+      <circle class="leader-dot" cx="236.9" cy="520.7" r="3"/>
+      <text class="fg-1" x="95" y="480" font-size="13" font-weight="600" font-family="Segoe UI, Arial, sans-serif">a short move</text>
+      <text class="fg-3" x="95" y="495" font-size="13" font-family="Segoe UI, Arial, sans-serif">costs little</text>
+    </g>
+    <g id="callout-costly">
+      <line class="leader" x1="850.0" y1="165.0" x2="820.0" y2="232.0"/>
+      <circle class="leader-dot" cx="820.0" cy="232.0" r="3"/>
+      <text class="fg-1" x="755" y="140" font-size="13" font-weight="600" font-family="Segoe UI, Arial, sans-serif">a long haul is the expensive move</text>
+      <text class="fg-3" x="755" y="155" font-size="13" font-family="Segoe UI, Arial, sans-serif">in any plan</text>
+    </g>
+    <g id="callout-split">
+      <line class="leader" x1="620.0" y1="380.0" x2="552.0" y2="438.0"/>
+      <circle class="leader-dot" cx="552.0" cy="438.0" r="3"/>
+      <text class="fg-1" x="600" y="345" font-size="13" font-weight="600" font-family="Segoe UI, Arial, sans-serif">the sand from one pile</text>
+      <text class="fg-3" x="600" y="365" font-size="13" font-family="Segoe UI, Arial, sans-serif">split across two destinations</text>
+    </g>
+  </g>
+</svg>

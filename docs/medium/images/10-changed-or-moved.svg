@@ -1,0 +1,340 @@
+<!--
+  08-changed-or-moved.svg - two independent questions need two independent numbers
+  Shows: title band, a 2x2 quadrant grid crossed by two plain questions (did the WORDS
+         change? / did the ORDER change?), each quadrant drawn as a before/after pair of
+         statement stacks, and under each pair a two-gauge readout naming which of the two
+         numbers moves and which stays flat; closing takeaway band.
+  Intent: teach a reader who knows cosine similarity but has never touched optimal transport
+         that rewording moves one number while the other stays flat, and rearranging does
+         the reverse - which is why the pair cannot be collapsed into a single score.
+  Theme: docdistance dark-first - bg 0a1a24, cyan 0096d1 / 5cc8e0 (words and meaning),
+         dim cyan 1a5a6e (rules and tracks), orange da8230 / d4a04a (order and arrangement)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1020" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0d2b3a; }
+    .fg-2 { fill: #1c4759; }
+    .fg-3 { fill: #476874; }
+    .fg-4 { fill: #557682; }
+    .accent-1 { fill: #056a92; }
+    .accent-2 { fill: #8c4e0e; }
+    .on-fill { fill: #eaf6fb; }
+    .card { fill: #0096d1; fill-opacity: 0.045; stroke: #0096d1; stroke-opacity: 0.55; stroke-width: 1; }
+    .stmt { fill: #0096d1; fill-opacity: 0.05; stroke: #0096d1; stroke-opacity: 0.35; stroke-width: 1; }
+    .rule { fill: #0096d1; fill-opacity: 0.32; }
+    .track-1 { fill: #0096d1; fill-opacity: 0.3; }
+    .track-2 { fill: #da8230; fill-opacity: 0.3; }
+    .dot-1 { fill: #056a92; }
+    .dot-2 { fill: #8c4e0e; }
+    .dot-flat { fill: #6d8b96; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e6f3f9; }
+      .fg-2 { fill: #c2dde8; }
+      .fg-3 { fill: #93b5c2; }
+      .fg-4 { fill: #7b9daa; }
+      .accent-1 { fill: #5cc8e0; }
+      .accent-2 { fill: #d4a04a; }
+      .on-fill { fill: #eaf6fb; }
+      .card { fill-opacity: 0.06; stroke: #2a7f9c; stroke-opacity: 1; }
+      .stmt { fill-opacity: 0.06; stroke: #2a7f9c; stroke-opacity: 0.85; }
+      .rule { fill: #1a5a6e; fill-opacity: 1; }
+      .track-1 { fill: #1a5a6e; fill-opacity: 1; }
+      .track-2 { fill: #da8230; fill-opacity: 0.45; }
+      .dot-1 { fill: #5cc8e0; }
+      .dot-2 { fill: #d4a04a; }
+      .dot-flat { fill: #55757f; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 1020 (doc-grid, extended for the axis band and the takeaway band)
+    Outer margins: 40 left/right, 40 top, 20 bottom (5px-grid snapped)
+
+    Bands:
+    header   : y=40..115   title, subtitle, closing rule
+    axis-x    : y=115..180  words question + per-column answers
+    axis-y    : x=40..180   order question (two lines, band centre x=110) + per-row answers
+    quadrants : y=180..880
+    takeaway  : y=915..1000
+
+    Columns (gap=20, left band 40..180 reserved for the order axis):
+    col-1: x=200.0..970.0   w=770.0  centre 585
+    col-2: x=990.0..1760.0  w=770.0  centre 1375
+
+    Rows (gap=20):
+    row-1: y=180.0..520.0  h=340.0  centre 350
+    row-2: y=540.0..880.0  h=340.0  centre 710
+
+    Card interior (origin cx,cy - left/right padding 30):
+    +50 title    +75 subtitle    +100 before/after labels
+    stacks: left x=cx+30 w=300, right x=cx+440 w=300, rows y=cy+110/150/190 h=30
+    divider y=cy+245
+    gauge rows: track y=cy+270 and cy+305, track x=cx+430..cx+650
+    gauge marker: flat at cx+430, moved at cx+595
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-stack: card-1, card-2 (gap=20)
+    h-stack: card-3, card-4 (gap=20)
+    v-stack: card-1, card-3 (gap=20)
+    v-stack: card-2, card-4 (gap=20)
+    v-align: card-1.top = card-2.top; card-3.top = card-4.top
+    h-align: card-1.left = card-3.left; card-2.left = card-4.left
+    contain: card-N greater than stack-before-N, stack-after-N, gauges-N
+    h-align: axis-x-answer-1 shares centre with card-1; axis-x-answer-2 shares centre with card-2
+    v-align: axis-y-answer-1 shares centre with card-1; axis-y-answer-2 shares centre with card-3
+  === -->
+
+  <rect x="0" y="0" width="1800" height="1020" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="1020" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="1020" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="1020" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="200" y1="0" x2="200" y2="1020" stroke="red" stroke-width="0.5"/>
+    <line x1="970" y1="0" x2="970" y2="1020" stroke="red" stroke-width="0.5"/>
+    <line x1="990" y1="0" x2="990" y2="1020" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="1020" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="180" x2="1800" y2="180" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="520" x2="1800" y2="520" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="540" x2="1800" y2="540" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="880" x2="1800" y2="880" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+  </g>
+
+  <g id="nodes"><!-- quadrant cards + the statement rows inside them -->
+    <g id="card-1">
+      <rect class="card" x="200" y="180" width="770" height="340" rx="6"/>
+      <g id="stack-before-1">
+        <rect class="stmt" x="230" y="290" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="230" y="330" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="230" y="370" width="300" height="30" rx="4"/>
+      </g>
+      <g id="stack-after-1">
+        <rect class="stmt" x="640" y="290" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="640" y="330" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="640" y="370" width="300" height="30" rx="4"/>
+      </g>
+    </g>
+    <g id="card-2">
+      <rect class="card" x="990" y="180" width="770" height="340" rx="6"/>
+      <g id="stack-before-2">
+        <rect class="stmt" x="1020" y="290" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1020" y="330" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1020" y="370" width="300" height="30" rx="4"/>
+      </g>
+      <g id="stack-after-2">
+        <rect class="stmt" x="1430" y="290" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1430" y="330" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1430" y="370" width="300" height="30" rx="4"/>
+      </g>
+    </g>
+    <g id="card-3">
+      <rect class="card" x="200" y="540" width="770" height="340" rx="6"/>
+      <g id="stack-before-3">
+        <rect class="stmt" x="230" y="650" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="230" y="690" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="230" y="730" width="300" height="30" rx="4"/>
+      </g>
+      <g id="stack-after-3">
+        <rect class="stmt" x="640" y="650" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="640" y="690" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="640" y="730" width="300" height="30" rx="4"/>
+      </g>
+    </g>
+    <g id="card-4">
+      <rect class="card" x="990" y="540" width="770" height="340" rx="6"/>
+      <g id="stack-before-4">
+        <rect class="stmt" x="1020" y="650" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1020" y="690" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1020" y="730" width="300" height="30" rx="4"/>
+      </g>
+      <g id="stack-after-4">
+        <rect class="stmt" x="1430" y="650" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1430" y="690" width="300" height="30" rx="4"/>
+        <rect class="stmt" x="1430" y="730" width="300" height="30" rx="4"/>
+      </g>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- no routed connectors: the before-to-after mark is a glyph inside each card -->
+  </g>
+
+  <g id="content" font-family="Helvetica, Arial, sans-serif"><!-- header, axes, card labels, gauges, takeaway -->
+
+    <g id="header">
+      <text class="fg-1" x="40" y="60" font-size="27" font-weight="bold">Two questions. Two numbers.</text>
+      <text class="fg-3" x="40" y="90" font-size="15">Reword a document and one number moves. Shuffle it and the other one does. That separation is the point.</text>
+      <rect class="rule" x="40" y="115" width="1720" height="1"/>
+    </g>
+
+    <g id="axis-x">
+      <text class="accent-1" x="980" y="140" font-size="17" font-weight="bold" text-anchor="middle">did the WORDS change?</text>
+      <text class="accent-1" x="585" y="165" font-size="15" font-weight="bold" text-anchor="middle">NO</text>
+      <text class="accent-1" x="1375" y="165" font-size="15" font-weight="bold" text-anchor="middle">YES</text>
+    </g>
+
+    <g id="axis-y">
+      <text class="accent-2" x="110" y="355" font-size="15" font-weight="bold" text-anchor="middle">NO</text>
+      <text class="accent-2" x="110" y="510" font-size="14" font-weight="bold" text-anchor="middle">did the ORDER</text>
+      <text class="accent-2" x="110" y="535" font-size="14" font-weight="bold" text-anchor="middle">change?</text>
+      <text class="accent-2" x="110" y="715" font-size="15" font-weight="bold" text-anchor="middle">YES</text>
+    </g>
+
+    <g id="labels-1">
+      <text class="fg-1" x="230" y="230" font-size="21" font-weight="bold">UNCHANGED</text>
+      <text class="fg-4" x="940" y="230" font-size="15" font-weight="bold" text-anchor="end">01</text>
+      <text class="fg-3" x="230" y="255" font-size="13">same words, same order</text>
+      <text class="fg-4" x="230" y="280" font-size="10.5">BEFORE</text>
+      <text class="fg-3" x="585" y="355" font-size="30" text-anchor="middle">→</text>
+      <text class="fg-4" x="640" y="280" font-size="10.5">AFTER</text>
+      <text class="fg-3" x="246" y="310" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="264" y="310" font-size="12.5">revenue rose 12%</text>
+      <text class="fg-3" x="246" y="350" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="264" y="350" font-size="12.5">costs fell 4%</text>
+      <text class="fg-3" x="246" y="390" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="264" y="390" font-size="12.5">hiring is on hold</text>
+      <text class="fg-3" x="656" y="310" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="674" y="310" font-size="12.5">revenue rose 12%</text>
+      <text class="fg-3" x="656" y="350" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="674" y="350" font-size="12.5">costs fell 4%</text>
+      <text class="fg-3" x="656" y="390" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="674" y="390" font-size="12.5">hiring is on hold</text>
+    </g>
+
+    <g id="gauges-1">
+      <rect class="rule" x="230" y="425" width="710" height="1"/>
+      <text class="accent-1" x="230" y="455" font-size="13" font-weight="bold">the meaning number</text>
+      <rect class="track-1" x="630" y="445" width="220" height="10" rx="5"/>
+      <circle class="dot-flat" cx="630" cy="450" r="8"/>
+      <text class="fg-4" x="940" y="455" font-size="12.5" text-anchor="end">stays flat</text>
+      <text class="accent-2" x="230" y="490" font-size="13" font-weight="bold">the arrangement number</text>
+      <rect class="track-2" x="630" y="480" width="220" height="10" rx="5"/>
+      <circle class="dot-flat" cx="630" cy="485" r="8"/>
+      <text class="fg-4" x="940" y="490" font-size="12.5" text-anchor="end">stays flat</text>
+    </g>
+
+    <g id="labels-2">
+      <text class="fg-1" x="1020" y="230" font-size="21" font-weight="bold">REWORDED</text>
+      <text class="fg-4" x="1730" y="230" font-size="15" font-weight="bold" text-anchor="end">02</text>
+      <text class="fg-3" x="1020" y="255" font-size="13">different words, same order</text>
+      <text class="fg-4" x="1020" y="280" font-size="10.5">BEFORE</text>
+      <text class="fg-3" x="1375" y="355" font-size="30" text-anchor="middle">→</text>
+      <text class="fg-4" x="1430" y="280" font-size="10.5">AFTER</text>
+      <text class="fg-3" x="1036" y="310" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="1054" y="310" font-size="12.5">revenue rose 12%</text>
+      <text class="fg-3" x="1036" y="350" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="1054" y="350" font-size="12.5">costs fell 4%</text>
+      <text class="fg-3" x="1036" y="390" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="1054" y="390" font-size="12.5">hiring is on hold</text>
+      <text class="fg-3" x="1446" y="310" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="accent-1" x="1464" y="310" font-size="12.5">income was up 12%</text>
+      <text class="fg-3" x="1446" y="350" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="accent-1" x="1464" y="350" font-size="12.5">spending dropped 4%</text>
+      <text class="fg-3" x="1446" y="390" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="accent-1" x="1464" y="390" font-size="12.5">recruiting is paused</text>
+    </g>
+
+    <g id="gauges-2">
+      <rect class="rule" x="1020" y="425" width="710" height="1"/>
+      <text class="accent-1" x="1020" y="455" font-size="13" font-weight="bold">the meaning number</text>
+      <rect class="track-1" x="1420" y="445" width="220" height="10" rx="5"/>
+      <circle class="dot-1" cx="1585" cy="450" r="8"/>
+      <text class="accent-1" x="1730" y="455" font-size="12.5" font-weight="bold" text-anchor="end">moves</text>
+      <text class="accent-2" x="1020" y="490" font-size="13" font-weight="bold">the arrangement number</text>
+      <rect class="track-2" x="1420" y="480" width="220" height="10" rx="5"/>
+      <circle class="dot-flat" cx="1420" cy="485" r="8"/>
+      <text class="fg-4" x="1730" y="490" font-size="12.5" text-anchor="end">stays flat</text>
+    </g>
+
+    <g id="labels-3">
+      <text class="fg-1" x="230" y="590" font-size="21" font-weight="bold">REARRANGED</text>
+      <text class="fg-4" x="940" y="590" font-size="15" font-weight="bold" text-anchor="end">03</text>
+      <text class="fg-3" x="230" y="615" font-size="13">same words, different order</text>
+      <text class="fg-4" x="230" y="640" font-size="10.5">BEFORE</text>
+      <text class="fg-3" x="585" y="715" font-size="30" text-anchor="middle">→</text>
+      <text class="fg-4" x="640" y="640" font-size="10.5">AFTER</text>
+      <text class="fg-3" x="246" y="670" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="264" y="670" font-size="12.5">revenue rose 12%</text>
+      <text class="fg-3" x="246" y="710" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="264" y="710" font-size="12.5">costs fell 4%</text>
+      <text class="fg-3" x="246" y="750" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="264" y="750" font-size="12.5">hiring is on hold</text>
+      <text class="accent-2" x="656" y="670" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="674" y="670" font-size="12.5">hiring is on hold</text>
+      <text class="accent-2" x="656" y="710" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="674" y="710" font-size="12.5">revenue rose 12%</text>
+      <text class="accent-2" x="656" y="750" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="674" y="750" font-size="12.5">costs fell 4%</text>
+    </g>
+
+    <g id="gauges-3">
+      <rect class="rule" x="230" y="785" width="710" height="1"/>
+      <text class="accent-1" x="230" y="815" font-size="13" font-weight="bold">the meaning number</text>
+      <rect class="track-1" x="630" y="805" width="220" height="10" rx="5"/>
+      <circle class="dot-flat" cx="630" cy="810" r="8"/>
+      <text class="fg-4" x="940" y="815" font-size="12.5" text-anchor="end">stays flat</text>
+      <text class="accent-2" x="230" y="850" font-size="13" font-weight="bold">the arrangement number</text>
+      <rect class="track-2" x="630" y="840" width="220" height="10" rx="5"/>
+      <circle class="dot-2" cx="795" cy="845" r="8"/>
+      <text class="accent-2" x="940" y="850" font-size="12.5" font-weight="bold" text-anchor="end">moves</text>
+    </g>
+
+    <g id="labels-4">
+      <text class="fg-1" x="1020" y="590" font-size="21" font-weight="bold">BOTH</text>
+      <text class="fg-4" x="1730" y="590" font-size="15" font-weight="bold" text-anchor="end">04</text>
+      <text class="fg-3" x="1020" y="615" font-size="13">different words, different order</text>
+      <text class="fg-4" x="1020" y="640" font-size="10.5">BEFORE</text>
+      <text class="fg-3" x="1375" y="715" font-size="30" text-anchor="middle">→</text>
+      <text class="fg-4" x="1430" y="640" font-size="10.5">AFTER</text>
+      <text class="fg-3" x="1036" y="670" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="fg-2" x="1054" y="670" font-size="12.5">revenue rose 12%</text>
+      <text class="fg-3" x="1036" y="710" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="fg-2" x="1054" y="710" font-size="12.5">costs fell 4%</text>
+      <text class="fg-3" x="1036" y="750" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="fg-2" x="1054" y="750" font-size="12.5">hiring is on hold</text>
+      <text class="accent-2" x="1446" y="670" font-size="12.5" font-weight="bold" text-anchor="middle">C</text>
+      <text class="accent-1" x="1464" y="670" font-size="12.5">recruiting is paused</text>
+      <text class="accent-2" x="1446" y="710" font-size="12.5" font-weight="bold" text-anchor="middle">A</text>
+      <text class="accent-1" x="1464" y="710" font-size="12.5">income was up 12%</text>
+      <text class="accent-2" x="1446" y="750" font-size="12.5" font-weight="bold" text-anchor="middle">B</text>
+      <text class="accent-1" x="1464" y="750" font-size="12.5">spending dropped 4%</text>
+    </g>
+
+    <g id="gauges-4">
+      <rect class="rule" x="1020" y="785" width="710" height="1"/>
+      <text class="accent-1" x="1020" y="815" font-size="13" font-weight="bold">the meaning number</text>
+      <rect class="track-1" x="1420" y="805" width="220" height="10" rx="5"/>
+      <circle class="dot-1" cx="1585" cy="810" r="8"/>
+      <text class="accent-1" x="1730" y="815" font-size="12.5" font-weight="bold" text-anchor="end">moves</text>
+      <text class="accent-2" x="1020" y="850" font-size="13" font-weight="bold">the arrangement number</text>
+      <rect class="track-2" x="1420" y="840" width="220" height="10" rx="5"/>
+      <circle class="dot-2" cx="1585" cy="845" r="8"/>
+      <text class="accent-2" x="1730" y="850" font-size="12.5" font-weight="bold" text-anchor="end">moves</text>
+    </g>
+
+    <g id="takeaway">
+      <rect class="rule" x="40" y="915" width="1720" height="1"/>
+      <text class="fg-1" x="980" y="950" font-size="18" font-weight="bold" text-anchor="middle">Two independent questions need two independent numbers.</text>
+      <text class="fg-3" x="980" y="975" font-size="13.5" text-anchor="middle">If both numbers always moved together they would be measuring the same thing, and neither could tell you which kind of change happened.</text>
+      <text class="fg-4" x="980" y="1000" font-size="11.5" text-anchor="middle">In each pair, cyan marks changed wording and orange marks a changed position • each gauge runs from 0 on the left (identical) to far apart on the right</text>
+    </g>
+
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

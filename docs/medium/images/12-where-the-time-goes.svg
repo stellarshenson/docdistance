@@ -1,0 +1,242 @@
+<!--
+  11-where-the-time-goes.svg - runtime breakdown of one document-pair comparison
+  Shows: title band; a true-scale stacked bar of the 5.55 s run (cutting 2.55 s,
+         embedding 3.00 s, optimal transport 0.4 ms); a zoom leader into an
+         inset band showing the final 1.00 ms at 5 550x; a callout reading
+         0.007 %; and a three-tile band with the batch-scale arithmetic.
+  Intent: kill the assumption that the optimal transport is the slow step. The encoder
+          is the entire bill; the transport is four orders of magnitude cheaper.
+  Theme: dark-first cyan/orange. cyan = the shipped mechanism, orange = the sliver
+         under discussion. Data-bar fills are fixed - identical in both colour schemes -
+         so they carry inline fill values; the ink on them is dark in both.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 700" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0b2a36; }
+    .fg-2 { fill: #16495c; }
+    .fg-3 { fill: #3d6b7d; }
+    .fg-4 { fill: #4a7182; }
+    .accent-cy { fill: #00719f; }
+    .accent-or { fill: #a3550f; }
+    .accent-or-lt { fill: #8f6117; }
+    .on-fill { fill: #04222c; }
+    .card { fill: #0096d1; fill-opacity: 0.05; stroke: #0096d1; stroke-width: 1; }
+    .card-bar { fill: #0096d1; fill-opacity: 0.55; }
+    .strip-punch { fill: #da8230; fill-opacity: 0.07; stroke: #da8230; stroke-width: 1.4; }
+    .wedge { fill: none; stroke: #1a5a6e; stroke-width: 1.5; }
+    .wedge-fill { fill: #1a5a6e; }
+    .arrow-stroke { fill: none; stroke: #0096d1; stroke-width: 1.5; }
+    .arrow-fill { fill: #0096d1; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #d6ecf4; }
+      .fg-2 { fill: #a9cfdd; }
+      .fg-3 { fill: #82adbe; }
+      .fg-4 { fill: #6a94a5; }
+      .accent-cy { fill: #5cc8e0; }
+      .accent-or { fill: #da8230; }
+      .accent-or-lt { fill: #d4a04a; }
+      .on-fill { fill: #04222c; }
+      .card { stroke: #5cc8e0; }
+      .card-bar { fill: #5cc8e0; fill-opacity: 0.5; }
+      .strip-punch { stroke: #da8230; }
+      .wedge { stroke: #2f8ba6; }
+      .wedge-fill { fill: #2f8ba6; }
+      .arrow-stroke { stroke: #5cc8e0; }
+      .arrow-fill { fill: #5cc8e0; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 700 (stats figure on the doc-grid canvas)
+    Outer margins: 40 left/right, 35 top, 35 bottom. Content width 1720 (x=40..1760)
+    Vertical rhythm: 5px grid; every baseline on a multiple of 5
+
+    Bands (top to bottom):
+    header      y=40..95    title baseline 60, subtitle baseline 90
+    band-A key  y=120       left label x=40; right pointer note anchored end x=1760
+    band-A bar  y=135..195  h=60, full width 1720 = 5.5504 s of wall clock
+                  cutting   x=40.000    w=790.213  (2.55 s,   45.94 pct)
+                  embedding x=830.213   w=929.663  (3.00 s,   54.05 pct)
+                  transport x=1759.876  w=0.124    (0.0004 s,  0.0072 pct)
+                  segment x and width are data-derived, deliberately not grid-snapped
+                  in-bar baselines 160 (stage) and 185 (value), left inset 25
+    leader      y=196..245  zoom leader, tail on the transport stripe, standoff 4
+    band-B bar  y=245..290  h=45, full width 1720 = the final 1.00 ms at 5 550x
+                  embedding tail x=40    w=1032 (0.60 ms)
+                  transport      x=1072  w=688  (0.40 ms)  data-derived x
+                  in-bar baselines 260 / 285 (transport), 270 (tail)
+    band-B key  y=230       magnification key anchored end x=1760, 15px above its bar
+    punchline   y=330..420  h=90; readout baseline 390, side lines 365..395
+    band-C key  y=450
+    tiles       y=470..635  h=165, w=520, x=40 / 640 / 1240, gap 80
+                  accent bar 470..475; kicker 500, hero 545, unit 575, body 600 and 620
+    arrows      y=550       between tile edges, standoff 14
+    teach       y=665       baseline, x=40
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    v-stack: header, band-A, leader, band-B, punchline, band-C, teach
+    contain: band-a > seg-cut, seg-embed, seg-transport (h-stack, gap=0)
+    contain: band-a > band-a-labels
+    contain: band-b > inset-embed-tail, inset-transport (h-stack, gap=0)
+    contain: band-b > band-b-labels
+    h-align: band-a.left = band-b.left = punchline.left = card-1.left = 40
+    h-align: band-a.right = band-b.right = punchline.right = card-3.right = 1760
+    connect: seg-transport to band-b (forward) - the zoom leader
+    h-stack: card-1, card-2, card-3 (gap=80)
+    v-align: card-1.top = card-2.top = card-3.top
+    contain: card-1 > tile-1-text, card-2 > tile-2-text, card-3 > tile-3-text
+    connect: card-1 to card-2, card-2 to card-3 (forward)
+  === -->
+
+  <rect x="0" y="0" width="1800" height="700" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40.0" y1="0" x2="40.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="640.0" y1="0" x2="640.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1240.0" y1="0" x2="1240.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1760.0" y1="0" x2="1760.0" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="135.0" x2="1800" y2="135.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="195.0" x2="1800" y2="195.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="245.0" x2="1800" y2="245.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="290.0" x2="1800" y2="290.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="470.0" x2="1800" y2="470.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="635.0" x2="1800" y2="635.0" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+  </g>
+
+  <g id="nodes"><!-- bars and cards - the shapes connectors attach to -->
+
+    <g id="band-a"><!-- true scale: 5.5504 s across 1720 px -->
+      <rect fill="#5cc8e0" x="40.0" y="135.0" width="790.213" height="60.0"/>
+      <rect fill="#0096d1" x="830.213" y="135.0" width="929.663" height="60.0"/>
+      <rect fill="#da8230" x="1759.876" y="135.0" width="0.124" height="60.0"/>
+    </g>
+
+    <g id="band-b"><!-- magnified 5 550x: the final 1.00 ms across 1720 px -->
+      <rect fill="#0096d1" x="40.0" y="245.0" width="1032.0" height="45.0"/>
+      <rect fill="#da8230" x="1072.0" y="245.0" width="688.0" height="45.0"/>
+    </g>
+
+    <g id="card-1">
+      <path class="card" d="M40.0,470.0 H560.0 V632.0 Q560.0,635.0 557.0,635.0 H43.0 Q40.0,635.0 40.0,632.0 Z"/>
+      <rect class="card-bar" x="40.0" y="470.0" width="520.0" height="5.0"/>
+    </g>
+    <g id="card-2">
+      <path class="card" d="M640.0,470.0 H1160.0 V632.0 Q1160.0,635.0 1157.0,635.0 H643.0 Q640.0,635.0 640.0,632.0 Z"/>
+      <rect class="card-bar" x="640.0" y="470.0" width="520.0" height="5.0"/>
+    </g>
+    <g id="card-3">
+      <path class="card" d="M1240.0,470.0 H1760.0 V632.0 Q1760.0,635.0 1757.0,635.0 H1243.0 Q1240.0,635.0 1240.0,632.0 Z"/>
+      <rect class="card-bar" x="1240.0" y="470.0" width="520.0" height="5.0"/>
+    </g>
+
+  </g>
+
+  <g id="connectors"><!-- every strand, tool-generated only -->
+
+    <!-- zoom leader: the transport stripe expands into the magnified band below -->
+    <path class="wedge" d="M1755.70,196.11 L57.99,244.60" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="wedge-fill" points="48.00,244.89 58.14,249.60 57.85,239.60"/>
+
+    <!-- card-1 to card-2 -->
+    <path class="arrow-stroke" d="M574.00,550.00 L616.00,550.00" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill" points="626.00,550.00 616.00,545.00 616.00,555.00"/>
+
+    <!-- card-2 to card-3 -->
+    <path class="arrow-stroke" d="M1174.00,550.00 L1216.00,550.00" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill" points="1226.00,550.00 1216.00,545.00 1216.00,555.00"/>
+
+  </g>
+
+  <g id="content"><!-- labels and text - never behind nodes -->
+
+    <g id="header">
+      <text x="40" y="60" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" class="fg-1">Where the time actually goes</text>
+      <text x="40" y="90" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" class="fg-3">one CPU core, two A4 pages — 5.55 seconds from raw text to a finished comparison</text>
+    </g>
+
+    <g id="band-a-key">
+      <text x="40" y="120" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2" class="fg-2">TRUE SCALE — THE WHOLE RUN, DRAWN IN PROPORTION</text>
+      <text x="1760" y="120" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" text-anchor="end" class="accent-or">the transport stripe is 0.12 of one pixel wide, right here ↓</text>
+    </g>
+
+    <g id="band-b-key">
+      <text x="1760" y="230" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="end" class="fg-2">MAGNIFIED 5 550× — THE FINAL 1.00 MILLISECOND OF THAT SAME RUN</text>
+    </g>
+
+    <g id="band-a-labels">
+      <text x="65" y="160" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" class="on-fill">cutting the documents into statements</text>
+      <text x="65" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" class="on-fill">2.55 s · 46 % of the run</text>
+      <text x="855" y="160" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" class="on-fill">embedding the statements</text>
+      <text x="855" y="185" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" class="on-fill">3.00 s · 54 % of the run — this is the encoder</text>
+    </g>
+
+    <g id="band-b-labels">
+      <text x="555" y="270" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle" class="on-fill">still embedding · 0.60 ms</text>
+      <text x="1415" y="260" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle" class="on-fill">the optimal transport this whole article is about</text>
+      <text x="1415" y="285" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12.5" text-anchor="middle" class="on-fill">0.40 ms — the entire solve, start to finish</text>
+    </g>
+
+
+    <g id="band-c-key">
+      <text x="40" y="450" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2" class="fg-2">SCALING IT UP — THE ARITHMETIC FOR A REAL BATCH</text>
+    </g>
+
+    <g id="tile-1-text">
+      <text x="65" y="500" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1" class="accent-cy">THROUGHPUT</text>
+      <text x="65" y="545" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" class="fg-1">0.2</text>
+      <text x="65" y="575" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" class="fg-2">document-pairs per second, per core</text>
+      <text x="65" y="600" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">CPU only, no GPU. adding cores adds</text>
+      <text x="65" y="620" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">throughput almost linearly</text>
+    </g>
+
+    <g id="tile-2-text">
+      <text x="665" y="500" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1" class="accent-cy">TOTAL WORK</text>
+      <text x="665" y="545" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" class="fg-1">139</text>
+      <text x="665" y="575" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" class="fg-2">core-hours for 100 000 pairs</text>
+      <text x="665" y="600" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">100 000 pairs ÷ 0.2 per second</text>
+      <text x="665" y="620" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">= 500 000 core-seconds</text>
+    </g>
+
+    <g id="tile-3-text">
+      <text x="1265" y="500" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1" class="accent-cy">WALL CLOCK</text>
+      <text x="1265" y="545" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" class="fg-1">≈ 4.5 h</text>
+      <text x="1265" y="575" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" class="fg-2">on one 32-core machine</text>
+      <text x="1265" y="600" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">139 core-hours spread over 32 cores</text>
+      <text x="1265" y="620" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">an overnight batch, not a research project</text>
+    </g>
+
+    <g id="teach-strip">
+      <text x="40" y="665" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13.5" class="fg-2">The expensive part is the encoder, not the mathematics — assume the optimal transport is the slow step and you are wrong by four orders of magnitude.</text>
+    </g>
+
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+    <g id="callout-punchline">
+      <rect class="strip-punch" x="40.0" y="330.0" width="1720.0" height="90.0" rx="3"/>
+      <text x="70" y="390" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="48" font-weight="700" class="accent-or">0.007 %</text>
+      <text x="320" y="370" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" font-weight="700" class="fg-1">of the runtime is the optimal transport</text>
+      <text x="320" y="395" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13" class="fg-3">0.40 ms out of 5 550 ms — four orders of magnitude below the encoder</text>
+      <text x="1730" y="365" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="end" class="accent-or-lt">the clever part is free.</text>
+      <text x="1730" y="395" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="700" text-anchor="end" class="accent-or-lt">you are paying for the encoder, as usual.</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,429 @@
+<!--
+  01-four-situations.svg - opening figure for the docdistance article
+  Shows: header, four quadrant cards (long report to one-page summary; report to
+         brochure with two traced claims; two near-identical pages with linked and
+         unlinked passages; one source fanning out to many variants), closing band.
+  Intent: teach that four everyday document jobs are one question - how far apart are
+          two documents, and which part matches which. Quadrant 4 is deliberately the
+          largest because its volume decides the design.
+  Theme: dark plate 0a1a24; cyan 0096d1 / light cyan 5cc8e0 = the working mechanism;
+         orange da8230 = the failure or unsupported case; light orange d4a04a = accepted cost.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 700" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0b2d3c; }
+    .fg-2 { fill: #1e3b49; }
+    .fg-3 { fill: #3e6374; }
+    .fg-4 { fill: #5e8394; }
+    .accent-1 { fill: #1db3ed; }
+    .accent-1-lt { fill: #157a90; }
+    .accent-2 { fill: #c56f1a; }
+    .accent-2-lt { fill: #aa771f; }
+    .card { fill: #0096d1; fill-opacity: 0.05; stroke: #2b8eab; stroke-width: 1; }
+    .card-hero { fill: #0096d1; fill-opacity: 0.09; stroke: #1db3ed; stroke-width: 2; }
+    .bar { fill: #1db3ed; fill-opacity: 0.55; }
+    .bar-hero { fill: #1db3ed; fill-opacity: 0.95; }
+    .strip { fill: #0096d1; fill-opacity: 0.07; stroke: #2b8eab; stroke-width: 1; }
+    .chip { fill: #0096d1; fill-opacity: 0.25; stroke: #1db3ed; stroke-width: 1; }
+    .badge { fill: #b5812b; fill-opacity: 0.10; stroke: #aa771f; stroke-width: 1; }
+    .doc { fill: none; stroke: #157a90; stroke-width: 1.4; }
+    .doc-dim { fill: none; stroke: #2b8eab; stroke-width: 1.2; }
+    .doc-warn { fill: none; stroke: #c56f1a; stroke-width: 1.6; }
+    .doc-fold { fill: none; stroke: #157a90; stroke-width: 0.8; stroke-dasharray: 2 2; }
+    .doc-fold-dim { fill: none; stroke: #2b8eab; stroke-width: 0.8; stroke-dasharray: 2 2; }
+    .tline { stroke: #5c8ea2; stroke-width: 3; stroke-linecap: round; }
+    .tline-hit { stroke: #157a90; stroke-width: 3; stroke-linecap: round; }
+    .tline-warn { stroke: #c56f1a; stroke-width: 3; stroke-linecap: round; }
+    .tline-tiny { stroke: #5c8ea2; stroke-width: 2.5; stroke-linecap: round; }
+    .tline-tiny-warn { stroke: #c56f1a; stroke-width: 2.5; stroke-linecap: round; }
+    .mark-warn { fill: none; stroke: #c56f1a; stroke-width: 1.8; stroke-linecap: round; }
+    .lens { fill: transparent; fill-opacity: 0.75; stroke: #157a90; stroke-width: 2.5; }
+    .lens-grip { fill: none; stroke: #157a90; stroke-width: 5; stroke-linecap: round; }
+    .glossy { fill: #1db3ed; fill-opacity: 0.45; }
+    .hilite { fill: #157a90; fill-opacity: 0.28; }
+    .sw-cy { fill: #157a90; }
+    .sw-or { fill: #c56f1a; }
+    .divider { fill: #2b8eab; }
+    .arrow-stroke { stroke: #157a90; fill: none; }
+    .arrow-fill { fill: #157a90; }
+    .arrow-stroke-cy { stroke: #1db3ed; fill: none; }
+    .arrow-fill-cy { fill: #1db3ed; }
+    .arrow-stroke-or { stroke: #c56f1a; fill: none; }
+    .arrow-fill-or { fill: #c56f1a; }
+    .manifold-connector { stroke: #1db3ed; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e4f3fa; }
+      .fg-2 { fill: #b6d3e1; }
+      .fg-3 { fill: #8bb0c1; }
+      .fg-4 { fill: #6b90a1; }
+      .accent-1 { fill: #12a8e2; }
+      .accent-1-lt { fill: #6fd4ea; }
+      .accent-2 { fill: #e58f3a; }
+      .accent-2-lt { fill: #e0ad55; }
+      .card { fill: #0096d1; fill-opacity: 0.05; stroke: #206a80; stroke-width: 1; }
+      .card-hero { fill: #0096d1; fill-opacity: 0.09; stroke: #12a8e2; stroke-width: 2; }
+      .bar { fill: #12a8e2; fill-opacity: 0.55; }
+      .bar-hero { fill: #12a8e2; fill-opacity: 0.95; }
+      .strip { fill: #0096d1; fill-opacity: 0.07; stroke: #206a80; stroke-width: 1; }
+      .chip { fill: #0096d1; fill-opacity: 0.25; stroke: #12a8e2; stroke-width: 1; }
+      .badge { fill: #d4a04a; fill-opacity: 0.10; stroke: #e0ad55; stroke-width: 1; }
+      .doc { fill: none; stroke: #6fd4ea; stroke-width: 1.4; }
+      .doc-dim { fill: none; stroke: #206a80; stroke-width: 1.2; }
+      .doc-warn { fill: none; stroke: #e58f3a; stroke-width: 1.6; }
+      .doc-fold { fill: none; stroke: #6fd4ea; stroke-width: 0.8; stroke-dasharray: 2 2; }
+      .doc-fold-dim { fill: none; stroke: #206a80; stroke-width: 0.8; stroke-dasharray: 2 2; }
+      .tline { stroke: #5d8fa3; stroke-width: 3; stroke-linecap: round; }
+      .tline-hit { stroke: #6fd4ea; stroke-width: 3; stroke-linecap: round; }
+      .tline-warn { stroke: #e58f3a; stroke-width: 3; stroke-linecap: round; }
+      .tline-tiny { stroke: #5d8fa3; stroke-width: 2.5; stroke-linecap: round; }
+      .tline-tiny-warn { stroke: #e58f3a; stroke-width: 2.5; stroke-linecap: round; }
+      .mark-warn { fill: none; stroke: #e58f3a; stroke-width: 1.8; stroke-linecap: round; }
+      .lens { fill: #0a1a24; fill-opacity: 0.75; stroke: #6fd4ea; stroke-width: 2.5; }
+      .lens-grip { fill: none; stroke: #6fd4ea; stroke-width: 5; stroke-linecap: round; }
+      .glossy { fill: #12a8e2; fill-opacity: 0.45; }
+      .hilite { fill: #6fd4ea; fill-opacity: 0.28; }
+      .sw-cy { fill: #6fd4ea; }
+      .sw-or { fill: #e58f3a; }
+      .divider { fill: #206a80; }
+      .arrow-stroke { stroke: #6fd4ea; fill: none; }
+      .arrow-fill { fill: #6fd4ea; }
+      .arrow-stroke-cy { stroke: #12a8e2; fill: none; }
+      .arrow-fill-cy { fill: #12a8e2; }
+      .arrow-stroke-or { stroke: #e58f3a; fill: none; }
+      .arrow-fill-or { fill: #e58f3a; }
+      .manifold-connector { stroke: #12a8e2; fill: none; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 700 (doc-grid). Every rect, line, circle and text coordinate sits
+    on the 5px grid; only tool-generated connector paths run off it.
+    Outer margins: 30 left/right, 20 bottom. Header: title y=30, subtitle y=55
+
+    Columns (gap=20): col-1 x=30..790 w=760 | col-2 x=810..1770 w=960
+    Rows (gap=15):    row-1 y=70..300 h=230 | row-2 y=315..610 h=295
+    Card 4 sits where the wide column crosses the tall row: 960x295 against card 1
+    at 760x230, a 1.62x area, which is the deliberate dominance.
+
+    Closing band: y=630..680 h=50; centred cluster x=485..1316 (midpoint 900)
+
+    Row-1 card rhythm: bar 5px flush top, kicker y=95, title y=125,
+      pictogram band y=145..255, caption y=285
+    Row-2 card rhythm: bar flush top, kicker y=345, title y=375,
+      pictogram band y=395..565, caption y=590
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-stack: card-1, card-2 (gap=20)
+    h-stack: card-3, card-4 (gap=20)
+    v-align: card-1.left = card-3.left; card-2.left = card-4.left
+    h-align: card-1.top = card-2.top; card-3.top = card-4.top
+    contain: card-1 > q1-stack, q1-summary, q1-note, caption
+    contain: card-2 > q2-report, q2-brochure, q2-dead-end, q2-legend, caption
+    contain: card-3 > q3-page-a, q3-page-b, q3-legend, caption
+    contain: card-4 > q4-source, q4-variants, q4-drift-flag, q4-readout, caption
+    contain: q3-page-a > mark-a (the passage with no counterpart)
+    contain: q3-page-b > mark-b (the passage with no counterpart)
+    flow: q1-stack to q1-summary
+    flow: q2-report to q2-brochure, then two claims traced back
+    flow: q3-page-a passages to q3-page-b passages
+    flow: q4-source to q4-variants (one trunk forking five ways)
+    contain: band-closing > chip-1, chip-2, chip-3, chip-4, band-text
+  === -->
+
+  <rect x="0" y="0" width="1800" height="700" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="700" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="30" y1="0" x2="30" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="790" y1="0" x2="790" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="810" y1="0" x2="810" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="1770" y1="0" x2="1770" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="70" x2="1800" y2="70" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1800" y2="300" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="315" x2="1800" y2="315" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="610" x2="1800" y2="610" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="630" x2="1800" y2="630" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="680" x2="1800" y2="680" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- the deck ships dark on every surface, so the plate is painted, not inherited -->
+    <rect x="0" y="0" width="1800" height="700" fill="transparent"/>
+  </g>
+
+  <g id="nodes"><!-- cards, band, and the pictograms connectors attach to -->
+
+    <g id="card-1">
+      <path class="card" d="M30.0,70.0 H790.0 V296.0 Q790.0,300.0 786.0,300.0 H34.0 Q30.0,300.0 30.0,296.0 Z"/>
+      <rect class="bar" x="30" y="70" width="760" height="5"/>
+    </g>
+    <g id="card-2">
+      <path class="card" d="M810.0,70.0 H1770.0 V296.0 Q1770.0,300.0 1766.0,300.0 H814.0 Q810.0,300.0 810.0,296.0 Z"/>
+      <rect class="bar" x="810" y="70" width="960" height="5"/>
+    </g>
+    <g id="card-3">
+      <path class="card" d="M30.0,315.0 H790.0 V606.0 Q790.0,610.0 786.0,610.0 H34.0 Q30.0,610.0 30.0,606.0 Z"/>
+      <rect class="bar" x="30" y="315" width="760" height="5"/>
+    </g>
+    <g id="card-4">
+      <path class="card-hero" d="M810.0,315.0 H1770.0 V606.0 Q1770.0,610.0 1766.0,610.0 H814.0 Q810.0,610.0 810.0,606.0 Z"/>
+      <rect class="bar-hero" x="810" y="315" width="960" height="5"/>
+    </g>
+
+    <g id="q1-stack"><!-- the long report: three stacked sheets, dense with text -->
+      <path class="doc-dim" d="M90.0,145.0 L154.0,145.0 L170.0,161.0 L170.0,235.0 L90.0,235.0 Z"/>
+      <path class="doc-fold-dim" d="M154.0,145.0 L154.0,161.0 L170.0,161.0 Z"/>
+      <path class="doc-dim" d="M85.0,155.0 L149.0,155.0 L165.0,171.0 L165.0,245.0 L85.0,245.0 Z"/>
+      <path class="doc-fold-dim" d="M149.0,155.0 L149.0,171.0 L165.0,171.0 Z"/>
+      <path class="doc" d="M80.0,165.0 L144.0,165.0 L160.0,181.0 L160.0,255.0 L80.0,255.0 Z"/>
+      <path class="doc-fold" d="M144.0,165.0 L144.0,181.0 L160.0,181.0 Z"/>
+      <line class="tline" x1="90" y1="190" x2="145" y2="190"/>
+      <line class="tline" x1="90" y1="205" x2="145" y2="205"/>
+      <line class="tline" x1="90" y1="220" x2="145" y2="220"/>
+      <line class="tline" x1="90" y1="235" x2="125" y2="235"/>
+    </g>
+
+    <g id="q1-summary"><!-- the one-pager, with a magnifier and a question over it -->
+      <path class="doc" d="M285.0,170.0 L341.0,170.0 L355.0,184.0 L355.0,255.0 L285.0,255.0 Z"/>
+      <path class="doc-fold" d="M341.0,170.0 L341.0,184.0 L355.0,184.0 Z"/>
+      <line class="tline" x1="295" y1="200" x2="325" y2="200"/>
+      <line class="tline" x1="295" y1="215" x2="325" y2="215"/>
+      <line class="tline" x1="295" y1="230" x2="315" y2="230"/>
+      <line class="lens-grip" x1="375" y1="235" x2="390" y2="250"/>
+      <circle class="lens" cx="355" cy="215" r="25"/>
+      <text class="accent-2-lt" x="355" y="225" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">?</text>
+    </g>
+
+    <g id="q2-report"><!-- the engineering report, one passage highlighted -->
+      <path class="doc" d="M845.0,145.0 L917.0,145.0 L935.0,163.0 L935.0,240.0 L845.0,240.0 Z"/>
+      <path class="doc-fold" d="M917.0,145.0 L917.0,163.0 L935.0,163.0 Z"/>
+      <rect class="hilite" x="855" y="185" width="60" height="10" rx="2"/>
+      <line class="tline" x1="855" y1="175" x2="915" y2="175"/>
+      <line class="tline-hit" x1="855" y1="190" x2="915" y2="190"/>
+      <line class="tline" x1="855" y1="205" x2="915" y2="205"/>
+      <line class="tline" x1="855" y1="220" x2="895" y2="220"/>
+    </g>
+
+    <g id="q2-brochure"><!-- the glossy client version, three claims -->
+      <path class="doc" d="M1150.0,145.0 L1241.0,145.0 L1260.0,164.0 L1260.0,240.0 L1150.0,240.0 Z"/>
+      <path class="doc-fold" d="M1241.0,145.0 L1241.0,164.0 L1260.0,164.0 Z"/>
+      <rect class="glossy" x="1160" y="155" width="90" height="20" rx="2"/>
+      <line class="tline-hit" x1="1160" y1="190" x2="1240" y2="190"/>
+      <line class="tline" x1="1160" y1="210" x2="1240" y2="210"/>
+      <line class="tline-warn" x1="1160" y1="230" x2="1225" y2="230"/>
+    </g>
+
+    <g id="q3-page-a"><!-- first version; one passage has no counterpart -->
+      <path class="doc" d="M90.0,420.0 L202.0,420.0 L230.0,448.0 L230.0,565.0 L90.0,565.0 Z"/>
+      <path class="doc-fold" d="M202.0,420.0 L202.0,448.0 L230.0,448.0 Z"/>
+      <line class="tline-hit" x1="105" y1="460" x2="220" y2="460"/>
+      <line class="tline-hit" x1="105" y1="490" x2="220" y2="490"/>
+      <line class="tline-warn" x1="105" y1="520" x2="195" y2="520"/>
+      <line class="tline-hit" x1="105" y1="550" x2="200" y2="550"/>
+      <circle class="mark-warn" cx="210" cy="520" r="10"/>
+      <path class="mark-warn" d="M205,515 L215,525 M215,515 L205,525"/>
+    </g>
+
+    <g id="q3-page-b"><!-- second version; one passage has no counterpart -->
+      <path class="doc" d="M380.0,420.0 L492.0,420.0 L520.0,448.0 L520.0,565.0 L380.0,565.0 Z"/>
+      <path class="doc-fold" d="M492.0,420.0 L492.0,448.0 L520.0,448.0 Z"/>
+      <line class="tline-hit" x1="390" y1="460" x2="505" y2="460"/>
+      <line class="tline-warn" x1="390" y1="490" x2="470" y2="490"/>
+      <line class="tline-hit" x1="390" y1="520" x2="505" y2="520"/>
+      <line class="tline-hit" x1="390" y1="550" x2="485" y2="550"/>
+      <circle class="mark-warn" cx="485" cy="490" r="10"/>
+      <path class="mark-warn" d="M480,485 L490,495 M490,485 L480,495"/>
+    </g>
+
+    <g id="q4-source"><!-- the one brief every variant comes from -->
+      <path class="doc" d="M845.0,425.0 L917.0,425.0 L935.0,443.0 L935.0,525.0 L845.0,525.0 Z"/>
+      <path class="doc-fold" d="M917.0,425.0 L917.0,443.0 L935.0,443.0 Z"/>
+      <line class="tline" x1="855" y1="450" x2="915" y2="450"/>
+      <line class="tline" x1="855" y1="465" x2="915" y2="465"/>
+      <line class="tline" x1="855" y1="480" x2="915" y2="480"/>
+      <line class="tline" x1="855" y1="495" x2="915" y2="495"/>
+      <line class="tline" x1="855" y1="510" x2="890" y2="510"/>
+    </g>
+
+    <g id="q4-variants"><!-- five of a thousand personalised outputs; the third drifted -->
+      <rect class="doc" x="1120" y="395" width="60" height="20" rx="2"/>
+      <line class="tline-tiny" x1="1130" y1="405" x2="1170" y2="405"/>
+      <rect class="doc" x="1120" y="430" width="60" height="20" rx="2"/>
+      <line class="tline-tiny" x1="1130" y1="440" x2="1170" y2="440"/>
+      <rect class="doc-warn" x="1120" y="465" width="60" height="20" rx="2"/>
+      <line class="tline-tiny-warn" x1="1130" y1="475" x2="1170" y2="475"/>
+      <rect class="doc" x="1120" y="500" width="60" height="20" rx="2"/>
+      <line class="tline-tiny" x1="1130" y1="510" x2="1170" y2="510"/>
+      <rect class="doc" x="1120" y="535" width="60" height="20" rx="2"/>
+      <line class="tline-tiny" x1="1130" y1="545" x2="1170" y2="545"/>
+    </g>
+
+    <g id="band-closing">
+      <path class="strip" d="M30.0,630.0 H1770.0 V676.0 Q1770.0,680.0 1766.0,680.0 H34.0 Q30.0,680.0 30.0,676.0 Z"/>
+      <rect class="chip" x="485" y="645" width="20" height="20" rx="3"/>
+      <rect class="chip" x="515" y="645" width="20" height="20" rx="3"/>
+      <rect class="chip" x="545" y="645" width="20" height="20" rx="3"/>
+      <rect class="chip" x="575" y="645" width="20" height="20" rx="3"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- every route tool-generated: straight, spline, manifold -->
+
+    <g id="conn-q1-shrink">
+      <!-- straight connector: len=81px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M187.00,210.00 L258.00,210.00" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="268.00,210.00 258.00,205.00 258.00,215.00" opacity="0.8"/>
+    </g>
+
+    <g id="conn-q2-rewrite">
+      <!-- straight connector: len=181px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M952.00,165.00 L1123.00,165.00" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="1133.00,165.00 1123.00,160.00 1123.00,170.00" opacity="0.8"/>
+    </g>
+
+    <g id="conn-q2-trace-lands">
+      <!-- spline connector: len=179px start_angle=-164.4deg end_angle=-17.0deg -->
+      <path class="arrow-stroke-cy" d="M966.57,195.20 L976.24,197.54 L986.85,199.71 L997.46,201.49 L1008.07,202.90 L1018.67,203.94 L1029.26,204.63 L1039.86,204.96 L1050.45,204.94 L1061.03,204.50 L1071.61,203.63 L1082.18,202.35 L1092.76,200.66 L1103.32,198.57 L1113.89,196.09 L1124.45,193.23 L1133.09,190.59" stroke-width="2" opacity="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill-cy" points="956.93,192.54 965.21,200.05 967.90,190.42" opacity="0.9"/>
+    </g>
+
+    <g id="conn-q2-trace-dangles">
+      <!-- spline connector: len=98px start_angle=173.7deg end_angle=-14.2deg -->
+      <path class="arrow-stroke-or" d="M1046.92,248.62 L1048.49,248.43 L1055.22,247.54 L1061.93,246.59 L1068.63,245.57 L1075.32,244.50 L1082.00,243.39 L1088.67,242.23 L1095.33,241.02 L1101.97,239.71 L1108.60,238.31 L1115.22,236.84 L1121.83,235.28 L1128.42,233.67 L1133.06,232.49" stroke-width="2" opacity="0.95" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill-or" points="1036.99,249.78 1047.48,253.65 1046.38,243.71" opacity="0.95"/>
+    </g>
+
+    <g id="conn-q3-match-1">
+      <!-- straight connector: len=106px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M252.00,460.00 L348.00,460.00" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="358.00,460.00 348.00,455.00 348.00,465.00" opacity="0.8"/>
+    </g>
+    <g id="conn-q3-match-2">
+      <!-- straight connector: len=110px start_angle=-164.7deg end_angle=15.3deg -->
+      <path class="arrow-stroke" d="M251.93,490.53 L348.42,516.84" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="358.07,519.47 349.74,512.02 347.11,521.67" opacity="0.8"/>
+    </g>
+    <g id="conn-q3-match-3">
+      <!-- straight connector: len=106px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M252.00,550.00 L348.00,550.00" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="358.00,550.00 348.00,545.00 348.00,555.00" opacity="0.8"/>
+    </g>
+
+    <g id="conn-q4-fanout">
+      <!-- manifold connector: shape=spline starts=1 ends=5 -->
+      <g class="manifold-connector" stroke-width="2" opacity="0.75" stroke-linejoin="round" stroke-linecap="round">
+        <!-- start 0: start_point to merge_point -->
+        <path d="M952.00,475.00 L952.43,475.00 L955.01,475.00 L957.73,475.00 L960.57,475.00 L963.51,475.00 L966.54,475.00 L969.62,475.00 L972.76,475.00 L975.92,475.00 L979.08,475.00 L982.24,475.00 L985.38,475.00 L988.46,475.00 L991.49,475.00 L994.43,475.00 L997.27,475.00 L999.99,475.00 L1002.57,475.00 L1005.00,475.00"/>
+        <!-- spine: merge_anchor to fork_anchor -->
+        <path d="M1005.00,475.00 L1007.63,475.00 L1010.26,475.00 L1012.89,475.00 L1015.53,475.00 L1018.16,475.00 L1020.79,475.00 L1023.42,475.00 L1026.05,475.00 L1028.68,475.00 L1031.32,475.00 L1033.95,475.00 L1036.58,475.00 L1039.21,475.00 L1041.84,475.00 L1044.47,475.00 L1047.11,475.00 L1049.74,475.00 L1052.37,475.00 L1055.00,475.00"/>
+        <!-- end 0: fork_point to end_point -->
+        <path d="M1055.00,475.00 L1058.51,474.44 L1061.73,472.84 L1064.69,470.32 L1067.42,467.00 L1069.97,463.01 L1072.36,458.47 L1074.63,453.50 L1076.81,448.22 L1078.94,442.76 L1081.06,437.24 L1083.19,431.78 L1085.37,426.50 L1087.64,421.53 L1090.03,416.99 L1092.58,413.00 L1094.70,410.43"/>
+        <polygon class="arrow-fill-cy" points="1103.03,405.32 1092.36,401.96 1093.94,411.83" stroke="none" opacity="0.85"/>
+        <!-- end 1: fork_point to end_point -->
+        <path d="M1055.00,475.00 L1057.61,474.72 L1060.22,473.92 L1062.84,472.66 L1065.47,471.00 L1068.11,469.00 L1070.74,466.73 L1073.39,464.25 L1076.03,461.61 L1078.68,458.88 L1081.32,456.12 L1083.97,453.39 L1086.61,450.75 L1089.26,448.27 L1091.89,446.00 L1094.03,444.38"/>
+        <polygon class="arrow-fill-cy" points="1103.01,440.21 1092.53,436.31 1093.60,446.26" stroke="none" opacity="0.85"/>
+        <!-- end 2: fork_point to end_point -->
+        <path d="M1055.00,475.00 L1057.21,475.00 L1059.56,475.00 L1062.03,475.00 L1064.61,475.00 L1067.29,475.00 L1070.03,475.00 L1072.84,475.00 L1075.69,475.00 L1078.56,475.00 L1081.44,475.00 L1084.31,475.00 L1087.16,475.00 L1089.97,475.00 L1092.71,475.00 L1093.00,475.00"/>
+        <polygon class="arrow-fill-cy" points="1103.00,475.00 1093.00,470.00 1093.00,480.00" stroke="none" opacity="0.85"/>
+        <!-- end 3: fork_point to end_point -->
+        <path d="M1055.00,475.00 L1057.61,475.28 L1060.22,476.08 L1062.84,477.34 L1065.47,479.00 L1068.11,481.00 L1070.74,483.27 L1073.39,485.75 L1076.03,488.39 L1078.68,491.12 L1081.32,493.88 L1083.97,496.61 L1086.61,499.25 L1089.26,501.73 L1091.89,504.00 L1094.03,505.62"/>
+        <polygon class="arrow-fill-cy" points="1103.01,509.79 1093.60,503.74 1092.53,513.69" stroke="none" opacity="0.85"/>
+        <!-- end 4: fork_point to end_point -->
+        <path d="M1055.00,475.00 L1058.51,475.56 L1061.73,477.16 L1064.69,479.68 L1067.42,483.00 L1069.97,486.99 L1072.36,491.53 L1074.63,496.50 L1076.81,501.78 L1078.94,507.24 L1081.06,512.76 L1083.19,518.22 L1085.37,523.50 L1087.64,528.47 L1090.03,533.01 L1092.58,537.00 L1094.70,539.57"/>
+        <polygon class="arrow-fill-cy" points="1103.03,544.68 1093.94,538.17 1092.36,548.04" stroke="none" opacity="0.85"/>
+      </g>
+    </g>
+  </g>
+
+  <g id="content"><!-- markers, legends, every label -->
+
+    <text class="fg-1" x="30" y="30" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Four situations, one question</text>
+    <text class="fg-3" x="30" y="55" font-family="Segoe UI, Arial, sans-serif" font-size="13">four everyday document jobs, and nobody can check the output by hand</text>
+
+    <text class="accent-1-lt" x="50" y="95" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="1.5">SITUATION 1</text>
+    <text class="fg-1" x="50" y="125" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">A long report becomes a one-page summary</text>
+    <g id="q1-note">
+      <text class="accent-1-lt" x="430" y="175" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">40 pages → 1 page</text>
+      <text class="fg-2" x="430" y="205" font-family="Segoe UI, Arial, sans-serif" font-size="14">Did it keep the one paragraph</text>
+      <text class="fg-2" x="430" y="230" font-family="Segoe UI, Arial, sans-serif" font-size="14">the decision rests on?</text>
+    </g>
+    <text class="fg-2" x="50" y="285" font-family="Segoe UI, Arial, sans-serif" font-size="15">two hundred of these, and no expert to check them</text>
+
+    <text class="accent-1-lt" x="830" y="95" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="1.5">SITUATION 2</text>
+    <text class="fg-1" x="830" y="125" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">A technical report becomes a client brochure</text>
+    <g id="q2-dead-end">
+      <circle class="mark-warn" cx="1010" cy="245" r="10"/>
+      <path class="mark-warn" d="M1005,240 L1015,250 M1015,240 L1005,250"/>
+    </g>
+    <g id="q2-swatch-lands">
+      <rect class="sw-cy" x="1330" y="195" width="40" height="5" rx="2"/>
+    </g>
+    <text class="fg-2" x="1385" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="13">traced to a real passage in the report</text>
+    <g id="q2-swatch-dangles">
+      <rect class="sw-or" x="1330" y="230" width="40" height="5" rx="2"/>
+    </g>
+    <text class="fg-2" x="1385" y="235" font-family="Segoe UI, Arial, sans-serif" font-size="13">traced to nothing at all</text>
+    <text class="fg-2" x="830" y="285" font-family="Segoe UI, Arial, sans-serif" font-size="15">which claim rests on nothing in the source?</text>
+
+    <text class="accent-1-lt" x="50" y="345" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="1.5">SITUATION 3</text>
+    <text class="fg-1" x="50" y="375" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">Two versions of the same page</text>
+    <text class="fg-3" x="50" y="405" font-family="Segoe UI, Arial, sans-serif" font-size="13">a contract and its revision · a page and its converted markdown</text>
+    <g id="q3-swatch-linked">
+      <rect class="sw-cy" x="560" y="480" width="40" height="5" rx="2"/>
+    </g>
+    <text class="fg-1" x="615" y="485" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600">lines up</text>
+    <text class="fg-3" x="560" y="510" font-family="Segoe UI, Arial, sans-serif" font-size="12">same content, moved</text>
+    <g id="q3-swatch-unlinked">
+      <rect class="sw-or" x="560" y="525" width="40" height="5" rx="2"/>
+    </g>
+    <text class="fg-1" x="615" y="535" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600">does not</text>
+    <text class="fg-3" x="560" y="560" font-family="Segoe UI, Arial, sans-serif" font-size="12">present in one page only</text>
+    <text class="fg-2" x="50" y="590" font-family="Segoe UI, Arial, sans-serif" font-size="15">which passages line up, and which quietly do not?</text>
+
+    <text class="accent-1-lt" x="830" y="345" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" letter-spacing="1.5">SITUATION 4</text>
+    <text class="fg-1" x="830" y="375" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">One brief becomes a thousand personalised variants</text>
+    <g id="q4-badge">
+      <rect class="badge" x="1500" y="365" width="245" height="25" rx="12"/>
+    </g>
+    <text class="accent-2-lt" x="1515" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2">THIS ONE DECIDES THE DESIGN</text>
+    <text class="fg-3" x="845" y="550" font-family="Segoe UI, Arial, sans-serif" font-size="12">one brief</text>
+    <g id="q4-drift-flag">
+      <circle class="mark-warn" cx="1205" cy="475" r="10"/>
+      <path class="mark-warn" d="M1200,470 L1210,480 M1210,470 L1200,480"/>
+    </g>
+    <text class="accent-2" x="1230" y="480" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="600">this one drifted</text>
+    <text class="fg-3" x="1195" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="12">1 000 outputs in all</text>
+    <g id="q4-divider">
+      <rect class="divider" x="1360" y="405" width="2" height="160"/>
+    </g>
+    <text class="accent-1-lt" x="1390" y="425" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" letter-spacing="1.5">AT THIS VOLUME</text>
+    <text class="accent-2-lt" x="1390" y="475" font-family="Segoe UI, Arial, sans-serif" font-size="46" font-weight="700">100 000</text>
+    <text class="fg-2" x="1390" y="510" font-family="Segoe UI, Arial, sans-serif" font-size="16">pairs to check, automatically</text>
+    <text class="fg-3" x="1390" y="535" font-family="Segoe UI, Arial, sans-serif" font-size="13">and the one that drifted looks exactly</text>
+    <text class="fg-3" x="1390" y="560" font-family="Segoe UI, Arial, sans-serif" font-size="13">like the 999 that did not</text>
+    <text class="fg-2" x="830" y="590" font-family="Segoe UI, Arial, sans-serif" font-size="15">personalised campaigns for forty segments · nobody reads a thousand outputs</text>
+
+    <text class="fg-1" x="495" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle">1</text>
+    <text class="fg-1" x="525" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle">2</text>
+    <text class="fg-1" x="555" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle">3</text>
+    <text class="fg-1" x="585" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle">4</text>
+    <text class="accent-1-lt" x="620" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="20" text-anchor="middle">→</text>
+    <text class="fg-1" x="650" y="660" font-family="Segoe UI, Arial, sans-serif" font-size="19" font-weight="700">one question in four coats: how far apart, and which part matches which?</text>
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

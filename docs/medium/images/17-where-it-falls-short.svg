@@ -1,0 +1,170 @@
+<!--
+  17-where-it-falls-short.svg - the limitations card grid for the docdistance article
+  Shows: header (title + standing warning), then three cards in a single row, each one limitation:
+    1 thin margin (+0.92 pts), 2 thresholds do not transfer (per corpus), 3 a score not a distance
+    (4.5% triangle-rule breaks). Footer restates that these are constraints by construction.
+  Intent: the honesty figure. It must read as prominently as the results figure and must not
+    read as a win, so the whole canvas is orange / light orange with no reassurance colour.
+  Theme: docdistance dark deck. Orange #da8230, light orange #d4a04a on #0a1a24 in dark mode;
+    darkened burnt-orange equivalents in light mode. No cyan on this canvas by design.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 420" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #6b3708; }
+    .fg-2 { fill: #8a4a12; }
+    .fg-3 { fill: #7a5230; }
+    .fg-4 { fill: #8a6540; }
+    .accent-1 { fill: #a4550f; }
+    .accent-2 { fill: #8f6a1a; }
+    .card { fill: #b8641a; fill-opacity: 0.05; stroke: #a4550f; stroke-width: 1; }
+    .bar { fill: #a4550f; fill-opacity: 0.75; }
+    .chip { fill: #a4550f; fill-opacity: 0.14; stroke: #a4550f; stroke-width: 1; }
+    .rule { fill: #a4550f; fill-opacity: 0.3; }
+    .rule-head { fill: #a4550f; fill-opacity: 0.5; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #f0c48a; }
+      .fg-2 { fill: #e8b374; }
+      .fg-3 { fill: #d4a04a; }
+      .fg-4 { fill: #c08f45; }
+      .accent-1 { fill: #da8230; }
+      .accent-2 { fill: #d4a04a; }
+      .card { fill: #da8230; stroke: #da8230; }
+      .bar { fill: #da8230; }
+      .chip { fill: #d4a04a; stroke: #d4a04a; }
+      .rule { fill: #da8230; }
+      .rule-head { fill: #da8230; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 420 (doc-grid: card grid / full infographic)
+    Outer margins: 40 left/right, 100 top, 60 bottom. Every x and y below is a multiple of 5.
+
+    Columns (gap=20):
+    col-1: x=40..600  w=560
+    col-2: x=620..1180  w=560
+    col-3: x=1200..1760  w=560
+
+    Rows:
+    row-1: y=100..360  h=260
+
+    Header band above the grid:
+    title baseline y=45 (32px/700), subtitle baseline y=75 (17px), head rule y=90 h=2
+
+    Card anatomy, identical in all three, written as offsets from the card origin (cx, cy):
+    body rect   cx+0,   cy+0    560x260 rx3
+    accent bar  cx+0,   cy+0    560x6
+    chip rect   cx+400, cy+25   130x30 rx3   center (cx+465, cy+40)
+    divider     cx+30,  cy+120  500x2
+    kicker text x=cx+30   baseline cy+45  (13px/700, letter-spacing 1.5)
+    chip text   x=cx+465  baseline cy+45  (14px/700, anchor middle)
+    title text  x=cx+30   baseline cy+95  (24px/700)
+    body text   x=cx+30   baselines cy+150, cy+175, cy+200, cy+225 (16px, rhythm 25)
+
+    Three deliberate rhythm zones inside a card: kicker to title 50, title to body 55, body 25.
+
+    Footer baseline y=395 (14px)
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-stack: card-1, card-2, card-3 (gap=20)
+    v-align: card-1.top = card-2.top = card-3.top
+    contain: card-N > bar-N, chip-N, divider-N
+    contain: card-N > kicker-N, chip-value-N, title-N, body-N
+    v-stack: header title, header subtitle, head rule, card row 1, footer
+  === -->
+
+  <rect x="0" y="0" width="1800" height="420" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="420" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="420" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="420" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="600" y1="0" x2="600" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="620" y1="0" x2="620" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="1180" y1="0" x2="1180" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="1200" y1="0" x2="1200" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="420" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="100" x2="1800" y2="100" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="360" x2="1800" y2="360" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+    <rect id="head-rule" class="rule-head" x="40" y="90" width="1720" height="2"/>
+  </g>
+
+  <g id="nodes"><!-- cards, circles, hexes - the shapes connectors attach to -->
+    <g id="card-1">
+      <rect class="card" x="40" y="100" width="560" height="260" rx="3"/>
+      <rect class="bar" x="40" y="100" width="560" height="6"/>
+      <rect class="chip" x="440" y="125" width="130" height="30" rx="3"/>
+      <rect class="rule" x="70" y="220" width="500" height="2"/>
+    </g>
+    <g id="card-2">
+      <rect class="card" x="620" y="100" width="560" height="260" rx="3"/>
+      <rect class="bar" x="620" y="100" width="560" height="6"/>
+      <rect class="chip" x="1020" y="125" width="130" height="30" rx="3"/>
+      <rect class="rule" x="650" y="220" width="500" height="2"/>
+    </g>
+    <g id="card-3">
+      <rect class="card" x="1200" y="100" width="560" height="260" rx="3"/>
+      <rect class="bar" x="1200" y="100" width="560" height="6"/>
+      <rect class="chip" x="1600" y="125" width="130" height="30" rx="3"/>
+      <rect class="rule" x="1230" y="220" width="500" height="2"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- every arrow / strand / spine, tool-generated only -->
+  </g>
+
+  <g id="content"><!-- icons, labels, text - never behind nodes -->
+    <g id="header">
+      <text class="fg-1" x="40" y="45" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700">Where it falls short</text>
+      <text class="fg-3" x="40" y="75" font-family="Segoe UI, Arial, sans-serif" font-size="17">Three limits, stated plainly. Read them before you rely on any number in this article.</text>
+    </g>
+
+    <g id="text-1">
+      <text class="accent-1" x="70" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.5">LIMITATION 1</text>
+      <text class="fg-1" x="505" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">+0.92 pts</text>
+      <text class="fg-1" x="70" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">The margin is thin</text>
+      <text class="fg-3" x="70" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">Good summaries sit 0.92 points away from bad ones,</text>
+      <text class="fg-3" x="70" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">on documents built to be hard to separate. That gap</text>
+      <text class="fg-3" x="70" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16">is the whole safety margin; noise flips the verdict.</text>
+    </g>
+
+    <g id="text-2">
+      <text class="accent-1" x="650" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.5">LIMITATION 2</text>
+      <text class="fg-1" x="1085" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">per corpus</text>
+      <text class="fg-1" x="650" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">Thresholds do not transfer</text>
+      <text class="fg-3" x="650" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">The cutoff that separates good from bad is a</text>
+      <text class="fg-3" x="650" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">per-corpus decision, not a constant. Calibrate it</text>
+      <text class="fg-3" x="650" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16">on your own documents rather than copying mine.</text>
+    </g>
+
+    <g id="text-3">
+      <text class="accent-1" x="1230" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.5">LIMITATION 3</text>
+      <text class="fg-1" x="1665" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">4.5%</text>
+      <text class="fg-1" x="1230" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">A score, not a distance</text>
+      <text class="fg-3" x="1230" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">The arrangement number breaks the triangle rule</text>
+      <text class="fg-3" x="1230" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">4.5% of the time: A→C can come out larger than</text>
+      <text class="fg-3" x="1230" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16">A→B plus B→C. So never chain it across comparisons.</text>
+    </g>
+
+    <text id="footer" class="fg-4" x="40" y="395" font-family="Segoe UI, Arial, sans-serif" font-size="14">These are the constraints the method carries by construction, not open bugs.</text>
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

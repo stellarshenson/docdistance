@@ -1,0 +1,259 @@
+<!--
+  15-when-to-use-it.svg - decision tree closing the docdistance article
+  Shows: root gate "can you read the model's token probabilities?" forking into a YES
+         terminal (KL divergence, orange, a legitimate good outcome) and a NO path
+         (cyan) that runs the meaning distance, then the arrangement number, then the
+         experimental source-conditioned variant (light orange, costs on canvas);
+         a footnote strip of three hard "do not" rules closes the band.
+  Intent: end the reader on a decision they can act on, including the branch where
+          the honest answer is "you do not need this at all".
+  Theme: dark plate #0a1a24; cyan #0096d1 / light cyan #5cc8e0 = the shipped path;
+         orange #da8230 = the simpler answer when it is available;
+         light orange #d4a04a = the experimental branch.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 320" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0b2e3c; }
+    .fg-2 { fill: #1a3c49; }
+    .fg-3 { fill: #396373; }
+    .t-cy { fill: #177b90; }
+    .t-or { fill: #95510f; }
+    .t-orl { fill: #9f7120; }
+    .card-lcy { fill: #0096d1; fill-opacity: 0.05; stroke: #177b90; stroke-width: 1; }
+    .card-cy { fill: #0096d1; fill-opacity: 0.06; stroke: #22aee5; stroke-width: 1; }
+    .card-or { fill: #cf7725; fill-opacity: 0.06; stroke: #bd6c1f; stroke-width: 1; }
+    .card-orl { fill: #b5812b; fill-opacity: 0.06; stroke: #9f7120; stroke-width: 1; }
+    .bar-lcy { fill: #177b90; }
+    .bar-cy { fill: #22aee5; }
+    .bar-or { fill: #bd6c1f; }
+    .bar-orl { fill: #9f7120; }
+    .chip-lcy { fill: #1f8ba3; fill-opacity: 0.16; stroke: #177b90; stroke-width: 0.8; }
+    .chip-cy { fill: #0096d1; fill-opacity: 0.24; stroke: #22aee5; stroke-width: 0.8; }
+    .chip-or { fill: #cf7725; fill-opacity: 0.22; stroke: #bd6c1f; stroke-width: 0.8; }
+    .chip-orl { fill: #b5812b; fill-opacity: 0.20; stroke: #9f7120; stroke-width: 0.8; }
+    .tag-cy { fill: #0096d1; fill-opacity: 0.04; stroke: #2c8caa; stroke-width: 0.9; }
+    .tag-or { fill: #cf7725; fill-opacity: 0.04; stroke: #bd6c1f; stroke-width: 0.9; }
+    .tag-orl { fill: #b5812b; fill-opacity: 0.04; stroke: #9f7120; stroke-width: 0.9; }
+    .dot-or { fill: #bd6c1f; }
+    .arrow-stroke { stroke: #177b90; }
+    .arrow-fill { fill: #177b90; }
+    .arrow-stroke-or { stroke: #bd6c1f; }
+    .arrow-fill-or { fill: #bd6c1f; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #eaf6fb; }
+      .fg-2 { fill: #b6d8e5; }
+      .fg-3 { fill: #8cb6c6; }
+      .t-cy { fill: #6fd3e8; }
+      .t-or { fill: #f0ac6a; }
+      .t-orl { fill: #dfb160; }
+      .card-lcy { fill: #0096d1; fill-opacity: 0.05; stroke: #6fd3e8; stroke-width: 1; }
+      .card-cy { fill: #0096d1; fill-opacity: 0.06; stroke: #1aa6dd; stroke-width: 1; }
+      .card-or { fill: #da8230; fill-opacity: 0.06; stroke: #e08f42; stroke-width: 1; }
+      .card-orl { fill: #d4a04a; fill-opacity: 0.06; stroke: #dfb160; stroke-width: 1; }
+      .bar-lcy { fill: #6fd3e8; }
+      .bar-cy { fill: #1aa6dd; }
+      .bar-or { fill: #e08f42; }
+      .bar-orl { fill: #dfb160; }
+      .chip-lcy { fill: #5cc8e0; fill-opacity: 0.16; stroke: #6fd3e8; stroke-width: 0.8; }
+      .chip-cy { fill: #0096d1; fill-opacity: 0.24; stroke: #1aa6dd; stroke-width: 0.8; }
+      .chip-or { fill: #da8230; fill-opacity: 0.22; stroke: #e08f42; stroke-width: 0.8; }
+      .chip-orl { fill: #d4a04a; fill-opacity: 0.20; stroke: #dfb160; stroke-width: 0.8; }
+      .tag-cy { fill: #0096d1; fill-opacity: 0.04; stroke: #24728a; stroke-width: 0.9; }
+      .tag-or { fill: #da8230; fill-opacity: 0.04; stroke: #e08f42; stroke-width: 0.9; }
+      .tag-orl { fill: #d4a04a; fill-opacity: 0.04; stroke: #dfb160; stroke-width: 0.9; }
+      .dot-or { fill: #e08f42; }
+      .arrow-stroke { stroke: #6fd3e8; }
+      .arrow-fill { fill: #6fd3e8; }
+      .arrow-stroke-or { stroke: #e08f42; }
+      .arrow-fill-or { fill: #e08f42; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 320 (doc-flow: decision-tree band)
+    Outer margins: 40 left/right, 20 top/bottom (5px-grid snapped)
+    Vertical gaps: 20 between every band
+
+    Columns:
+    gate:     x=40..340    w=300
+    fork gap: x=340..440   w=100 (manifold routes here)
+    branch:   x=440..1760  w=1320
+      step-1: x=440..840    w=400
+      step-2: x=900..1300   w=400  (gap 60)
+      step-3: x=1360..1760  w=400  (gap 60)
+
+    Rows:
+    yes-terminal: y=20..90    h=70   (mid 55)
+    no-path:      y=110..220  h=110  (mid 165)
+    gate:         y=20..200   h=180  (mid 110 = fork centre)
+    footnote:     y=240..300  h=60
+
+    Card padding 20; no-path text rhythm: chip 125..145,
+    question base 165, answer base 185, gloss base 205 (uniform 20)
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    contain: card-gate > chip-start, gate question, gate gloss
+    fork: card-gate -> card-kl (yes), card-gate -> card-meaning (no)
+    h-stack: card-meaning, card-position, card-source (gap=60)
+    v-align: card-meaning.top = card-position.top = card-source.top
+    h-align: card-kl.left = card-meaning.left
+    v-spacing: card-kl, no-path row, card-donts (gap=20)
+    mirror: card-gate.right-mid is the midpoint of card-kl.left-mid and card-meaning.left-mid
+  === -->
+
+  <rect x="0" y="0" width="1800" height="320" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="320" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="320" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="320" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40.0" y1="0" x2="40.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="340.0" y1="0" x2="340.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="440.0" y1="0" x2="440.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="840.0" y1="0" x2="840.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="900.0" y1="0" x2="900.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="1300.0" y1="0" x2="1300.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="1360.0" y1="0" x2="1360.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="1760.0" y1="0" x2="1760.0" y2="320" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="20.0" x2="1800" y2="20.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="90.0" x2="1800" y2="90.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="110.0" x2="1800" y2="110.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="200.0" x2="1800" y2="200.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="220.0" x2="1800" y2="220.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="240.0" x2="1800" y2="240.0" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="300.0" x2="1800" y2="300.0" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+    <!-- dark plate: this deck is dark-primary by article spec, so the plate is a
+         structural fill and stays #0a1a24 in both colour schemes -->
+    <rect id="backplate" x="0" y="0" width="1800" height="320" fill="transparent"/>
+  </g>
+
+  <g id="nodes"><!-- cards, circles, hexes - the shapes connectors attach to -->
+    <g id="card-gate">
+      <path class="card-lcy" d="M40.0,20.0 H340.0 V190.0 Q340.0,200.0 330.0,200.0 H50.0 Q40.0,200.0 40.0,190.0 Z"/>
+      <rect class="bar-lcy" x="40.0" y="20.0" width="300.0" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-kl">
+      <path class="card-or" d="M440.0,20.0 H1760.0 V80.0 Q1760.0,90.0 1750.0,90.0 H450.0 Q440.0,90.0 440.0,80.0 Z"/>
+      <rect class="bar-or" x="440.0" y="20.0" width="1320.0" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-meaning">
+      <path class="card-cy" d="M440.0,110.0 H840.0 V210.0 Q840.0,220.0 830.0,220.0 H450.0 Q440.0,220.0 440.0,210.0 Z"/>
+      <rect class="bar-cy" x="440.0" y="110.0" width="400.0" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-position">
+      <path class="card-cy" d="M900.0,110.0 H1300.0 V210.0 Q1300.0,220.0 1290.0,220.0 H910.0 Q900.0,220.0 900.0,210.0 Z"/>
+      <rect class="bar-cy" x="900.0" y="110.0" width="400.0" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-source">
+      <path class="card-orl" d="M1360.0,110.0 H1760.0 V210.0 Q1760.0,220.0 1750.0,220.0 H1370.0 Q1360.0,220.0 1360.0,210.0 Z"/>
+      <rect class="bar-orl" x="1360.0" y="110.0" width="400.0" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-donts">
+      <path class="card-or" d="M40.0,240.0 H1760.0 V290.0 Q1760.0,300.0 1750.0,300.0 H50.0 Q40.0,300.0 40.0,290.0 Z"/>
+      <rect class="bar-or" x="40.0" y="240.0" width="1720.0" height="5" opacity="0.6"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- every arrow / strand / spine, tool-generated only -->
+    <!-- manifold connector: shape=spline starts=1 ends=2, gate forks to yes-terminal and no-path -->
+    <g class="manifold-connector" fill="none" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round">
+      <!-- start 0: start_point -> merge_point -->
+      <path class="arrow-stroke" opacity="0.8" d="M356.00,110.00 L356.43,110.00 L357.30,110.00 L358.20,110.00 L359.14,110.00 L360.13,110.00 L361.19,110.00 L362.35,110.00 L363.60,110.00 L364.98,110.00 L366.49,110.00 L368.15,110.00 L369.99,110.00 L372.00,110.00"/>
+      <!-- spine: merge_anchor -> fork_anchor -->
+      <path class="arrow-stroke" opacity="0.8" d="M372.00,110.00 L373.12,110.00 L374.24,110.00 L375.36,110.00 L376.48,110.00 L377.60,110.00 L378.72,110.00 L379.84,110.00 L380.96,110.00 L382.08,110.00 L383.20,110.00 L384.32,110.00 L385.44,110.00 L386.56,110.00 L387.68,110.00 L388.80,110.00 L389.92,110.00 L391.04,110.00 L392.16,110.00 L393.28,110.00 L394.40,110.00 L395.52,110.00 L396.64,110.00 L397.76,110.00 L398.88,110.00 L400.00,110.00"/>
+      <!-- end 0: fork_point -> yes terminal -->
+      <path class="arrow-stroke-or" opacity="0.8" d="M400.00,110.00 L404.15,109.74 L407.66,109.00 L410.60,107.81 L413.00,106.23 L414.93,104.28 L416.45,102.02 L417.61,99.48 L418.46,96.71 L419.06,93.75 L419.47,90.64 L419.74,87.43 L419.92,84.15 L420.08,80.85 L420.26,77.57 L420.53,74.36 L420.94,71.25 L421.53,68.34"/>
+      <polygon class="arrow-fill-or" points="425.45,60.34 414.14,61.79 424.07,71.66" stroke="none" opacity="0.85"/>
+      <!-- end 1: fork_point -> no path -->
+      <path class="arrow-stroke" opacity="0.8" d="M400.00,110.00 L404.15,110.26 L407.66,111.00 L410.60,112.19 L413.00,113.77 L414.93,115.72 L416.45,117.98 L417.61,120.52 L418.46,123.29 L419.06,126.25 L419.47,129.36 L419.74,132.57 L419.92,135.85 L420.08,139.15 L420.26,142.43 L420.53,145.64 L420.94,148.75 L421.53,151.66"/>
+      <polygon class="arrow-fill" points="425.45,159.66 424.07,148.34 414.14,158.21" stroke="none" opacity="0.85"/>
+    </g>
+    <!-- straight connector: len=32px, step 1 -> step 2 -->
+    <g class="connector">
+      <path class="arrow-stroke" d="M854.00,165.00 L877.00,165.00" fill="none" stroke-width="1.4" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="886.00,165.00 877.00,158.00 877.00,172.00" opacity="0.85"/>
+    </g>
+    <!-- straight connector: len=32px, step 2 -> step 3 -->
+    <g class="connector">
+      <path class="arrow-stroke" d="M1314.00,165.00 L1337.00,165.00" fill="none" stroke-width="1.4" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="1346.00,165.00 1337.00,158.00 1337.00,172.00" opacity="0.85"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- icons, labels, text - never behind nodes -->
+    <g id="text-gate">
+      <rect class="chip-lcy" x="60" y="55" width="70" height="20" rx="10"/>
+      <text class="t-cy" x="95" y="70" font-size="10.5" font-weight="bold" letter-spacing="0.8" text-anchor="middle">START</text>
+      <text class="fg-1" x="60" y="115" font-size="20" font-weight="bold">can you read the model&#8217;s</text>
+      <text class="fg-1" x="60" y="140" font-size="20" font-weight="bold">token probabilities?</text>
+      <text class="fg-3" x="60" y="165" font-size="11">the per-token logits, if you can get them</text>
+    </g>
+
+    <g id="text-kl">
+      <rect class="chip-or" x="460" y="35" width="50" height="20" rx="10"/>
+      <text class="t-or" x="485" y="50" font-size="10.5" font-weight="bold" letter-spacing="0.8" text-anchor="middle">YES</text>
+      <rect class="tag-or" x="1660" y="35" width="80" height="20" rx="10"/>
+      <text class="t-or" x="1700" y="50" font-size="10" font-weight="bold" letter-spacing="0.6" text-anchor="middle">STOP HERE</text>
+      <text class="fg-1" x="525" y="50" font-size="18" font-weight="bold">use KL divergence</text>
+      <text class="fg-2" x="525" y="75" font-size="13">it is the right tool for this job, and it is simpler</text>
+      <text class="t-or" x="1740" y="75" font-size="15" font-weight="bold" text-anchor="end">you do not need any of this</text>
+    </g>
+
+    <g id="text-meaning">
+      <rect class="chip-cy" x="460" y="125" width="50" height="20" rx="10"/>
+      <text class="t-cy" x="485" y="140" font-size="10.5" font-weight="bold" letter-spacing="0.8" text-anchor="middle">NO</text>
+      <rect class="tag-cy" x="750" y="125" width="70" height="20" rx="10"/>
+      <text class="fg-3" x="785" y="140" font-size="10" font-weight="bold" letter-spacing="0.6" text-anchor="middle">SHIPPED</text>
+      <text class="fg-1" x="460" y="165" font-size="15" font-weight="bold">how far did the MEANING move?</text>
+      <text class="t-cy" x="460" y="185" font-size="12.5">&#8594; use the semantic distance</text>
+      <text class="fg-3" x="460" y="205" font-size="10">the cheapest plan that carries A&#8217;s statements onto B&#8217;s</text>
+    </g>
+
+    <g id="text-position">
+      <rect class="chip-cy" x="920" y="125" width="60" height="20" rx="10"/>
+      <text class="t-cy" x="950" y="140" font-size="10.5" font-weight="bold" letter-spacing="0.8" text-anchor="middle">THEN</text>
+      <rect class="tag-cy" x="1210" y="125" width="70" height="20" rx="10"/>
+      <text class="fg-3" x="1245" y="140" font-size="10" font-weight="bold" letter-spacing="0.6" text-anchor="middle">SHIPPED</text>
+      <text class="fg-1" x="920" y="165" font-size="15" font-weight="bold">did anything move POSITION?</text>
+      <text class="t-cy" x="920" y="185" font-size="12.5">&#8594; add the arrangement number</text>
+      <text class="fg-3" x="920" y="205" font-size="10">same statements, new order &#8226; the meaning number stays flat</text>
+    </g>
+
+    <g id="text-source">
+      <rect class="chip-orl" x="1380" y="125" width="70" height="20" rx="10"/>
+      <text class="t-orl" x="1415" y="140" font-size="10.5" font-weight="bold" letter-spacing="0.8" text-anchor="middle">ONLY IF</text>
+      <rect class="tag-orl" x="1640" y="125" width="100" height="20" rx="10"/>
+      <text class="t-orl" x="1690" y="140" font-size="10" font-weight="bold" letter-spacing="0.6" text-anchor="middle">SOURCE MODE</text>
+      <text class="fg-1" x="1380" y="165" font-size="15" font-weight="bold">do you hold the SOURCE they both came from?</text>
+      <text class="t-orl" x="1380" y="185" font-size="12.5">&#8594; the source-conditioned variant</text>
+      <text class="t-orl" x="1380" y="205" font-size="10">seconds per pair, not milliseconds</text>
+    </g>
+
+    <g id="text-donts">
+      <circle class="dot-or" cx="65" cy="270" r="3.5"/>
+      <text class="fg-2" x="80" y="275" font-size="15">do not use it if you can read logits.</text>
+      <circle class="dot-or" cx="625" cy="270" r="3.5"/>
+      <text class="fg-2" x="640" y="275" font-size="15">do not read it as a quality score.</text>
+      <circle class="dot-or" cx="1185" cy="270" r="3.5"/>
+      <text class="fg-2" x="1200" y="275" font-size="15">do not inherit my threshold.</text>
+    </g>
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

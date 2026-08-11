@@ -1,0 +1,262 @@
+<!--
+  07-anisotropy.svg - Before / after the anisotropy correction on embedding vectors
+  Shows: title with plain-English gloss; left panel (orange, defective) narrow cone of 11 vectors
+         with spread 0.057; right panel (cyan, corrected) same 11 vectors fanned wide with spread
+         0.180; gain badge 3.2x; three facts (source paper, why it is safe, what it costs);
+         light-orange caution strip on the batch requirement.
+  Intent: teach data scientists who know cosine but not optimal transport that "anisotropic" names
+         a plain defect, that subtracting the shared directions is cheap and safe, and that the
+         correction needs a batch so one-off pairs go without it.
+  Theme: docdistance deck. cyan #0096d1 / light cyan #5cc8e0 = corrected state.
+         orange #da8230 = defective state. light orange #d4a04a = caution. dark bg #0a1a24.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 800" preserveAspectRatio="xMidYMid meet">
+  <style>
+    /* light mode - default; accent text uses darkened palette variants for WCAG */
+    .fg-1 { fill: #0d2b38; }
+    .fg-2 { fill: #1a5a6e; }
+    .fg-3 { fill: #40606d; }
+    .fg-4 { fill: #4a6b78; }
+    .t-or { fill: #a85f18; }
+    .t-cy { fill: #0d5f80; }
+
+    .card-or { fill: #da8230; fill-opacity: 0.05; stroke: #da8230; stroke-width: 1; }
+    .card-cy { fill: #0096d1; fill-opacity: 0.05; stroke: #0096d1; stroke-width: 1; }
+    .chip    { fill: #1a5a6e; fill-opacity: 0.05; stroke: #1a5a6e; stroke-width: 1; }
+    .badge   { fill: #0096d1; fill-opacity: 0.08; stroke: #0096d1; stroke-width: 1.4; }
+    .caution { fill: #d4a04a; fill-opacity: 0.12; stroke: #d4a04a; stroke-width: 1.4; }
+    .caution-tab { fill: #d4a04a; fill-opacity: 0.22; stroke: #d4a04a; stroke-width: 1; }
+
+    .ray-or  { stroke: #da8230; stroke-width: 1.8; fill: none; }
+    .head-or { fill: #da8230; stroke: none; }
+    .ray-cy  { stroke: #0096d1; stroke-width: 1.8; fill: none; }
+    .head-cy { fill: #0096d1; stroke: none; }
+
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #d8ecf5; }
+      .fg-2 { fill: #b3d4e2; }
+      .fg-3 { fill: #93b2c0; }
+      .fg-4 { fill: #85a3b1; }
+      .t-or { fill: #d4a04a; }
+      .t-cy { fill: #5cc8e0; }
+
+      .card-or { stroke: #d4a04a; fill: #d4a04a; }
+      .card-cy { stroke: #5cc8e0; fill: #5cc8e0; }
+      .chip    { stroke: #5cc8e0; fill: #5cc8e0; }
+      .badge   { stroke: #5cc8e0; fill: #5cc8e0; }
+      .caution { stroke: #d4a04a; fill: #d4a04a; }
+      .caution-tab { fill: #d4a04a; }
+
+      .ray-or  { stroke: #d4a04a; }
+      .head-or { fill: #d4a04a; }
+      .ray-cy  { stroke: #5cc8e0; }
+      .head-cy { fill: #5cc8e0; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 800 (doc-stats before/after; height extended from 200 to carry the two fans)
+    Outer margins: 40 left/right, 40 top, 40 bottom. Band gap: 20 throughout.
+
+    Columns (gap=20):
+    col-1: x=40..890   w=850
+    col-2: x=910..1760 w=850
+
+    Bands (gap=20):
+    title   y=40..92           title baseline 65, subtitle baseline 95
+    panels  y=110..510  h=400  card-1 col-1, card-2 col-2
+    badge   y=530..600  h=70   x=540..1260 w=720, centred on x=900
+    facts   y=620..680  h=60   3 chips w=560, gap=20 (x=40, 620, 1200)
+    caution y=700..760  h=60   full width x=40..1760
+
+    Fan geometry (mirrored, offset 870):
+    origin  (160,310) and (1030,310); fork hub (200,310) and (1070,310)
+    rays    r=230, 11 per panel; ray count and fan angle carry the spread, no backing shape
+    before  span 20 deg, step 2.0     after span 64 deg, step 6.4
+    64 / 20 = 3.2, so the fan angle ratio IS the spread gain 0.057 to 0.180
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    v-stack: title, panels, badge, facts, caution (gap=20)
+    h-stack: card-1, card-2 (gap=20)
+    h-stack: fact-1, fact-2, fact-3 (gap=20)
+    v-align: card-1.top = card-2.top ; fact-1.top = fact-2.top = fact-3.top
+    layer:   card-1, card-2 are tint plates in the background layer, not connector anchors
+    contain: card-1 > fan-before, readout-before, caption-before
+    contain: card-2 > fan-after, readout-after, caption-after
+    contain: caution > caution-tab, caution-text
+    mirror:  card-1 fan geometry mirrors card-2 about the column offset 870
+  === -->
+
+  <rect x="0" y="0" width="1800" height="800" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="890" y1="0" x2="890" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="910" y1="0" x2="910" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="95" x2="1800" y2="95" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="110" x2="1800" y2="110" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="310" x2="1800" y2="310" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="510" x2="1800" y2="510" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="530" x2="1800" y2="530" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="600" x2="1800" y2="600" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="620" x2="1800" y2="620" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="680" x2="1800" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="700" x2="1800" y2="700" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="760" x2="1800" y2="760" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- panel tint plates: fills only, nothing attaches to them -->
+    <g id="card-1">
+      <rect class="card-or" x="40" y="110" width="850" height="400" rx="3"/>
+    </g>
+    <g id="card-2">
+      <rect class="card-cy" x="910" y="110" width="850" height="400" rx="3"/>
+    </g>
+  </g>
+
+  <g id="nodes"><!-- badge, fact chips, caution strip -->
+    <g id="badge"><rect class="badge" x="540" y="530" width="720" height="70" rx="3"/></g>
+
+    <g id="fact-1"><rect class="chip" x="40" y="620" width="560" height="60" rx="3"/></g>
+    <g id="fact-2"><rect class="chip" x="620" y="620" width="560" height="60" rx="3"/></g>
+    <g id="fact-3"><rect class="chip" x="1200" y="620" width="560" height="60" rx="3"/></g>
+
+    <g id="caution-strip">
+      <rect class="caution" x="40" y="700" width="1720" height="60" rx="3"/>
+      <rect class="caution-tab" x="65" y="715" width="100" height="30" rx="3"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- the two vector fans, manifold connectors, tool generated -->
+    <!-- manifold connector: shape=straight starts=1 ends=11, span 20 deg -->
+    <g id="fan-before" class="manifold-connector ray-or" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M162.00,310.00 L170.00,310.00"/>
+      <path d="M170.00,310.00 L200.00,310.00"/>
+      <path d="M200.00,310.00 L415.68,271.97"/>
+      <polygon class="head-or" points="424.54,270.41 414.64,266.06 416.72,277.88"/>
+      <path d="M200.00,310.00 L416.87,279.52"/>
+      <polygon class="head-or" points="425.78,278.27 416.03,273.58 417.70,285.46"/>
+      <path d="M200.00,310.00 L417.80,287.11"/>
+      <polygon class="head-or" points="426.75,286.17 417.17,281.14 418.43,293.08"/>
+      <path d="M200.00,310.00 L418.47,294.73"/>
+      <polygon class="head-or" points="427.44,294.10 418.05,288.74 418.89,300.71"/>
+      <path d="M200.00,310.00 L418.87,302.35"/>
+      <polygon class="head-or" points="427.86,302.04 418.66,296.36 419.08,308.35"/>
+      <path d="M200.00,310.00 L419.00,310.00"/>
+      <polygon class="head-or" points="428.00,310.00 419.00,304.00 419.00,316.00"/>
+      <path d="M200.00,310.00 L418.87,317.65"/>
+      <polygon class="head-or" points="427.86,317.96 419.08,311.65 418.66,323.64"/>
+      <path d="M200.00,310.00 L418.47,325.27"/>
+      <polygon class="head-or" points="427.44,325.90 418.89,319.29 418.05,331.26"/>
+      <path d="M200.00,310.00 L417.80,332.89"/>
+      <polygon class="head-or" points="426.75,333.83 418.43,326.92 417.17,338.86"/>
+      <path d="M200.00,310.00 L416.87,340.48"/>
+      <polygon class="head-or" points="425.78,341.73 417.70,334.54 416.03,346.42"/>
+      <path d="M200.00,310.00 L415.68,348.03"/>
+      <polygon class="head-or" points="424.54,349.59 416.72,342.12 414.64,353.94"/>
+    </g>
+
+    <!-- manifold connector: shape=straight starts=1 ends=11, span 64 deg -->
+    <g id="fan-after" class="manifold-connector ray-cy" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M1032.00,310.00 L1040.00,310.00"/>
+      <path d="M1040.00,310.00 L1070.00,310.00"/>
+      <path d="M1070.00,310.00 L1255.72,193.95"/>
+      <polygon class="head-cy" points="1263.35,189.18 1252.54,188.86 1258.90,199.04"/>
+      <path d="M1070.00,310.00 L1267.50,215.37"/>
+      <polygon class="head-cy" points="1275.62,211.48 1264.91,209.96 1270.09,220.78"/>
+      <path d="M1070.00,310.00 L1276.82,237.98"/>
+      <polygon class="head-cy" points="1285.32,235.02 1274.85,232.31 1278.80,243.64"/>
+      <path d="M1070.00,310.00 L1283.55,261.48"/>
+      <polygon class="head-cy" points="1292.33,259.48 1282.22,255.63 1284.88,267.33"/>
+      <path d="M1070.00,310.00 L1287.64,285.59"/>
+      <polygon class="head-cy" points="1296.58,284.58 1286.97,279.62 1288.31,291.55"/>
+      <path d="M1070.00,310.00 L1289.00,310.00"/>
+      <polygon class="head-cy" points="1298.00,310.00 1289.00,304.00 1289.00,316.00"/>
+      <path d="M1070.00,310.00 L1287.64,334.41"/>
+      <polygon class="head-cy" points="1296.58,335.42 1288.31,328.45 1286.97,340.38"/>
+      <path d="M1070.00,310.00 L1283.55,358.52"/>
+      <polygon class="head-cy" points="1292.33,360.52 1284.88,352.67 1282.22,364.37"/>
+      <path d="M1070.00,310.00 L1276.82,382.02"/>
+      <polygon class="head-cy" points="1285.32,384.98 1278.80,376.36 1274.85,387.69"/>
+      <path d="M1070.00,310.00 L1267.50,404.63"/>
+      <polygon class="head-cy" points="1275.62,408.52 1270.09,399.22 1264.91,410.04"/>
+      <path d="M1070.00,310.00 L1255.72,426.05"/>
+      <polygon class="head-cy" points="1263.35,430.82 1258.90,420.96 1252.54,431.14"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- all text -->
+    <g id="header">
+      <text class="fg-1" x="40" y="65" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">“Anisotropic” is an over-glorified term for a plain defect: the vectors barely use the space</text>
+      <text class="fg-3" x="40" y="95" font-family="Segoe UI, Arial, sans-serif" font-size="17">Same eleven executive summaries, same encoder. The only difference between the two panels is one correction.</text>
+    </g>
+
+    <g id="label-before">
+      <text class="t-or" x="65" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">BEFORE · RAW EMBEDDINGS</text>
+    </g>
+    <g id="readout-before">
+      <text class="t-or" x="480" y="280" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700">0.057</text>
+      <text class="fg-3" x="480" y="315" font-family="Segoe UI, Arial, sans-serif" font-size="13">best-to-worst spread across 11 summaries</text>
+    </g>
+    <g id="caption-before">
+      <text class="fg-2" x="480" y="355" font-family="Segoe UI, Arial, sans-serif" font-size="15">a few shared directions dominate every</text>
+      <text class="fg-2" x="480" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="15">vector, so everything looks similar to</text>
+      <text class="fg-2" x="480" y="405" font-family="Segoe UI, Arial, sans-serif" font-size="15">everything else</text>
+    </g>
+
+    <g id="label-after">
+      <text class="t-cy" x="935" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="1.2">AFTER · SHARED DIRECTIONS SUBTRACTED</text>
+    </g>
+    <g id="readout-after">
+      <text class="t-cy" x="1350" y="280" font-family="Segoe UI, Arial, sans-serif" font-size="56" font-weight="700">0.180</text>
+      <text class="fg-3" x="1350" y="315" font-family="Segoe UI, Arial, sans-serif" font-size="13">best-to-worst spread across 11 summaries</text>
+    </g>
+    <g id="caption-after">
+      <text class="fg-2" x="1350" y="355" font-family="Segoe UI, Arial, sans-serif" font-size="15">the same vectors, now fanned much wider</text>
+      <text class="fg-2" x="1350" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="15">across the space, so a threshold has</text>
+      <text class="fg-2" x="1350" y="405" font-family="Segoe UI, Arial, sans-serif" font-size="15">somewhere to sit</text>
+    </g>
+
+    <g id="badge-text">
+      <text class="fg-1" x="900" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" text-anchor="middle">3.2× more room to place a threshold</text>
+      <text class="fg-3" x="900" y="585" font-family="Segoe UI, Arial, sans-serif" font-size="15" text-anchor="middle">0.057 → 0.180</text>
+    </g>
+
+    <g id="fact-1-text">
+      <text class="fg-4" x="65" y="645" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">THE FIX</text>
+      <text class="fg-2" x="65" y="670" font-family="Segoe UI, Arial, sans-serif" font-size="15">Mu and Viswanath, ICLR 2018</text>
+    </g>
+    <g id="fact-2-text">
+      <text class="fg-4" x="645" y="645" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">WHY REMOVING THEM IS SAFE</text>
+      <text class="fg-2" x="645" y="670" font-family="Segoe UI, Arial, sans-serif" font-size="15">The dominant directions encode word FREQUENCY, not meaning</text>
+    </g>
+    <g id="fact-3-text">
+      <text class="fg-4" x="1225" y="645" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">WHAT IT COSTS</text>
+      <text class="fg-2" x="1225" y="670" font-family="Segoe UI, Arial, sans-serif" font-size="15">Only a handful of lines of code</text>
+    </g>
+
+    <g id="caution-text">
+      <text class="t-or" x="115" y="735" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CAUTION</text>
+      <text class="fg-2" x="190" y="735" font-family="Segoe UI, Arial, sans-serif" font-size="15">The shared direction has to be estimated across a batch of documents. An isolated pair gives about two dozen vectors, which is not enough, so single one-off comparisons run without this correction.</text>
+    </g>
+  </g>
+
+  <g id="callouts"><!-- none -->
+  </g>
+</svg>

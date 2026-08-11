@@ -1,0 +1,240 @@
+<!--
+  05-the-ladder.svg - The nested ladder of document-distance bounds
+  Shows: title and teaching subtitle; a value gauge on the left (three bars rising toward a dashed
+         "true distance" line); a literal ladder with two rails and three rungs, cheapest at the
+         bottom (WCD) climbing to the real answer at the top (SMD); a vertical bracket on the right
+         declaring that each rung is a lower bound on the one above it.
+  Intent: teach a reader who knows cosine similarity but has never touched optimal transport that
+         whole-document cosine is not a rival to optimal transport but the bottom rung of the same
+         ladder, a loose approximation of the very same quantity.
+  Theme: docdistance deck. cyan #0096d1 is the real answer at the top, dim cyan #1a5a6e the cheaper
+         approximations below, light orange marks an approximation rather than a failure.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 800" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0d2b3a; }
+    .fg-2 { fill: #1b4a61; }
+    .fg-3 { fill: #3d6478; }
+    .fg-4 { fill: #55798a; }
+    .accent-1 { fill: #00719e; }
+    .accent-warn { fill: #a05f18; }
+    .card-top { fill: #0096d1; fill-opacity: 0.10; stroke: #0096d1; stroke-width: 2.5; }
+    .card-mid { fill: #0096d1; fill-opacity: 0.055; stroke: #4a8399; stroke-width: 1.6; }
+    .card-lo  { fill: #0096d1; fill-opacity: 0.03; stroke: #5590a6; stroke-width: 1.2; }
+    .tread-top { fill: #0096d1; opacity: 0.75; }
+    .tread-mid { fill: #4a8399; opacity: 0.55; }
+    .tread-lo  { fill: #5590a6; opacity: 0.40; }
+    .rail { fill: #0096d1; fill-opacity: 0.18; stroke: #0096d1; stroke-width: 2; }
+    .chip-top { fill: #0096d1; fill-opacity: 0.12; stroke: #0096d1; stroke-width: 1; }
+    .chip-lo { fill: #5590a6; fill-opacity: 0.12; stroke: #5590a6; stroke-width: 1; }
+    .gauge-hi { fill: #0096d1; }
+    .gauge-lo { fill: #4a8399; }
+    .gauge-axis { stroke: #5590a6; stroke-width: 2; fill: none; }
+    .gauge-ref { stroke: #0096d1; stroke-width: 2; stroke-dasharray: 8 6; fill: none; }
+    .bracket { stroke: #00719e; stroke-width: 2; fill: none; stroke-linecap: round; }
+    .arrow-stroke { stroke: #5590a6; }
+    .arrow-fill { fill: #5590a6; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e3f2f8; }
+      .fg-2 { fill: #bcdcea; }
+      .fg-3 { fill: #a8c9d8; }
+      .fg-4 { fill: #86a9b8; }
+      .accent-1 { fill: #5cc8e0; }
+      .accent-warn { fill: #d4a04a; }
+      .card-top { fill: #0096d1; fill-opacity: 0.16; stroke: #5cc8e0; }
+      .card-mid { fill-opacity: 0.09; stroke: #4a95ad; }
+      .card-lo  { fill-opacity: 0.05; stroke: #3f8ba3; }
+      .tread-top { fill: #5cc8e0; }
+      .tread-mid { fill: #4a95ad; }
+      .tread-lo  { fill: #4a95ad; }
+      .rail { fill-opacity: 0.22; stroke: #4a95ad; }
+      .chip-top { fill-opacity: 0.18; stroke: #5cc8e0; }
+      .chip-lo { fill-opacity: 0.30; stroke: #4a95ad; }
+      .gauge-hi { fill: #5cc8e0; }
+      .gauge-lo { fill: #4a95ad; }
+      .gauge-axis { stroke: #4a95ad; }
+      .gauge-ref { stroke: #5cc8e0; }
+      .bracket { stroke: #5cc8e0; }
+      .arrow-stroke { stroke: #4a95ad; }
+      .arrow-fill { fill: #4a95ad; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 800. Every x and y below sits on the 5px grid.
+    Outer margins: 40 left/right, 30 bottom
+    Header: title baseline 50 (34px), subtitle baselines 85 and 115 (18px)
+    Footer: baseline 770 (17px)
+
+    Columns:
+    gauge   : axis line x=55 (y=215..675), bars start x=60, labels x=75, true-distance dashed line x=245
+    ladder  : rail-left x=290..305, rungs x=320..1330, rail-right x=1345..1360 (15px air each side)
+    bracket : spine x=1400, arms back to x=1380, nub out to x=1420, label block x=1440..1760
+
+    Rungs (h=150, gap=40, cheapest at the bottom):
+    rung-3 SMD  : y=165..315  centre 240
+    rung-2 RWMD : y=355..505  centre 430
+    rung-1 WCD  : y=545..695  centre 620
+    Rails span y=140..720 (25px overshoot above the top rung and below the bottom rung)
+
+    Card internals (Y = card top):
+    tread bar Y..Y+5 | kicker Y+35 | title Y+70 | body Y+105 and Y+135
+    chip x=1030..1300 y=Y+70 h=65 | acronym Y+100 | expansion Y+125
+
+    Gauge levels (bar h=20, centred on each rung centre):
+    SMD  y=230..250  length 175 (reaches the true-distance line)
+    RWMD y=420..440  length 120
+    WCD  y=610..630  length 60
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    v-stack: card-3, card-2, card-1 (gap=40)
+    h-align: card-1.left = card-2.left = card-3.left
+    mirror: rail-left, rail-right about ladder centre x=825
+    contain: card-3 > chip-3, card-2 > chip-2, card-1 > chip-1
+    v-align: gauge-bar-3.centre = card-3.centre, gauge-bar-2.centre = card-2.centre, gauge-bar-1.centre = card-1.centre
+    contain: bracket spans card-3.centre to card-1.centre
+    h-stack: gauge, ladder, bracket
+  === -->
+
+  <rect x="0" y="0" width="1800" height="800" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="800" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="800" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="165" x2="1800" y2="165" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="315" x2="1800" y2="315" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="355" x2="1800" y2="355" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="505" x2="1800" y2="505" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="545" x2="1800" y2="545" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="695" x2="1800" y2="695" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, textures, banners - lowest z -->
+  </g>
+
+  <g id="nodes"><!-- ladder rails, rungs, gauge shapes, bracket -->
+
+    <g id="shape-rail-left">
+      <rect class="rail" x="290" y="140" width="15" height="580" rx="7"/>
+    </g>
+    <g id="shape-rail-right">
+      <rect class="rail" x="1345" y="140" width="15" height="580" rx="7"/>
+    </g>
+
+    <g id="card-3">
+      <path class="card-top" d="M320.0,165.0 H1330.0 V312.0 Q1330.0,315.0 1327.0,315.0 H323.0 Q320.0,315.0 320.0,312.0 Z"/>
+      <rect class="tread-top" x="320" y="165" width="1010" height="5"/>
+      <rect class="chip-top" x="1030" y="235" width="270" height="65" rx="4"/>
+    </g>
+
+    <g id="card-2">
+      <path class="card-mid" d="M320.0,355.0 H1330.0 V502.0 Q1330.0,505.0 1327.0,505.0 H323.0 Q320.0,505.0 320.0,502.0 Z"/>
+      <rect class="tread-mid" x="320" y="355" width="1010" height="5"/>
+      <rect class="chip-lo" x="1030" y="425" width="270" height="65" rx="4"/>
+    </g>
+
+    <g id="card-1">
+      <path class="card-lo" d="M320.0,545.0 H1330.0 V692.0 Q1330.0,695.0 1327.0,695.0 H323.0 Q320.0,695.0 320.0,692.0 Z"/>
+      <rect class="tread-lo" x="320" y="545" width="1010" height="5"/>
+      <rect class="chip-lo" x="1030" y="615" width="270" height="65" rx="4"/>
+    </g>
+
+    <g id="shape-value-gauge">
+      <line class="gauge-axis" x1="55" y1="215" x2="55" y2="675"/>
+      <line class="gauge-ref" x1="245" y1="215" x2="245" y2="675"/>
+      <rect class="gauge-hi" x="60" y="230" width="175" height="20" rx="3"/>
+      <rect class="gauge-lo" x="60" y="420" width="120" height="20" rx="3"/>
+      <rect class="gauge-lo" x="60" y="610" width="60" height="20" rx="3"/>
+    </g>
+
+    <g id="shape-bracket">
+      <line class="bracket" x1="1400" y1="240" x2="1400" y2="620"/>
+      <line class="bracket" x1="1380" y1="240" x2="1400" y2="240"/>
+      <line class="bracket" x1="1380" y1="620" x2="1400" y2="620"/>
+      <line class="bracket" x1="1400" y1="430" x2="1420" y2="430"/>
+    </g>
+
+  </g>
+
+  <g id="connectors"><!-- every arrow, tool-generated only -->
+    <g id="gauge-axis-arrow">
+      <!-- straight connector: len=170px start_angle=180.0deg end_angle=0.0deg -->
+      <path class="arrow-stroke" d="M60.00,195.00 L218.00,195.00" fill="none" stroke-width="2" opacity="0.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polygon class="arrow-fill" points="230.00,195.00 218.00,189.00 218.00,201.00" opacity="0.8"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- headings, labels, rung copy -->
+
+    <g id="header">
+      <text class="fg-1" x="40" y="50" font-size="34" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Three ways to measure the same distance</text>
+      <text class="fg-3" x="40" y="85" font-size="18" font-family="Segoe UI, Arial, sans-serif">All three answer the same question: how far apart are these two documents? They differ only in how much structure they keep.</text>
+      <text class="fg-2" x="40" y="115" font-size="18" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Ordinary whole-document cosine similarity is not a rival to optimal transport. It is the loosest bound on the same quantity.</text>
+    </g>
+
+    <g id="gauge-labels">
+      <text class="fg-4" x="60" y="170" font-size="15" font-family="Segoe UI, Arial, sans-serif">the number it reports</text>
+      <text class="accent-1" x="75" y="280" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">the true distance</text>
+      <text class="fg-4" x="75" y="470" font-size="15" font-family="Segoe UI, Arial, sans-serif">closer to it</text>
+      <text class="fg-4" x="75" y="660" font-size="15" font-family="Segoe UI, Arial, sans-serif">well below it</text>
+    </g>
+
+    <g id="rung-3-text">
+      <text class="accent-1" x="350" y="200" font-size="14" font-weight="600" letter-spacing="2" font-family="Segoe UI, Arial, sans-serif">THE REAL ANSWER</text>
+      <text class="fg-1" x="350" y="235" font-size="20" font-weight="700" font-family="Segoe UI, Arial, sans-serif">The cheapest globally consistent plan</text>
+      <text class="fg-3" x="350" y="270" font-size="18" font-family="Segoe UI, Arial, sans-serif">Every statement is accounted for, nothing counted twice.</text>
+      <text class="fg-3" x="350" y="300" font-size="18" font-family="Segoe UI, Arial, sans-serif">This is the distance itself, not an approximation.</text>
+      <text class="accent-1" x="1165" y="265" font-size="20" font-weight="700" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">SMD</text>
+      <text class="fg-4" x="1165" y="290" font-size="13" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">statement mover's distance</text>
+    </g>
+
+    <g id="rung-2-text">
+      <text class="accent-warn" x="350" y="390" font-size="14" font-weight="600" letter-spacing="2" font-family="Segoe UI, Arial, sans-serif">TIGHTER APPROXIMATION</text>
+      <text class="fg-1" x="350" y="425" font-size="20" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Give each statement its nearest match on the other side</text>
+      <text class="fg-3" x="350" y="460" font-size="18" font-family="Segoe UI, Arial, sans-serif">Conflicts ignored: two statements may claim one partner.</text>
+      <text class="fg-3" x="350" y="490" font-size="18" font-family="Segoe UI, Arial, sans-serif">Closer to the true value, and still below it.</text>
+      <text class="fg-2" x="1165" y="455" font-size="20" font-weight="700" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">RWMD</text>
+      <text class="fg-4" x="1165" y="480" font-size="13" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">relaxed word mover's distance</text>
+    </g>
+
+    <g id="rung-1-text">
+      <text class="accent-warn" x="350" y="580" font-size="14" font-weight="600" letter-spacing="2" font-family="Segoe UI, Arial, sans-serif">LOOSEST APPROXIMATION</text>
+      <text class="fg-1" x="350" y="615" font-size="20" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Average each document down to a single point</text>
+      <text class="fg-3" x="350" y="650" font-size="18" font-family="Segoe UI, Arial, sans-serif">Compare them. This is whole-document cosine similarity.</text>
+      <text class="fg-3" x="350" y="680" font-size="18" font-family="Segoe UI, Arial, sans-serif">Cheapest to compute, furthest below the true value.</text>
+      <text class="fg-2" x="1165" y="645" font-size="20" font-weight="700" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">WCD</text>
+      <text class="fg-4" x="1165" y="670" font-size="13" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif">word centroid distance</text>
+    </g>
+
+    <g id="bracket-label">
+      <text class="fg-1" x="1440" y="370" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Each is a lower bound</text>
+      <text class="fg-1" x="1440" y="405" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">on the one above it</text>
+      <text class="accent-1" x="1440" y="455" font-size="24" font-weight="700" font-family="Segoe UI, Arial, sans-serif">WCD ≤ RWMD ≤ SMD</text>
+      <text class="fg-4" x="1440" y="485" font-size="15" font-family="Segoe UI, Arial, sans-serif">Climbing costs more compute</text>
+      <text class="fg-4" x="1440" y="515" font-size="15" font-family="Segoe UI, Arial, sans-serif">and returns a bigger number.</text>
+    </g>
+
+    <g id="footer">
+      <text class="fg-4" x="40" y="770" font-size="17" font-family="Segoe UI, Arial, sans-serif">The two looser bounds are cheap enough to screen a corpus before paying for the exact one.</text>
+    </g>
+
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

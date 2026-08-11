@@ -219,3 +219,6 @@ cython_debug/
 
 # Claude Code agent scratch memory (not project content)
 .claude/agent-memory/
+
+# Reference papers: keep the digests, not the source PDFs (each digest links its original)
+references/papers/*.pdf

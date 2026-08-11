@@ -1,0 +1,299 @@
+<!--
+  03-cosine-collapse.svg - whole-document cosine has no room left to decide anything
+  Shows: a full 0 to 1 similarity scale with almost all of it unused; eleven summaries
+         crammed into one smudge inside the 0.70 to 0.90 stretch; that stretch magnified
+         into a panel below, where the seven faithful and four degraded summaries are
+         plainly interleaved, the best to worst span is measured at 0.057, and a
+         candidate threshold cuts through both colours; a closing band naming the
+         real defect as resolution rather than correctness.
+  Intent: teach that the failure of one cosine score is not wrong answers but answers
+          packed too close together to act on.
+  Theme: docdistance deck - plate #0a1a24, cyan #0096d1 / #5cc8e0 / #1a5a6e (faithful,
+         structure), orange #da8230 / #d4a04a (degraded, the problem being measured).
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 660" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .plate { fill: transparent; }
+    .bg-grid { fill: none; stroke: #229fd1; stroke-opacity: 0.12; }
+    .fg-1 { fill: #0e2c3a; }
+    .fg-2 { fill: #1d3b49; }
+    .fg-3 { fill: #3a5c6c; }
+    .fg-4 { fill: #517485; }
+    .accent-1 { fill: #229fd1; }
+    .accent-2 { fill: #157186; }
+    .warn-1 { fill: #c06e1c; }
+    .warn-2 { fill: #a37524; }
+    .card-cy { fill: #0096d1; fill-opacity: 0.05; stroke: #298dad; stroke-width: 1; }
+    .bar-cy { fill: #229fd1; }
+    .bar-or { fill: #c06e1c; }
+    .axis-line { fill: none; stroke: #298dad; stroke-width: 1.5; }
+    .axis-tick { fill: none; stroke: #298dad; stroke-width: 1; }
+    .track-dim { fill: #298dad; fill-opacity: 0.30; }
+    .band-warn { fill: #cf7725; fill-opacity: 0.10; stroke: #c06e1c; stroke-width: 1; stroke-opacity: 0.65; }
+    .window-frame { fill: none; stroke: #157186; stroke-width: 1.2; stroke-dasharray: 6 4; stroke-opacity: 0.75; }
+    .guide { fill: none; stroke: #298dad; stroke-width: 1.2; stroke-dasharray: 5 5; }
+    .mark-cy { fill: #229fd1; stroke: #157186; stroke-width: 1.5; }
+    .mark-or { fill: #c06e1c; stroke: #a37524; stroke-width: 1.5; }
+    .mark-cy-s { fill: #229fd1; stroke: #157186; stroke-width: 0.8; }
+    .mark-or-s { fill: #c06e1c; stroke: #a37524; stroke-width: 0.8; }
+    .span-line { fill: none; stroke: #a37524; stroke-width: 1.6; }
+    .span-head { fill: #a37524; }
+    .threshold { fill: none; stroke: #1d3b49; stroke-width: 2; stroke-dasharray: 7 5; }
+    .pill { fill: #cf7725; fill-opacity: 0.14; stroke: #c06e1c; stroke-width: 1; stroke-opacity: 0.7; }
+    .leader { fill: #c06e1c; }
+    .chip-cy { fill: #229fd1; stroke: #157186; stroke-width: 1; }
+    .chip-or { fill: #c06e1c; stroke: #a37524; stroke-width: 1; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: #0a1a24; }
+      .bg-grid { fill: none; stroke: #2eabdd; stroke-opacity: 0.12; }
+      .fg-1 { fill: #e6f3f9; }
+      .fg-2 { fill: #b6d4e2; }
+      .fg-3 { fill: #93b5c5; }
+      .fg-4 { fill: #7a9dae; }
+      .accent-1 { fill: #2eabdd; }
+      .accent-2 { fill: #79d5ea; }
+      .warn-1 { fill: #e3913f; }
+      .warn-2 { fill: #dbad5c; }
+      .card-cy { fill: #0096d1; fill-opacity: 0.05; stroke: #1f6b83; stroke-width: 1; }
+      .bar-cy { fill: #2eabdd; }
+      .bar-or { fill: #e3913f; }
+      .axis-line { fill: none; stroke: #1f6b83; stroke-width: 1.5; }
+      .axis-tick { fill: none; stroke: #1f6b83; stroke-width: 1; }
+      .track-dim { fill: #1f6b83; fill-opacity: 0.30; }
+      .band-warn { fill: #da8230; fill-opacity: 0.10; stroke: #e3913f; stroke-width: 1; stroke-opacity: 0.65; }
+      .window-frame { fill: none; stroke: #79d5ea; stroke-width: 1.2; stroke-dasharray: 6 4; stroke-opacity: 0.75; }
+      .guide { fill: none; stroke: #1f6b83; stroke-width: 1.2; stroke-dasharray: 5 5; }
+      .mark-cy { fill: #2eabdd; stroke: #79d5ea; stroke-width: 1.5; }
+      .mark-or { fill: #e3913f; stroke: #dbad5c; stroke-width: 1.5; }
+      .mark-cy-s { fill: #2eabdd; stroke: #79d5ea; stroke-width: 0.8; }
+      .mark-or-s { fill: #e3913f; stroke: #dbad5c; stroke-width: 0.8; }
+      .span-line { fill: none; stroke: #dbad5c; stroke-width: 1.6; }
+      .span-head { fill: #dbad5c; }
+      .threshold { fill: none; stroke: #b6d4e2; stroke-width: 2; stroke-dasharray: 7 5; }
+      .pill { fill: #da8230; fill-opacity: 0.14; stroke: #e3913f; stroke-width: 1; stroke-opacity: 0.7; }
+      .leader { fill: #e3913f; }
+      .chip-cy { fill: #2eabdd; stroke: #79d5ea; stroke-width: 1; }
+      .chip-or { fill: #e3913f; stroke: #dbad5c; stroke-width: 1; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 660 (doc-stats strip, extended to carry a magnified second scale)
+    Outer margins: 40 left/right
+
+    Row A  header            y=0..115    kicker y=36, title y=74, subtitle y=100
+    Row B  smudge callout    y=126..152  pill, leader bar y=152..178
+    Row C  full 0..1 scale   y=170..222  tick labels y=176, axis y=190, notes y=216
+           scale map: value v to x = 140 + 1600*v  (0.0 at x=140, 1.0 at x=1740)
+           magnified window 0.70..0.90 = x 1260..1580
+           occupied smudge  0.790..0.847 = x 1404..1495.2  (91.2px of 1600)
+    Row D  magnifier guides  y=206..300
+    Row E  magnified panel   y=300..540
+           scale map: value v to x = 160 + (v - 0.70)*7400  (0.70 at x=160, 0.90 at x=1640)
+           kicker y=330, legend chips y=322, span arrow y=376, markers cy=430,
+           tick labels y=456, callout y=498 and y=520
+    Row F  closing band      y=562..630  line 1 y=592, line 2 y=615
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    contain: shape-window-frame > shape-occupied-band, markers-full
+        v-stack: header, shape-window-frame, card-panel-magnified, card-closing-band
+    h-align: card-panel-magnified.left = card-closing-band.left = 100
+    link: shape-window-frame.bottom-left to card-panel-magnified.top-left (guide-left)
+    link: shape-window-frame.bottom-right to card-panel-magnified.top-right (guide-right)
+    contain: card-panel-magnified > span-arrow, threshold-rule, markers-magnified, legend
+    mirror: guide-left, guide-right about shape-window-frame
+  === -->
+
+  <rect x="0" y="0" width="1800" height="660" fill="transparent"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="660" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="660" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="660" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="660" stroke="red" stroke-width="0.5"/>
+    <line x1="140" y1="0" x2="140" y2="660" stroke="red" stroke-width="0.5"/>
+    <line x1="1740" y1="0" x2="1740" y2="660" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="660" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="190" x2="1800" y2="190" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1800" y2="300" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="430" x2="1800" y2="430" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="540" x2="1800" y2="540" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- plate, procedural grid texture, dim unused stretches -->
+    <rect class="plate" x="0" y="0" width="1800" height="660"/>
+    <g id="bg-texture" class="bg-grid">
+      <line x1="0" y1="0" x2="0" y2="640.0" stroke-width="0.3"/>
+      <line x1="166" y1="0" x2="166" y2="640.0" stroke-width="0.3"/>
+      <line x1="332" y1="0" x2="332" y2="640.0" stroke-width="0.3"/>
+      <line x1="498" y1="0" x2="498" y2="640.0" stroke-width="0.3"/>
+      <line x1="664" y1="0" x2="664" y2="640.0" stroke-width="0.3"/>
+      <line x1="830" y1="0" x2="830" y2="640.0" stroke-width="0.3"/>
+      <line x1="996" y1="0" x2="996" y2="640.0" stroke-width="0.3"/>
+      <line x1="1162" y1="0" x2="1162" y2="640.0" stroke-width="0.3"/>
+      <line x1="1328" y1="0" x2="1328" y2="640.0" stroke-width="0.3"/>
+      <line x1="1494" y1="0" x2="1494" y2="640.0" stroke-width="0.3"/>
+      <line x1="1660" y1="0" x2="1660" y2="640.0" stroke-width="0.3"/>
+      <line x1="0" y1="0" x2="1800.0" y2="0" stroke-width="0.3"/>
+      <line x1="0" y1="166" x2="1800.0" y2="166" stroke-width="0.3"/>
+      <line x1="0" y1="332" x2="1800.0" y2="332" stroke-width="0.3"/>
+      <line x1="0" y1="498" x2="1800.0" y2="498" stroke-width="0.3"/>
+    </g>
+    <g id="shape-unused-stretches">
+      <rect class="track-dim" x="140.0" y="183.0" width="1120.0" height="14.0"/>
+      <rect class="track-dim" x="1580.0" y="183.0" width="160.0" height="14.0"/>
+    </g>
+  </g>
+
+  <g id="nodes"><!-- cards, window frame, highlighted bands -->
+    <g id="card-panel-magnified">
+      <rect class="card-cy" x="100.0" y="300.0" width="1600.0" height="240.0" rx="8"/>
+      <rect class="bar-or" x="100.0" y="300.0" width="1600.0" height="4.0"/>
+      <rect class="band-warn" x="814.0" y="406.0" width="445.8" height="48.0" rx="8"/>
+    </g>
+    <g id="shape-window-frame">
+      <rect class="window-frame" x="1260.0" y="178.0" width="320.0" height="28.0" rx="4"/>
+    </g>
+    <g id="shape-occupied-band">
+      <rect class="band-warn" x="1404.0" y="181.0" width="91.2" height="22.0" rx="4"/>
+    </g>
+    <g id="card-closing-band">
+      <rect class="card-cy" x="100.0" y="562.0" width="1600.0" height="68.0" rx="8"/>
+      <rect class="bar-cy" x="100.0" y="562.0" width="1600.0" height="4.0"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- magnifier guides, spread span, candidate threshold -->
+    <g id="guide-left">
+      <path class="guide" d="M1258.01,206.16 L101.99,299.84"/>
+    </g>
+    <g id="guide-right">
+      <path class="guide" d="M1581.57,207.23 L1698.43,298.77"/>
+    </g>
+    <g id="span-arrow">
+      <path class="span-line" d="M836.00,376.00 L1237.80,376.00"/>
+      <polygon class="span-head" points="1247.80,376.00 1237.80,371.00 1237.80,381.00"/>
+      <polygon class="span-head" points="826.00,376.00 836.00,381.00 836.00,371.00"/>
+    </g>
+    <g id="threshold-rule">
+      <path class="threshold" d="M1014.70,388.00 L1014.70,478.00"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- axes, ticks, markers, labels -->
+    <g id="header">
+      <text class="accent-2" x="40" y="36" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2.4">STEP ONE · WHOLE‑DOCUMENT COSINE SIMILARITY</text>
+      <text class="fg-1" x="40" y="74" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">Eleven summaries of one article. Seven faithful, four degraded. One narrow band.</text>
+      <text class="fg-3" x="40" y="100" font-family="Segoe UI, Arial, sans-serif" font-size="13">Each summary was embedded to a single vector and scored by cosine against a reference summary. Higher means more similar.</text>
+    </g>
+
+    <g id="scale-full-axis">
+      <text class="fg-4" x="40" y="186" font-family="Segoe UI, Arial, sans-serif" font-size="11">cosine</text>
+      <text class="fg-4" x="40" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="11">score</text>
+      <line class="axis-line" x1="140.0" y1="190.0" x2="1740.0" y2="190.0"/>
+      <line class="axis-tick" x1="300.0" y1="186.0" x2="300.0" y2="194.0"/>
+      <line class="axis-tick" x1="460.0" y1="186.0" x2="460.0" y2="194.0"/>
+      <line class="axis-tick" x1="620.0" y1="186.0" x2="620.0" y2="194.0"/>
+      <line class="axis-tick" x1="780.0" y1="186.0" x2="780.0" y2="194.0"/>
+      <line class="axis-tick" x1="940.0" y1="186.0" x2="940.0" y2="194.0"/>
+      <line class="axis-tick" x1="1100.0" y1="186.0" x2="1100.0" y2="194.0"/>
+      <line class="axis-tick" x1="1260.0" y1="186.0" x2="1260.0" y2="194.0"/>
+      <line class="axis-tick" x1="1420.0" y1="186.0" x2="1420.0" y2="194.0"/>
+      <line class="axis-tick" x1="1580.0" y1="186.0" x2="1580.0" y2="194.0"/>
+      <text class="fg-4" x="140" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.0</text>
+      <text class="fg-4" x="300" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.1</text>
+      <text class="fg-4" x="460" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.2</text>
+      <text class="fg-4" x="620" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.3</text>
+      <text class="fg-4" x="780" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.4</text>
+      <text class="fg-4" x="940" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.5</text>
+      <text class="fg-4" x="1100" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.6</text>
+      <text class="fg-4" x="1260" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.7</text>
+      <text class="fg-4" x="1420" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.8</text>
+      <text class="fg-4" x="1580" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.9</text>
+      <text class="fg-4" x="1740" y="176" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">1.0</text>
+      <text class="fg-4" x="700" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">not one summary scored below 0.70</text>
+      <text class="fg-4" x="1660" y="216" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">none above 0.90</text>
+    </g>
+
+    <g id="markers-full">
+      <circle class="mark-cy-s" cx="1404.0" cy="190.0" r="3.0"/>
+      <circle class="mark-or-s" cx="1423.2" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1432.8" cy="190.0" r="3.0"/>
+      <circle class="mark-or-s" cx="1440.8" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1448.8" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1455.2" cy="190.0" r="3.0"/>
+      <circle class="mark-or-s" cx="1461.6" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1469.6" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1477.6" cy="190.0" r="3.0"/>
+      <circle class="mark-or-s" cx="1485.6" cy="190.0" r="3.0"/>
+      <circle class="mark-cy-s" cx="1495.2" cy="190.0" r="3.0"/>
+    </g>
+
+    <g id="panel-labels">
+      <text class="warn-2" x="130" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="2.2">MAGNIFIED · THE 0.70 TO 0.90 STRETCH</text>
+      <rect class="chip-cy" x="1180.0" y="322.0" width="14.0" height="14.0" rx="3"/>
+      <text class="fg-2" x="1202" y="334" font-family="Segoe UI, Arial, sans-serif" font-size="12">faithful summary (7)</text>
+      <rect class="chip-or" x="1400.0" y="322.0" width="14.0" height="14.0" rx="3"/>
+      <text class="fg-2" x="1422" y="334" font-family="Segoe UI, Arial, sans-serif" font-size="12">deliberately degraded (4)</text>
+      <text class="warn-2" x="1036.9" y="364" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">0.057 wide · best to worst</text>
+      <text class="fg-3" x="1000" y="400" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="end">a candidate threshold</text>
+      <text class="fg-4" x="487" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">nothing lands here</text>
+      <text class="fg-4" x="1450" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">nothing lands here either</text>
+    </g>
+
+    <g id="panel-axis">
+      <line class="axis-line" x1="160.0" y1="430.0" x2="1640.0" y2="430.0"/>
+      <line class="axis-tick" x1="530.0" y1="426.0" x2="530.0" y2="434.0"/>
+      <line class="axis-tick" x1="900.0" y1="426.0" x2="900.0" y2="434.0"/>
+      <line class="axis-tick" x1="1270.0" y1="426.0" x2="1270.0" y2="434.0"/>
+      <text class="fg-4" x="160" y="456" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.70</text>
+      <text class="fg-4" x="530" y="456" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.75</text>
+      <text class="fg-4" x="900" y="456" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.80</text>
+      <text class="fg-4" x="1270" y="456" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.85</text>
+      <text class="fg-4" x="1640" y="456" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="middle">0.90</text>
+    </g>
+
+    <g id="markers-magnified">
+      <circle class="mark-cy" cx="826.0" cy="430.0" r="12.0"/>
+      <circle class="mark-or" cx="914.8" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="959.2" cy="430.0" r="12.0"/>
+      <circle class="mark-or" cx="996.2" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="1033.2" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="1062.8" cy="430.0" r="12.0"/>
+      <circle class="mark-or" cx="1092.4" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="1129.4" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="1166.4" cy="430.0" r="12.0"/>
+      <circle class="mark-or" cx="1203.4" cy="430.0" r="12.0"/>
+      <circle class="mark-cy" cx="1247.8" cy="430.0" r="12.0"/>
+    </g>
+
+    <g id="closing-text">
+      <text class="fg-1" x="900" y="592" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">The scale runs 0 to 1 — and every document landed in 6% of it.</text>
+      <text class="fg-3" x="900" y="615" font-family="Segoe UI, Arial, sans-serif" font-size="12" text-anchor="middle">Cosine is not giving wrong answers here. It is giving answers too close together to act on. The missing quality is resolution, not correctness.</text>
+    </g>
+  </g>
+
+  <g id="callouts"><!-- topmost annotations -->
+    <g id="callout-smudge">
+      <rect class="pill" x="1314.6" y="126.0" width="270.0" height="26.0" rx="13"/>
+      <text class="warn-1" x="1449.6" y="144" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" text-anchor="middle">all eleven land in here · 6% of the scale</text>
+      <rect class="leader" x="1448.6" y="152.0" width="2.0" height="26.0"/>
+    </g>
+    <g id="callout-threshold">
+      <text class="warn-1" x="1014.7" y="498" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">any threshold I picked sat inside the noise</text>
+      <text class="fg-3" x="1014.7" y="520" font-family="Segoe UI, Arial, sans-serif" font-size="12" text-anchor="middle">faithful and degraded summaries sit on both sides of it</text>
+    </g>
+  </g>
+</svg>

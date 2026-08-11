@@ -1,0 +1,261 @@
+<!--
+  03-why-divergence-fails.svg - two-panel contrast: what a divergence compares vs where the statements really sit
+  Shows: header; left panel (orange, the failing measure) with three paraphrase pairs, a "SAME?" gutter of not-equal
+         glyphs, an empty overlap box and a big "overlap = 0" readout; right panel (cyan, the truth) with the same six
+         statements as points in embedding space, each pair joined by a short link, legend and caption; a full-width
+         band stating the general lesson.
+  Intent: teach a reader who knows cosine similarity but not optimal transport why a divergence returns infinity on
+          paraphrase, and that paraphrase is the normal case rather than an edge case.
+  Theme: docdistance dark deck, plate #0a1a24; cyan #0096d1 / #5cc8e0 = the truth of the situation;
+         orange #da8230 / #d4a04a = the failing measure.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 770" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .plate { fill: transparent; }
+    .fg-1 { fill: #0e2c3a; }
+    .fg-2 { fill: #1d3640; }
+    .fg-3 { fill: #395965; }
+    .fg-4 { fill: #496e7d; }
+    .accent-1 { fill: #1fb1eb; }
+    .accent-1-lt { fill: #177b91; }
+    .accent-2 { fill: #c7721d; }
+    .accent-2-lt { fill: #ab7923; }
+    .panel-fail { fill: #cf7725; fill-opacity: 0.05; stroke: #c7721d; stroke-width: 1; stroke-opacity: 0.5; }
+    .panel-true { fill: #0096d1; fill-opacity: 0.05; stroke: #1fb1eb; stroke-width: 1; stroke-opacity: 0.5; }
+    .bar-fail { fill: #c7721d; fill-opacity: 0.6; }
+    .bar-true { fill: #1fb1eb; fill-opacity: 0.6; }
+    .chip-fail { fill: #c7721d; fill-opacity: 0.1; stroke: #c7721d; stroke-width: 0.8; stroke-opacity: 0.4; }
+    .overlap-empty { fill: none; stroke: #c7721d; stroke-width: 1.4; stroke-opacity: 0.6; stroke-dasharray: 9 6; }
+    .readout { fill: #c7721d; fill-opacity: 0.14; stroke: #c7721d; stroke-width: 1.4; stroke-opacity: 0.7; }
+    .plot-frame { fill: #1fb1eb; fill-opacity: 0.05; stroke: #1fb1eb; stroke-width: 1; stroke-opacity: 0.45; }
+    .pt-a { fill: #1fb1eb; fill-opacity: 0.9; stroke: #177b91; stroke-width: 1.4; }
+    .pt-b { fill: none; stroke: #177b91; stroke-width: 2; }
+    .link { fill: none; stroke: #177b91; stroke-width: 1.6; stroke-opacity: 0.75; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: #0a1a24; }
+      .fg-1 { fill: #eaf5fa; }
+      .fg-2 { fill: #bfd8e2; }
+      .fg-3 { fill: #9abac6; }
+      .fg-4 { fill: #82a7b6; }
+      .accent-1 { fill: #14a6e0; }
+      .accent-1-lt { fill: #6ed2e8; }
+      .accent-2 { fill: #e28d38; }
+      .accent-2-lt { fill: #dcaa54; }
+      .panel-fail { fill: #da8230; fill-opacity: 0.05; stroke: #e28d38; stroke-width: 1; stroke-opacity: 0.5; }
+      .panel-true { fill: #0096d1; fill-opacity: 0.05; stroke: #14a6e0; stroke-width: 1; stroke-opacity: 0.5; }
+      .bar-fail { fill: #e28d38; fill-opacity: 0.6; }
+      .bar-true { fill: #14a6e0; fill-opacity: 0.6; }
+      .chip-fail { fill: #e28d38; fill-opacity: 0.1; stroke: #e28d38; stroke-width: 0.8; stroke-opacity: 0.4; }
+      .overlap-empty { fill: none; stroke: #e28d38; stroke-width: 1.4; stroke-opacity: 0.6; stroke-dasharray: 9 6; }
+      .readout { fill: #e28d38; fill-opacity: 0.14; stroke: #e28d38; stroke-width: 1.4; stroke-opacity: 0.7; }
+      .plot-frame { fill: #14a6e0; fill-opacity: 0.05; stroke: #14a6e0; stroke-width: 1; stroke-opacity: 0.45; }
+      .pt-a { fill: #14a6e0; fill-opacity: 0.9; stroke: #6ed2e8; stroke-width: 1.4; }
+      .pt-b { fill: none; stroke: #6ed2e8; stroke-width: 2; }
+      .link { fill: none; stroke: #6ed2e8; stroke-width: 1.6; stroke-opacity: 0.75; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox 1800 x 770, every coordinate on the 5px grid. Outer margins 40 all round.
+    Header: title baseline y=60 (30px), subtitle baseline y=90 (17px)
+    Panels row y=110..620 (h=510)
+      left  panel, the failing measure: x=40..1040   w=1000
+      right panel, reality:             x=1060..1760 w=700
+    Lesson band: x=40..1760, y=640..730 (h=90)
+    Left panel inner content x=70..1010 (940)
+      numeral col x=70..90, statement col A x=100..500, gutter x=500..560 (centre 530), col B x=560..1010
+      chip rows 400x55 and 450x55, stride 70: y=265, 335, 405; row text on baselines 300, 370, 440
+      pair numeral x=75, col A text x=120, not-equal glyph x=520, col B text x=580 (left-anchored, widths from text-to-path)
+      empty overlap box y=475..530 (text baseline 510); readout band y=545..610 (text baseline 590)
+    Right panel inner content x=1090..1730 (640)
+      plot frame x=1090..1730, y=265..505
+      point pairs A/B: (1235,350)/(1290,325), (1475,450)/(1430,425), (1620,335)/(1665,360), radius 9
+      pair labels left-anchored x=1210, 1405, 1600 on baselines 385, 485, 400 (optically centred on each pair)
+      legend swatch centres cy=530, legend text baseline 535; caption centred x=1410, baselines 575 and 605
+    Lesson band inner: kicker x=65 baseline 690, copy x=250 on baselines 675 and 705
+    Vertical rhythm at the head of both panels: uniform 30px step (150, 180, 210, 240)
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-stack: card-left, card-right (gap=20)
+    v-align: card-left.top = card-right.top = 110; card-left.bottom = card-right.bottom = 620
+    v-stack: card-left, card-lesson (gap=20)
+    contain: card-left > col-a-chips, col-b-chips, shape-overlap-box, readout-band
+    contain: card-right > shape-plot-frame, pair-1-points, pair-2-points, pair-3-points, legend, caption
+    h-align: col-a-chips.left = 100; col-b-chips.left = 560 (gutter 60; col B wider, it holds the longer paraphrases)
+    v-spacing: chip rows equal stride 70
+    scatter: pair-1-points, pair-2-points, pair-3-points inside shape-plot-frame
+    mirror: col-a-chips, col-b-chips about x=530
+  === -->
+
+  <rect class="plate" x="0" y="0" width="1800" height="770"/>
+
+  <defs>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="770" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="770" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="770" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="40" y1="0" x2="40" y2="770" stroke="red" stroke-width="0.5"/>
+    <line x1="1040" y1="0" x2="1040" y2="770" stroke="red" stroke-width="0.5"/>
+    <line x1="1060" y1="0" x2="1060" y2="770" stroke="red" stroke-width="0.5"/>
+    <line x1="1760" y1="0" x2="1760" y2="770" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="110" x2="1800" y2="110" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="620" x2="1800" y2="620" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="640" x2="1800" y2="640" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="730" x2="1800" y2="730" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- reserved: the plate above is the only background fill -->
+  </g>
+
+  <g id="nodes"><!-- cards, plot frame, chips, points - the shapes connectors attach to -->
+    <g id="card-left">
+      <path class="panel-fail" d="M40.0,110.0 H1040.0 V617.0 Q1040.0,620.0 1037.0,620.0 H43.0 Q40.0,620.0 40.0,617.0 Z"/>
+      <rect class="bar-fail" x="40" y="110" width="1000" height="5"/>
+    </g>
+    <g id="card-right">
+      <path class="panel-true" d="M1060.0,110.0 H1760.0 V617.0 Q1760.0,620.0 1757.0,620.0 H1063.0 Q1060.0,620.0 1060.0,617.0 Z"/>
+      <rect class="bar-true" x="1060" y="110" width="700" height="5"/>
+    </g>
+    <g id="card-lesson">
+      <path class="panel-true" d="M40.0,640.0 H1760.0 V727.0 Q1760.0,730.0 1757.0,730.0 H43.0 Q40.0,730.0 40.0,727.0 Z"/>
+      <rect class="bar-true" x="40" y="640" width="1720" height="5"/>
+    </g>
+    <g id="col-a-chips">
+      <path class="chip-fail" d="M100.0,265.0 H500.0 V317.0 Q500.0,320.0 497.0,320.0 H103.0 Q100.0,320.0 100.0,317.0 Z"/>
+      <path class="chip-fail" d="M100.0,335.0 H500.0 V387.0 Q500.0,390.0 497.0,390.0 H103.0 Q100.0,390.0 100.0,387.0 Z"/>
+      <path class="chip-fail" d="M100.0,405.0 H500.0 V457.0 Q500.0,460.0 497.0,460.0 H103.0 Q100.0,460.0 100.0,457.0 Z"/>
+    </g>
+    <g id="col-b-chips">
+      <path class="chip-fail" d="M560.0,265.0 H1010.0 V317.0 Q1010.0,320.0 1007.0,320.0 H563.0 Q560.0,320.0 560.0,317.0 Z"/>
+      <path class="chip-fail" d="M560.0,335.0 H1010.0 V387.0 Q1010.0,390.0 1007.0,390.0 H563.0 Q560.0,390.0 560.0,387.0 Z"/>
+      <path class="chip-fail" d="M560.0,405.0 H1010.0 V457.0 Q1010.0,460.0 1007.0,460.0 H563.0 Q560.0,460.0 560.0,457.0 Z"/>
+    </g>
+    <g id="shape-overlap-box">
+      <path class="overlap-empty" d="M70.0,475.0 H1010.0 V527.0 Q1010.0,530.0 1007.0,530.0 H73.0 Q70.0,530.0 70.0,527.0 Z"/>
+    </g>
+    <g id="readout-band">
+      <path class="readout" d="M70.0,545.0 H1010.0 V607.0 Q1010.0,610.0 1007.0,610.0 H73.0 Q70.0,610.0 70.0,607.0 Z"/>
+    </g>
+    <g id="shape-plot-frame">
+      <path class="plot-frame" d="M1090.0,265.0 H1730.0 V502.0 Q1730.0,505.0 1727.0,505.0 H1093.0 Q1090.0,505.0 1090.0,502.0 Z"/>
+    </g>
+    <g id="pair-1-points">
+      <circle class="pt-a" cx="1235" cy="350" r="9"/>
+      <circle class="pt-b" cx="1290" cy="325" r="9"/>
+    </g>
+    <g id="pair-2-points">
+      <circle class="pt-a" cx="1475" cy="450" r="9"/>
+      <circle class="pt-b" cx="1430" cy="425" r="9"/>
+    </g>
+    <g id="pair-3-points">
+      <circle class="pt-a" cx="1620" cy="335" r="9"/>
+      <circle class="pt-b" cx="1665" cy="360" r="9"/>
+    </g>
+    <g id="legend-mark-a">
+      <circle class="pt-a" cx="1095" cy="530" r="9"/>
+    </g>
+    <g id="legend-mark-b">
+      <circle class="pt-b" cx="1315" cy="530" r="9"/>
+    </g>
+  </g>
+
+  <g id="connectors"><!-- pair links, tool-generated by connector mode straight, direction none -->
+    <g id="link-pair-1">
+      <path class="link" d="M1245.0,345.4 L1280.0,329.6"/>
+    </g>
+    <g id="link-pair-2">
+      <path class="link" d="M1465.4,444.7 L1439.6,430.3"/>
+    </g>
+    <g id="link-pair-3">
+      <path class="link" d="M1629.6,340.3 L1655.4,354.7"/>
+    </g>
+    <g id="link-legend">
+      <path class="link" d="M1555.0,530.0 L1595.0,530.0"/>
+    </g>
+  </g>
+
+  <g id="content"><!-- labels and text - never behind nodes -->
+    <g id="header">
+      <text class="fg-1" x="40" y="60" font-family="Segoe UI, Arial, sans-serif" font-size="30" font-weight="700">Why a divergence cannot answer this</text>
+      <text class="fg-3" x="40" y="90" font-family="Segoe UI, Arial, sans-serif" font-size="17">A divergence (KL, Jensen-Shannon) scores two documents by comparing how much weight each puts on the same item. Paraphrase breaks that before it starts.</text>
+    </g>
+
+    <g id="left-copy">
+      <text class="accent-2" x="70" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="2">WHAT THE MEASURE COMPARES</text>
+      <text class="fg-1" x="70" y="180" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">It only ever asks one question: is this exact item in both documents?</text>
+      <text class="fg-3" x="70" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="15">Two ways of saying the same thing are two different items to it. It has no way of noticing they are related.</text>
+      <text class="fg-4" x="100" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="1.5">DOCUMENT A</text>
+      <text class="fg-4" x="560" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="1.5">DOCUMENT B</text>
+    </g>
+
+    <g id="statement-rows">
+      <text class="accent-2-lt" x="75" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">1</text>
+      <text class="fg-2" x="120" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="17">revenue rose 12% last quarter</text>
+      <text class="accent-2" x="520" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">≠</text>
+      <text class="fg-2" x="580" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="17">last quarter revenue was up twelve percent</text>
+
+      <text class="accent-2-lt" x="75" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">2</text>
+      <text class="fg-2" x="120" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="17">the plant runs at 94% capacity</text>
+      <text class="accent-2" x="520" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">≠</text>
+      <text class="fg-2" x="580" y="370" font-family="Segoe UI, Arial, sans-serif" font-size="17">the facility runs at ninety-four percent</text>
+
+      <text class="accent-2-lt" x="75" y="440" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700">3</text>
+      <text class="fg-2" x="120" y="440" font-family="Segoe UI, Arial, sans-serif" font-size="17">churn fell to 3.1%</text>
+      <text class="accent-2" x="520" y="440" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">≠</text>
+      <text class="fg-2" x="580" y="440" font-family="Segoe UI, Arial, sans-serif" font-size="17">customer attrition dropped to 3.1 percent</text>
+    </g>
+
+    <g id="overlap-copy">
+      <text class="fg-3" x="95" y="510" font-family="Segoe UI, Arial, sans-serif" font-size="16">the overlap - every item that appears in both documents, word for word</text>
+      <text class="accent-2" x="985" y="510" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="end">EMPTY · 0 of 3</text>
+    </g>
+
+    <g id="readout-copy">
+      <text class="accent-2" x="540" y="590" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" text-anchor="middle">overlap = 0, so the divergence returns infinity</text>
+    </g>
+
+    <g id="right-copy">
+      <text class="accent-1-lt" x="1090" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="2">WHERE THOSE SAME SIX STATEMENTS SIT</text>
+      <text class="fg-1" x="1090" y="180" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Placed by meaning, each pair lands together</text>
+      <text class="fg-3" x="1090" y="210" font-family="Segoe UI, Arial, sans-serif" font-size="15">Embedding space - the same space cosine similarity lives in.</text>
+      <text class="fg-3" x="1090" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="15">Two points land near each other when they mean the same thing.</text>
+    </g>
+
+    <g id="pair-labels">
+      <text class="accent-1-lt" x="1210" y="385" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600">1 · revenue</text>
+      <text class="accent-1-lt" x="1405" y="485" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600">2 · capacity</text>
+      <text class="accent-1-lt" x="1600" y="400" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="600">3 · churn</text>
+    </g>
+
+    <g id="legend-copy">
+      <text class="fg-3" x="1120" y="535" font-family="Segoe UI, Arial, sans-serif" font-size="14">a claim in document A</text>
+      <text class="fg-3" x="1340" y="535" font-family="Segoe UI, Arial, sans-serif" font-size="14">the same claim, reworded</text>
+      <text class="fg-3" x="1610" y="535" font-family="Segoe UI, Arial, sans-serif" font-size="14">how far apart</text>
+    </g>
+
+    <g id="right-caption">
+      <text class="accent-1-lt" x="1410" y="575" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle">These are paraphrases. They are nearly the same.</text>
+      <text class="fg-2" x="1410" y="605" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="middle">The divergence cannot see that - it never compared meaning.</text>
+    </g>
+
+    <g id="lesson-copy">
+      <text class="accent-1-lt" x="65" y="690" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="2">WHAT THIS MEANS</text>
+      <text class="fg-1" x="250" y="675" font-family="Segoe UI, Arial, sans-serif" font-size="18">A divergence only measures where two documents put mass in the same place - the same item, word for word. Nothing identical, nothing to measure.</text>
+      <text class="fg-2" x="250" y="705" font-family="Segoe UI, Arial, sans-serif" font-size="18">And paraphrase is the normal case, not an edge case - the whole question is how far apart two things are when they are not identical.</text>
+    </g>
+  </g>
+
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

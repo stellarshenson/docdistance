@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 700" preserveAspectRatio="xMidYMid meet">
+  <!--
+    04-jensen-lower-bound.svg - why the cheap whole-document number can never exceed the true distance
+    Shows: panel 1, four statement-to-statement moves pointing in different directions, with the two
+           centroids and the short gap between them; panel 2, the same four moves laid head to tail,
+           the walked path against the straight shot between the same two endpoints.
+    Intent: make Jensen's inequality obvious geometrically. The article carries the algebra directly
+            beneath this figure, so no formula appears on the canvas.
+    Geometry is honest, not decorative. The four move vectors are
+      v1 (120,-60)  v2 (90,70)  v3 (140,-40)  v4 (70,50)
+    Sum = (420,20), |Sum| = 420.5. Sum of individual lengths = 134.2+114.0+145.6+86.0 = 479.8.
+    So the straight shot is 420 units against 480 walked - 12% shorter, and never longer.
+    Theme: docdistance deck. cyan #0096d1 = the true cost, orange #da8230 = the cheap estimate.
+    Opaque plate: Medium serves SVGs through <img>, where prefers-color-scheme never fires.
+  -->
+
+  <style>
+    .fg-1 { fill: #0e2e3a; }
+    .fg-2 { fill: #17323d; }
+    .fg-3 { fill: #35515e; }
+    .fg-4 { fill: #496775; }
+    .accent-1 { fill: #177a90; }
+    .accent-2 { fill: #ab7923; }
+    .plate { fill: transparent; }
+    .rule-bar { fill: #1bb0ed; fill-opacity: 0.75; }
+    .panel { fill: #1bb0ed; fill-opacity: 0.04; stroke: #298ead; stroke-width: 1; }
+    .band { fill: #1bb0ed; fill-opacity: 0.07; stroke: #0096d1; stroke-width: 1; }
+    .move-stroke { stroke: #35515e; stroke-opacity: 0.55; fill: none; }
+    .move-fill { fill: #35515e; fill-opacity: 0.55; }
+    .dot-a { fill: #177a90; }
+    .dot-b { fill: transparent; stroke: #c9751f; stroke-width: 2; }
+    .dot-centroid-a { fill: #177a90; stroke: transparent; stroke-width: 2; }
+    .dot-centroid-b { fill: #c9751f; stroke: transparent; stroke-width: 2; }
+    .halo { fill: #1bb0ed; fill-opacity: 0.16; }
+    .path-walked { stroke: #1bb0ed; stroke-width: 5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+    .path-node { fill: #177a90; }
+    .straight-stroke { stroke: #c9751f; stroke-width: 5; fill: none; stroke-linecap: round; }
+    .straight-fill { fill: #c9751f; }
+    .tick { stroke: #496775; stroke-opacity: 0.5; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e6f4f9; }
+      .fg-2 { fill: #c2dde8; }
+      .fg-3 { fill: #a1bdca; }
+      .fg-4 { fill: #8aa8b6; }
+      .accent-1 { fill: #6fd2e8; }
+      .accent-2 { fill: #dcaa54; }
+      .plate { fill: #08161f; }
+      .rule-bar { fill: #12a7e4; fill-opacity: 0.75; }
+      .panel { fill: #12a7e4; fill-opacity: 0.04; stroke: #1a5a6e; stroke-width: 1; }
+      .band { fill: #12a7e4; fill-opacity: 0.07; stroke: #0096d1; stroke-width: 1; }
+      .move-stroke { stroke: #a1bdca; stroke-opacity: 0.55; fill: none; }
+      .move-fill { fill: #a1bdca; fill-opacity: 0.55; }
+      .dot-a { fill: #6fd2e8; }
+      .dot-b { fill: #0a1a24; stroke: #e08c36; stroke-width: 2; }
+      .dot-centroid-a { fill: #6fd2e8; stroke: #08161f; stroke-width: 2; }
+      .dot-centroid-b { fill: #e08c36; stroke: #0a1a24; stroke-width: 2; }
+      .halo { fill: #12a7e4; fill-opacity: 0.16; }
+      .path-walked { stroke: #12a7e4; stroke-width: 5; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+      .path-node { fill: #6fd2e8; }
+      .straight-stroke { stroke: #e08c36; stroke-width: 5; fill: none; stroke-linecap: round; }
+      .straight-fill { fill: #e08c36; }
+      .tick { stroke: #8aa8b6; stroke-opacity: 0.5; fill: none; }
+    }
+  </style>
+
+  <rect class="plate" x="0" y="0" width="1800" height="700"/>
+
+  <g id="background">
+    <rect class="panel" x="40" y="120" width="820" height="440" rx="3"/>
+    <rect class="panel" x="900" y="120" width="860" height="440" rx="3"/>
+    <rect class="band" x="40" y="595" width="1720" height="80" rx="3"/>
+  </g>
+
+  <g id="nodes">
+
+    <g id="panel-1-moves">
+      <!-- four statement-to-statement moves; grey because neither colour owns them yet -->
+      <g id="move-1">
+        <line class="move-stroke" x1="160" y1="220" x2="268" y2="166" stroke-width="2.5"/>
+        <polygon class="move-fill" points="280,160 264,160 267,173"/>
+      </g>
+      <g id="move-2">
+        <line class="move-stroke" x1="150" y1="300" x2="229" y2="361" stroke-width="2.5"/>
+        <polygon class="move-fill" points="240,370 226,352 229,368"/>
+      </g>
+      <g id="move-3">
+        <line class="move-stroke" x1="200" y1="400" x2="327" y2="364" stroke-width="2.5"/>
+        <polygon class="move-fill" points="340,360 325,354 328,371"/>
+      </g>
+      <g id="move-4">
+        <line class="move-stroke" x1="170" y1="470" x2="230" y2="513" stroke-width="2.5"/>
+        <polygon class="move-fill" points="240,520 227,504 228,519"/>
+      </g>
+
+      <circle class="dot-a" cx="160" cy="220" r="8"/>
+      <circle class="dot-a" cx="150" cy="300" r="8"/>
+      <circle class="dot-a" cx="200" cy="400" r="8"/>
+      <circle class="dot-a" cx="170" cy="470" r="8"/>
+
+      <circle class="dot-b" cx="280" cy="160" r="8"/>
+      <circle class="dot-b" cx="240" cy="370" r="8"/>
+      <circle class="dot-b" cx="340" cy="360" r="8"/>
+      <circle class="dot-b" cx="240" cy="520" r="8"/>
+    </g>
+
+    <g id="panel-1-centroids">
+      <circle class="halo" cx="170" cy="345" r="22"/>
+      <circle class="halo" cx="275" cy="348" r="22"/>
+      <circle class="dot-centroid-a" cx="170" cy="345" r="11"/>
+      <circle class="dot-centroid-b" cx="275" cy="348" r="11"/>
+      <line class="straight-stroke" x1="181" y1="345" x2="255" y2="347" stroke-width="4"/>
+      <polygon class="straight-fill" points="266,348 251,341 251,354"/>
+    </g>
+
+    <g id="panel-2-chain">
+      <!-- the same four vectors, head to tail: (1060,390) -> (1180,330) -> (1270,400) -> (1410,360) -> (1480,410) -->
+      <polyline class="path-walked" points="1060,390 1180,330 1270,400 1410,360 1480,410"/>
+      <circle class="path-node" cx="1060" cy="390" r="7"/>
+      <circle class="path-node" cx="1180" cy="330" r="6"/>
+      <circle class="path-node" cx="1270" cy="400" r="6"/>
+      <circle class="path-node" cx="1410" cy="360" r="6"/>
+      <circle class="path-node" cx="1480" cy="410" r="7"/>
+
+      <line class="straight-stroke" x1="1060" y1="390" x2="1462" y2="409" stroke-width="5"/>
+      <polygon class="straight-fill" points="1480,410 1461,401 1460,417"/>
+
+      <line class="tick" x1="1060" y1="390" x2="1060" y2="470" stroke-width="1.5" stroke-dasharray="5 5"/>
+      <line class="tick" x1="1480" y1="410" x2="1480" y2="470" stroke-width="1.5" stroke-dasharray="5 5"/>
+    </g>
+
+  </g>
+
+  <g id="connectors"></g>
+
+  <g id="content">
+
+    <g id="header">
+      <rect class="rule-bar" x="40" y="40" width="200" height="4"/>
+      <text class="fg-1" x="40" y="80" font-size="32" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Why the cheap number is always too small</text>
+      <text class="fg-3" x="40" y="106" font-size="17" font-family="Segoe UI, Arial, sans-serif">Add up the individual moves and you land exactly where the straight line lands. You walk further getting there.</text>
+    </g>
+
+    <g id="panel-1-text">
+      <text class="accent-1" x="70" y="160" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Segoe UI, Arial, sans-serif">1 · WHAT THE TRANSPORT PLAN DOES</text>
+      <text class="fg-2" x="420" y="215" font-size="17" font-family="Segoe UI, Arial, sans-serif">Each statement moves to its counterpart</text>
+      <text class="fg-4" x="420" y="240" font-size="15" font-family="Segoe UI, Arial, sans-serif">in the other document. Four moves here,</text>
+      <text class="fg-4" x="420" y="262" font-size="15" font-family="Segoe UI, Arial, sans-serif">pointing in four different directions.</text>
+
+      <text class="accent-2" x="420" y="330" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">The two larger dots are the averages</text>
+      <text class="fg-4" x="420" y="353" font-size="15" font-family="Segoe UI, Arial, sans-serif">of each document - what you compare</text>
+      <text class="fg-4" x="420" y="375" font-size="15" font-family="Segoe UI, Arial, sans-serif">when you take one whole-document cosine.</text>
+      <text class="fg-3" x="420" y="404" font-size="15" font-style="italic" font-family="Segoe UI, Arial, sans-serif">The gap between them is short. That is the point.</text>
+
+      <text class="accent-1" x="420" y="470" font-size="14" font-weight="600" font-family="Segoe UI, Arial, sans-serif">filled dot = a statement in document A</text>
+      <text class="accent-2" x="420" y="494" font-size="14" font-weight="600" font-family="Segoe UI, Arial, sans-serif">open dot = where it lands in document B</text>
+    </g>
+
+    <g id="panel-2-text">
+      <text class="accent-1" x="930" y="160" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Segoe UI, Arial, sans-serif">2 · THE SAME FOUR MOVES, LAID HEAD TO TAIL</text>
+      <text class="fg-2" x="930" y="205" font-size="17" font-family="Segoe UI, Arial, sans-serif">Same start. Same finish. Two different distances.</text>
+
+      <text class="accent-1" x="1060" y="280" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">the path actually walked</text>
+      <text class="fg-1" x="1060" y="308" font-size="26" font-weight="600" font-family="Segoe UI, Arial, sans-serif">480 units</text>
+
+      <text class="accent-2" x="1060" y="510" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">the straight shot between the same two points</text>
+      <text class="fg-1" x="1060" y="538" font-size="26" font-weight="600" font-family="Segoe UI, Arial, sans-serif">420 units</text>
+
+      <text class="fg-4" x="1450" y="510" font-size="15" font-family="Segoe UI, Arial, sans-serif" text-anchor="end">12% shorter here.</text>
+      <text class="fg-3" x="1450" y="533" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif" text-anchor="end">Never longer, for any set of moves.</text>
+
+      <text class="fg-4" x="930" y="470" font-size="14" font-family="Segoe UI, Arial, sans-serif">The moves partly cancel, because they point different ways.</text>
+      <text class="fg-4" x="930" y="490" font-size="14" font-family="Segoe UI, Arial, sans-serif">Cancellation is what makes the straight line shorter.</text>
+    </g>
+
+  </g>
+
+  <g id="callouts">
+    <text class="fg-1" x="70" y="632" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Averaging the documents first and measuring once can never come out above measuring every move and adding them up.</text>
+    <text class="fg-3" x="70" y="658" font-size="16" font-family="Segoe UI, Arial, sans-serif">That is Jensen's inequality. It is why the whole-document cosine can only ever land at or below the true distance, and never past it.</text>
+  </g>
+
+</svg>

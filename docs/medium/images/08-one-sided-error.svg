@@ -1,0 +1,234 @@
+<!--
+  06-one-sided-error.svg - the one-directional error of a lower bound
+  Shows: header (title + plain gloss of "lower bound"), a single horizontal distance axis carrying
+    two orange cheap-estimate markers left of the cyan true-distance marker, an orange "allowed"
+    band holding a left-pointing arrow, a hatched forbidden band right of the true value, two
+    verdict chips (cyan sound-as-a-filter, orange unsound-as-a-verdict), and a fact footer.
+  Intent: teach that a lower bound errs in exactly one direction - safe as a pre-filter,
+    unsafe as an answer. Section keystone image for the docdistance article.
+  Theme: docdistance dark - ground #0a1a24, cyan #0096d1 / #5cc8e0 / #1a5a6e = truth and the sound
+    use, orange #da8230 / #d4a04a = the cheap estimates and the unsound use.
+  Canvas: doc-stats family (axis strip) extended to 1800x680 to carry the verdict chips + footer.
+  Note: the graphic ships dark-ground on an opaque #0a1a24 plate, so the host page background
+    never shows through; the light-mode contrast model does not apply to this deliverable.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 680" preserveAspectRatio="xMidYMid meet">
+  <style>
+    .fg-1 { fill: #0e2e3a; }
+    .fg-2 { fill: #17323d; }
+    .fg-3 { fill: #35515e; }
+    .fg-4 { fill: #496775; }
+    .accent-1 { fill: #177a90; }
+    .accent-2 { fill: #ab7923; }
+    .on-fill { fill: transparent; }
+    .plate { fill: transparent; }
+    .rule-bar { fill: #1bb0ed; fill-opacity: 0.75; }
+    .axis-stroke { stroke: #35515e; stroke-opacity: 0.85; fill: none; }
+    .zone-allowed { fill: #c9751f; fill-opacity: 0.12; }
+    .zone-forbidden { fill: #298ead; fill-opacity: 0.18; stroke: #298ead; stroke-opacity: 0.9; stroke-width: 1.5; stroke-dasharray: 9 6; }
+    .hatch-line { stroke: #298ead; stroke-opacity: 0.9; }
+    .wall-true { stroke: #177a90; stroke-opacity: 0.85; fill: none; }
+    .stem-est { stroke: #c9751f; stroke-opacity: 0.75; fill: none; }
+    .dot-est { fill: #c9751f; stroke: transparent; stroke-width: 2; }
+    .halo-true { fill: #1bb0ed; fill-opacity: 0.18; stroke: #1bb0ed; stroke-opacity: 0.65; stroke-width: 1.5; }
+    .dot-true { fill: #177a90; }
+    .card-sound { fill: #1bb0ed; fill-opacity: 0.07; stroke: #1bb0ed; stroke-width: 1; }
+    .card-unsound { fill: #c9751f; fill-opacity: 0.07; stroke: #c9751f; stroke-width: 1; }
+    .bar-sound { fill: #1bb0ed; }
+    .bar-unsound { fill: #c9751f; }
+    .arrow-stroke { stroke: #c9751f; fill: none; }
+    .arrow-fill { fill: #c9751f; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e6f4f9; }
+      .fg-2 { fill: #c2dde8; }
+      .fg-3 { fill: #a1bdca; }
+      .fg-4 { fill: #8aa8b6; }
+      .accent-1 { fill: #6fd2e8; }
+      .accent-2 { fill: #dcaa54; }
+      .on-fill { fill: #08161f; }
+      .plate { fill: #08161f; }
+      .rule-bar { fill: #12a7e4; fill-opacity: 0.75; }
+      .axis-stroke { stroke: #a1bdca; stroke-opacity: 0.85; fill: none; }
+      .zone-allowed { fill: #e08c36; fill-opacity: 0.12; }
+      .zone-forbidden { fill: #1f6b82; fill-opacity: 0.18; stroke: #1f6b82; stroke-opacity: 0.9; stroke-width: 1.5; stroke-dasharray: 9 6; }
+      .hatch-line { stroke: #1f6b82; stroke-opacity: 0.9; }
+      .wall-true { stroke: #6fd2e8; stroke-opacity: 0.85; fill: none; }
+      .stem-est { stroke: #e08c36; stroke-opacity: 0.75; fill: none; }
+      .dot-est { fill: #e08c36; stroke: #08161f; stroke-width: 2; }
+      .halo-true { fill: #12a7e4; fill-opacity: 0.18; stroke: #12a7e4; stroke-opacity: 0.65; stroke-width: 1.5; }
+      .dot-true { fill: #6fd2e8; }
+      .card-sound { fill: #12a7e4; fill-opacity: 0.07; stroke: #12a7e4; stroke-width: 1; }
+      .card-unsound { fill: #e08c36; fill-opacity: 0.07; stroke: #e08c36; stroke-width: 1; }
+      .bar-sound { fill: #12a7e4; }
+      .bar-unsound { fill: #e08c36; }
+      .arrow-stroke { stroke: #e08c36; fill: none; }
+      .arrow-fill { fill: #e08c36; }
+    }
+  </style>
+
+  <!-- === GRID REFERENCE ===
+    viewBox: 1800 x 680 (doc-stats axis strip, extended for the verdict row + footer)
+    Outer margins: 160 left/right (axis span 160..1640), 40 top, 35 bottom
+    Vertical rhythm: 30px; every baseline snapped to a 5px multiple
+
+    Bands:
+    header       y=40..134    title y=75, subtitle y=110, rule bar y=125..129
+    marker text  y=150..225   kicker y=160, name y=190, gloss y=220
+    marker stem  y=240..252 (rungs), y=230..242 (true, clears the r=18 halo)
+    axis         y=260        segments 160..530, 590..880, 940..1215, 1285..1640
+                              gaps centred on each marker: 560, 910, 1250
+    value band   y=300..400   allowed x=160..1240, forbidden x=1260..1640
+                              gutter 1240..1260 centred on the true value x=1250
+    band content y=325 label, y=345 one-way arrow, y=380 label; forbidden y=340, y=365
+    axis title   y=430
+    verdict row  y=450..570   card-sound x=160..890, card-unsound x=910..1640 (gap=20)
+                              card text x=185 / x=935, baselines y=485, 515, 545
+    footer       y=610, y=640
+
+    Axis anchors (5px snapped):
+    rung-1 x=560, rung-2 x=910, true x=1250 (also the allowed / forbidden boundary)
+  === -->
+
+  <!-- === LAYOUT TOPOLOGY ===
+    h-align: shape-marker-rung-1, shape-marker-rung-2, shape-marker-true sit on the axis (cy=260)
+    h-stack: shape-zone-allowed, shape-zone-forbidden (gutter=20 centred on the true value x=1250)
+    h-align: shape-axis-a, shape-axis-b, shape-axis-c, shape-axis-d (one axis, cut at each marker)
+    contain: shape-zone-allowed - one-way arrow, allowed-side labels
+    contain: shape-zone-forbidden - wall edge, forbidden label
+    h-stack: card-sound, card-unsound (gap=20)
+    v-align: card-sound.top = card-unsound.top
+    mirror: shape-marker-true.x = zone boundary x = 1250
+  === -->
+
+  <defs>
+    <pattern id="hatch-forbidden" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line class="hatch-line" x1="0" y1="0" x2="0" y2="16" stroke-width="3"/>
+    </pattern>
+    <pattern id="grid-pat-100" width="100" height="100" patternUnits="userSpaceOnUse">
+      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="red" stroke-width="0.6"/>
+    </pattern>
+    <pattern id="grid-pat-20" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="red" stroke-width="0.35"/>
+    </pattern>
+    <pattern id="grid-pat-5" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M 5 0 L 0 0 0 5" fill="none" stroke="red" stroke-width="0.15"/>
+    </pattern>
+  </defs>
+  <g id="grid-100" display="none"><rect x="0" y="0" width="1800" height="680" fill="url(#grid-pat-100)"/></g>
+  <g id="grid-20" display="none"><rect x="0" y="0" width="1800" height="680" fill="url(#grid-pat-20)"/></g>
+  <g id="grid-5" display="none"><rect x="0" y="0" width="1800" height="680" fill="url(#grid-pat-5)"/></g>
+  <g id="guide-grid" display="none">
+    <line x1="160" y1="0" x2="160" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="560" y1="0" x2="560" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="890" y1="0" x2="890" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="910" y1="0" x2="910" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="1250" y1="0" x2="1250" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="1640" y1="0" x2="1640" y2="680" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="260" x2="1800" y2="260" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="300" x2="1800" y2="300" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="400" x2="1800" y2="400" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="450" x2="1800" y2="450" stroke="red" stroke-width="0.5"/>
+    <line x1="0" y1="570" x2="1800" y2="570" stroke="red" stroke-width="0.5"/>
+  </g>
+
+  <g id="background"><!-- fills, bands, banners - lowest z -->
+    <rect id="plate" class="plate" x="0" y="0" width="1800" height="680" fill="transparent"/>
+    <g id="shape-zone-allowed">
+      <rect class="zone-allowed" x="160" y="300" width="1080" height="100"/>
+    </g>
+    <g id="shape-zone-forbidden">
+      <rect class="zone-forbidden" x="1260" y="300" width="380" height="100"/>
+      <rect x="1260" y="300" width="380" height="100" fill="url(#hatch-forbidden)" opacity="0.5"/>
+      <line class="wall-true" x1="1260" y1="300" x2="1260" y2="400" stroke-width="3"/>
+    </g>
+  </g>
+  <g id="nodes"><!-- cards, markers, axis - the shapes connectors attach to -->
+    <g id="shape-axis-a">
+      <line class="axis-stroke" x1="160" y1="260" x2="530" y2="260" stroke-width="1.5"/>
+    </g>
+    <g id="shape-axis-b">
+      <line class="axis-stroke" x1="590" y1="260" x2="880" y2="260" stroke-width="1.5"/>
+    </g>
+    <g id="shape-axis-c">
+      <line class="axis-stroke" x1="940" y1="260" x2="1215" y2="260" stroke-width="1.5"/>
+    </g>
+    <g id="shape-axis-d">
+      <line class="axis-stroke" x1="1285" y1="260" x2="1640" y2="260" stroke-width="1.5"/>
+    </g>
+    <g id="shape-marker-rung-1">
+      <line class="stem-est" x1="560" y1="240" x2="560" y2="252" stroke-width="2"/>
+      <circle class="dot-est" cx="560" cy="260" r="9"/>
+    </g>
+    <g id="shape-marker-rung-2">
+      <line class="stem-est" x1="910" y1="240" x2="910" y2="252" stroke-width="2"/>
+      <circle class="dot-est" cx="910" cy="260" r="9"/>
+    </g>
+    <g id="shape-marker-true">
+      <line class="wall-true" x1="1250" y1="230" x2="1250" y2="242" stroke-width="2"/>
+      <circle class="halo-true" cx="1250" cy="260" r="18"/>
+      <polygon class="dot-true" points="1250,246 1264,260 1250,274 1236,260"/>
+    </g>
+    <g id="card-sound">
+      <path class="card-sound" d="M160.0,450.0 H890.0 V567.0 Q890.0,570.0 887.0,570.0 H163.0 Q160.0,570.0 160.0,567.0 Z"/>
+      <rect class="bar-sound" x="160" y="450" width="730" height="5" opacity="0.6"/>
+    </g>
+    <g id="card-unsound">
+      <path class="card-unsound" d="M910.0,450.0 H1640.0 V567.0 Q1640.0,570.0 1637.0,570.0 H913.0 Q910.0,570.0 910.0,567.0 Z"/>
+      <rect class="bar-unsound" x="910" y="450" width="730" height="5" opacity="0.6"/>
+    </g>
+  </g>
+  <g id="connectors"><!-- every arrow / strand / spine, tool-generated only -->
+    <!-- straight connector: len=952px start_angle=0.0deg end_angle=180.0deg - the one-way error -->
+    <path class="arrow-stroke" d="M1224.00,345.00 L286.00,345.00" stroke-width="2" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <polygon class="arrow-fill" points="272.00,345.00 286.00,354.00 286.00,336.00" opacity="0.9"/>
+  </g>
+  <g id="content"><!-- icons, labels, text - never behind nodes -->
+    <g id="header">
+      <text class="fg-1" x="900" y="75" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="0.5" text-anchor="middle">A lower bound errs in exactly one direction</text>
+      <text class="fg-3" x="900" y="110" font-family="Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle">a lower bound is a number guaranteed to sit at or below the true one — it can come out too small, never too big</text>
+      <rect class="rule-bar" x="800" y="125" width="200" height="4"/>
+    </g>
+    <g id="label-rung-1">
+      <text class="accent-2" x="560" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6" text-anchor="middle">BOUND 1 · CHEAPEST</text>
+      <text class="fg-1" x="560" y="190" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">whole-document cosine</text>
+      <text class="fg-3" x="560" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="13" text-anchor="middle">one embedding for the whole document</text>
+    </g>
+    <g id="label-rung-2">
+      <text class="accent-2" x="910" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6" text-anchor="middle">BOUND 2 · CHEAP</text>
+      <text class="fg-1" x="910" y="190" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">nearest-match per statement</text>
+      <text class="fg-3" x="910" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="13" text-anchor="middle">each statement, its closest partner</text>
+    </g>
+    <g id="label-true">
+      <text class="accent-1" x="1250" y="160" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.6" text-anchor="middle">THE TRUTH · EXPENSIVE</text>
+      <text class="fg-1" x="1250" y="190" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" text-anchor="middle">true distance</text>
+      <text class="fg-3" x="1250" y="220" font-family="Segoe UI, Arial, sans-serif" font-size="13" text-anchor="middle">exact optimal transport — every statement matched</text>
+    </g>
+    <g id="axis-labels">
+      <text class="fg-4" x="160" y="245" font-family="Segoe UI, Arial, sans-serif" font-size="13" text-anchor="start">0 · identical documents</text>
+      <text class="fg-4" x="1640" y="245" font-family="Segoe UI, Arial, sans-serif" font-size="13" text-anchor="end">farther apart →</text>
+      <text class="fg-2" x="900" y="430" font-family="Segoe UI, Arial, sans-serif" font-size="16" letter-spacing="1.2" text-anchor="middle">true distance between the two documents</text>
+    </g>
+    <g id="zone-text">
+      <text class="accent-2" x="700" y="325" font-family="Segoe UI, Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="0.6" text-anchor="middle">the error points one way only</text>
+      <text class="fg-2" x="700" y="380" font-family="Segoe UI, Arial, sans-serif" font-size="15" text-anchor="middle">a cheap estimate may land anywhere on this side of the truth — never past it</text>
+      <text class="fg-1" x="1450" y="340" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">a lower bound can never</text>
+      <text class="fg-1" x="1450" y="365" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" text-anchor="middle">land here</text>
+    </g>
+    <g id="text-verdict-sound">
+      <text class="accent-1" x="185" y="485" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.4" text-anchor="start">SOUND · AS A PRE-FILTER</text>
+      <text class="fg-2" x="185" y="515" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="start">if the cheap number already exceeds your threshold, the true one does too —</text>
+      <text class="fg-2" x="185" y="545" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="start">skip the expensive computation and lose nothing</text>
+    </g>
+    <g id="text-verdict-unsound">
+      <text class="accent-2" x="935" y="485" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="1.4" text-anchor="start">UNSOUND · AS A VERDICT</text>
+      <text class="fg-2" x="935" y="515" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="start">it can call two documents closer than they really are,</text>
+      <text class="fg-2" x="935" y="545" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="start">and never further apart — never quote it as the answer</text>
+    </g>
+    <g id="footer">
+      <text class="fg-4" x="900" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle">this is why the cheapest bound scored all eleven summaries within 0.057 of each other</text>
+      <text class="fg-1" x="900" y="640" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" text-anchor="middle">a lower bound does not have to separate what sits above it</text>
+    </g>
+  </g>
+  <g id="callouts"><!-- callout groups - topmost -->
+  </g>
+</svg>

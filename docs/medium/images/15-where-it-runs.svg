@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 780" preserveAspectRatio="xMidYMid meet">
+  <!--
+    16-where-it-runs.svg - three production deployments and what they cost to run
+    Shows: three deployment cards (research-report triage, marketing personalisation, lead
+           generation and targeting), each with its source-to-output shape and the check that
+           sits between them; then a full-width cost band, then a two-column comparison against
+           an LLM judge.
+    Intent: the section's argument is that this runs at volume for no marginal cost. The cost
+            band is therefore the visual anchor, not the deployment cards.
+    Facts, all from the article: no API tokens, no per-document charge, no rate limit; local CPU
+            inference; encoder is mmBERT, a multilingual ModernBERT, INT8, published as
+            stellars/mmBERT-base-openvino-int8, run through OpenVINO; no GPU; several thousand
+            hours of manual reading replaced per month.
+    Theme: docdistance deck. cyan #0096d1 = the shipped mechanism, orange #da8230 = the drift
+            caught and the alternative rejected.
+    Opaque plate: Medium serves SVGs through <img>, where prefers-color-scheme never fires.
+  -->
+
+  <style>
+    .fg-1 { fill: #0e2e3a; }
+    .fg-2 { fill: #17323d; }
+    .fg-3 { fill: #35515e; }
+    .fg-4 { fill: #496775; }
+    .accent-1 { fill: #177a90; }
+    .accent-2 { fill: #ab7923; }
+    .warn-1 { fill: #c9751f; }
+    .plate { fill: transparent; }
+    .rule-bar { fill: #1bb0ed; fill-opacity: 0.75; }
+    .card { fill: #1bb0ed; fill-opacity: 0.05; stroke: #298ead; stroke-width: 1; }
+    .cost-band { fill: #1bb0ed; fill-opacity: 0.09; stroke: #1bb0ed; stroke-width: 1.5; }
+    .cmp-good { fill: #1bb0ed; fill-opacity: 0.06; stroke: #1bb0ed; stroke-width: 1; }
+    .cmp-bad { fill: #c9751f; fill-opacity: 0.06; stroke: #c9751f; stroke-width: 1; }
+    .doc-src { fill: #298ead; fill-opacity: 0.55; stroke: #177a90; stroke-width: 1.2; }
+    .doc-out { fill: transparent; stroke: #177a90; stroke-width: 1.2; }
+    .doc-flag { fill: transparent; stroke: #c9751f; stroke-width: 1.6; }
+    .gate { fill: #1bb0ed; fill-opacity: 0.18; stroke: #1bb0ed; stroke-width: 1.4; }
+    .flow { stroke: #177a90; stroke-opacity: 0.8; fill: none; }
+    .flow-fill { fill: #177a90; fill-opacity: 0.8; }
+    .flow-warn { stroke: #c9751f; stroke-opacity: 0.85; fill: none; }
+    .flow-warn-fill { fill: #c9751f; fill-opacity: 0.85; }
+    .zero { fill: #177a90; }
+    .divider { stroke: #298ead; stroke-opacity: 0.7; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .fg-1 { fill: #e6f4f9; }
+      .fg-2 { fill: #c2dde8; }
+      .fg-3 { fill: #a1bdca; }
+      .fg-4 { fill: #8aa8b6; }
+      .accent-1 { fill: #6fd2e8; }
+      .accent-2 { fill: #dcaa54; }
+      .warn-1 { fill: #e08c36; }
+      .plate { fill: #08161f; }
+      .rule-bar { fill: #12a7e4; fill-opacity: 0.75; }
+      .card { fill: #12a7e4; fill-opacity: 0.05; stroke: #1f6b82; stroke-width: 1; }
+      .cost-band { fill: #12a7e4; fill-opacity: 0.09; stroke: #12a7e4; stroke-width: 1.5; }
+      .cmp-good { fill: #12a7e4; fill-opacity: 0.06; stroke: #12a7e4; stroke-width: 1; }
+      .cmp-bad { fill: #e08c36; fill-opacity: 0.06; stroke: #e08c36; stroke-width: 1; }
+      .doc-src { fill: #1a5a6e; fill-opacity: 0.55; stroke: #6fd2e8; stroke-width: 1.2; }
+      .doc-out { fill: #0a1a24; stroke: #6fd2e8; stroke-width: 1.2; }
+      .doc-flag { fill: #0a1a24; stroke: #e08c36; stroke-width: 1.6; }
+      .gate { fill: #12a7e4; fill-opacity: 0.18; stroke: #12a7e4; stroke-width: 1.4; }
+      .flow { stroke: #6fd2e8; stroke-opacity: 0.8; fill: none; }
+      .flow-fill { fill: #6fd2e8; fill-opacity: 0.8; }
+      .flow-warn { stroke: #e08c36; stroke-opacity: 0.85; fill: none; }
+      .flow-warn-fill { fill: #e08c36; fill-opacity: 0.85; }
+      .zero { fill: #6fd2e8; }
+      .divider { stroke: #1f6b82; stroke-opacity: 0.7; fill: none; }
+    }
+  </style>
+
+  <rect class="plate" x="0" y="0" width="1800" height="780"/>
+
+  <g id="background">
+    <rect class="card" x="40" y="130" width="560" height="300" rx="3"/>
+    <rect class="card" x="620" y="130" width="560" height="300" rx="3"/>
+    <rect class="card" x="1200" y="130" width="560" height="300" rx="3"/>
+    <rect class="cost-band" x="40" y="460" width="1720" height="150" rx="3"/>
+    <rect class="cmp-bad" x="40" y="640" width="850" height="110" rx="3"/>
+    <rect class="cmp-good" x="910" y="640" width="850" height="110" rx="3"/>
+  </g>
+
+  <g id="nodes">
+
+    <g id="deploy-1">
+      <rect class="doc-src" x="70" y="250" width="60" height="78" rx="2"/>
+      <rect class="doc-src" x="78" y="242" width="60" height="78" rx="2"/>
+      <rect class="gate" x="230" y="258" width="70" height="54" rx="3"/>
+      <rect class="doc-out" x="400" y="248" width="46" height="60" rx="2"/>
+      <rect class="doc-flag" x="460" y="248" width="46" height="60" rx="2"/>
+      <line class="flow" x1="150" y1="282" x2="216" y2="282" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="228,282 213,275 213,289"/>
+      <line class="flow" x1="312" y1="282" x2="386" y2="278" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="398,278 383,271 384,285"/>
+    </g>
+
+    <g id="deploy-2">
+      <rect class="doc-src" x="650" y="250" width="60" height="78" rx="2"/>
+      <rect class="gate" x="810" y="258" width="70" height="54" rx="3"/>
+      <rect class="doc-out" x="980" y="240" width="46" height="34" rx="2"/>
+      <rect class="doc-out" x="980" y="282" width="46" height="34" rx="2"/>
+      <rect class="doc-flag" x="1040" y="261" width="46" height="34" rx="2"/>
+      <line class="flow" x1="722" y1="282" x2="796" y2="282" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="808,282 793,275 793,289"/>
+      <line class="flow" x1="892" y1="282" x2="966" y2="266" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="978,263 962,259 966,273"/>
+    </g>
+
+    <g id="deploy-3">
+      <rect class="doc-src" x="1230" y="228" width="52" height="42" rx="2"/>
+      <rect class="doc-src" x="1230" y="284" width="52" height="42" rx="2"/>
+      <rect class="doc-out" x="1600" y="228" width="52" height="42" rx="2"/>
+      <rect class="doc-out" x="1600" y="284" width="52" height="42" rx="2"/>
+      <rect class="gate" x="1400" y="248" width="82" height="58" rx="3"/>
+      <line class="flow" x1="1294" y1="249" x2="1386" y2="268" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="1398,271 1383,262 1381,276"/>
+      <line class="flow" x1="1294" y1="305" x2="1386" y2="288" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="1398,285 1382,281 1385,295"/>
+      <line class="flow" x1="1494" y1="268" x2="1586" y2="249" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="1598,246 1583,242 1586,256"/>
+      <line class="flow" x1="1494" y1="288" x2="1586" y2="305" stroke-width="2.5"/>
+      <polygon class="flow-fill" points="1598,308 1583,299 1581,313"/>
+    </g>
+
+    <line class="divider" x1="910" y1="672" x2="910" y2="718" stroke-width="0"/>
+  </g>
+
+  <g id="connectors"></g>
+
+  <g id="content">
+
+    <g id="header">
+      <rect class="rule-bar" x="40" y="40" width="200" height="4"/>
+      <text class="fg-1" x="40" y="80" font-size="32" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Where it runs, and what it costs</text>
+      <text class="fg-3" x="40" y="106" font-size="17" font-family="Segoe UI, Arial, sans-serif">Three deployments, all of them high volume, none of them a demo.</text>
+    </g>
+
+    <g id="deploy-1-text">
+      <text class="accent-1" x="70" y="170" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">1 · RESEARCH-REPORT TRIAGE</text>
+      <text class="fg-1" x="70" y="200" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Analysts read excerpts, not reports</text>
+      <text class="fg-4" x="70" y="224" font-size="15" font-family="Segoe UI, Arial, sans-serif">Every excerpt is scored against its source.</text>
+      <text class="fg-3" x="70" y="360" font-size="15" font-family="Segoe UI, Arial, sans-serif">Excerpts that kept the meaning go to the analyst.</text>
+      <text class="warn-1" x="70" y="383" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">The ones that drifted go to a human instead.</text>
+      <text class="accent-2" x="70" y="411" font-size="16" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Replaces several thousand hours of reading a month.</text>
+    </g>
+
+    <g id="deploy-2-text">
+      <text class="accent-1" x="650" y="170" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">2 · MARKETING PERSONALISATION</text>
+      <text class="fg-1" x="650" y="200" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Match the pitch to what the product does</text>
+      <text class="fg-4" x="650" y="224" font-size="15" font-family="Segoe UI, Arial, sans-serif">Each generated pitch is scored against the product docs.</text>
+      <text class="fg-3" x="650" y="360" font-size="15" font-family="Segoe UI, Arial, sans-serif">The failure mode is a pitch describing a capability</text>
+      <text class="warn-1" x="650" y="383" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">the product does not have. Caught statement by statement,</text>
+      <text class="warn-1" x="650" y="406" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">before it reaches anyone.</text>
+    </g>
+
+    <g id="deploy-3-text">
+      <text class="accent-1" x="1230" y="170" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">3 · LEAD GENERATION AND TARGETING</text>
+      <text class="fg-1" x="1230" y="200" font-size="19" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Which passage speaks to this account</text>
+      <text class="fg-4" x="1230" y="224" font-size="15" font-family="Segoe UI, Arial, sans-serif">Case studies and service docs, against account dossiers.</text>
+      <text class="fg-3" x="1230" y="360" font-size="15" font-family="Segoe UI, Arial, sans-serif">The map does not only say a document is relevant.</text>
+      <text class="accent-2" x="1230" y="383" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">It says which passage lines up with which part</text>
+      <text class="accent-2" x="1230" y="406" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">of that account's situation.</text>
+      <text class="fg-4" x="1408" y="284" font-size="12" font-weight="600" letter-spacing="0.8" font-family="Segoe UI, Arial, sans-serif">MATCH</text>
+    </g>
+
+    <g id="cost-text">
+      <text class="accent-1" x="70" y="500" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">WHAT ALL THREE COST TO RUN</text>
+      <text class="zero" x="70" y="556" font-size="46" font-weight="700" font-family="Segoe UI, Arial, sans-serif">Nothing per call</text>
+      <text class="fg-3" x="70" y="586" font-size="16" font-family="Segoe UI, Arial, sans-serif">No API tokens. No per-document charge. No rate limit.</text>
+
+      <text class="fg-2" x="700" y="502" font-size="16" font-weight="600" font-family="Segoe UI, Arial, sans-serif">Local inference, on a CPU</text>
+      <text class="fg-4" x="700" y="526" font-size="15" font-family="Segoe UI, Arial, sans-serif">The encoder is mmBERT, a multilingual ModernBERT,</text>
+      <text class="fg-4" x="700" y="548" font-size="15" font-family="Segoe UI, Arial, sans-serif">quantized to INT8 and run through OpenVINO.</text>
+      <text class="fg-3" x="700" y="572" font-size="15" font-family="Segoe UI, Arial, sans-serif">Shipped with the library as</text>
+      <text class="accent-1" x="700" y="594" font-size="15" font-weight="600" font-family="Segoe UI, Arial, sans-serif">stellars/mmBERT-base-openvino-int8</text>
+
+      <text class="accent-2" x="1300" y="502" font-size="16" font-weight="600" font-family="Segoe UI, Arial, sans-serif">No GPU is needed, and none is used</text>
+      <text class="fg-4" x="1300" y="530" font-size="15" font-family="Segoe UI, Arial, sans-serif">The thousandth comparison costs what</text>
+      <text class="fg-4" x="1300" y="552" font-size="15" font-family="Segoe UI, Arial, sans-serif">the first one did. On hardware you own,</text>
+      <text class="fg-4" x="1300" y="574" font-size="15" font-family="Segoe UI, Arial, sans-serif">that is your electricity and nothing else.</text>
+    </g>
+
+    <g id="compare-text">
+      <text class="warn-1" x="70" y="672" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">AN LLM JUDGE</text>
+      <text class="fg-2" x="70" y="700" font-size="16" font-family="Segoe UI, Arial, sans-serif">Charges per call. Answers differently on a rerun.</text>
+      <text class="fg-2" x="70" y="724" font-size="16" font-family="Segoe UI, Arial, sans-serif">Gives you a verdict without a location.</text>
+
+      <text class="accent-1" x="940" y="672" font-size="13" font-weight="600" letter-spacing="1.4" font-family="Segoe UI, Arial, sans-serif">A MEASURED DISTANCE</text>
+      <text class="fg-2" x="940" y="700" font-size="16" font-family="Segoe UI, Arial, sans-serif">Same number every time. Points at the statement.</text>
+      <text class="fg-2" x="940" y="724" font-size="16" font-family="Segoe UI, Arial, sans-serif">Bills nothing.</text>
+    </g>
+
+  </g>
+
+  <g id="callouts"></g>
+
+</svg>
