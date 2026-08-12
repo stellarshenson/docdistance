@@ -35,7 +35,9 @@ def test_config_file_path_precedence(monkeypatch, tmp_path):
 
 def test_save_then_load_in_a_fresh_process_marks_ready(monkeypatch, tmp_path):
     monkeypatch.setenv("DOCDISTANCE_HOME", str(tmp_path))
-    settings.configure(modes=["wmd"], models_dir=str(tmp_path / "models"), sources={"mmbert": "hf"})
+    settings.configure(
+        modes=["wmd"], models_dir=str(tmp_path / "models"), sources={"mmbert": "hf"}
+    )
     p = settings.save_config_file()
     assert p == tmp_path / "docdistance.json"
     data = json.loads(p.read_text())

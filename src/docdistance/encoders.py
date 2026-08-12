@@ -381,7 +381,7 @@ class OpenVINONLI:
         self._innames = [i.get_any_name() for i in model.inputs]
         self._cm = core.compile_model(model, "CPU", {"PERFORMANCE_HINT": "THROUGHPUT"})
         self._tok = AutoTokenizer.from_pretrained(str(src))
-        cfg = json.loads((src / "config.json").read_text())
+        cfg = json.loads((src / "config.json").read_text(encoding="utf-8"))
         self._entail = _entail_index(cfg.get("id2label", {}))
         logger.debug("loaded OpenVINO INT8 NLI from {} (entail idx {})", src, self._entail)
 

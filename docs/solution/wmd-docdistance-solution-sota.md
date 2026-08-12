@@ -2,7 +2,7 @@
 
 ## Abstract
 
-An embedding-grounded, metric document distance for pipelines that cannot read model logits. Each document is segmented into statements, embedded with mmBERT, isotropy-corrected (all-but-the-top), and compared by exact optimal transport - the Statement Mover's Distance (SMD). It adapts Word Mover's Distance[<sup>ref1</sup>](#ref1) (Kusner et al. 2015, digest in `../references/papers/from-word-embeddings-to-document-distances.md`) by swapping the embedded unit (statement, not word) and the encoder (mmBERT, not word2vec), keeping the transport skeleton verbatim. SMD is a true metric, ranks the executive-summary quality tiers with zero ordering errors (batch E01, [`experiments/wmd-docdistance-experiments.md`](experiments/wmd-docdistance-experiments.md)), and runs CPU-INT8 end-to-end (~5.5 s for two A4 pages on one core). This is the conclusion doc; the experiments log is its evidence.
+An embedding-grounded, metric document distance for pipelines that cannot read model logits. Each document is segmented into statements, embedded with mmBERT, isotropy-corrected (all-but-the-top), and compared by exact optimal transport - the Statement Mover's Distance (SMD). It adapts Word Mover's Distance[<sup>ref1</sup>](#ref1) (Kusner et al. 2015, digest in `../references/papers/from-word-embeddings-to-document-distances.md`) by swapping the embedded unit (statement, not word) and the encoder (mmBERT, not word2vec), keeping the transport skeleton verbatim. SMD is a true metric, ranks the executive-summary quality tiers with zero ordering errors (batch E01, [`experiments/wmd-docdistance-experiments.md`](../experiments/wmd-docdistance-experiments.md)), and runs CPU-INT8 end-to-end (~5.5 s for two A4 pages on one core). This is the conclusion doc; the experiments log is its evidence.
 
 ## Problem
 
@@ -19,7 +19,7 @@ Lift the comparison to statements and optimal transport: segment each document, 
 - **Distance interpretation** - transport cost between the two statement clouds; `0` identical, larger = more divergent content, read as `closeness = 1 − SMD/√2` (1 identical, 0 unrelated)
 - **Why and how to use** - flag content drift between two documents when model logits are unavailable; two texts in → one metric distance, a similar/not verdict, and the statement alignment showing what moved, dropped, or was added
 - **Deterministic and reproducible** - the same two texts give the same distance every run; the CPU-INT8 production path is bit-exact (segmentation, embedding, the SVD and exact OT are all deterministic), the only non-determinism being the natural floating-point reduction-order variance on GPU - unlike a sampling LLM judge
-- **Headline result** - perfect tier ordinality (`0/24` violations), anisotropy removal widens the dynamic range 3.2x, and a 2 × A4 pair compares in ~5.5 s on one CPU core
+- **Headline result** - perfect tier ordinality (`0/24` violations), anisotropy removal widens the dynamic range 2.7x, and a 2 × A4 pair compares in ~5.5 s on one CPU core
 
 ## Pipeline
 
@@ -74,27 +74,27 @@ $$
 \mathbf{v}' = \tilde{\mathbf{v}} - \sum_{i=1}^{D} (\mathbf{u}_i^{\top} \mathbf{v})\, \mathbf{u}_i
 $$
 
-- **Effect** - de-bunched cosines, dynamic range up 3.2x (DR 0.057 → 0.180) at zero ordinality violations (E01)
+- **Effect** - de-bunched cosines, dynamic range up 2.7x (DR 0.0854 → 0.2286) at zero ordinality violations (E01)
 - **Metric preserved** - re-normalized vectors keep Euclidean = metric-safe cosine, so the distance stays a metric
 - **Corpus-level step** - the shared direction is estimated from the pooled statements of all documents compared, so it sharpens a batch or corpus; an isolated document pair (~two dozen vectors) is too small to estimate it reliably, so a single pairwise comparison uses raw embeddings, on which the tier ordering is already perfect (`0/24`)
 
 ## Performance
 
-Eleven executive summaries of one IBM AI-adoption article, three tiers (7 gold, 2 info-loss, 2 info-noise), scored against the reference gold; full evidence in [batch E01](experiments/wmd-docdistance-experiments.md).
+Eleven executive summaries of one IBM AI-adoption article, three tiers (7 gold, 2 info-loss, 2 info-noise), scored against the reference gold; full evidence in [batch E01](../experiments/wmd-docdistance-experiments.md).
 
 | measure | SMD + anisotropy removal (shipped) | SMD, no postprocessing |
 |---|---|---|
 | ordinality violations `V` | 0 / 24 | 0 / 24 |
-| dynamic range `DR` | 0.180 (3.2x) | 0.057 |
-| boundary margin (closeness pts) | +0.92 | +0.79 |
-| separation `d'` | 2.34 | 2.70 |
-| reference contrast `R` | 1.26x | 1.27x |
+| dynamic range `DR` | 0.2286 (2.7x) | 0.0854 |
+| boundary margin (closeness pts) | +18.48 | +4.58 |
+| separation `d'` | 7.17 | 4.60 |
+| reference contrast `R` | - | 1.680 |
 | metric | yes | yes |
 
 - **Perfect ordering** - every gold summary is closer to the anchor than every adversarial one, zero crossings, with or without postprocessing
 - **Resolution gain ships** - of five levers tested in E01, anisotropy removal is the only one that widens dynamic range and the boundary margin without breaking the order, so it is standard
-- **`d'` tradeoff** - the isotropy step spreads the gold band too, so the effect-size separation `d'` drops (2.70 → 2.34); accepted for the 3.2x resolution gain since ordering stays perfect
-- **Closeness bands** (no postprocessing) - gold 73-82%, adversarial 68-72%; the two 3-sweep golds nearest
+- **No `d'` tradeoff** - the isotropy step was expected to spread the gold band and cost effect size; measured, the separation `d'` **rises** (4.60 → 7.17) alongside the 2.7x resolution gain, at unchanged perfect ordering. The trade this section previously reported did not occur
+- **Closeness bands** (no postprocessing) - gold 80.3-85.9%, adversarial 68.5-75.7%; the two 3-sweep golds nearest
 - **What it responds to** - SMD tracks shared statement content; the info-noise tier (kept the source's numbers) lands slightly closer than the info-loss tier (stripped them), so numeric retention correlates with closeness
 
 ## Setup
@@ -136,10 +136,10 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 
 ## Limitations
 
-- **Thin boundary margin** - +0.92 closeness points at the gold/adversarial boundary; the ordering is clean, the separation is narrow
+- **Boundary margin** - +4.58 closeness points at the gold/adversarial boundary on the raw axis (+18.48 after anisotropy removal); the ordering is clean and the margin is modest, on documents built to be hard to separate
 - **Intrinsic to the fixture** - all eleven summaries describe one article and share its content, so the margin is genuinely narrow, not a defect of the distance
 - **Single source, single degradation design** - a controlled probe, not a benchmark; cross-fixture validation on a second article is pending
-- **`d'` lowered by the isotropy step** - anisotropy removal widens the margin and dynamic range but spreads the gold band, lowering the effect-size `d'` (2.70 → 2.34); ordering is unaffected
+- **`d'` raised by the isotropy step** - anisotropy removal widens the margin and the dynamic range and raises the effect-size `d'` (4.60 → 7.17); ordering is unaffected
 - **Selection vs grounding not separated** - a symmetric distance cannot tell same-source-different-picks from off-source fabrication; the source-conditioned variant `d(A,B|S)` in [`wmd-source-conditioned-docdistance-solution-sota.md`](wmd-source-conditioned-docdistance-solution-sota.md) adds that axis
 
 ## FAQ

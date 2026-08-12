@@ -3,7 +3,7 @@
   Shows: a full 0 to 1 similarity scale with almost all of it unused; eleven summaries
          crammed into one smudge inside the 0.70 to 0.90 stretch; that stretch magnified
          into a panel below, where the seven faithful and four degraded summaries are
-         plainly interleaved, the best to worst span is measured at 0.057, and a
+         plainly interleaved, the spread (standard deviation) is measured at 0.085, and a
          candidate threshold cuts through both colours; a closing band naming the
          real defect as resolution rather than correctness.
   Intent: teach that the failure of one cosine score is not wrong answers but answers
@@ -247,7 +247,7 @@
       <text class="fg-2" x="1202" y="334" font-family="Segoe UI, Arial, sans-serif" font-size="12">faithful summary (7)</text>
       <rect class="chip-or" x="1400.0" y="322.0" width="14.0" height="14.0" rx="3"/>
       <text class="fg-2" x="1422" y="334" font-family="Segoe UI, Arial, sans-serif" font-size="12">deliberately degraded (4)</text>
-      <text class="warn-2" x="1036.9" y="364" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">0.057 wide · best to worst</text>
+      <text class="warn-2" x="1036.9" y="364" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700" text-anchor="middle">0.085 spread · std across 11</text>
       <text class="fg-3" x="1000" y="400" font-family="Segoe UI, Arial, sans-serif" font-size="10" text-anchor="end">a candidate threshold</text>
       <text class="fg-4" x="487" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">nothing lands here</text>
       <text class="fg-4" x="1450" y="404" font-family="Segoe UI, Arial, sans-serif" font-size="11" text-anchor="middle">nothing lands here either</text>

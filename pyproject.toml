@@ -114,7 +114,7 @@ exclude = ["tests*"]
 [tool.ruff]
 line-length = 99
 src = ["src/docdistance"]
-include = ["pyproject.toml", "src/docdistance/**/*.py"]
+include = ["pyproject.toml", "src/docdistance/**/*.py", "tests/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]

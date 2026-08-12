@@ -14,6 +14,7 @@ import json
 
 import numpy as np
 import pytest
+from rich.console import Console
 from typer.testing import CliRunner
 
 from docdistance import pipeline, settings
@@ -104,7 +105,9 @@ def test_cli_structural_details_localizes_a_reorder(tmp_path):
     assert res.exit_code == 0, res.output
     diff = json.loads(out.read_text())
 
-    assert diff["smd"] == pytest.approx(0.0, abs=2e-3)  # same statements, reordered (float floor ~3e-4)
+    assert diff["smd"] == pytest.approx(
+        0.0, abs=2e-3
+    )  # same statements, reordered (float floor ~3e-4)
     assert diff["order_gap"] > 0.0  # arrangement changed
     assert diff["structure_closeness"] < 1.0
     st = _by_index(diff)
@@ -127,7 +130,9 @@ def test_cli_semantic_details_localizes_a_reword(tmp_path):
     assert fl[3]["matches"][0]["cost"] > DIFF_CHANGED_COST  # its best match is a far statement
     for i in (0, 1, 2):
         assert fl[i]["changed"] is False
-        assert fl[i]["matches"][0]["cost"] < 0.01  # untouched statements map to their twin at ~0 cost
+        assert (
+            fl[i]["matches"][0]["cost"] < 0.01
+        )  # untouched statements map to their twin at ~0 cost
 
 
 def test_cli_semantic_details_writes_flows(tmp_path):
@@ -145,8 +150,34 @@ def test_cli_semantic_details_writes_flows(tmp_path):
 def test_cli_result_only_prints_a_bare_scalar():
     res = runner.invoke(app, ["distance-semantic", DOC, DOC_SWAP, "--result-only"], env=_WIDE)
     assert res.exit_code == 0, res.output
-    floats = [float(tok) for line in res.output.splitlines() for tok in line.split() if _isfloat(tok)]
+    floats = [
+        float(tok) for line in res.output.splitlines() for tok in line.split() if _isfloat(tok)
+    ]
     assert floats and floats[-1] == pytest.approx(0.0, abs=1e-3)  # reorder -> SMD ~ 0
+
+
+def test_cli_structural_machine_output_does_not_route_through_rich(monkeypatch):
+    """``--json`` / ``--result-only`` must bypass the Rich console.
+
+    Rich applies its repr highlighter and wraps at the console width, so a coloured or narrow
+    terminal turns the documented machine-readable output into unparseable text while the exit
+    code stays 0. The suite's own ``_WIDE`` env (TERM=dumb, NO_COLOR) hides it, and TERM=dumb
+    also defeats a plain ``force_terminal`` console - hence the explicit ``color_system``.
+    """
+    import docdistance.cli as cli_mod
+
+    monkeypatch.setattr(
+        cli_mod, "_out", Console(force_terminal=True, width=80, no_color=False, color_system="256")
+    )
+
+    res = runner.invoke(app, ["distance-structural", DOC, DOC_SWAP, "--result-only"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    float(res.output.strip())  # raises if Rich wrapped or colourized it
+
+    res = runner.invoke(app, ["distance-structural", DOC, DOC_SWAP, "--json"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    payload = json.loads(res.output)  # raises if Rich wrapped or colourized it
+    assert payload["verdict"] in {"similar", "not similar"}
 
 
 def _isfloat(tok: str) -> bool:

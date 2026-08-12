@@ -46,7 +46,7 @@ Top-level read (both details carry `smd`; the structural details also carries th
 
 ## The semantic details - what changed in meaning
 
-`distance-semantic --details-json` returns the content alignment: for each A statement, a `flows` entry with the B statement(s) its mass flows to - `weight` (mass fraction, sums to 1 per statement), `cost` (ground distance of the match, low = good) - and a per-flow `changed` flag (best-match `cost` over the 0.389 cutoff). One entry verbatim:
+`distance-semantic --details-json` returns the content alignment: for each A statement, a `flows` entry with the B statement(s) its mass flows to - `weight` (mass fraction, sums to 1 per statement), `cost` (ground distance of the match, low = good) - and a per-flow `changed` flag (best-match `cost` over the 0.325 cutoff). One entry verbatim:
 
 ```json
 {
@@ -77,7 +77,7 @@ All six statements, compact - every statement flows fully (weight 1.00) to a sin
 
 Reading rules:
 
-- **changed = true** (`cost` > 0.389, the changed-cost cutoff) - the content of that statement drifted; `cost` is how far, on the ground scale √(2 − 2cos), 0 = identical meaning, √2 ≈ 1.414 = opposite
+- **changed = true** (`cost` > 0.325, the changed-cost cutoff) - the content of that statement drifted; `cost` is how far, on the ground scale √(2 − 2cos), 0 = identical meaning, √2 ≈ 1.414 = opposite
 - **cost ≈ 0, target index = source index** - unchanged, in place
 - **cost ≈ 0, target index ≠ source index** - same content, moved (the rank shift is read off the structural details)
 - **cost high** - content changed; the best available match is still far. The named `target` is the leftover assignment, not a semantic claim - tokens did not "become" push notifications

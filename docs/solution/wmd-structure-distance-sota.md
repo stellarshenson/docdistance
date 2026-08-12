@@ -2,7 +2,7 @@
 
 ## Abstract
 
-A second, structure-sensitive number beside the Statement Mover's Distance, for pipelines that must tell *content drift* from *rearrangement*. SMD is deliberately position-invariant - reorder a document's statements and it barely moves. The structure axis adds *how a document is arranged*, as a single number that is **content-invariant by construction**: a faithful reword with order preserved reads ~0, a reorder with content preserved reads large. The shipped mechanism is the **OPW order-gap** - the order-preserving Wasserstein cost minus SMD - which subtracts the content-optimal transport cost so only the cost of order violation remains. It is reported as a bounded closeness on the same `1 − d/√2` scale as SMD. The decisive evidence is batch E11, which stress-tested it against the earlier position-augmented Wasserstein metric on a true paraphrase and a second article: the metric fuses content and arrangement and reads a reword at 73.5% of a full-scramble distance, while the order-gap reads it at 0.5%. Evidence: [`experiments/wmd-structure-distance-experiments.md`](experiments/wmd-structure-distance-experiments.md), hypotheses E10-H55 (mechanism) and E11 (decision).
+A second, structure-sensitive number beside the Statement Mover's Distance, for pipelines that must tell *content drift* from *rearrangement*. SMD is deliberately position-invariant - reorder a document's statements and it barely moves. The structure axis adds *how a document is arranged*, as a single number that is **content-invariant by construction**: a faithful reword with order preserved reads ~0, a reorder with content preserved reads large. The shipped mechanism is the **OPW order-gap** - the order-preserving Wasserstein cost minus SMD - which subtracts the content-optimal transport cost so only the cost of order violation remains. It is reported as a bounded closeness on the same `1 − d/√2` scale as SMD. The decisive evidence is batch E11, which stress-tested it against the earlier position-augmented Wasserstein metric on a true paraphrase and a second article: the metric fuses content and arrangement and reads a reword at 73.5% of a full-scramble distance, while the order-gap reads it at 0.5%. Evidence: [`experiments/wmd-structure-distance-experiments.md`](../experiments/wmd-structure-distance-experiments.md), hypotheses E10-H55 (mechanism) and E11 (decision).
 
 ## Problem
 
@@ -67,24 +67,24 @@ $$
 
 This is a fixed analytic rescale by a constant - stateless (no batch statistics, no calibration, identical for a single pair or a million), the same convention SMD and the dropped metric use. The trade is a compressed practical range: the gap reaches only ~0.34·√2, so closeness sits in `[0.66, 1.0]`; the raw gap is the higher-resolution internal form.
 
-**The solver - Sinkhorn, not exact EMD.** Unlike SMD, OPW is an entropic-regularized transport (the KL prior is a divergence), so the gap is a **score, not a metric** - it carries a few percent triangle violations (4.5% measured). This is registered honestly: for a pairwise *arrangement, not meaning* read the triangle inequality is never invoked, so the score-ness costs nothing the use case needs.
+**The solver - Sinkhorn, not exact EMD.** Unlike SMD, OPW is an entropic-regularized transport (the KL prior is a divergence), so the gap is a **score, not a metric** - it carries a substantial triangle-violation rate (15% measured on the E11 fixtures, `reports/E11-structure-sota-decision.json` `.triangle.H55`). This is registered honestly: for a pairwise *arrangement, not meaning* read the triangle inequality is never invoked, so the score-ness costs nothing the use case needs.
 
 ## Performance
 
-Batch E11 on the two-article structure fixture: IBM exec-summaries and the Wergeland *Impact of AI on Society* curriculum (three section bases); the byte-identical reorder pool (6 displacement bins) for monotonicity, a synthetic pure-shift for translation-invariance, and a **true paraphrase** for content-invariance - opus-mt EN→DE→EN back-translation (per-statement reword, mmBERT cosine 0.98) plus same-model a/b regenerations. Full evidence in [batch E11](experiments/wmd-structure-distance-experiments.md).
+Batch E11 on the two-article structure fixture: IBM exec-summaries and the Wergeland *Impact of AI on Society* curriculum (three section bases); the byte-identical reorder pool (6 displacement bins) for monotonicity, a synthetic pure-shift for translation-invariance, and a **true paraphrase** for content-invariance - opus-mt EN→DE→EN back-translation (per-statement reword, mmBERT cosine 0.98) plus same-model a/b regenerations. Full evidence in [batch E11](../experiments/wmd-structure-distance-experiments.md).
 
 | gate | OPW order-gap (E10-H55, shipped) | position-augmented Wasserstein (E08-H44, dropped) |
 |---|---|---|
 | content-invariance (paraphrase ÷ scramble-top) | **0.005** | 0.735 |
 | translation-invariance (pure shift ÷ scramble-top) | 0.001 | 0.417 |
 | scramble-monotone (Spearman, both articles) | 1.00, no collapse | 1.00, no collapse |
-| triangle-inequality violations | 4.5% (score) | 0% (metric) |
+| triangle-inequality violations | 15% (score) | 0% (metric) |
 | reword reads as | ~0 (0.0017 raw) | a structure change (0.149 raw) |
 
 - **Content-invariance is the decider, and the order-gap wins it** - a true reword reads 0.5% of a full-scramble distance; the metric reads 73.5%, almost as much as a real reorder - it cannot isolate arrangement
 - **Translation-invariant** - a uniform shift reads 0.001 of range (index-intrinsic); the metric fires at 0.42 (absolute position)
 - **Monotone and replicated** - Spearman 1.00 rising through the top bin on both articles (scramble top-bin 0.439 IBM / 0.396 Wergeland), so the order signal is real and not article-specific
-- **The honest cost** - a score, not a metric (4.5% triangle, the KL prior), and the a/b-regeneration control reads ~0.04 (independent regenerations carry genuine minor content/order differences) versus ~0.002 for a pure reword - real signal, not failure
+- **The honest cost** - a score, not a metric (15% triangle, the KL prior), and the a/b-regeneration control reads ~0.04 (independent regenerations carry genuine minor content/order differences) versus ~0.002 for a pure reword - real signal, not failure
 
 ## Why the metric was dropped
 
@@ -126,7 +126,7 @@ The structure axis adds no serving model and one extra regularized-transport sol
 
 ## Limitations
 
-- **A score, not a metric** - the KL temporal prior makes the gap a divergence (4.5% triangle violations), so it cannot index, cluster, or cache at corpus scale; it is a pairwise *arrangement* read
+- **A score, not a metric** - the KL temporal prior makes the gap a divergence (15% triangle violations), so it cannot index, cluster, or cache at corpus scale; it is a pairwise *arrangement* read
 - **The metric + invariant + monotone combo is unsolved** - a structure read that is simultaneously a metric, translation-invariant, and scramble-monotone remains open (E08-H45 had metric + translation-invariance but collapsed at full scramble)
 - **Compressed closeness range** - the bounded readout `1 − gap/√2` uses only ~⅓ of the scale (closeness sits in `[0.66, 1.0]`); the raw gap is the higher-resolution form for internal thresholds
 - **OPW hyperparameters fixed, not tuned** - `λ₁ = 50`, `λ₂ = 0.1`, `σ = 1.0` are the Su & Hua / E10 defaults; their principled selection on a held-out fixture is deferred
@@ -140,7 +140,7 @@ The structure axis adds no serving model and one extra regularized-transport sol
 - **Why subtract SMD instead of reading OPW directly?** - OPW alone still contains the content-matching cost, so it rises on content drift; subtracting SMD cancels that shared term, leaving only the order penalty. The gap, not OPW, is the content-invariant structure signal
 - **Why not the position-augmented metric (E08-H44)?** - it fuses content and position into one distance, so it inherits SMD's content sensitivity and reads a reword as large as a reorder (E11: 73.5% of a full scramble). It is a metric on *content + arrangement*, not arrangement; the order-gap isolates arrangement at the cost of metricity
 - **Is it really content-invariant?** - measured: a back-translation reword reads 0.0017 (0.5% of a full scramble) across both articles, against the metric's 0.149 (73.5%); the subtraction of SMD is what cancels the content cost
-- **Why is it a score and not a metric?** - OPW carries a KL temporal prior, a divergence, so the gap has no triangle inequality (4.5% violations measured). For a pairwise read this costs nothing - the triangle inequality is only invoked by corpus-scale indexing
+- **Why is it a score and not a metric?** - OPW carries a KL temporal prior, a divergence, so the gap has no triangle inequality (15% violations measured). For a pairwise read this costs nothing - the triangle inequality is only invoked by corpus-scale indexing
 - **Why not Gromov-Wasserstein for order?** - GW compares intra-document distance matrices and is invariant to a pure reorder (an isometry → GW = 0), so it is blind to order; its positional Fused-GW variant (E08-H45) is translation-invariant but collapses at full scramble. GW is the relational-rewrite instrument, not the order one
 - **How is the score normalized - batch or curve?** - neither; `1 − gap/√2` is a fixed analytic rescale by a constant (the ground-cost ceiling), stateless and per-pair, the same convention as SMD closeness. Batch-max normalization would make the score depend on the reference set; a logistic squash would need calibration - both rejected
 - **Do we recover what moved?** - yes, `structure_displacement` names the movers per statement. It is read off the crisp exact-EMD alignment (`order_alignment`, an `ot.emd` plan with an `eps` positional tie-break), not the entropic OPW plan, so a moved statement gets a sharp integer shift rather than smeared mass; the OPW plan drives only the aggregate `order_gap`
@@ -160,7 +160,7 @@ A single structure number beside SMD that scores arrangement and is blind to wor
 - **The order-gap is the structure axis** - `OPW − SMD` subtracts the content-optimal cost, so a reword reads ~0 and a reorder reads large; it answers *arrangement, not meaning* as one number
 - **It beat the metric on the gate that matters** - content-invariance: the order-gap leaks 0.5% of a reword into the structure axis, the position-augmented metric leaks 73.5%; metricity did not survive a real paraphrase
 - **Bounded and stateless** - reported as `1 − gap/√2 ∈ [0,1]`, a fixed analytic rescale on the library's closeness scale, deterministic for a single pair
-- **Operating point** - content-invariant, translation-invariant, scramble-monotone, replicated across two articles; a score not a metric (4.5% triangle), which a pairwise read never penalizes
+- **Operating point** - content-invariant, translation-invariant, scramble-monotone, replicated across two articles; a score not a metric (15% triangle), which a pairwise read never penalizes
 - **Status** - shipped and validated, confirmed on two articles and a back-translation paraphrase; the OPW hyperparameter selection, a broader article set, a genuine LLM-rewrite control, and real-conversion-pair evidence (E07-H28) are the open confidence steps
 
 ## Bibliography

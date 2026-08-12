@@ -18,7 +18,7 @@ The OpenVINO INT8 IRs sit at the bucket root (or under a prefix); `init --source
 
 - **CLI** - `docdistance init <mode> --source s3://your-bucket` (or `.../models` if grouped); add `--aws-profile NAME` locally, omit it in Lambda to use the execution-role credential chain; `--aws-endpoint-url URL` targets an S3-compatible store
 - **Python** - `docdistance.init(mode, source="s3://your-bucket", home="/tmp/docdistance")`
-- **Resolution order** - per model: the S3 prefix, then a local dir, then HuggingFace; the source served is recorded per model in `docdistance.json`
+- **Resolution order** - per model: the source named by `--source` (an S3 prefix or a local dir, whichever was given), then HuggingFace; the source served is recorded per model in `docdistance.json`
 - **Any prefix** - `--source` accepts the bucket root or any `s3://bucket/prefix`; mirror the dirs to your own bucket with `make sync_models_up` (or `aws s3 sync`)
 - **Extra** - the S3 path needs botocore: `pip install 'docdistance[s3]'` (or bake it into the image)
 - **Readiness** - `init` writes `docdistance.json` to `$DOCDISTANCE_HOME` (else the current folder); a mode never init'd exits 1 with `run: docdistance init <mode>`

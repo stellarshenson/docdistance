@@ -20,7 +20,7 @@ from rich.table import Table
 import typer
 
 from docdistance.config import configure_logging
-from docdistance.distance import DEFAULT_THRESHOLD
+from docdistance.distance import DEFAULT_THRESHOLD, STRUCTURE_THRESHOLD
 
 app = typer.Typer(
     rich_markup_mode="rich",
@@ -68,7 +68,9 @@ def _run(fn):
 
     try:
         return fn()
-    except (ModelsNotInstalled, NotInitializedError) as exc:
+    except (ModelsNotInstalled, NotInitializedError, ValueError) as exc:
+        # ValueError covers the empty-document case (pipeline.embed_statements), which a
+        # title-only markdown reaches and which otherwise escapes as a stack trace
         _err.print(f"[bold red]error:[/bold red] {exc}")
         raise typer.Exit(1)
 
@@ -112,11 +114,13 @@ def _emit_distance(r, json_out: bool, result_only: bool) -> None:
 
 
 def _emit_structural(r, json_out: bool, result_only: bool) -> None:
+    # typer.echo, not _out.print: Rich colourizes and wraps, which corrupts both the
+    # scalar and the JSON on any coloured or narrow terminal (the other emitters match)
     if result_only:
-        _out.print(str(r.structure_closeness))
+        typer.echo(str(r.structure_closeness))
         return
     if json_out:
-        _out.print(json.dumps(r.to_dict(), indent=2))
+        typer.echo(json.dumps(r.to_dict(), indent=2))
         return
     color = "green" if r.verdict == "similar" else "red"
     grid = Table.grid(padding=(0, 2))
@@ -283,9 +287,9 @@ def distance_structural(
         help="all-but-the-top anisotropy removal - needs a corpus, off by default for a pair",
     ),
     threshold: float = typer.Option(
-        DEFAULT_THRESHOLD,
+        STRUCTURE_THRESHOLD,
         "--threshold",
-        help="closeness cutoff for the similar / not-similar verdict",
+        help="structure_closeness cutoff for the similar / not-similar verdict",
     ),
     details_json: str = typer.Option(
         None,
@@ -339,7 +343,7 @@ def distance_structural(
     "  docdistance distance-wrt-source summary_a.md summary_b.md --source article.md\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --json\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   [dim]# statement → source map[/dim]\n"
-    "  docdistance distance-wrt-source a.md b.md -s s.md --result-only   [dim]# D_sel,res_a,res_b[/dim]",
+    "  docdistance distance-wrt-source a.md b.md -s s.md --result-only   [dim]# d_sel,grd_a,grd_b[/dim]",
 )
 def distance_wrt_source(
     a: str = typer.Argument(..., help="first document - a file path or raw text"),
@@ -366,7 +370,7 @@ def distance_wrt_source(
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
-        False, "--result-only", help="bare comma-separated D_sel,residual_a,residual_b to stdout"
+        False, "--result-only", help="bare comma-separated d_sel,grd_a,grd_b to stdout"
     ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG logging to stderr"),
 ):
@@ -403,7 +407,7 @@ def distance_wrt_source(
     epilog="[bold]Examples[/bold]\n\n"
     "  docdistance init                                    [dim]# wmd mode, from HuggingFace[/dim]\n"
     "  docdistance init wmd-wrt-source                     [dim]# + reranker + NLI grounding models[/dim]\n"
-    "  docdistance init wmd-wrt-source --source s3://general-purpose/docdistance --aws-profile stellars-tech\n"
+    "  docdistance init wmd-wrt-source --source s3://your-bucket/docdistance --aws-profile NAME\n"
     "  docdistance init wmd --source /path/to/models       [dim]# from a local mirror[/dim]",
 )
 def init(
@@ -447,13 +451,13 @@ def init(
             aws_region=aws_region,
             home=home,
         )
-    except (ModelsNotInstalled, FileNotFoundError, ValueError) as exc:
+    # OSError covers FileNotFoundError (--source missing) and an unwritable home
+    except (ModelsNotInstalled, ValueError, OSError) as exc:
         _err.print(f"[bold red]error:[/bold red] {exc}")
         raise typer.Exit(1)
     srcs = ", ".join(f"{k}:{v}" for k, v in summary["sources"].items())
     _out.print(f"[green]initialized {summary['mode']}:[/green] {srcs}")
-    if summary["config_file"]:
-        _out.print(f"[dim]config written: {summary['config_file']}[/dim]")
+    _out.print(f"[dim]config written: {summary['config_file']}[/dim]")
 
 
 if __name__ == "__main__":

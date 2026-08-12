@@ -70,7 +70,7 @@ If you can read logits, and the question you are actually asking is about the mo
 
 The reflex is to embed both documents and take a cosine. I did that first.
 
-Eleven executive summaries of one article - seven faithful, four deliberately degraded - all landed between 0.7 and 0.9. Best-to-worst spread: **0.057**. Any threshold I picked sat inside the noise.
+Eleven executive summaries of one article - seven faithful, four deliberately degraded - all landed between 0.67 and 0.86 on the closeness scale. The spread of the underlying distances was **0.085**. Any threshold I picked sat close to the noise.
 
 ![Eleven summaries, one narrow band](images/03-cosine-collapse.svg)
 
@@ -147,7 +147,7 @@ Each is a lower bound on the next: `WCD ≤ RWMD ≤ SMD`. Whole-document cosine
 
 Jensen's inequality gives you the bottom of that chain. The consequence is what matters in practice: a lower bound can understate a distance and can never overstate it. Both of the cheaper methods can call two documents closer than they really are. Neither can ever call them further apart. That makes them safe as a quick filter and unsafe as a final answer.
 
-It is also why the Word Centroid Distance scored all eleven summaries within 0.057 of each other. A lower bound does not have to separate the documents that sit above it, and here it did not.
+It is also why a lower bound carries no promise about separation: it constrains the true distance from below and says nothing about the gap between two documents that both sit above it. On these eleven the Word Centroid Distance orders the tiers correctly anyway; how well it separates them was not measured here, so the case for the full transport is the lower-bound property and the statement-level alignment it buys, not a demonstrated win over the centroid.
 
 That one-sided error is what makes the cheap methods worth running. If the Word Centroid Distance already clears your threshold, the exact distance does too. Skip the expensive computation, lose nothing.
 
@@ -185,13 +185,13 @@ $$
 
 Read it aloud: the straight-line distance between two unit vectors is the square root of two minus twice their cosine.
 
-Same ranking as cosine, and a real metric. You give up nothing. It also has fixed end points: since embedding cosines sit between 0 and 1, the distance sits between 0 and `√2`, so it converts to a 0-to-1 closeness score as `closeness = 1 - distance/√2`.
+Same ranking as cosine, and a real metric. You give up nothing. It also has fixed end points: as long as the encoder keeps cosines non-negative - which this one does on these documents, though nothing guarantees it - the distance sits between 0 and `√2`, so it converts to a 0-to-1 closeness score as `closeness = 1 - distance/√2`.
 
 ## The embedding model makes everything look alike
 
 One property of transformer embeddings is not obvious from outside, and it distorts every distance you compute. They are **anisotropic**, which is an over-glorified term for a plain defect: a few shared directions dominate every vector, so everything looks similar to everything else. The distances you are about to measure are squashed together before you start.
 
-Fortunately, there is someone who thought about this already. [All-but-the-Top - Mu et al.](https://arxiv.org/abs/1702.01417) showed in 2018 that those directions largely encode token frequency rather than meaning. Subtracting them is a handful of lines. It widened my spread from **0.057 to 0.180**, roughly three times the room to place a threshold.
+Fortunately, there is someone who thought about this already. [All-but-the-Top - Mu et al.](https://arxiv.org/abs/1702.01417) showed in 2018 that those directions largely encode token frequency rather than meaning. Subtracting them is a handful of lines. It widened my spread from **0.085 to 0.229**, roughly 2.7 times the room to place a threshold.
 
 The limitation: the shared directions have to be estimated across a batch of documents. An isolated pair gives about two dozen vectors, which is not enough to estimate them, so single one-off comparisons run without the correction.
 
@@ -213,7 +213,7 @@ The test that decides whether this works uses **back-translation**. Take the Eng
 
 It reads **0.5%** of what a fully scrambled document reads.
 
-One property to know before you use it. The order number breaks the triangle inequality about **4.5%** of the time, which makes it a score rather than a distance. Never chain it across comparisons.
+One property to know before you use it. The order number breaks the triangle inequality about **15%** of the time, which makes it a score rather than a distance. Never chain it across comparisons.
 
 ![Changed or only moved](images/10-changed-or-moved.svg)
 
@@ -223,9 +223,9 @@ Two questions were tested. Does the meaning number rank summaries correctly, and
 
 **Does it rank correctly?** Eleven summaries of one article, seven faithful and four deliberately degraded, each scored against a reference. Every faithful summary came out closer to the reference than every degraded one. Comparing each faithful summary against each degraded one gives 24 comparisons, and all **24 of 24** came out the right way round.
 
-**How much room is there between good and bad?** The closest faithful summary and the furthest degraded one are **0.92 points** apart on a 0-to-100 scale. The ordering is perfect and the gap is narrow, and I would rather say that than bury it. All eleven summarise the same source article, so they are alike by construction, which is the hardest case to separate and the reason the probe was built that way. Set your cutoff on your own documents rather than copying mine.
+**How much room is there between good and bad?** The closest faithful summary and the furthest degraded one are **4.7 points** apart on a 0-to-100 scale (79.4 against 74.7). The ordering is perfect and the gap is still narrow, and I would rather say that than bury it. All eleven summarise the same source article, so they are alike by construction, which is the hardest case to separate and the reason the probe was built that way. Set your cutoff on your own documents rather than copying mine.
 
-**What the encoder correction cost.** Removing the shared directions tripled the spread, which was the point, but it also pushed the seven faithful summaries further apart from each other. Take the distance between the faithful group and the degraded group, and divide it by how scattered the two groups are internally: that ratio fell from **2.70 to 2.34**. I chose the wider spread over the tighter grouping. The opposite choice is defensible.
+**What the encoder correction cost.** I expected a trade: a wider spread bought by looser grouping inside the faithful set. Take the distance between the faithful group and the degraded group, and divide it by how scattered the two groups are internally. That ratio **rose from 4.60 to 7.17** - the correction widened the spread and tightened the separation at the same time, so the trade I was braced for did not appear. That is a better result than I expected, which is its own reason to state it plainly rather than keep the caveat that reads well.
 
 **Does the order number stay out of the meaning number's business?** Across two articles, it rose every time the shuffling got worse, without one exception. A back-translated document, reworded throughout but in its original order, moves it by **0.5%** of what a full scramble moves it. And inserting a header at the top, which pushes every statement down one place while changing nothing about the document, moved it by **0.001** - because it measures where statements sit relative to each other, not what position number they carry.
 
@@ -241,7 +241,7 @@ That is why I solve the transport exactly rather than using **Sinkhorn**, the st
 
 About 0.2 document-pairs per second per core, CPU-only, scaling near-linearly with cores.
 
-It is not enough to say a thing scales, so put a number on it. The fourth situation, a hundred thousand pairs, costs about 139 core-hours. That is four and a half hours on one 32-core machine: an overnight batch, not a research project. The two cheaper bounds are there to prune that further, though I have not measured what they save on a real corpus.
+It is not enough to say a thing scales, so put a number on it. The fourth situation, a hundred thousand pairs, costs about 154 core-hours. That is just under five hours on one 32-core machine: an overnight batch, not a research project. The two cheaper bounds are there to prune that further, though I have not measured what they save on a real corpus.
 
 ![Where the time goes](images/12-where-the-time-goes.svg)
 
@@ -313,15 +313,16 @@ The library is on PyPI as `docdistance`; the design notes and experiment logs ar
 
 ## Where it falls short
 
-- **Thin margin** - 0.92 points between the groups, on documents built to be hard to separate
+- **Thin margin** - 4.7 points between the groups, on documents built to be hard to separate
 - **Thresholds do not transfer** - the cutoff is a per-corpus decision, so calibrate it on your own documents
-- **The structural number is a score** - 4.5% triangle violations, so never chain it
+- **The structural number is a score** - 15% triangle violations, so never chain it
+- **The cheap baseline was never scored against this one** - the case for full transport here rests on the lower-bound property and the statement-level alignment it yields, not on a measured win over the centroid distance on these eleven documents. That comparison is still owed
 
 ![Where it falls short](images/17-where-it-falls-short.svg)
 
 ## References
 
-The distance, the bounds and the geometry correction come from the papers below. What is mine is the assembly and the evidence for it: transport run over statements rather than words, a ground cost chosen so the result stays a metric, meaning and order kept as two numbers instead of one fused score, the encoder correction adopted with its cost measured rather than assumed, and exact transport preferred to Sinkhorn at this scale. So are the measurements - 24 of 24, 0.92 points, 0.5% against a full scramble, 5.55 seconds a pair on one core. Grouped by what each paper contributed.
+The distance, the bounds and the geometry correction come from the papers below. What is mine is the assembly and the evidence for it: transport run over statements rather than words, a ground cost chosen so the result stays a metric, meaning and order kept as two numbers instead of one fused score, the encoder correction adopted with its cost measured rather than assumed, and exact transport preferred to Sinkhorn at this scale. So are the measurements - 24 of 24, 4.7 points, 0.5% against a full scramble, 5.55 seconds a pair on one core. Grouped by what each paper contributed.
 
 **The distance itself**
 
@@ -331,7 +332,7 @@ The distance, the bounds and the geometry correction come from the papers below.
 
 **The embedding geometry**
 
-- [All-but-the-Top: Simple and Effective Postprocessing for Word Representations - Mu et al.](https://arxiv.org/abs/1702.01417), ICLR 2018 - subtract the common mean, project away the top directions. This is where 0.057 -> 0.180 came from
+- [All-but-the-Top: Simple and Effective Postprocessing for Word Representations - Mu et al.](https://arxiv.org/abs/1702.01417), ICLR 2018 - subtract the common mean, project away the top directions. This is where 0.085 -> 0.229 came from
 
 **Order and structure**
 

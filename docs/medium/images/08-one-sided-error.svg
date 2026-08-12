@@ -225,7 +225,7 @@
       <text class="fg-2" x="935" y="545" font-family="Segoe UI, Arial, sans-serif" font-size="16" text-anchor="start">and never further apart — never quote it as the answer</text>
     </g>
     <g id="footer">
-      <text class="fg-4" x="900" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle">this is why the cheapest bound scored all eleven summaries within 0.057 of each other</text>
+      <text class="fg-4" x="900" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle">a lower bound constrains the true distance; it promises nothing about the gap between two documents</text>
       <text class="fg-1" x="900" y="640" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="600" text-anchor="middle">a lower bound does not have to separate what sits above it</text>
     </g>
   </g>

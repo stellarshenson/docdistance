@@ -253,7 +253,7 @@
       <text class="fg-2" x="1460" y="255" font-size="9.5">There is no free lunch in general.</text>
       <text class="fg-4" x="1460" y="300" font-size="8">b[11]</text>
       <text class="tag-warn" x="1720" y="300" font-size="8.5" font-weight="bold" text-anchor="end">weight 0.25</text>
-      <text class="fg-2" x="1460" y="320" font-size="9.5">A hundred thousand pairs costs 139 core hours.</text>
+      <text class="fg-2" x="1460" y="320" font-size="9.5">A hundred thousand pairs costs 154 core hours.</text>
     </g>
 
     <g id="fields-split">

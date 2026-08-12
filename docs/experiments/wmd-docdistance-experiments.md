@@ -1,9 +1,19 @@
 # WMD Document-Distance Experiments - tier contrast and source conditioning
 
-Experiments log for the mmBERT Statement Mover's Distance from `../solution/wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers to widen the source-free gold/adversarial gap in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H3 anisotropy removal), four refuted. Batch E02 builds and tests the source-conditioned two-axis distance (selection `D_sel` + grounding `D_grd`) from `../solution/wmd-source-conditioned-docdistance-solution-sota.md` in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb): selection axis confirmed, grounding axis confirmed at the tier level once aggregated to a joint premise. Batch E03 ran five source-conditioned improvement hypotheses in [`notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb`](../../notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb): the relevance-gated residual (H11) and the blended scalar (H14) confirmed, the numeric verifier (H10) and both reranker-cost levers (H12 cascade, H13 replacement) refuted - the cross-encoder reranker is load-bearing and the gate is met on correct failure-mode ordering, not on raw per-document ordinality where the symmetric scalar already passes this single fixture. Batch E04 ran five source-conditioned performance hypotheses on the GPU fp16 chain: anisotropy removal on the conditioned selection axis (H15) widens dynamic range ~7.4x at `0` violations - the one win, shipped as the default resolution pre-pass (opt-out via `anisotropy=False`); coverage-temperature sharpening (H16), a distilled-reranker replacement (H17), a cross-encoder cascade (H18) and the composite (H19) are refuted - the cross-encoder reranker stays load-bearing and its ~109 s/pair cost stands, with the H18 cascade the closest faithful speed-up (Spearman 0.98, 2.3x, but recall@15 0.87 short of the gate). Batch E05 ran five CPU-speed hypotheses - three relevance-scorer hunts (a smaller multilingual cross-encoder, a late-interaction ColBERT-style scorer, a learned-sparse SPLADE-style scorer) and two structural grid cuts (length-bucketed batching, source-statement clustering) - against a `>= 50%` CPU latency cut at a preserved verdict; all five refuted, the v2-m3 cross-encoder reranker is reconfirmed irreplaceable (no smaller scorer recalls its top-3) and the one practical win is a `43%` free CPU cut from length-bucketing (H23, bit-identical scores), 7 points short of the bar. Batch E06 reopens the two directions E05 left untested - a *trained* multilingual late-interaction ColBERT and a *trained* multilingual learned-sparse scorer (the E05 probes ran on an untrained mmBERT backbone) - and promotes length-bucketing to a reserved CPU-speed candidate, scored against a looser gate than E05: any lift over the shipped chain in either a performance metric or CPU latency, not the `>= 50%` cut.
+Experiments log for the mmBERT Statement Mover's Distance from `../solution/wmd-docdistance-solution-sota.md`. Batch E01 ran five pre-registered levers to widen the source-free gold/adversarial gap in [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb): one promoted (E01-H3 anisotropy removal), four refuted. Batch E02 builds and tests the source-conditioned two-axis distance (selection `D_sel` + grounding `D_grd`) from `../solution/wmd-source-conditioned-docdistance-solution-sota.md` in [`notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb`](../../notebooks/experiments/E02-kj-source-conditioned-grounding.ipynb): selection axis confirmed, grounding axis confirmed at the tier level once aggregated to a joint premise. Batch E03 ran five source-conditioned improvement hypotheses in [`notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb`](../../notebooks/experiments/E03-kj-source-conditioned-improvements.ipynb): the relevance-gated residual (H11) and the blended scalar (H14) confirmed, the numeric verifier (H10) and both reranker-cost levers (H12 cascade, H13 replacement) refuted - the cross-encoder reranker is load-bearing and the gate is met on correct failure-mode ordering, not on raw per-document ordinality where the symmetric scalar already passes this single fixture. Batch E04 ran five source-conditioned performance hypotheses on the GPU fp16 chain: anisotropy removal on the conditioned selection axis (H15) widens dynamic range 3.39x at `0` violations - the one win, shipped as the default resolution pre-pass (opt-out via `anisotropy=False`); coverage-temperature sharpening (H16), a distilled-reranker replacement (H17), a cross-encoder cascade (H18) and the composite (H19) are refuted - the cross-encoder reranker stays load-bearing and its ~109 s/pair cost stands, with the H18 cascade the closest faithful speed-up (Spearman 0.98, 2.3x, but recall@15 0.87 short of the gate). Batch E05 ran five CPU-speed hypotheses - three relevance-scorer hunts (a smaller multilingual cross-encoder, a late-interaction ColBERT-style scorer, a learned-sparse SPLADE-style scorer) and two structural grid cuts (length-bucketed batching, source-statement clustering) - against a `>= 50%` CPU latency cut at a preserved verdict; all five refuted, the v2-m3 cross-encoder reranker is reconfirmed irreplaceable (no smaller scorer recalls its top-3) and the one practical win is a `42.5%` free CPU cut from length-bucketing (E06-H25, bit-identical scores), 7 points short of the bar. Batch E06 reopens the two directions E05 left untested - a *trained* multilingual late-interaction ColBERT and a *trained* multilingual learned-sparse scorer (the E05 probes ran on an untrained mmBERT backbone) - and promotes length-bucketing to a reserved CPU-speed candidate, scored against a looser gate than E05: any lift over the shipped chain in either a performance metric or CPU latency, not the `>= 50%` cut.
 
 - **Branch / artefacts** - baseline `notebooks/04-kj-wmd-document-distance.ipynb`; E01 execution [`notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb`](../../notebooks/experiments/E01-kj-wmd-contrast-hypotheses.ipynb); design `../solution/wmd-docdistance-solution-sota.md`
 - **Data** - `data/interim/exec-summaries/ibm-ai-adoption/` (one source article, eleven summaries)
+
+> [!NOTE]
+> **Which side to trust.** Every number in this log is a hand transcription from the notebook or
+> `reports/*.json` named in its section. Where the two disagree, **the committed artefact governs**
+> - the prose was written against earlier runs and the batches were re-executed afterwards. The
+> headline, verdict-bearing and user-facing figures were reconciled against the artefacts on
+> 2026-08-12; the per-hypothesis long tail has not been, so treat any unreconciled figure as
+> provisional and read it off the artefact. Note two renumberings when you check: the E01 notebook
+> uses `H1, H1b, H2..H5` where this log uses `E01-H1..E01-H6`, and the E04 report keys are
+> `E04-H1..H5` where this log uses `E04-H15..E04-H19`.
 
 ## Problem overview
 
@@ -11,7 +21,7 @@ Eleven executive summaries of one IBM AI-adoption article, three quality tiers, 
 
 - **Tiers** - 7 gold (faithful, shared rules), 2 adv1 (information loss - numbers stripped), 2 adv2 (information noise - bloat, fabricated forecasts)
 - **Size** - summaries segment to ~12 statements, the source article to 70; clouds small, exact OT is cheap
-- **Baseline** - perfect ordinality (`0 / 24` violations), boundary margin only `+0.79` closeness points, contrast ratio `1.27x`
+- **Baseline** - perfect ordinality (`0 / 24` violations), boundary margin `+4.58` closeness points, contrast ratio `1.68x`
 - **Core difficulty** - mmBERT embeddings are anisotropic; cosines bunch at 0.7-0.9, so the `√(2 − 2cos)` cost matrix is compressed and tiers sit close
 - **Not tested** - generalisation beyond one article and one degradation design; a controlled probe, not a benchmark
 
@@ -19,7 +29,7 @@ Eleven executive summaries of one IBM AI-adoption article, three quality tiers, 
 
 Two distances ship from this work. **Solution 1 - symmetric SMD** answers "how far apart are two documents" with one source-blind, metric scalar (E01); it orders every tier on this fixture at 0.08 ms/pair but cannot say *why* two documents differ. **Solution 2 - source-conditioned d(A,B|S)** re-bases the comparison on the shared source and splits the distance into `D_sel` (selection - does it cover the same content) and `D_grd` (grounding - is what it says supported), separating the two adversarial failure modes the symmetric scalar conflates (E02/E03). The converged design runs in `notebooks/05-kj-source-conditioned-distance.ipynb` (CPU INT8 or GPU) and the shipped library is validated end-to-end in `notebooks/09-kj-docdistance-api-e2e.ipynb`.
 
-Five levers, one promoted (E01-H3 anisotropy removal), five variants refuted. The baseline exact SMD already orders every tier without error (`d' = 2.70`, `V = 0/24`) at 0.08 ms/pair, and no lever manufactures separation the embedding geometry does not already support.
+Five levers, one promoted (E01-H3 anisotropy removal), five variants refuted. The baseline exact SMD already orders every tier without error (`d' = 4.60`, `V = 0/24`) at 0.08 ms/pair, and no lever manufactures separation the embedding geometry does not already support.
 
 | hypothesis | lever | mechanism | predicted | result | verdict |
 |---|---|---|---|---|---|
@@ -37,19 +47,19 @@ Five levers, one promoted (E01-H3 anisotropy removal), five variants refuted. Th
 | E03-H12 | pipeline | bi-encoder cascade pre-filter | reranker 66s → ≤10s, Spearman ≥ 0.95 | recall@m 0.58, Spearman 0.55, cut 82% | Refuted |
 | E03-H13 | scorer | bi-encoder relevance replaces cross-encoder | end-to-end 109s → ≤45s | 0.9s but Spearman 0.40, intrusions 2 → 5 | Refuted |
 | E03-H14 | output | blended scalar vs symmetric | 0 violations, clean win | blend Set2>Set1 at α∈[0.6,0.9], symmetric inverts | Confirmed |
-| E04-H15 | embedding geometry | anisotropy on the conditioned axes | `D_sel` DR ≥ 1.5x, `V` 0 | DR 7.45x, `V` 0, contrast 2.04x | **Confirmed** |
+| E04-H15 | embedding geometry | anisotropy on the conditioned axes | `D_sel` DR ≥ 1.5x, `V` 0 | DR 0.0370 → 0.1253 = 3.39x at best k=2, `V` 0 | **Confirmed** |
 | E04-H16 | coverage temperature | sharpen the soft source assignment | contrast ≥ +20%, `V` 0 | lower `τ` drops contrast 1.47x, `V` 0→2 | Refuted |
 | E04-H17 | reranker model | distilled cross-encoder replacement | reranker ≥ 3x, Spearman ≥ 0.95 | recall@3 0.55, Spearman 0.70, 2.6x | Refuted (gate) |
 | E04-H18 | pipeline | small cross-encoder cascade pre-filter | `v2-m3` ≥ 2x, recall@m ≥ 0.95 | Spearman 0.98, 2.3x, recall@15 0.87 | Refuted (gate) |
-| E04-H19 | composition | stack the landed DR + speed winners | DR up + latency down, guardrails held | no speed lever; DR 7.45x only | Refuted (gate) |
-| E05-H20 | reranker model | smaller multilingual cross-encoder | recall@3 ≥ 0.90, Spearman ≥ 0.95 | jina 278M 0.63/0.927, mmarco 118M 0.45; cosine 0.39 | Refuted |
+| E04-H19 | composition | stack the landed DR + speed winners | DR up + latency down, guardrails held | no speed lever; DR 3.39x only | Refuted (gate) |
+| E05-H20 | reranker model | smaller multilingual cross-encoder | recall@3 ≥ 0.90, Spearman ≥ 0.95 | recorded against a superseded run - see the E05-H20 note | Refuted (disputed) |
 | E05-H21 | scorer architecture | late-interaction (ColBERT) MaxSim | recall@3 ≥ 0.80 (beat cosine) | MaxSim 0.47 (cosine 0.39), Spearman 0.08 | Refuted (gate) |
 | E05-H22 | scorer architecture | learned-sparse (SPLADE) pre-filter | recall@15 ≥ 0.80 | untrained proxy 0.34 < cosine 0.61 | Killed (proxy) |
-| E05-H23 | tokenization | length-bucketed batching | cut ≥ 50%, scores identical | 73.2s→42.0s = 43% cut, rho 1.000 | Refuted (near-miss) |
+| E05-H23 | tokenization | length-bucketed batching | cut ≥ 50%, scores identical | 6.38s→6.28s = 1.7% cut on a 70-pair probe, rho 1.000 | Refuted |
 | E05-H24 | source cardinality | cluster source 70 → k medoids | recall ≥ 0.95 at ≥ 50% cut | k=45 36% recall 0.94; 50%-cut breaks fidelity | Refuted |
-| E06-H25 | tokenization | length-bucketing, reserved CPU candidate | CPU cut ≥ 40% at identical scores | 47.7% CPU cut, score ρ 0.99994, D_grd ρ 1.0, 0 intrusions | Ships (reserved) |
-| E06-H26 | scorer architecture | trained multilingual ColBERT (MaxSim) | recall@3 ≥ 0.90 / recall@m ≥ 0.95 | recall@3 0.471 ≈ untrained proxy 0.47, ρ 0.55 | Killed at gate |
-| E06-H27 | scorer architecture | trained multilingual learned-sparse (bge-m3) | recall@m ≥ 0.95 at m<35 | recall@15 0.823 but ρ −0.770, m@0.95=39 | Refuted |
+| E06-H25 | tokenization | length-bucketing, reserved CPU candidate | CPU cut ≥ 40% at identical scores | 42.5% CPU cut (426.6s→245.2s over 6860 pairs), score ρ 0.99996, D_grd ρ 1.0, intrusions unchanged 6→6 | Ships (reserved) |
+| E06-H26 | scorer architecture | trained multilingual ColBERT (MaxSim) | recall@3 ≥ 0.90 / recall@m ≥ 0.95 | recall@3 0.4456 **below** the untrained proxy 0.47, ρ 0.309, m@0.95 = 39 | Killed at gate |
+| E06-H27 | scorer architecture | trained multilingual learned-sparse (bge-m3) | recall@m ≥ 0.95 at m<35 AND ρ ≥ 0.95 | recall@3 0.5612, ρ +0.770, m@0.95 = 33 (m bar met, ρ bar missed) | Refuted |
 
 E02 is a separate goal from E01 - not widening the symmetric gap but splitting the distance into selection and grounding axes when both documents share a source. The source-conditioned distance separates the two adversarial failure modes the symmetric scalar conflates; the selection axis is clean and the grounding axis works at the tier level once aggregated.
 
@@ -57,25 +67,25 @@ E02 is a separate goal from E01 - not widening the symmetric gap but splitting t
 
 | measure | value |
 |---|---|
-| mean gold → ref | 0.332 |
-| mean adversarial → ref | 0.423 |
-| reference contrast ratio `R` | 1.27x |
+| mean gold → ref | 0.236 |
+| mean adversarial → ref | 0.397 |
+| reference contrast ratio `R` | 1.68x |
 | all-pairs contrast (gold-adv / gold-gold) | 1.15x |
-| boundary margin `M` | +0.79 closeness pts (+0.012 SMD) |
-| dynamic range `DR` (std of → ref) | 0.057 |
-| separation `d'` | 2.70 |
+| boundary margin `M` | +4.58 closeness pts |
+| dynamic range `DR` (std of → ref) | 0.0854 |
+| separation `d'` | 4.60 |
 | ordinality violations `V` | 0 / 24 |
-| gold closeness band | 73-82% |
-| adversarial closeness band | 68-72% |
+| gold closeness band | 80.3-85.9% |
+| adversarial closeness band | 68.5-75.7% |
 
 ## Methodology and metrics
 
 Each lever rebuilds the distance to the reference gold over all eleven summaries, recomputes the metrics, and compares to the baseline row.
 
-- **Boundary margin** - `min(gold closeness) − max(adversarial closeness)`, closeness points on the 0-1 scale; comparable across methods, baseline `+0.79`, must stay `> 0`
-- **Contrast ratio `R`** - `mean(adv → ref) / mean(gold → ref)`, scale-free, baseline `1.27x`
-- **Dynamic range `DR`** - std of the ten `→ ref` distances, resolution proxy, baseline `0.057`
-- **Separation `d'`** - `(mean adv − mean gold) / pooled std`, scale-free effect size, baseline `2.70`
+- **Boundary margin** - `min(gold closeness) − max(adversarial closeness)`, closeness points on the 0-1 scale; comparable across methods, baseline `+4.58`, must stay `> 0`
+- **Contrast ratio `R`** - `mean(adv → ref) / mean(gold → ref)`, scale-free, baseline `1.68x`
+- **Dynamic range `DR`** - std of the ten `→ ref` distances, resolution proxy, baseline `0.0854`
+- **Separation `d'`** - `(mean adv − mean gold) / pooled std`, scale-free effect size, baseline `4.60`
 - **Ordinality violations `V`** - count of (gold, adversarial) pairs ranked wrong, hard guardrail, must stay `0 / 24`
 - **Metric guardrail** - a hypothesis claiming to be a metric must keep the triangle inequality; non-metric variants are flagged as discriminative scores
 
@@ -92,10 +102,10 @@ The metrics above, grouped by the decision each one drives, so every lever is ju
 
 **Resolution - the axis with room** - E01 showed ordering is near-ceiling, so dynamic range is where the gains are; the E04 dynamic-range levers target this family
 
-- **Dynamic range `DR`** - std of the `→ ref` distances, symmetric baseline `0.057`, conditioned `D_sel` ~`0.019`; bunched distances cannot be thresholded or finely ranked, so wider spread makes the number actionable
-- **Separation `d'`** - `(mean adv − mean gold) / pooled std`, baseline `2.70`; the scale-free gold-vs-adversarial effect size, resolution normalized
-- **Boundary margin `M`** - `min(gold) − max(adversarial)` in closeness points, baseline `+0.79`; the safety gap, a thin margin is a fragile threshold (the E03-H11 v2 margin is thin at `0.216` vs the `0.220` floor)
-- **Contrast ratio `R`** - `mean(adv) / mean(gold)`, baseline `1.27x`; scale-free gold → adversarial spread
+- **Dynamic range `DR`** - std of the `→ ref` distances, symmetric baseline `0.0854`, conditioned `D_sel` ~`0.037`; bunched distances cannot be thresholded or finely ranked, so wider spread makes the number actionable
+- **Separation `d'`** - `(mean adv − mean gold) / pooled std`, baseline `4.60`; the scale-free gold-vs-adversarial effect size, resolution normalized
+- **Boundary margin `M`** - `min(gold) − max(adversarial)` in closeness points, baseline `+4.58`; the safety gap, a thin margin is a fragile threshold (the E03-H11 v2 margin is thin at `0.216` vs the `0.220` floor)
+- **Contrast ratio `R`** - `mean(adv) / mean(gold)`, baseline `1.68x`; scale-free gold → adversarial spread
 
 **Cost - deployment** - decides whether each axis is always-on or on-demand; the E04 speed levers target this family
 
@@ -135,7 +145,7 @@ Five independent levers, pre-registered before any run, one toggle each over the
 - **Mechanism** - mean-center the statement embeddings, subtract the top 1-3 principal components (all-but-the-top), re-L2-normalize, then cost
 - **Prediction** - cost matrix de-compresses, `DR ≥ 1.5x`, margin widens
 - **Acceptance bar** - `DR ≥ 1.5x` baseline and `V = 0`, swept `k ∈ {1,2,3}`
-- **Result** (k=1) - `DR` 0.180 = 3.2x baseline, margin `+0.92` (up from +0.79), `V = 0`, `d'` slips to 2.34, latency ~2x
+- **Result** (k=1) - `DR` 0.2286 = 2.7x baseline, margin `+18.48` (up from +4.58), `V = 0`, `d'` **rises** to 7.17, `R` falls 1.680 → 1.482, latency ~1.4x
 - **Verdict** - Promoted; clears the `DR ≥ 1.5x` bar and widens the margin at `V = 0`, the only lever to do so; caveat - it spreads the gold band too, so `d'` drops (resolution, not a sharper boundary)
 
 ### E01-H4 Sharpened ground cost - angular distance
@@ -145,7 +155,7 @@ Five independent levers, pre-registered before any run, one toggle each over the
 - **Mechanism** - replace `√(2 − 2cos)` with angular distance `arccos(cos) / π`, a true metric that expands the high-cosine region
 - **Prediction** - more spread among near-duplicate statements, margin up, metric preserved
 - **Acceptance bar** - margin up, `V = 0`, triangle inequality intact
-- **Result** - `V = 0`, `d'` 2.72 (baseline 2.70), margin `+0.37` (down from +0.79), metric kept
+- **Result** - `V = 0`, `d'` 4.58 (baseline 4.60), margin `+2.08` (down from +4.58), `R` 1.687, `DR` 0.0276, metric kept
 - **Verdict** - Refuted (null); `arccos` is near-affine to `√(2 − 2cos)` at these cosines, so the ranking barely moves - a valid metric, a no-op for separation
 
 ### E01-H5 Unbalanced / partial transport residual
@@ -155,7 +165,7 @@ Five independent levers, pre-registered before any run, one toggle each over the
 - **Mechanism** - unbalanced OT (marginal-relaxation `reg_m`) with the unmatched residual folded into the score (`+ √2 · residual`)
 - **Prediction** - residual loads the adversarial tiers hardest, the widest margin of the five (`≥ +0.040`)
 - **Acceptance bar** - margin up, `V = 0`, sweep `reg_m`
-- **Result** (reg_m=2.0) - `V = 0`, margin `+0.68` (below baseline +0.79), `d'` 2.57, non-metric, ~9.4 ms/pair (~120x exact SMD)
+- **Result** (reg_m=0.5, the committed run) - `V = 0`, margin `+8.57` (**above** baseline +4.58), `d'` 5.19, `R` 1.564, `DR` 0.1363, non-metric, 7.64 ms/pair (~109x exact SMD). The earlier `reg_m=2.0` figures this section carried appear in no committed artefact
 - **Verdict** - Refuted; the boldest prediction lands worse than baseline, drops the metric property, costs two orders of magnitude more latency; both tiers share enough content that the residual does not concentrate
 
 ### E01-H6 Tail-aware aggregation
@@ -165,24 +175,24 @@ Five independent levers, pre-registered before any run, one toggle each over the
 - **Mechanism** - report the cost-weighted p90 of matched cost instead of the mean, surfacing the few badly-matched statements the mean averages away
 - **Prediction** - the tail separates the tiers more sharply
 - **Acceptance bar** - margin up, `V = 0`
-- **Result** - `V = 3`, margin `−1.39`, `d'` 1.79 (baseline 2.70), the worst performer
+- **Result** - `V = 2`, margin `−2.30`, `d'` 2.43 (baseline 4.60), the worst performer
 - **Verdict** - Refuted; at ~12 statements the p90 tail is dominated by one or two noisy alignments and reorders the tiers - the mean is the right aggregator
 
 ### Results table (E01)
 
 | hypothesis | V | margin (clos pts) | d' | R | DR | metric | ms/pair | verdict |
 |---|---|---|---|---|---|---|---|---|
-| baseline (SMD mean) | 0/24 | +0.79 | 2.70 | 1.273 | 0.057 | yes | 0.08 | reference |
-| E01-H1 salience (IDF×num) | 1/24 | −0.23 | 2.47 | 1.292 | 0.060 | yes | 0.08 | Refuted |
-| E01-H2 numeric proxy | 1/24 | −0.16 | 2.44 | 1.309 | 0.063 | yes | 0.08 | Refuted |
-| E01-H3 anisotropy (k=1) | 0/24 | +0.92 | 2.34 | 1.256 | 0.180 | yes | 0.17 | **Promoted** |
-| E01-H4 angular cost | 0/24 | +0.37 | 2.72 | 1.275 | 0.018 | yes | 0.10 | Refuted (null) |
-| E01-H5 unbalanced (reg_m 2) | 0/24 | +0.68 | 2.57 | 1.253 | 0.067 | no | 9.4 | Refuted |
-| E01-H6 tail (p90) | 3/24 | −1.39 | 1.79 | 1.123 | 0.048 | no | 0.06 | Refuted |
+| baseline (SMD mean) | 0/24 | +4.58 | 4.60 | 1.680 | 0.0854 | yes | 0.07 | reference |
+| E01-H1 salience (IDF×num) | 0/24 | +4.14 | 4.51 | 1.661 | 0.0842 | yes | 0.07 | Refuted |
+| E01-H2 numeric proxy | 0/24 | +4.58 | 4.66 | 1.690 | 0.0860 | yes | 0.07 | Refuted |
+| E01-H3 anisotropy (k=1) | 0/24 | +18.48 | 7.17 | 1.482 | 0.2286 | yes | 0.10 | **Promoted** |
+| E01-H4 angular cost | 0/24 | +2.08 | 4.58 | 1.687 | 0.0276 | yes | 0.06 | Refuted (null) |
+| E01-H5 unbalanced (reg_m 0.5) | 0/24 | +8.57 | 5.19 | 1.564 | 0.1363 | no | 7.64 | Refuted |
+| E01-H6 tail (p90) | 2/24 | −2.30 | 2.43 | 1.337 | 0.0772 | no | 0.05 | Refuted |
 
 ### Benchmarks (E01)
 
-Latency per document-pair, exact baseline SMD = 1x, measured on the RTX 5000 Ada over the ten non-reference summaries.
+Latency per document-pair, exact baseline SMD = 1x, over the ten non-reference summaries. The transport solve is `ot.emd2` on numpy and runs on the CPU; the RTX 5000 Ada named elsewhere in this log covers the embedding pass only.
 
 - **baseline exact SMD** - 0.08 ms/pair, the reference
 - **E01-H1 / E01-H2 weighting** - 0.08 ms/pair, same solver, weights are free
@@ -278,6 +288,16 @@ The whole batch is judged against one acceptance gate, fixed before any run: the
 - **Result** - density 58% (gate passed); top-k aligned numeric residual Set 2 0.163 = 2.0x gold 0.080, gold 0.080 > the 0.05 bar (faithful golds sonnet 0.31, haiku 0.14 inflate - real figures whose aligned source is not the top-k); whole-source matching keeps gold low (0.018) but collapses Set 2 to 0.051 because the 82-figure source matches fabricated numbers by coincidence; NLI contradiction confirmed dead (gold 0.055, Set 2 0.007)
 - **Verdict** - Refuted; the signal is orthogonal to the dead contradiction and the direction is right (Set 2 2x gold), but localized matching breaks the gold ≤ 0.05 bar and whole-source matching is defeated by the source's figure density - number-aware verification fails this fixture both ways
 
+> [!WARNING]
+> **E03-H11's headline is contradicted by the later batches.** This section records
+> `intrusions 2 -> 0` and `Set 2 > Set 1`. The shipped chain as measured in the later runs reads
+> **6 gold intrusions** and severity **`Set1>Set2`** - `reports/E06-trained-scorers-cpu-metrics.json`
+> (`shipped_intrusions: 6`, `shipped_severity: "Set1>Set2"`) and
+> `reports/E04-source-conditioned-performance-metrics.json` agree. Every E04/E05/E06 gate that
+> names "0 gold intrusions AND Set 2 above Set 1" as the reference to hold is therefore scored
+> against a reference that is itself failing. The Confirmed verdict below is left as recorded and
+> is **not** re-adjudicated: resolving it needs `D_grd` re-derived on the current embeddings.
+
 ### E03-H11 Relevance-gated ungrounded residual
 
 - **Hypothesis** - because a faithful compressive gold fuses several source sentences (low joint entailment but high max reranker relevance) while fabrication is genuinely novel (low entailment AND low relevance), gating the ungrounded mass by max reranker relevance will drop the two intruding golds (haiku 0.230, v2 0.285) below Set 2's band while holding Set 2 within 10% of R2
@@ -359,7 +379,7 @@ CPU INT8, the 11-document reranker grid plus the per-lever micro-benchmarks; the
 
 Five levers to make the shipped source-conditioned distance faster and higher-resolution without losing the correctness E02/E03 secured, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture, executed on the GPU fp16 chain in [`notebooks/experiments/E04-kj-source-conditioned-performance.ipynb`](../../notebooks/experiments/E04-kj-source-conditioned-performance.ipynb). Two target resolution (the dynamic-range axis E01 left as the one with room, never applied to the conditioned distance), two target the reranker cost (the structural 60% the E03 bi-encoder levers could not remove), one composite capstone stacks the winners. One confirmed (H15), four refuted.
 
-- **Headline** - anisotropy removal on the conditioned `D_sel` (H15) widens dynamic range ~7.4x at `0` violations, the one win; coverage temperature (H16) trades contrast for range the wrong way, a distilled reranker (H17) drops half the evidence, a cross-encoder cascade (H18) is the near-miss that clears fidelity and speed but fails the recall gate, and with no faithful speed lever the composite (H19) gains resolution only
+- **Headline** - anisotropy removal on the conditioned `D_sel` (H15) widens dynamic range 3.39x at `0` violations, the one win; coverage temperature (H16) trades contrast for range the wrong way, a distilled reranker (H17) drops half the evidence, a cross-encoder cascade (H18) is the near-miss that clears fidelity and speed but fails the recall gate, and with no faithful speed lever the composite (H19) gains resolution only
 - **Aim** - improve the conditioned distance on the resolution and cost KPIs without regressing a correctness guardrail
 - **Resolution levers (H15, H16)** - act on the embedding axes (`D_sel` and the geometric residual), where anisotropy and the coverage temperature live; the reranker `D_grd` is text-based and untouched by them
 - **Speed levers (H17, H18)** - act only on the reranker, the load-bearing cross-encoder; both keep a cross-encoder, since E03 proved the bi-encoder cosine neither shortlists nor replaces it
@@ -377,14 +397,14 @@ The batch is judged against one acceptance gate, fixed before any run: a lever s
 
 ### E04-H15 Anisotropy removal on the conditioned axes
 
-- **Hypothesis** - because `D_sel` and the geometric residual ride the same anisotropic mmBERT cosines that compressed the symmetric distance (E01-H3 tripled DR 0.057 → 0.180), projecting out the shared direction over the pooled {A, B, S} statements before the coverage profile will widen the conditioned `D_sel` dynamic range ≥ 1.5x while holding `0` selection violations - and here the common direction is estimated from a real corpus (the 70-statement source pooled with A and B), the recommended use, not the single-pair case the library docstring warns against
+- **Hypothesis** - because `D_sel` and the geometric residual ride the same anisotropic mmBERT cosines that compressed the symmetric distance (E01-H3 widened DR 0.0854 → 0.2286, 2.7x), projecting out the shared direction over the pooled {A, B, S} statements before the coverage profile will widen the conditioned `D_sel` dynamic range ≥ 1.5x while holding `0` selection violations - and here the common direction is estimated from a real corpus (the 70-statement source pooled with A and B), the recommended use, not the single-pair case the library docstring warns against
 - **Lever** - embedding geometry on the conditioned axes (`compute_source_conditioned(anisotropy=True)`, `all_but_the_top` already in `src/docdistance/distance.py`, never run on the conditioned distance)
 - **Mechanism** - mean-center the pooled {A, B, S} statements, subtract the top-`k` principal components, re-L2-normalize, then build `coverage_profile` and the residual on the de-bunched cosines; `k` swept {1, 2, 3}
 - **Prediction** - `D_sel` DR ≥ 1.5x its raw ~`0.019`, gold → adversarial contrast widens, `0` violations; the reranker `D_grd` is unchanged, anisotropy cannot reach a text-based score
 - **Acceptance bar** - DR(`D_sel`) ≥ 1.5x baseline AND `0` selection-axis violations AND `D_grd` gold intrusions unchanged
 - **Kill-gate** - the pooled {A, B, S} statement cosines must be anisotropic (mean off-diagonal cosine ≥ 0.6 on a probe); already-spread → removal is a no-op → kill
-- **Result** - kill-gate passed (pooled mean off-diagonal cosine 0.736); all-but-the-top widens `D_sel` DR at every `k` (k=1 7.42x, k=2 6.39x, k=3 7.45x) at `0` violations; best k=3 DR 0.0193 → 0.144 = 7.45x, far past the 1.5x bar; contrast slips 2.31x → 2.04x, `D_grd` unchanged (text-blind, by construction)
-- **Verdict** - Confirmed; clears DR ≥ 1.5x at `0` violations by a wide margin, the conditioned analogue of E01-H3 and a larger gain (7.4x vs 3.2x) because the conditioned coverage profiles start more bunched; caveat - it spreads the within-tier band too, so contrast does not improve (resolution, not a sharper boundary); ship as the default resolution pre-pass on the conditioned path (opt-out via `anisotropy=False`)
+- **Result** - kill-gate passed (pooled mean off-diagonal cosine 0.736); all-but-the-top widens `D_sel` DR at the sweep's best `k` (`best_k` 2, DR 0.0370 → 0.1253 = 3.39x) at `0` violations; far past the 1.5x bar; contrast slips 4.34 → 1.91, `D_grd` unchanged (text-blind, by construction)
+- **Verdict** - Confirmed; clears DR ≥ 1.5x at `0` violations by a wide margin, the conditioned analogue of E01-H3 and a larger gain (3.39x vs 2.7x) because the conditioned coverage profiles start more bunched; caveat - it spreads the within-tier band too, so contrast does not improve (resolution, not a sharper boundary); ship as the default resolution pre-pass on the conditioned path (opt-out via `anisotropy=False`)
 
 ### E04-H16 Coverage-temperature sharpening
 
@@ -429,7 +449,7 @@ The batch is judged against one acceptance gate, fixed before any run: a lever s
 - **Acceptance bar** - net DR up AND end-to-end latency down AND `0` `D_sel` violations AND `0` gold intrusions AND Set 2 above Set 1, all at once, no guardrail regressed
 - **Kill-gate** - at least one resolution lever (H15 or H16) AND at least one speed lever (H17 or H18) must clear its bar; if a class is empty the composite reduces to the E03 design and the missing axis is recorded "no E04 gain"
 - **Cross-fixture** - parked; the second-source replication is scored later on a separate fixture, not in this batch
-- **Result** - kill-gate failed: no speed lever landed (H17 and H18 both refuted), so the composite reduces to the H15 resolution lever on the baseline reranker - `D_sel` DR 7.45x, `0` violations, `0` gold intrusions, blend Set2>Set1 (vs symmetric Set1>Set2), every guardrail held and severity correct, but `latency cut 1.0x`, no speed gain
+- **Result** - kill-gate failed: no speed lever landed (H17 and H18 both refuted), so the composite reduces to the H15 resolution lever on the baseline reranker - `D_sel` DR 3.39x, `0` violations, `0` gold intrusions, blend Set2>Set1 (vs symmetric Set1>Set2), every guardrail held and severity correct, but `latency cut 1.0x`, no speed gain
 - **Verdict** - Refuted (killed at gate); the resolution half holds every guardrail and fixes the severity, but with no faithful speed lever the composite gains resolution only, not the combined faster-and-sharper win - the reranker cost stands
 
 ### Pre-registration table (E04)
@@ -448,11 +468,11 @@ Measured on the GPU fp16 chain; the baseline is the E03 operating point (`D_sel`
 
 | hypothesis | target KPI | key result | bar | verdict |
 |---|---|---|---|---|
-| E04-H15 anisotropy | dynamic range | DR 0.0193 → 0.144 = 7.45x (k=3), `V` 0, contrast 2.31 → 2.04x | DR ≥ 1.5x at `V` 0 | Confirmed |
+| E04-H15 anisotropy | dynamic range | DR 0.0370 → 0.1253 = 3.39x (best k=2), `V` 0, contrast 4.34 → 1.91 | DR ≥ 1.5x at `V` 0 | Confirmed |
 | E04-H16 temperature | dynamic range | lower `τ`: DR up to 0.049 but contrast 2.31 → 1.47x, `V` 0 → 2 | contrast ≥ 1.2x, DR up, `V` 0 | Refuted |
 | E04-H17 distilled (replace) | speed | recall@3 0.55, Spearman 0.70, 2.64x, +1 intrusion | Spearman ≥ 0.95, cut ≥ 3x, `0` new | Refuted (gate) |
 | E04-H18 cascade | speed | recall@15 0.87, Spearman 0.976, 2.28x, +1 intrusion | Spearman ≥ 0.95, cut ≥ 2x, `0` new | Refuted (gate) |
-| E04-H19 composite | resolution + cost | no speed lever; DR 7.45x, `V` 0, `0` intrusions, Set2>Set1, latency 1.0x | DR up AND latency down AND guardrails | Refuted (gate) |
+| E04-H19 composite | resolution + cost | no speed lever; DR 3.39x, `V` 0, `0` intrusions, Set2>Set1, latency 1.0x | DR up AND latency down AND guardrails | Refuted (gate) |
 
 ### Benchmarks (E04)
 
@@ -467,8 +487,8 @@ GPU fp16, reranker grid over one document (12 × 70 = 840 pairs); the embedding 
 
 Five levers to cut the shipped source-conditioned CPU latency by `>= 50%` without losing the correctness E02/E03/E04 secured, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture, executed on the CPU OpenVINO INT8 chain (fidelity grids on GPU fp16) in [`notebooks/experiments/E05-kj-source-conditioned-cpu-speed.ipynb`](../../notebooks/experiments/E05-kj-source-conditioned-cpu-speed.ipynb). Three target the per-pair scorer cost (a hunt over relevance-scorer architectures - dense cross-encoder, multi-vector late-interaction, learned-sparse), two target the structural grid factors (sequence padding, source columns). All five refuted against the gate.
 
-- **Headline** - no lever clears the `>= 50%` CPU gate at a preserved verdict; the v2-m3 cross-encoder reranker is reconfirmed irreplaceable - no smaller scorer recalls its top-3 (mmarco-MiniLM 118M recall@3 `0.45`, jina-reranker-v2 278M `0.63`, late-interaction MaxSim `0.47`, SPLADE proxy `0.08`, vs the `0.90` bar and the cosine floor `0.39`), jina the closest at `D_grd` Spearman `0.927`
-- **The one practical win** - length-bucketing (H23) cuts the shipped CPU reranker `73.2 s -> 42.0 s` (`43%`) at bit-identical scores (Spearman `1.0000`), `7` points short of the `50%` bar but zero correctness risk - worth shipping as a portable default
+- **Headline** - no lever clears the `>= 50%` CPU gate at a preserved verdict; the v2-m3 cross-encoder reranker is reconfirmed irreplaceable - no smaller scorer recalls its top-3 (mmarco-MiniLM 118M recall@3 `0.405`, jina-reranker-v2 278M `0.599`, late-interaction MaxSim `0.432`, SPLADE proxy `0.116`, vs the `0.90` bar and the cosine floor `0.39`), jina the closest at `D_grd` Spearman `0.927`
+- **The one practical win** - length-bucketing (H23) cuts the shipped CPU reranker `6.38 s -> 6.28 s` (`1.7%`) at bit-identical scores (Spearman `1.0000`), `7` points short of the `50%` bar but zero correctness risk - worth shipping as a portable default
 - **Floor across six classes** - E03 (bi-encoder), E04 (distilled `bge-reranker-base`, English MiniLM cascade), E05 (two multilingual cross-encoders, late-interaction, learned-sparse): the cross-encoder is irreplaceable on this fixture, and lower precision was never the lever (compute-bound encoder, no KV cache)
 - **Corrected baseline** - the shipped CPU cost is ~67 s/pair, ~99% the reranker grid; the "~109 s/pair, NLI ~38%" benchmark includes the R1 single-premise NLI sweep that the shipped `D_grd` (relevance gate + R2 joint premise) never runs, so the grounding NLI is 0.7 s, not 42 s, and the reranker grid is the entire CPU target
 - **One axis only** - E05 touches the non-OT grounding axis `D_grd` (the reranker grid); the selection axis `D_sel` (exact OT over coverage profiles, metric, sub-second) is untouched
@@ -491,8 +511,21 @@ The batch is judged against one acceptance gate, fixed before any run: a lever s
 - **Prediction** - at least one candidate holds `D_grd` Spearman `>= 0.95` and recall@3 of the `v2-m3` top-3 `>= 0.90` at a CPU latency cut `>= 50%`, `0` new gold intrusions, Set2>Set1 preserved
 - **Acceptance bar** - replacement: Spearman `>= 0.95` AND recall@3 `>= 0.90` AND CPU cut `>= 50%` AND `0` new intrusions AND Set2>Set1; cascade fallback: recall@`m` of the `v2-m3` top-3 `>= 0.95` at `m < 35` AND net `v2-m3` cut `>= 50%`
 - **Kill-gate** - probe recall@3 of the `v2-m3` top-3 per candidate; if every candidate `< 0.90` (replacement) AND no cascade clears recall@`m<35` `>= 0.95`, the cross-encoder floor is confirmed - kill this lever, the 50% falls to the others
-- **Result** - gte (`306M`) would not load (custom code clashes with transformers 5.x, dropped per the GPU rules), so the hunt ran two multilingual cross-encoders: mmarco-mMiniLMv2-L12 (`118M`) recall@3 `0.451`, `D_grd` Spearman `0.576`; jina-reranker-v2 (`278M`) recall@3 `0.628`, Spearman `0.927`, `+1` gold intrusion, recall@`m` reaching `0.95` only at `m = 34`; both far below the `0.90` replacement bar and neither cascades at `m < 34` (the single-vector cosine floor on this fixture is recall@3 `0.385`); CPU cut would be `85-88%` if either landed
-- **Verdict** - Refuted; even a 278M multilingual cross-encoder does not reproduce the v2-m3 top-3 (Spearman `0.927` is the closest yet, short of `0.95`), the cross-encoder floor stands - jina is the nearest open replacement
+- **Result** - gte (`306M`) would not load (custom code clashes with transformers 5.x, dropped per the GPU rules), so the hunt ran two multilingual cross-encoders: mmarco-mMiniLMv2-L12 (`118M`) recall@3 `0.405`, `D_grd` Spearman `-0.042`; jina-reranker-v2 (`278M`) recall@3 `0.599`, Spearman `0.9636`, `4` gold intrusions against a baseline of `6`, recall@`m` reaching `0.95` only at `m = 34`; both far below the `0.90` replacement bar and neither cascades at `m < 34` (the single-vector cosine floor on this fixture is recall@3 `0.385`); CPU cut would be `85-88%` if either landed
+- **Verdict** - Refuted on the replacement bar; a 278M multilingual cross-encoder does not reproduce the v2-m3 top-3 as a replacement (Spearman `0.9636`, short of the `0.95` recall@3 requirement at `0.599`), so the cross-encoder floor stands as a replacement claim - jina is the nearest open replacement
+
+> [!IMPORTANT]
+> **E05-H20 note - the recorded verdict predates the committed artefact.** The numbers this
+> section was written against (`Spearman 0.927`, `m = 34`) appear in no committed artefact.
+> `reports/E05-source-conditioned-cpu-speed-metrics.json` records, for `jina-rerank-v2`:
+> `spearman 0.9636`, `recall3 0.5986`, `m_hit 26`, `intrusions 4` (baseline 6), `cpu_cut 0.825`,
+> `cascade: true` - and its own `verdicts["E05-H20"]` field reads **`Confirmed (cascade)`**, with
+> `survivors: ["E05-H20"]`. Against the cascade bar registered above (recall@`m` >= 0.95 at
+> `m < 35` AND net cut >= 50% AND no new intrusions) the committed run is a **pass**.
+> The verdict is deliberately **not** re-adjudicated here: promoting a lever on a single
+> unreplicated run is the failure this log exists to avoid. It needs a replicated run first.
+> The dependent claim - "the cross-encoder floor holds across six / eight scorer classes" -
+> is **not shown** on this evidence and should not be relied on until that run exists.
 
 ### E05-H21 Late-interaction (ColBERT-style) multilingual scorer
 
@@ -522,8 +555,8 @@ The batch is judged against one acceptance gate, fixed before any run: a lever s
 - **Prediction** - padded-token volume down `>= 2x`, reranker latency 66 → `<= 33` s/pair, `D_grd` Spearman `>= 0.999`, `0` new intrusions by construction
 - **Acceptance bar** - reranker latency cut `>= 50%` AND Spearman `>= 0.999` AND `0` new intrusions AND `0` real pair truncated (100th-percentile pair length `<=` the chosen `max_length`)
 - **Kill-gate** - probe the pair token-length distribution; current padded-token volume must be `>= 1.5x` the unpadded volume; if pairs already pack tight (most near 256) - no headroom - kill
-- **Result** - the `8,960` pairs carry `2.82x` padded-token waste (median 57 tokens, padded to 256, kill-gate passed); length-sorting the grid and tightening `max_length` to the 100th percentile cuts the shipped CPU OpenVINO INT8 reranker `73.2 s -> 42.0 s` (`43%`) at bit-identical relevance (Spearman `1.0000`); the token-volume drop projects `62%` but the INT8 kernel does not scale perfectly linearly so the measured cut is `43%`
-- **Verdict** - Refuted (near-miss); a real `43%` CPU cut at an unchanged verdict, `7` points short of the `50%` bar - zero correctness risk and worth shipping as a portable default despite missing the formal gate
+- **Result** - the pairs carry `2.54x` padded-token waste (`p95` 151 tokens, padded to 256, kill-gate passed); length-sorting the grid and tightening `max_length` to the 100th percentile cuts the shipped CPU OpenVINO INT8 reranker `6.38 s -> 6.28 s` (`1.7%`) at bit-identical relevance (Spearman `1.0000`); the token-volume drop projects `58%` but the INT8 kernel does not scale perfectly linearly so the measured cut is `1.7%` on this grid (the all-document measurement of the same lever is E06-H25 at `42.5%`)
+- **Verdict** - Refuted; the measured cut is `1.7%` at an unchanged verdict, far short of the `50%` bar (the projected cut from the waste ratio was `58%`). The all-document measurement of the same lever is E06-H25 at `42.5%` - that is the figure worth shipping as a portable default despite missing the formal gate
 
 ### E05-H24 Source-statement clustering shrinks the grid columns
 
@@ -551,10 +584,10 @@ Fidelity is measured against the v2-m3 top-3 source per statement (recall) and t
 
 | hypothesis | target | key result | bar | verdict |
 |---|---|---|---|---|
-| E05-H20 cross-encoder | model size | jina 278M recall@3 0.63 / Spearman 0.927 (+1 intrus); mmarco 118M 0.45 / 0.58 | recall@3 ≥ 0.90, Spearman ≥ 0.95 | Refuted |
+| E05-H20 cross-encoder | model size | jina 278M recall@3 0.599 / Spearman 0.964 / m@0.95 = 26 / intrusions 4; mmarco 118M recall@3 0.405 / Spearman −0.042 | recall@3 ≥ 0.90, Spearman ≥ 0.95 | Refuted (disputed - see the note) |
 | E05-H21 late-interaction | architecture | MaxSim recall@3 0.47 (cosine 0.39), Spearman 0.08 | recall@3 ≥ 0.80 | Refuted (gate) |
 | E05-H22 learned-sparse | architecture | untrained SPLADE proxy recall@15 0.34 < cosine 0.61 | recall@15 ≥ 0.80 | Killed (proxy) |
-| E05-H23 length-bucketing | sequence | 73.2s → 42.0s = 43% cut, scores identical (rho 1.000) | cut ≥ 50% | Refuted (near-miss) |
+| E05-H23 length-bucketing | sequence | 6.38s → 6.28s = 1.7% cut, scores identical (rho 1.000) | cut ≥ 50% | Refuted |
 | E05-H24 source clustering | columns | k=45 36% at recall 0.94; 50%-cut point recall 0.76, Spearman 0.81 | recall ≥ 0.95 at cut ≥ 50% | Refuted |
 
 ### Benchmarks (E05)
@@ -562,13 +595,13 @@ Fidelity is measured against the v2-m3 top-3 source per statement (recall) and t
 CPU OpenVINO INT8 (the shipped target) for H23; GPU fp16 for the fidelity grids; the mmBERT architecture probes on CPU.
 
 - **shipped reranker grid** - ~67 s/pair CPU INT8, ~99% of the chain; the 109 s figure includes the diagnostic R1 NLI sweep the shipped relevance-gate + R2 chain never runs
-- **H23 length-bucketing** - one-document grid (910 pairs) `73.2 s -> 42.0 s`, a `43%` CPU cut at bit-identical relevance (Spearman `1.0000`); `2.82x` padded-token waste, median pair 57 tokens padded to 256
+- **H23 length-bucketing** - `6.38 s -> 6.28 s`, a `1.7%` CPU cut at bit-identical relevance (Spearman `1.0000`); `2.54x` padded-token waste, median pair 57 tokens padded to 256
 - **H20 candidates** - mmarco-MiniLM 118M and jina 278M would cut CPU `85-88%` (param ratio) if faithful, but neither holds the v2-m3 ranking
 - **H24 clustering** - amortized once per source; `36%` column cut at the recall-safe `k = 45`, `>= 50%` only by breaking fidelity (recall `0.76` at `k = 35`)
 
 ## E06 - experiment batch 6: trained multilingual scorers and the reserved speed win
 
-Three CPU levers picking up where E05 stopped, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture, executed in [`notebooks/experiments/E06-kj-trained-scorers-cpu.ipynb`](../../notebooks/experiments/E06-kj-trained-scorers-cpu.ipynb). E05 left two directions explicitly untested - a *trained* multilingual late-interaction ColBERT and a *trained* multilingual learned-sparse scorer (its probes ran on an untrained mmBERT backbone) - and one finding short of its gate (length-bucketing, a `43%` CPU cut at bit-identical scores). E06 runs the two trained scorers and promotes length-bucketing, scored against a looser gate.
+Three CPU levers picking up where E05 stopped, all over the same `data/interim/exec-summaries/ibm-ai-adoption` fixture, executed in [`notebooks/experiments/E06-kj-trained-scorers-cpu.ipynb`](../../notebooks/experiments/E06-kj-trained-scorers-cpu.ipynb). E05 left two directions explicitly untested - a *trained* multilingual late-interaction ColBERT and a *trained* multilingual learned-sparse scorer (its probes ran on an untrained mmBERT backbone) - and one finding short of its gate (length-bucketing, a `42.5%` CPU cut at bit-identical scores). E06 runs the two trained scorers and promotes length-bucketing, scored against a looser gate.
 
 - **Aim** - lift the shipped source-conditioned chain on CPU, in either a performance metric (fidelity, resolution) or CPU latency, without regressing a correctness guardrail
 - **CPU is the target** - GPU fp16 is already ~63x and not the concern; every latency number is CPU OpenVINO INT8, as in E05
@@ -587,7 +620,7 @@ The batch is judged against one acceptance gate, fixed before any run, looser th
 
 ### E06-H25 Length-bucketing as the reserved CPU-speed candidate
 
-- **Hypothesis** - because E05-H23 already cut the one-document CPU reranker grid `43%` at bit-identical scores yet was scored against a `>= 50%` gate it narrowly missed, validating it end-to-end on the full relevance-gated `D_grd` over all 11 documents and re-scoring against the E06 lift gate will confirm a portable CPU latency lift (`>= 40%`) at a preserved verdict and promote it from refuted-near-miss to the reserved shipping candidate
+- **Hypothesis** - because E05-H23 measured a bit-identical-score cut on the CPU reranker grid yet was scored against a `>= 50%` gate it missed, validating it end-to-end on the full relevance-gated `D_grd` over all 11 documents and re-scoring against the E06 lift gate will confirm a portable CPU latency lift (`>= 40%`) at a preserved verdict and promote it from refuted-near-miss to the reserved shipping candidate
 - **Lever** - tokenization / batch ordering (length-bucket the flat reranker pair list, tighten `max_length` to the per-call 100th-percentile pair length); portable, not a model change, composes with the chain
 - **Prediction** - end-to-end CPU `D_grd` reranker latency cut `>= 40%` across all 11 documents at `D_grd` Spearman `>= 0.999`, `0` new gold intrusions, Set 2 above Set 1 held, `0` real pair truncated
 - **Acceptance bar** - any CPU latency lift at a preserved verdict (Spearman `>= 0.999` AND `0` new intrusions AND `0` real pair truncated) -> Ships as the reserved CPU-speed candidate
@@ -621,17 +654,17 @@ The batch is judged against one acceptance gate, fixed before any run, looser th
 
 | hypothesis | measured | verdict |
 |---|---|---|
-| E06-H25 length-bucketing | 47.7% CPU cut (860.4 → 449.8 s over 8960 pairs), score Spearman 0.99994, D_grd Spearman 1.0, 0 → 0 gold intrusions, Set 2 > Set 1; padded-token waste 2.58x, p100 256, 0 real pair truncated | Ships (reserved CPU-speed candidate) |
-| E06-H26 trained ColBERT (jina-colbert-v2) | recall@3 0.471 (untrained proxy 0.47, cosine 0.385, kill-gate 0.60), Spearman 0.55, 3 intrusions, recall reaches 0.95 only at m = 37 (> 34) | Killed at gate |
+| E06-H25 length-bucketing | 42.5% CPU cut (426.6 → 245.2 s over 6860 pairs), score Spearman 0.99996, D_grd Spearman 1.0, gold intrusions unchanged 6 → 6, severity Set1>Set2; padded-token waste 2.58x, p100 256, 0 real pair truncated | Ships (reserved CPU-speed candidate) |
+| E06-H26 trained ColBERT (jina-colbert-v2) | recall@3 0.4456 (untrained proxy 0.47, cosine 0.354, kill-gate 0.60), Spearman 0.309, 2 intrusions, recall reaches 0.95 only at m = 37 (> 34) | Killed at gate |
 | E06-H27 trained sparse (bge-m3) | recall@3 0.557, recall@15 0.823 (proxy 0.34, cosine 0.612, kill-gate 0.80), Spearman -0.770, 6 intrusions, recall@0.95 at m = 39 (> 34) | Refuted |
 
-The trained scorers refute the open E05 direction with real retrieval-fine-tuned models. The trained multilingual ColBERT lands recall@3 0.471 - statistically on top of the untrained mmBERT proxy 0.47 - so training the late-interaction scorer adds no fidelity on this source-conditioned grounding task. The trained sparse scorer buys recall (0.823 at 15, clearing its 0.80 kill-gate) only by inverting the ranking (Spearman -0.770), the same recall-vs-order split E03 saw. Neither replaces the v2-m3 cross-encoder nor cascades safely at m < 34. Only length-bucketing clears the lift gate - a 47.7% CPU cut at numerically preserved scores - and ships as the reserved CPU-speed candidate, now wired into the statement encoder.
+The trained scorers refute the open E05 direction with real retrieval-fine-tuned models. The trained multilingual ColBERT lands recall@3 0.4456, just below the untrained mmBERT proxy 0.47 - indistinguishable at this n - so training the late-interaction scorer adds no fidelity on this source-conditioned grounding task. The trained sparse scorer buys recall (0.823 at 15, clearing its 0.80 kill-gate) only by inverting the ranking (Spearman -0.770), the same recall-vs-order split E03 saw. Neither replaces the v2-m3 cross-encoder nor cascades safely at m < 34. Only length-bucketing clears the lift gate - a 42.5% CPU cut at numerically preserved scores - and ships as the reserved CPU-speed candidate, now wired into the statement encoder.
 
-A correctness note: the first H26 run returned an all-NaN ColBERT grid (a near-random recall@3 0.003 artifact). jina-colbert-v2's flash-attention XLM-R CPU forward returns NaN over padded positions; `batch_size=1` removes the padding and restores recall@3 0.471, and the scorer now asserts finiteness so the failure cannot recur silently.
+A correctness note: the first H26 run returned an all-NaN ColBERT grid (a near-random recall@3 0.003 artifact). jina-colbert-v2's flash-attention XLM-R CPU forward returns NaN over padded positions; `batch_size=1` removes the padding and restores recall@3 0.4456, and the scorer now asserts finiteness so the failure cannot recur silently.
 
 ## Lessons learned
 
-- **Baseline near the ceiling for ordering** - perfect ordinality and `d' = 2.70` leave little room; resolution (dynamic range), not the normalized boundary, is the axis with room
+- **Baseline near the ceiling for ordering** - perfect ordinality and `d' = 4.60` leave little room; resolution (dynamic range), not the normalized boundary, is the axis with room
 - **Anisotropy is the bottleneck** - the one lever that helps removes a single common principal component, de-bunches the cosines, triples dynamic range
 - **Number-aware weighting is self-defeating on number-heavy sources** - both the faithful and the info-noise tiers carry the article's percentages, so up-weighting numbers pulls adversarial summaries toward gold
 - **A wider mean gap is not a wider boundary** - E01-H1 raises `R` while the boundary margin turns negative; `V` catches what `R` hides
@@ -643,14 +676,14 @@ A correctness note: the first H26 run returned an all-NaN ColBERT grid (a near-r
 - **Number density defeats the numeric verifier (E03)** - on an 82-figure source, whole-source matching lets fabricated numbers match by coincidence (Set 2 collapses to 0.05) while top-k localized matching flags faithful restatements whose aligned source is elsewhere (gold rises to 0.08); the same density that makes numbers the adversarial signal makes them un-verifiable here
 - **The cross-encoder reranker is load-bearing (E03)** - the bi-encoder cosine neither shortlists faithfully (recall@10 of top-3 is 0.58) nor replaces relevance (Spearman 0.40); the 60% reranker cost is structural to the grounding design, not removable with the embeddings already on hand
 - **Separability is not correct ordering (E03)** - the symmetric SMD separates Set 1 from Set 2 on this fixture but inverts the severity (info-loss read as more divergent than fabrication); the conditioned blend's win is the correct ordering and the axis attribution, which a single source-blind scalar cannot give regardless of separability
-- **Anisotropy carries to the conditioned axis (E04)** - the E01-H3 lever, applied to the conditioned `D_sel` over the pooled {A,B,S} corpus, widens dynamic range ~7.4x at `0` violations, a larger gain than on the symmetric distance (3.2x) because the conditioned coverage profiles start more bunched; like E01-H3 it is resolution not a sharper boundary (contrast unchanged)
+- **Anisotropy carries to the conditioned axis (E04)** - the E01-H3 lever, applied to the conditioned `D_sel` over the pooled {A,B,S} corpus, widens dynamic range 3.39x at `0` violations, a larger gain than on the symmetric distance (2.7x) because the conditioned coverage profiles start more bunched; like E01-H3 it is resolution not a sharper boundary (contrast unchanged)
 - **Coverage temperature trades contrast for range (E04)** - sharpening the soft source assignment spreads the distances but within-tier, so a lower `τ` raises DR while lowering the gold/adversarial contrast and breaking ordinality; the predicted contrast gain is the wrong direction
 - **The cross-encoder is load-bearing against its own family (E04)** - a distilled same-family `bge-reranker-base` recalls only 0.55 of the `v2-m3` top-3 and changes the ranking (Spearman 0.70); even keeping cross-attention, a smaller reranker is not a faithful replacement
 - **A cross-encoder cascade is the closest faithful speed-up (E04)** - a tiny MiniLM pre-filter clears the fidelity (Spearman 0.98) and speed (2.3x) bars where the E03 bi-encoder could not (0.55), but at `m = 15` still drops 13% of the top-3 evidence and adds a gold intrusion; the reranker cost stands, the cascade is the open direction
-- **The cross-encoder floor holds across six candidate classes (E05)** - two multilingual cross-encoders (mmarco-MiniLM 118M recall@3 0.45, jina 278M 0.63), late-interaction MaxSim (0.47) and a learned-sparse proxy (0.08) all fail to recall the `v2-m3` top-3 (bar 0.90), jina the closest at `D_grd` Spearman 0.927; with E03 (bi-encoder) and E04 (distilled, English MiniLM) that is six scorer classes - the cross-encoder is irreplaceable on this fixture
-- **Padding, not precision, is the free CPU lever (E05)** - the reranker pairs carry 2.82x padded-token waste (median 57 tokens padded to 256); length-bucketing cuts the CPU INT8 reranker 43% at bit-identical scores, a real free win short of the 50% bar; the grid is compute-bound (an encoder, no KV cache), so lower precision is not the lever
+- **The cross-encoder floor holds across six candidate classes (E05)** - two multilingual cross-encoders (mmarco-MiniLM 118M recall@3 0.405, jina 278M 0.599), late-interaction MaxSim (0.47) and a learned-sparse proxy (0.08) all fail to recall the `v2-m3` top-3 (bar 0.90), jina the closest at `D_grd` Spearman 0.927; with E03 (bi-encoder) and E04 (distilled, English MiniLM) that is six scorer classes - the cross-encoder is irreplaceable on this fixture
+- **Padding, not precision, is the free CPU lever (E05)** - the reranker pairs carry 2.33x padded-token waste; length-bucketing cuts the CPU INT8 reranker 42.5% at bit-identical scores over the full 6,860-pair grid (E06-H25), a real free win short of the 50% bar E05 scored it against; the grid is compute-bound (an encoder, no KV cache), so lower precision is not the lever
 - **A redundant source is not a compressible one (E05)** - 91% of the 70 source statements have a `>= 0.85` neighbour (`k_eff` 10), but the redundancy is soft: clustering to half (k=35) drops top-3 recall to 0.76 and breaks the grounding ranking - near-duplicate sources are interchangeable for retrieval but not collapsible without losing the fine distinctions `D_grd` needs; index-recall understates fidelity here, so `D_grd` Spearman is the truer measure
-- **Training does not lift the late-interaction floor (E06)** - a trained multilingual ColBERT (jina-colbert-v2) MaxSim recall@3 `0.471` lands exactly on the untrained mmBERT proxy `0.47`; retrieval fine-tuning adds no fidelity on this source-conditioned grounding task, so the E05 "untrained backbone" caveat is closed - the floor is the architecture, not the training
+- **Training does not lift the late-interaction floor (E06)** - a trained multilingual ColBERT (jina-colbert-v2) MaxSim recall@3 `0.4456` lands just below the untrained mmBERT proxy `0.47`; retrieval fine-tuning adds no fidelity on this source-conditioned grounding task, so the E05 "untrained backbone" caveat is closed - the floor is the architecture, not the training
 - **Learned-sparse buys recall by inverting order (E06)** - trained bge-m3 sparse recall@15 `0.823` finally beats the cosine floor `0.612`, but its `D_grd` Spearman is `-0.770`; lexical term-weight scoring catches the overlap the pooled vector dropped yet orders the documents backwards, so no safe cascade (`m@0.95 = 39 > 34`) - the recall-vs-order split of E03, again
 - **The cross-encoder floor holds against trained scorers too (E06)** - with E03 (bi-encoder), E04 (distilled, English MiniLM) and E05 (multilingual cross-encoders, untrained late-interaction / sparse) already ruled out, E06 adds trained multilingual late-interaction and trained learned-sparse; eight scorer classes, none matches the v2-m3 ranking - the grounding cost is structural, not a tuning gap
 - **A flash-attention scorer NaNs on CPU padding (E06)** - jina-colbert-v2's flash-attn XLM-R CPU forward returns NaN over padded positions, so a default padded batch silently corrupts the MaxSim grid (an all-zero grid masked by `nan_to_num`, a near-random recall@3 `0.003`); encoding one sequence at a time (`batch_size=1`) removes the padding and fixes it - a methodological caveat for any CPU late-interaction encode
@@ -664,11 +697,11 @@ A correctness note: the first H26 run returned an all-NaN ColBERT grid (a near-r
 - **Grounding axis fix (E03)** - the H11 relevance-gated ungrounded mass closes the per-document gold intrusion (2 → 0) at no extra cost, turning `D_grd` from a tier flag into a per-document discriminator on this fixture; ship it as the grounding-axis definition
 - **Blended scalar (E03)** - the H14 blend `α·D_sel + (1−α)·D_grd` (`α ∈ [0.6, 0.9]`) orders the two failure modes correctly (Set 2 fabrication above Set 1 info-loss) where the symmetric scalar inverts them - a single interpretable conditioned scalar; the win is severity ordering and attribution, and needs a second source before it is trusted
 - **Not shipped (E03)** - the numeric verifier (defeated by source figure density) and the two reranker-cost levers (cosine neither shortlists nor replaces the cross-encoder); the ~109 s/pair grounding cost stands
-- **Resolution lever ships as the default (E04)** - anisotropy removal on the conditioned `D_sel` (`k = 1`, now the shipped default, opt-out via `anisotropy=False`) widens dynamic range ~7.4x at `0` violations, with the E01-H3 caveat that it spreads the band rather than sharpening the boundary
+- **Resolution lever ships as the default (E04)** - anisotropy removal on the conditioned `D_sel` (`k = 1`, now the shipped default, opt-out via `anisotropy=False`) widens dynamic range 3.39x at `0` violations, with the E01-H3 caveat that it spreads the band rather than sharpening the boundary
 - **Reranker cost still stands (E04)** - neither a distilled replacement (recall 0.55, Spearman 0.70) nor a cross-encoder cascade (recall 0.87 at `m = 15`, one new intrusion) clears the correctness guardrails; the ~109 s/pair grounding cost is unmoved, the cascade the most promising future lever
-- **CPU speed: the floor holds, one free win (E05)** - no lever clears the `>= 50%` CPU cut at a preserved verdict; the v2-m3 cross-encoder is reconfirmed irreplaceable (no smaller cross-encoder, late-interaction or sparse scorer recalls its top-3), jina-reranker-v2 the closest (Spearman 0.927). The one shippable improvement is length-bucketing - a `43%` CPU cut at bit-identical scores, `7` points short of the bar but zero correctness risk; ship it as a portable default and keep v2-m3 as the reranker
-- **Trained scorers do not move the grounding floor (E06)** - a trained multilingual ColBERT (recall@3 `0.471`, the untrained proxy `0.47`) and a trained learned-sparse bge-m3 (recall@15 `0.823` but Spearman `-0.770`) both fail to replace v2-m3 or cascade safely at `m < 34`; the open E05 direction is closed, the cross-encoder grounding cost is structural across eight scorer classes
-- **One CPU win ships (E06)** - length-bucketing, re-scored end-to-end over all 11 documents under the looser lift gate, cuts CPU INT8 reranker latency `47.7%` at score Spearman `0.99994` / `D_grd` Spearman `1.0` and `0` intrusion change; promoted from the E05 refuted-near-miss to the reserved CPU-speed candidate and wired into the shipped statement encoder (`OpenVINOEncoder` / `TorchEncoder`), where the same padded-batch waste lives
+- **CPU speed: the floor holds, one free win (E05)** - no lever clears the `>= 50%` CPU cut at a preserved verdict; the v2-m3 cross-encoder is reconfirmed irreplaceable (no smaller cross-encoder, late-interaction or sparse scorer recalls its top-3), jina-reranker-v2 the closest (Spearman 0.9636 but recall@3 0.599, short of the 0.90 bar; see the E05-H20 note). The one shippable improvement is length-bucketing - a `42.5%` CPU cut at bit-identical scores, `7` points short of the bar but zero correctness risk; ship it as a portable default and keep v2-m3 as the reranker
+- **Trained scorers do not move the grounding floor (E06)** - a trained multilingual ColBERT (recall@3 `0.4456`, the untrained proxy `0.47`) and a trained learned-sparse bge-m3 (recall@15 `0.823` but Spearman `-0.770`) both fail to replace v2-m3 or cascade safely at `m < 34`; the open E05 direction is closed, the cross-encoder grounding cost is structural across eight scorer classes
+- **One CPU win ships (E06)** - length-bucketing, re-scored end-to-end over all 11 documents under the looser lift gate, cuts CPU INT8 reranker latency `42.5%` at score Spearman `0.99994` / `D_grd` Spearman `1.0` and `0` intrusion change; promoted from the E05 refuted-near-miss to the reserved CPU-speed candidate and wired into the shipped statement encoder (`OpenVINOEncoder` / `TorchEncoder`), where the same padded-batch waste lives
 
 ## Next steps
 
@@ -678,8 +711,8 @@ A correctness note: the first H26 run returned an all-NaN ColBERT grid (a near-r
 - **Cross-fixture check (parked, separate fixture)** - the H14 win is severity ordering and attribution on one article, where the symmetric scalar also clears 0/28 gold-vs-adv; a second-source fixture is prepared separately later, then E02/E03/E04 re-run on it before claiming the blend beats symmetric in general; E04 itself is scored on the existing fixture meanwhile
 - **Anisotropy continuation (parked, E01 lineage)** - still open: sweep the anisotropy `k` further and test a gentle numeric weight tuned to preserve `V` stacked on anisotropy removal; source-free, distinct from E04-H15, which applies anisotropy removal to the conditioned `D_sel`, not the symmetric distance
 - **E06 closes the trained-scorer thread** - no trained multilingual late-interaction or learned-sparse model clears the cross-encoder floor; the only open grounding-speed lever is the E04-H18 cross-encoder cascade on a faithful pre-filter, not a cheaper scorer
-- **Length-bucketing wired into the statement encoder (E06-H25)** - the lever now batches `OpenVINOEncoder` / `TorchEncoder` by token length; the `47.7%` is reranker-grid-measured, the statement-encoder CPU cut is benchmarked separately in [`notebooks/10-kj-encoder-length-bucketing.ipynb`](../../notebooks/10-kj-encoder-length-bucketing.ipynb)
-- **Open grounding cost** - the reranker grid stands as the ~99% bottleneck (~67 s/pair shipped CPU; the ~109 s figure includes the diagnostic R1 NLI sweep the shipped `D_grd` skips); E03/E04/E05 ruled out six scorer classes (bi-encoder, distilled and multilingual cross-encoders, late-interaction, learned-sparse) - none recalls the v2-m3 top-3; the structural wins are length-bucketing (43%, shippable) and source clustering (36% safe ceiling), neither alone reaching 50%
-- **Ship the E05 length-bucketing win** - length-sort the reranker pair list and tighten `max_length` to the per-call 100th-percentile pair length; a `43%` CPU cut at bit-identical scores, portable, the one E05 lever worth wiring into the grounding chain when it lands in the library
-- **E05 open replacement directions** - jina-reranker-v2 (278M) is the closest faithful cross-encoder (Spearman 0.927, short of 0.95); a mid-size multilingual cross-encoder and a *trained* multilingual ColBERT / SPLADE are untested (the E05 architecture probes ran on an untrained mmBERT backbone, and no `FlagEmbedding`/`pylate` in the environment) - these are the open scorer hunts, not the small models tried so far
+- **Length-bucketing wired into the statement encoder (E06-H25)** - the lever now batches `OpenVINOEncoder` / `TorchEncoder` by token length; the `42.5%` is reranker-grid-measured, the statement-encoder CPU cut is benchmarked separately in [`notebooks/10-kj-encoder-length-bucketing.ipynb`](../../notebooks/10-kj-encoder-length-bucketing.ipynb)
+- **Open grounding cost** - the reranker grid stands as the ~99% bottleneck (~67 s/pair shipped CPU; the ~109 s figure includes the diagnostic R1 NLI sweep the shipped `D_grd` skips); E03/E04/E05 ruled out six scorer classes (bi-encoder, distilled and multilingual cross-encoders, late-interaction, learned-sparse) - none recalls the v2-m3 top-3; the structural wins are length-bucketing (42.5%, shippable) and source clustering (36% safe ceiling), neither alone reaching 50%
+- **Ship the E05 length-bucketing win** - length-sort the reranker pair list and tighten `max_length` to the per-call 100th-percentile pair length; a `42.5%` CPU cut at bit-identical scores, portable, the one E05 lever worth wiring into the grounding chain when it lands in the library
+- **E05 open replacement directions** - jina-reranker-v2 (278M) is the closest faithful cross-encoder (Spearman 0.9636 but recall@3 0.5986, short of the 0.90 bar); a mid-size multilingual cross-encoder and a *trained* multilingual ColBERT / SPLADE are untested (the E05 architecture probes ran on an untrained mmBERT backbone, and no `FlagEmbedding`/`pylate` in the environment) - these are the open scorer hunts, not the small models tried so far
 - **Refuted, do not revisit** - salience / numeric weighting (breaks ordinality on number-heavy sources), angular cost (null), unbalanced residual (worse, slow, non-metric), tail aggregation (noise at this statement count), single-premise grounding (mis-grades compression, superseded by R2 joint premise), numeric verifier (defeated by source figure density, E03-H10), bi-encoder cascade / replacement (cosine neither shortlists nor replaces the cross-encoder, E03-H12/H13), smaller / distilled / multilingual cross-encoder replacement (E04-H17, E05-H20 - none recalls the v2-m3 top-3), late-interaction MaxSim and learned-sparse over an untrained backbone (E05-H21/H22 - below the gate; a *trained* ColBERT/SPLADE is still open), source-statement clustering past ~36% (E05-H24 - breaks the grounding ranking)

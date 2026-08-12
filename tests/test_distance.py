@@ -158,3 +158,31 @@ def test_compute_source_conditioned_with_grounding_arrays():
     assert r.grd_a == pytest.approx(d.grounding_residual(ra, enta))
     assert r.grd_b == pytest.approx(d.grounding_residual(rb, entb))
     assert r.d_grd == pytest.approx(abs(r.grd_a - r.grd_b))
+
+
+# --- calibration guards ----------------------------------------------------
+# Both cutoffs are fitted on the 11 ibm-ai-adoption fixtures and are therefore in-sample.
+# These pin them to the band the artefacts measured, so a future edit that moves a cutoff
+# out of its separating range fails here instead of silently mis-classifying documents.
+
+
+def test_default_threshold_separates_the_measured_fixture_band():
+    """Semantic cutoff must split the tiers recorded in notebook 09 cell 10 (OpenVINO INT8):
+    min gold 79.7% (haiku), max adversarial 75.0% (adv2-b)."""
+    assert d.verdict(0.797, d.DEFAULT_THRESHOLD) == "similar"  # haiku, the closest gold
+    assert (
+        d.verdict(0.750, d.DEFAULT_THRESHOLD) == "not similar"
+    )  # adv2-b, the furthest adversarial
+
+
+def test_structure_threshold_splits_the_e11_scramble_ladder():
+    """Structural cutoff must sit between rung 1 and rung 2 of the E11 scramble ladder.
+
+    Ladder closeness (reports/E11-structure-sota-decision.json .scramble.ibm.H55), lightest
+    reorder to full scramble: 0.9702 / 0.8928 / 0.8197 / 0.7609 / 0.7269 / 0.7058. The two-sided
+    assertion is the point - a cutoff below rung 2 leaves real rearrangements reading "similar",
+    and one above rung 1 flags a light reorder. A semantic cutoff fails the first: 0.725 catches
+    only the deepest rung, 0.77 catches three of six.
+    """
+    assert d.verdict(0.9702, d.STRUCTURE_THRESHOLD) == "similar"  # rung 1, a light reorder
+    assert d.verdict(0.8928, d.STRUCTURE_THRESHOLD) == "not similar"  # rung 2, a real one

@@ -23,9 +23,21 @@ from docdistance import config
 # orthogonal statement clouds -> closeness 0; cos >= 0 for these embeddings so distance lands in [0, sqrt(2)]
 SMD_MAX = float(np.sqrt(2.0))
 
-# closeness cutoff for the similar / not-similar verdict; heuristic, calibrate per corpus
-# (measured boundary on the ibm-ai-adoption fixtures: min gold 72.7% vs max adversarial 72.2%)
-DEFAULT_THRESHOLD = 0.725
+# closeness cutoff for the similar / not-similar verdict; heuristic, calibrate per corpus.
+# Band from notebook 09 cell 10 (11 ibm-ai-adoption fixtures, OpenVINO INT8): min gold 79.7%
+# (haiku) vs max adversarial 75.0% (adv2-b), so any cutoff in [0.750, 0.797] separates the
+# tiers. In-sample: the same 11 documents set it and are scored by it.
+DEFAULT_THRESHOLD = 0.77
+
+# closeness cutoff for the structural (order) verdict, calibrated on the E11 scramble ladder
+# (reports/E11-structure-sota-decision.json .scramble.ibm.H55), whose closeness rungs run
+# 0.970 / 0.893 / 0.820 / 0.761 / 0.727 / 0.706 from lightest reorder to full scramble
+# (wergeland bottoms at 0.720). The order-gap scale is compressed relative to the semantic
+# one, so a semantic cutoff fires on almost nothing here: 0.725 catches only the deepest
+# rung, 0.77 catches three of six. 0.90 puts the boundary between rung 1 (a light reorder,
+# still "similar") and rung 2 (a genuine rearrangement). It is not a max-margin point -
+# the nearest un-reordered pair in the E11 diffuse set clears it by well under a point.
+STRUCTURE_THRESHOLD = 0.90
 
 
 def cost_matrix(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
@@ -422,14 +434,15 @@ def compute_structural(
     emb_b: np.ndarray,
     *,
     anisotropy: bool = False,
-    threshold: float = DEFAULT_THRESHOLD,
+    threshold: float = STRUCTURE_THRESHOLD,
 ) -> StructuralResult:
     """Assemble a :class:`StructuralResult` from two statement-embedding arrays.
 
     The structural (order) axis: content is reported via ``smd``, structure via the E11-H55 OPW
     ``order_gap``, and ``structure_closeness = closeness(order_gap)`` is the SMD-scale readout
-    (1 = same order). ``anisotropy`` is off by default for the same reason as
-    :func:`compute_distance`.
+    (1 = same order). The verdict uses :data:`STRUCTURE_THRESHOLD`, not the semantic cutoff -
+    the order-gap scale is compressed, so a semantic threshold never fires here.
+    ``anisotropy`` is off by default for the same reason as :func:`compute_distance`.
     """
     n_a, n_b = len(emb_a), len(emb_b)
     if anisotropy:

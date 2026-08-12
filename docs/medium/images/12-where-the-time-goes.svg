@@ -219,7 +219,7 @@
       <text x="1265" y="500" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1" class="accent-cy">WALL CLOCK</text>
       <text x="1265" y="545" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" class="fg-1">≈ 4.5 h</text>
       <text x="1265" y="575" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" font-weight="700" class="fg-2">on one 32-core machine</text>
-      <text x="1265" y="600" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">139 core-hours spread over 32 cores</text>
+      <text x="1265" y="600" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">154 core-hours spread over 32 cores</text>
       <text x="1265" y="620" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="12" class="fg-3">an overnight batch, not a research project</text>
     </g>
 

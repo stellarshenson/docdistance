@@ -2,9 +2,11 @@
   10-what-the-numbers-say.svg - results panel for the docdistance article
   Shows: title band, then three labelled bands - MEANING (three cyan stat tiles),
          ARRANGEMENT (three cyan stat tiles), THE COST (one full-width orange tile).
+         The cost band reports that the expected trade did not appear.
          Every metric is named in plain language, no optimal-transport vocabulary.
-  Intent: report the wins and the single regression side by side, at equal weight,
-          so the figure cannot be read as a wins-only summary.
+  Intent: report the wins and the expected regression side by side, at equal weight. The
+          regression did not materialise - the separation ratio rose - and the figure says so
+          rather than keeping a caveat the measurement does not support.
   Theme: dark plate #0a1a24; cyan #0096d1 / light cyan #5cc8e0 / dim cyan #1a5a6e
          for improved results; orange #da8230 / light orange #d4a04a for the cost.
 -->
@@ -195,12 +197,12 @@
     </g>
     <g id="tile-2-text">
       <text class="fg-3" x="640" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="0.8">spread of the scale</text>
-      <text class="accent-1-bright" x="640" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700">0.057 → 0.180</text>
-      <text class="fg-2" x="640" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14">3.2× wider — room to place a threshold</text>
+      <text class="accent-1-bright" x="640" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700">0.085 → 0.229</text>
+      <text class="fg-2" x="640" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14">2.7× wider — room to place a threshold</text>
     </g>
     <g id="tile-3-text">
       <text class="fg-3" x="1220" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="0.8">safety gap between good and bad summaries</text>
-      <text class="accent-1-bright" x="1220" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700">+0.92</text>
+      <text class="accent-1-bright" x="1220" y="200" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="700">+4.7</text>
       <text class="fg-2" x="1220" y="240" font-family="Segoe UI, Arial, sans-serif" font-size="14">good summaries sit this far clear of bad ones</text>
     </g>
 
@@ -231,19 +233,19 @@
     </g>
 
     <g id="cost-seg-1">
-      <text class="accent-2-bright" x="60" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="0.8">↓ the one number that got worse</text>
-      <text class="accent-2-bright" x="60" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="700">2.70 → 2.34</text>
-      <text class="fg-2" x="60" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">separation between the good and bad groups</text>
+      <text class="accent-2-bright" x="60" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="0.8">↑ the number I expected to get worse</text>
+      <text class="accent-2-bright" x="60" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="700">4.60 → 7.17</text>
+      <text class="fg-2" x="60" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">separation between the good and bad groups — it rose</text>
     </g>
     <g id="cost-seg-2">
       <text class="fg-3" x="640" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="0.8">↑ what it bought</text>
-      <text class="fg-1" x="640" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="700">0.057 → 0.180</text>
-      <text class="fg-2" x="640" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">the 3.2× wider scale in the tile above</text>
+      <text class="fg-1" x="640" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="40" font-weight="700">0.085 → 0.229</text>
+      <text class="fg-2" x="640" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">the 2.7× wider scale in the tile above</text>
     </g>
     <g id="cost-seg-3">
       <text class="fg-3" x="1220" y="555" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="0.8">the verdict</text>
-      <text class="fg-1" x="1220" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="28">an accepted cost</text>
-      <text class="fg-2" x="1220" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">the spread gain was the better trade</text>
+      <text class="fg-1" x="1220" y="610" font-family="Segoe UI, Arial, sans-serif" font-size="28">no trade appeared</text>
+      <text class="fg-2" x="1220" y="650" font-family="Segoe UI, Arial, sans-serif" font-size="14">the real cost is that it needs a batch, not a pair</text>
     </g>
   </g>
 

@@ -40,7 +40,7 @@ Optional interpretable output that separates content drift from rearrangement be
   - log: 2026-07-01 asserted in `tests/test_structure.py` (v1.1.2)
 - [x] **Content-edit order isolation** - changing one statement's content leaves every `displacement` ~ 0, so a pure reword does not perturb the order projection (the content-localization signal lives in the [Transport Map](acc-crit-transport-map.md))
   - log: 2026-07-01 asserted in `tests/test_structure.py` (v1.1.2)
-- [x] **API method** - `DocDistance.structural_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` returns `(StructuralResult, dict)` sharing one encode pass
+- [x] **API method** - `DocDistance.structural_distance_with_details(a, b, *, anisotropy=False, threshold=0.90)` returns `(StructuralResult, dict)` sharing one encode pass
   - log: 2026-07-01 implemented (v1.1.2)
 - [x] **CLI flag** - `distance-structural --details-json FILE` writes the structural details JSON to `FILE`
   - log: 2026-07-01 implemented (v1.1.2)
@@ -64,6 +64,6 @@ Optional interpretable output that separates content drift from rearrangement be
 ## API
 
 - CLI `docdistance distance-structural A B --details-json FILE` -> writes `FILE`, still prints the result; stderr note `details written: FILE (order_gap=.., structure_closeness=..)`
-- Python `DocDistance.structural_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` -> `(StructuralResult, details)`
+- Python `DocDistance.structural_distance_with_details(a, b, *, anisotropy=False, threshold=0.90)` -> `(StructuralResult, details)`
 - Python low-level: `opw_plan(X, Y)` -> `ndarray [n_X, n_Y]`; `opw_cost(X, Y)` -> `float`; `opw_gap(X, Y)` -> `float`; `order_alignment(X, Y)` -> `ndarray[int]`; `structure_displacement(X, Y)` -> `ndarray[int]`
 - Details shape: `{smd: float, order_gap: float, structure_closeness: float, anisotropy: bool, n_statements: {a, b}, statements: [{index, text, target_index, target_text, displacement, moved}]}`

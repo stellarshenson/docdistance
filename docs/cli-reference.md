@@ -5,7 +5,7 @@
 machine-readable, `--result-only` is the bare scalar. Logs go to stderr, so stdout carries only the result.
 
 - **Init** - `pip install docdistance`, then `docdistance init <mode>` once to provision that mode's models
-- **Arguments** - `A`, `B`, `S` are each a file path or raw text (auto-detected); a leading markdown `# ` title line in a file is stripped so the title is not a statement
+- **Arguments** - `A`, `B`, `S` are each a file path or raw text (auto-detected); every markdown `# ` title line in a file is stripped so the title is not a statement
 - **Global** - `--version` prints the version; `--help` (and `<command> --help`) prints usage; exit code 1 on a missing model, an un-init'd mode, or an unsecured `--gpu`
 - **Backends** - `--backend openvino` (CPU INT8, default) or `torch`; `--gpu` forces torch on CUDA and errors if GPU support is not installed
 - **Offline** - after `docdistance init <mode>`, every distance call for that mode runs fully offline from the local cache
@@ -25,7 +25,7 @@ Provision a mode's models from local / S3 / HuggingFace and write `docdistance.j
 | `--home DIR` | `$DOCDISTANCE_HOME` or cwd | where to write `docdistance.json` + the model mirror |
 | `--verbose`, `-v` | off | DEBUG logging to stderr |
 
-- **Resolution** - per model: an `s3://` prefix, then a local dir, then the HuggingFace Hub (the always-available fallback); the source served is recorded per model in `docdistance.json`
+- **Resolution** - per model: the source named by `--source` (an `s3://` prefix or a local dir, not both), then the HuggingFace Hub (the always-available fallback); the source served is recorded per model in `docdistance.json`
 - **Readiness** - a distance run whose mode is not init'd exits 1 with `mode '<mode>' is not initialized - run:  docdistance init <mode>`
 
 ## distance-semantic
@@ -37,7 +37,7 @@ Symmetric Statement Mover's Distance between two documents - the exact content m
 | `--backend openvino\|torch` | `openvino` | statement encoder backend |
 | `--gpu` | off | force the torch backend on CUDA; errors if GPU support is not secured |
 | `--anisotropy / --no-anisotropy` | `--no-anisotropy` | all-but-the-top anisotropy removal; needs a corpus, off for a bare pair |
-| `--threshold FLOAT` | `0.725` | closeness cutoff for the similar / not-similar verdict |
+| `--threshold FLOAT` | `0.77` | closeness cutoff for the similar / not-similar verdict |
 | `--details-json FILE` | off | also write the content alignment (which B statements each A statement's mass flows to, with weights, match cost, and a per-flow changed flag) to `FILE` |
 | `--json` | off | machine-readable JSON to stdout |
 | `--result-only` | off | bare SMD scalar to stdout, no clutter |
@@ -58,16 +58,16 @@ Symmetric statement-order distance between two documents - the E11-H55 OPW order
 | `--backend openvino\|torch` | `openvino` | statement encoder backend |
 | `--gpu` | off | force the torch backend on CUDA; errors if GPU support is not secured |
 | `--anisotropy / --no-anisotropy` | `--no-anisotropy` | all-but-the-top anisotropy removal; needs a corpus, off for a bare pair |
-| `--threshold FLOAT` | `0.725` | closeness cutoff for the similar / not-similar verdict |
+| `--threshold FLOAT` | `0.90` | structure_closeness cutoff for the similar / not-similar verdict |
 | `--details-json FILE` | off | also write the order details (per statement: its aligned target and rank displacement) to `FILE` |
 | `--json` | off | machine-readable JSON to stdout |
-| `--result-only` | off | bare order_gap scalar to stdout, no clutter |
+| `--result-only` | off | bare structure_closeness scalar to stdout, no clutter |
 | `--verbose`, `-v` | off | DEBUG logging to stderr |
 
 - **Default output** - a rich panel: order_gap, structure_closeness, verdict + threshold, statement counts, anisotropy on/off
 - **`--json`** - the result dict: `smd`, `order_gap`, `structure_closeness`, `threshold`, `verdict`, `anisotropy`, `n_statements_a`, `n_statements_b`
 - **`--details-json`** - writes a separate JSON file (the result still prints as usual): `{smd, order_gap, structure_closeness, anisotropy, n_statements, statements}`, where `order_gap` is the E11-H55 OPW structural distance (translation-invariant, `>= 0`) and `structure_closeness` = `1 - order_gap / sqrt(2)` the shipped SOTA 0..1 structure readout on the SMD-closeness scale (1 = same order); `statements` is a per-A-statement list of `{index, text, target_index, target_text, displacement, moved}` - `displacement` the rank shift of that statement (0 = in place), `moved` = `displacement != 0`; this pins down precisely what MOVED in order, statement by statement
-- **`--result-only`** - the bare order_gap float, for scripts
+- **`--result-only`** - the bare structure_closeness float, for scripts
 - **Reading it** - structure_closeness `1.0` same order, `0.0` fully reordered; the order details name *which* statement of B each statement of A maps to and how far it MOVED (`displacement`)
 
 ## distance-wrt-source
@@ -115,7 +115,7 @@ docdistance distance-semantic a.md b.md --gpu                     # torch on CUD
 docdistance distance-structural report_v1.md report_v2.md
 docdistance distance-structural a.md b.md --json                  # machine-readable
 docdistance distance-structural a.md b.md --details-json order.json   # + per-statement order displacement
-docdistance distance-structural a.md b.md --result-only           # bare order_gap scalar
+docdistance distance-structural a.md b.md --result-only           # bare structure_closeness scalar
 
 # method 3 - source-conditioned d(A,B|S)
 docdistance distance-wrt-source sum_a.md sum_b.md --source article.md

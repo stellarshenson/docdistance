@@ -7,19 +7,19 @@ package; the SOTA docs carry the mechanics.
 ## Library - high-level
 
 The entry points most callers use. Inputs are raw text or a path to a text/markdown file (auto-detected);
-a leading markdown `# ` title line in a file is stripped so the title is not counted as a statement.
+every markdown `# ` title line in a file is stripped so the title is not counted as a statement.
 
 | Symbol | Signature | Returns | Notes |
 | --- | --- | --- | --- |
 | `init` | `(mode="wmd", *, source=None, backend="openvino", aws_profile=None, aws_endpoint_url=None, aws_region=None, home=None)` | `dict` | provision a mode's models from local / S3 / HuggingFace; writes `docdistance.json`, returns a per-model source summary |
-| `semantic_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.725, offline=True, device=None)` | `DistanceResult` | symmetric SMD; loads models then scores in one call |
-| `structural_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.725, offline=True, device=None)` | `StructuralResult` | symmetric OPW order-gap; loads models then scores in one call |
+| `semantic_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.77, offline=True, device=None)` | `DistanceResult` | symmetric SMD; loads models then scores in one call |
+| `structural_distance` | `(a, b, *, backend="openvino", anisotropy=False, threshold=0.90, offline=True, device=None)` | `StructuralResult` | symmetric OPW order-gap; loads models then scores in one call |
 | `source_conditioned_distance` | `(a, b, source, *, backend="openvino", anisotropy=True, offline=True, device=None)` | `SourceConditionedResult` | `d(A, B | S)`; selection axis + reranker x NLI grounding residuals |
 | `DocDistance` | `DocDistance(backend="openvino", offline=True, device=None)` | pipeline | construct once, models load lazily on first use, then score many pairs |
-| `DocDistance.semantic_distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `DistanceResult` | symmetric distance on the loaded models |
-| `DocDistance.semantic_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(DistanceResult, dict)` | the distance plus the content alignment details, one encode pass |
-| `DocDistance.structural_distance` | `(a, b, *, anisotropy=False, threshold=0.725)` | `StructuralResult` | structural OPW order-gap distance on the loaded models |
-| `DocDistance.structural_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.725)` | `(StructuralResult, dict)` | the structural distance plus the order details, one encode pass |
+| `DocDistance.semantic_distance` | `(a, b, *, anisotropy=False, threshold=0.77)` | `DistanceResult` | symmetric distance on the loaded models |
+| `DocDistance.semantic_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.77)` | `(DistanceResult, dict)` | the distance plus the content alignment details, one encode pass |
+| `DocDistance.structural_distance` | `(a, b, *, anisotropy=False, threshold=0.90)` | `StructuralResult` | structural OPW order-gap distance on the loaded models |
+| `DocDistance.structural_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.90)` | `(StructuralResult, dict)` | the structural distance plus the order details, one encode pass |
 | `DocDistance.distance_wrt_source` | `(a, b, source, *, anisotropy=True)` | `SourceConditionedResult` | source-conditioned distance, runs the reranker x NLI grounding |
 | `DocDistance.distance_wrt_source_with_map` | `(a, b, source, *, anisotropy=True, top_k=3)` | `(SourceConditionedResult, dict)` | the conditioned result plus the statement → source map, one encode pass |
 | `DocDistance.embed` | `(doc)` | `ndarray [n, dim]` | segment then embed into L2-normalized statement vectors |
@@ -28,7 +28,8 @@ a leading markdown `# ` title line in a file is stripped so the title is not cou
 - **backend** - `"openvino"` (CPU INT8, default) or `"torch"`; pass `device="cuda"` with `backend="torch"` for GPU
 - **offline** - `True` loads from the local cache only; run `docdistance.init(mode)` once to populate it
 - **anisotropy** - all-but-the-top postprocessing; off for a bare pair, on by default for the conditioned axis (E04-H15)
-- **threshold** - closeness cutoff for the similar / not-similar verdict, default `0.725`
+- **threshold** - closeness cutoff for the similar / not-similar verdict; default `0.77` on the semantic
+  entry points, `0.90` on the structural ones (the order-gap scale is compressed, so the semantic cutoff never fires there)
 
 ## Library - low-level
 
@@ -47,7 +48,7 @@ loading. Use these when you hold the embeddings already.
 | `opw_gap` | `(X, Y)` | `float` | H55 order-gap: structural distance `max(0, opw_cost − smd)`, translation-invariant, `≥ 0` (a score, not a metric) |
 | `order_alignment` | `(X, Y)` | `ndarray [n_X]` | per `X` statement, its aligned `Y` index - crisp exact-EMD argmax with a diagonal tie-break |
 | `structure_displacement` | `(X, Y)` | `ndarray [n_X]` | rank shift from the crisp alignment; `0` = in place, nonzero = moved |
-| `compute_distance` | `(X, Y, *, anisotropy=False, threshold=0.725)` | `DistanceResult` | assemble the full symmetric result from embeddings |
+| `compute_distance` | `(X, Y, *, anisotropy=False, threshold=0.77)` | `DistanceResult` | assemble the full symmetric result from embeddings |
 | `compute_source_conditioned` | `(X, Y, S, *, anisotropy=True, reranker_a=None, reranker_b=None, entail_a=None, entail_b=None)` | `SourceConditionedResult` | assemble the conditioned result; pass the grounding arrays for `grd_a`/`grd_b`/`d_grd` |
 | `grounding_residual` | `(reranker, entail)` | `float` | E03-H11 relevance-gated ungrounded mass `mean_i (1 − entail_i)·(1 − max_j R[i,j])` |
 | `grounding_blend` | `(d_sel, d_grd, *, alpha=0.75)` | `float` | E03-H14 two-axis blend `alpha·d_sel + (1 − alpha)·d_grd` |
@@ -106,7 +107,7 @@ the bare scalar. Logs go to stderr, so stdout carries only the result.
 | `init [MODE]` | provision a mode's models from local / S3 / HuggingFace (the only command that fetches); writes `docdistance.json` | `--source`, `--backend`, `--aws-profile`, `--aws-endpoint-url`, `--region`, `--home` |
 | `distance-semantic A B` | Statement Mover's Distance content closeness between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--details-json`, `--json`, `--result-only` |
 | `distance-structural A B` | structural OPW order-gap distance between two documents | `--backend`, `--gpu`, `--anisotropy`, `--threshold`, `--details-json`, `--json`, `--result-only` |
-| `distance-wrt-source A B --source S` | source-conditioned `d(A, B | S)` | `--source/-s` (required), `--backend`, `--gpu`, `--source-map-json`, `--json`, `--result-only` |
+| `distance-wrt-source A B --source S` | source-conditioned `d(A, B | S)` | `--source/-s` (required), `--backend`, `--gpu`, `--anisotropy`, `--source-map-json`, `--json`, `--result-only` |
 
 ## Examples
 

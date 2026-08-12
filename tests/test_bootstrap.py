@@ -67,7 +67,9 @@ def test_init_local_source_records_local_and_never_touches_hf(monkeypatch, tmp_p
 
 def test_init_hf_source_records_hf(monkeypatch, tmp_path):
     seen = []
-    monkeypatch.setattr(bootstrap, "_warm_hf", lambda key, backend: seen.append(key) or f"/cache/{key}")
+    monkeypatch.setattr(
+        bootstrap, "_warm_hf", lambda key, backend: seen.append(key) or f"/cache/{key}"
+    )
 
     summary = bootstrap.init("wmd", home=str(tmp_path / "home"))  # no source -> HuggingFace
 

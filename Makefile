@@ -1,4 +1,4 @@
-.PHONY: clean data lint format requirements upgrade build sync_data_up sync_data_down sync_models_up sync_models_down test docs docs_serve register_environment preflight
+.PHONY: clean lint format requirements upgrade build sync_models_up sync_models_down test register_environment preflight
 
 #################################################################################
 # GLOBALS                                                                       #
@@ -8,7 +8,12 @@ PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = docdistance
 MODULE_NAME = docdistance
 PYTHON_VERSION = 3.13
-PYTHON_INTERPRETER = python
+# python3 first: Ubuntu/Debian ship no bare `python` unless python-is-python3 is installed,
+# which made the default goal and preflight fail with a misleading "install Python" message.
+# Resolve to a bare NAME, never a path: an empty value would make preflight's `command -v`
+# run with no operand, which exits 0 and silently disables the guard, and an absolute path
+# word-splits unquoted on a prefix containing a space.
+PYTHON_INTERPRETER ?= $(shell command -v python3 >/dev/null 2>&1 && echo python3 || echo python)
 RUFF_VERSION = 0.16.2
 
 # Set SKIP_VERSION_INCREMENT=1 to skip auto-bumping the patch version in install/build
@@ -55,10 +60,10 @@ upgrade:
 clean:
 	@echo "$(MSG_PREFIX) removing cache and compiled files"
 	@find . -type f -name "*.py[co]" -delete
-	@find . -type d -name '__pycache__' -exec rm -r {} +
-	@find . -type d -name '*.egg-info' -exec rm -r {} +
-	@find . -type d -name '.ipynb_checkpoints' -exec rm -r {} +
-	@find . -type d -name '.pytest_cache' -exec rm -r {} +
+	@find . -type d -name '__pycache__' -prune -exec rm -r {} +
+	@find . -type d -name '*.egg-info' -prune -exec rm -r {} +
+	@find . -type d -name '.ipynb_checkpoints' -prune -exec rm -r {} +
+	@find . -type d -name '.pytest_cache' -prune -exec rm -r {} +
 	@echo "$(MSG_PREFIX) removing dist and build directory"
 	@rm -rf build dist
 
@@ -198,14 +203,6 @@ increment_version_number:
 		echo "$(MSG_PREFIX) incrementing build number"; \
 		$(PROJECT_DIR)/.venv/bin/python -c "import re; c=open('pyproject.toml').read(); m=re.search(r'version = \"(\\d+)\\.(\\d+)\\.(\\d+)\"',c); v=f'{m[1]}.{m[2]}.{int(m[3])+1}'; c=re.sub(r'version = \"\\d+\\.\\d+\\.\\d+\"',f'version = \"{v}\"',c,count=1); open('pyproject.toml','w').write(c); print('New version:',v)"; \
 	fi
-
-#################################################################################
-# PROJECT RULES                                                                 #
-#################################################################################
-## Make dataset
-data: requirements
-	@echo "$(MSG_PREFIX) generating dataset"
-	$(PYTHON_INTERPRETER) src/docdistance/dataset.py
 
 #################################################################################
 # S3 MODEL MIRROR                                                               #

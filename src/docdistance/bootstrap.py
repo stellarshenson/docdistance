@@ -68,7 +68,7 @@ def _fetch_to(uri: str, dest: str | Path, *, client=None) -> bool:
         try:
             body = client.get_object(Bucket=bucket, Key=key)["Body"].read()
         except Exception as exc:  # noqa: BLE001 - missing key / auth / endpoint
-            logger.debug("S3 fetch miss {}: {}", uri, exc)
+            logger.warning("S3 fetch miss {}: {}", uri, exc)
             return False
         dest.write_bytes(body)
         return True
@@ -80,23 +80,32 @@ def _fetch_to(uri: str, dest: str | Path, *, client=None) -> bool:
 
 
 def _s3_prefix_to_dir(client, s3_base: str, name: str, dest: Path) -> bool:
-    """Mirror every object under ``<s3_base>/<name>/`` into ``dest``. True if any object copied."""
+    """Mirror every object under ``<s3_base>/<name>/`` into ``dest``. True only if all copied.
+
+    A non-empty listing is not proof of a usable mirror: the bucket policy may allow
+    ``ListBucket`` and deny ``GetObject``, or a token may expire between the two calls.
+    Reporting success on a partial copy marks the mode ready over a half-written model
+    dir, so any per-object miss fails the whole prefix and lets the caller fall through.
+    """
     bucket, key = _split_s3(s3_base.rstrip("/") + "/" + name + "/")
     try:
         resp = client.list_objects_v2(Bucket=bucket, Prefix=key)
     except Exception as exc:  # noqa: BLE001
-        logger.debug("S3 list miss {}: {}", key, exc)
+        logger.warning("S3 list miss {}: {}", key, exc)
         return False
     objs = resp.get("Contents") or []
     if not objs:
         return False
     dest.mkdir(parents=True, exist_ok=True)
+    ok = True
     for o in objs:
         rel = o["Key"][len(key) :].lstrip("/")
         if not rel:
             continue
-        _fetch_to(f"s3://{bucket}/{o['Key']}", dest / rel, client=client)
-    return True
+        ok = _fetch_to(f"s3://{bucket}/{o['Key']}", dest / rel, client=client) and ok
+    if not ok:
+        logger.warning("S3 mirror of {} incomplete - treating the prefix as a miss", key)
+    return ok
 
 
 # --- per-model resolution --------------------------------------------------
@@ -123,7 +132,11 @@ def _warm_hf(key: str, backend: str) -> str | None:
 def _mirror_one(
     key, s3_base, local_base, force_hf, models_dir: Path, client, backend
 ) -> tuple[str, str | None]:
-    """Resolve one model: S3 prefix, then local dir, then HF. Returns ``(source_used, local_dir)``."""
+    """Resolve one model: the source named by ``--source`` (S3 prefix XOR local dir), then HF.
+
+    Returns ``(source_used, local_dir)``. ``init`` sets ``s3_base`` or ``local_base``, never both,
+    so this is a 2-way chain, not the 3-way one older docs described.
+    """
     name = config.MODEL_REGISTRY[key]["subdir"]
     dest = models_dir / name
     if not force_hf and s3_base and _s3_prefix_to_dir(client, s3_base, name, dest):
@@ -212,7 +225,7 @@ def init(
         "home": str(home_path),
         "models_dir": str(models_dir),
         "sources": sources,
-        "config_file": str(cfg) if cfg else None,
+        "config_file": str(cfg),
     }
     logger.success("docdistance init complete ({}): {}", mode, sources)
     return summary

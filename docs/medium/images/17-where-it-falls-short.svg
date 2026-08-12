@@ -1,8 +1,8 @@
 <!--
   17-where-it-falls-short.svg - the limitations card grid for the docdistance article
   Shows: header (title + standing warning), then three cards in a single row, each one limitation:
-    1 thin margin (+0.92 pts), 2 thresholds do not transfer (per corpus), 3 a score not a distance
-    (4.5% triangle-rule breaks). Footer restates that these are constraints by construction.
+    1 thin margin (+4.7 pts), 2 thresholds do not transfer (per corpus), 3 a score not a distance
+    (15% triangle-rule breaks). Footer restates that these are constraints by construction.
   Intent: the honesty figure. It must read as prominently as the results figure and must not
     read as a win, so the whole canvas is orange / light orange with no reassurance colour.
   Theme: docdistance dark deck. Orange #da8230, light orange #d4a04a on #0a1a24 in dark mode;
@@ -137,9 +137,9 @@
 
     <g id="text-1">
       <text class="accent-1" x="70" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.5">LIMITATION 1</text>
-      <text class="fg-1" x="505" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">+0.92 pts</text>
+      <text class="fg-1" x="505" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">+4.7 pts</text>
       <text class="fg-1" x="70" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">The margin is thin</text>
-      <text class="fg-3" x="70" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">Good summaries sit 0.92 points away from bad ones,</text>
+      <text class="fg-3" x="70" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">Good summaries sit 4.7 points away from bad ones,</text>
       <text class="fg-3" x="70" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">on documents built to be hard to separate. That gap</text>
       <text class="fg-3" x="70" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16">is the whole safety margin; noise flips the verdict.</text>
     </g>
@@ -155,10 +155,10 @@
 
     <g id="text-3">
       <text class="accent-1" x="1230" y="145" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="1.5">LIMITATION 3</text>
-      <text class="fg-1" x="1665" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">4.5%</text>
+      <text class="fg-1" x="1665" y="145" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="700">15%</text>
       <text class="fg-1" x="1230" y="195" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700">A score, not a distance</text>
       <text class="fg-3" x="1230" y="250" font-family="Segoe UI, Arial, sans-serif" font-size="16">The arrangement number breaks the triangle rule</text>
-      <text class="fg-3" x="1230" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">4.5% of the time: A→C can come out larger than</text>
+      <text class="fg-3" x="1230" y="275" font-family="Segoe UI, Arial, sans-serif" font-size="16">15% of the time: A→C can come out larger than</text>
       <text class="fg-3" x="1230" y="300" font-family="Segoe UI, Arial, sans-serif" font-size="16">A→B plus B→C. So never chain it across comparisons.</text>
     </g>
 

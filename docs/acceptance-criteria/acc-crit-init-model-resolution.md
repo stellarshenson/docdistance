@@ -16,7 +16,7 @@ Mode-aware `init` (CLI command + `docdistance.init` API) provisions a distance m
   - log: 2026-06-22 tested `test_init_hf_source_records_hf` (v1.1.0)
 - [x] **S3 resolution** - `--source s3://bucket/prefix` mirrors each model dir via botocore directly (path-style, optional `--aws-profile` / `--aws-endpoint-url`; Lambda omits profile for the execution-role chain)
   - log: 2026-06-22 implemented; opt-in round-trip test gated on `DOCDISTANCE_S3_TEST` (v1.1.0)
-- [x] **3-way order** - per model: S3 prefix, then local dir, then HuggingFace fallback (mirrors groundrails `_mirror_one`)
+- [x] **2-way order** - per model: the single source named by `--source` (S3 prefix XOR local dir), then the HuggingFace fallback (`_mirror_one`)
   - log: 2026-06-22 implemented (v1.1.0)
 - [x] **docdistance.json** - init writes the readiness file to `$DOCDISTANCE_HOME/docdistance.json`, else `./docdistance.json`; records modes, model paths, per-model source
   - log: 2026-06-22 tested `test_save_then_load_in_a_fresh_process_marks_ready` (v1.1.0)

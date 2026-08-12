@@ -113,15 +113,16 @@ def config_file_path(explicit: str | None = None) -> Path:
     return default_home() / CONFIG_FILENAME
 
 
-def save_config_file(explicit: str | None = None) -> Path | None:
-    """Persist the active runtime config to ``docdistance.json``; ``None`` if the path is read-only."""
+def save_config_file(explicit: str | None = None) -> Path:
+    """Persist the active runtime config to ``docdistance.json``; raises ``OSError`` if it cannot.
+
+    Swallowing the write failure made ``init`` exit 0 having persisted nothing, so every later
+    process reported the mode un-init'd with no clue why. A read-only home must fail loudly.
+    """
     p = config_file_path(explicit)
-    try:
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(json.dumps(asdict(_RUNTIME), indent=2), encoding="utf-8")
-        return p
-    except OSError:
-        return None
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(asdict(_RUNTIME), indent=2), encoding="utf-8")
+    return p
 
 
 def load_config_file(explicit: str | None = None) -> bool:

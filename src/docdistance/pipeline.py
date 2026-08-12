@@ -6,8 +6,9 @@ Two entry styles:
 - :func:`semantic_distance` / :func:`source_conditioned_distance` - one-shot convenience that loads
   and scores in a single call
 
-Inputs are raw text or a path to a text/markdown file (auto-detected). A leading markdown ``# `` title
-line is stripped from files so the document title does not count as a statement.
+Inputs are raw text or a path to a text/markdown file (auto-detected). Every markdown ``# `` line is
+stripped from files so titles do not count as statements; deeper headings (``## `` and below) are
+kept, since they carry section content. Files are read as UTF-8.
 """
 
 from __future__ import annotations
@@ -21,18 +22,23 @@ from docdistance import distance as _core
 from docdistance.distance import (
     DEFAULT_THRESHOLD,
     SMD_MAX,
+    STRUCTURE_THRESHOLD,
     DistanceResult,
     SourceConditionedResult,
     StructuralResult,
 )
 from docdistance.encoders import Segmenter, load_encoder, load_nli, load_reranker
 
-# per-statement "changed" cutoff: a ground cost above the shipped closeness threshold (heuristic)
+# per-statement "changed" cutoff: a ground cost above the shipped closeness threshold (heuristic).
+# Derived, so it tracks DEFAULT_THRESHOLD: the 0.725 -> 0.77 recalibration moves it 0.389 -> 0.325,
+# so MORE flows are flagged "changed" on real documents.
 DIFF_CHANGED_COST = (1.0 - DEFAULT_THRESHOLD) * SMD_MAX
 
 
 def _load_body(path: Path) -> str:
-    lines = path.read_text().splitlines()
+    # explicit utf-8: the default is the locale encoding, which silently mojibakes an
+    # accented document on a cp1252 host and raises on an ASCII one
+    lines = path.read_text(encoding="utf-8").splitlines()
     return "\n".join(ln for ln in lines if not ln.startswith("# ")).strip()
 
 
@@ -306,7 +312,7 @@ class DocDistance:
         b: str | Path,
         *,
         anisotropy: bool = False,
-        threshold: float = DEFAULT_THRESHOLD,
+        threshold: float = STRUCTURE_THRESHOLD,
     ) -> StructuralResult:
         settings.require_ready("wmd")
         emb_a = self.embed(a)
@@ -319,7 +325,7 @@ class DocDistance:
         b: str | Path,
         *,
         anisotropy: bool = False,
-        threshold: float = DEFAULT_THRESHOLD,
+        threshold: float = STRUCTURE_THRESHOLD,
     ) -> tuple[StructuralResult, dict]:
         """The structural (order) distance result and the per-statement displacement details, sharing one encode pass."""
         settings.require_ready("wmd")
@@ -408,7 +414,7 @@ def structural_distance(
     *,
     backend: str = "openvino",
     anisotropy: bool = False,
-    threshold: float = DEFAULT_THRESHOLD,
+    threshold: float = STRUCTURE_THRESHOLD,
     offline: bool = True,
     device: str | None = None,
 ) -> StructuralResult:

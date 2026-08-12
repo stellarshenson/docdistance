@@ -20,7 +20,7 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Match ordering** - matches per statement sorted by descending weight
   - log: 2026-06-22 implemented (v1.0.16)
-- [x] **Changed flag** - `changed` = the A statement's best (lowest-`cost`) match has `cost` above the change cutoff (best-match cost > cutoff); `true` flags a statement whose aligned meaning drifted
+- [x] **Changed flag** - `changed` = the A statement's best (highest-`weight`) match has `cost` above the change cutoff; the highest-weight match is the aligned target, which is what "its aligned meaning drifted" means
   - log: 2026-07-01 added with the semantic/structural split (v1.1.2)
 - [x] **Sparse** - only nonzero flows kept (raw mass below `1e-9` dropped); network-simplex sparsity keeps the map compact
   - log: 2026-06-22 implemented (v1.0.16)
@@ -30,13 +30,13 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **map.smd matches** - the `smd` field of the written map equals the printed SMD of the same pair
   - log: 2026-06-22 verified on ibm-ai-adoption fixtures (v1.0.16)
-- [x] **API method** - `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` returns `(DistanceResult, dict)` sharing one encode pass
+- [x] **API method** - `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.77)` returns `(DistanceResult, dict)` sharing one encode pass
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **CLI flag** - `distance-semantic --details-json FILE` writes the map JSON to `FILE`
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **CLI result preserved** - the distance result still prints to stdout as usual when the flag is set
   - log: 2026-06-22 implemented (v1.0.16)
-- [x] **CLI note to stderr** - a confirmation line `transport map written: ... (A n -> B m statements)` goes to stderr, so stdout stays the result only
+- [x] **CLI note to stderr** - a confirmation line `details written: ... (A n -> B m statements)` goes to stderr, so stdout stays the result only
   - log: 2026-06-22 implemented (v1.0.16)
 - [x] **Tests** - core (marginals + realizes-SMD), map builder (shape, weights sum to 1, descending, valid target, cost), anisotropy flag, identical-docs identity, CLI help lists the flag; 22/22 pass
   - log: 2026-06-22 implemented (v1.0.16)
@@ -51,7 +51,7 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
 
 ## API
 
-- CLI `docdistance distance-semantic A B --details-json FILE` -> writes `FILE`, still prints the result; stderr note `transport map written: FILE (A n -> B m statements)`
-- Python `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.725)` -> `(DistanceResult, map)`
+- CLI `docdistance distance-semantic A B --details-json FILE` -> writes `FILE`, still prints the result; stderr note `details written: FILE (A n -> B m statements)`
+- Python `DocDistance.semantic_distance_with_details(a, b, *, anisotropy=False, threshold=0.77)` -> `(DistanceResult, map)`
 - Python `transport_plan(X, Y)` -> `ndarray [n_X, n_Y]` (raw coupling, embeddings in hand)
 - Map shape: `{smd: float, anisotropy: bool, n_statements: {a, b}, flows: [{index, text, matches: [{target_index, target_text, weight, cost}], changed}]}`

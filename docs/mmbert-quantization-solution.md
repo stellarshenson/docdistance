@@ -1,6 +1,6 @@
 # mmBERT Quantization Solution
 
-How the mmBERT statement encoder is quantized for the document-distance pipeline, and why the answer is two different artifacts - one for CPU, one for GPU. The work lives in `notebooks/02-kj-mmbert-quantization.ipynb` and the shipped CPU model is [`stellars/mmBERT-base-openvino-int8`](https://huggingface.co/stellars/mmBERT-base-openvino-int8).
+How the mmBERT statement encoder is quantized for the document-distance pipeline, and why the answer is two different artifacts - one for CPU, one for GPU. The work lives in `notebooks/model-quantization/Q01-kj-mmbert-quantization.ipynb` and the shipped CPU model is [`stellars/mmBERT-base-openvino-int8`](https://huggingface.co/stellars/mmBERT-base-openvino-int8).
 
 ## The problem
 
@@ -35,12 +35,12 @@ The cross-device multiple is directional, not a like-for-like benchmark: GPU row
 
 The CPU artifact is a real OpenVINO INT8 IR produced by `openvino.convert_model` (optimum-intel does not yet support the ModernBERT architecture for export, so the graph is traced directly) followed by `nncf.quantize` with SmoothQuant.
 
-- **Scheme** - per-channel symmetric INT8 weights, per-tensor static INT8 activations, SmoothQuant alpha 0.6
-- **Fidelity** - Pearson 0.956 on in-domain statements, 0.979 on a public generic sentence set, vs FP32
-- **Performance** - 1.4x faster (29.1 → 20.6 ms/sentence, CPU), 1.98x smaller (615 → 310 MB)
+- **Scheme** - per-channel symmetric INT8 weights, per-tensor static INT8 activations, SmoothQuant alpha 0.8
+- **Fidelity** - Pearson 0.9916 on in-domain statements vs FP32 (`reports/02-mmbert-bestconfig.json` `cpu.pearson_in_domain`)
+- **Performance** - 22.04 ms/sentence CPU, 310 MB IR (`cpu.latency_ms_per_sentence`, `cpu.ir_size_mb`)
 - **Shipped** - [`stellars/mmBERT-base-openvino-int8`](https://huggingface.co/stellars/mmBERT-base-openvino-int8)
 
-OpenVINO's runtime quantizes activations per-tensor and static, which is what caps CPU fidelity at ~0.96 - a coarser scheme than the simulation's ceiling, but a clean, dependency-light CPU deployable.
+OpenVINO's runtime quantizes activations per-tensor and static, which is what caps CPU fidelity at ~0.99 - a coarser scheme than the simulation's ceiling, but a clean, dependency-light CPU deployable.
 
 ## GPU solution - torchao FP8 + torch.compile
 
@@ -83,7 +83,7 @@ Recommended operating point per target, measured on the shipped INT8 IR (CPU, 32
 The story is in why the numbers land where they do.
 
 - **Per-token beats per-tensor** - the simulation showed naive INT8 jumps from 0.929 (per-tensor) to 0.998 (per-token) activation quantization. Per-token gives each token its own scale, so one outlier token cannot coarsen the rest. Once activations are per-token, SmoothQuant adds only ~0.001 - the per-token scaling already tames the outliers SmoothQuant targets
-- **OpenVINO cannot express per-token on NVIDIA** - its INT8 runtime is per-tensor static, which is why the deployed CPU fidelity (0.956) sits below the simulated ceiling (0.999). The gap is the runtime's scheme, not the model
+- **OpenVINO cannot express per-token on NVIDIA** - its INT8 runtime is per-tensor static, which is why the deployed CPU fidelity (0.9916) sits below the simulated per-token ceiling (0.9991); the ~0.0075 Pearson gap is the runtime's scheme, not the model
 - **torchao needs compilation to be fast** - in eager mode every quant scheme is slower than bf16 (INT8 dynamic was 14x slower) because the quant is not fused into the tensor-core GEMM. `torch.compile` fuses it; without compile there is no GPU speedup
 - **Compilation needs a C compiler** - Inductor/Triton build the fused kernels with a host C compiler, which the environment lacked. Installing the conda-forge toolchain and pointing `CC`/`CXX` at it unblocked the entire GPU speedup path
 - **Compiling bf16 alone is already a 1.85x win** - part of "GPU performance" is simply compiling the model; FP8 then adds a further 1.15x on top
@@ -91,7 +91,7 @@ The story is in why the numbers land where they do.
 
 ## Recommendations
 
-- **CPU / GPU-free serving** - use the OpenVINO INT8 model from the Hub; 0.96 fidelity, 1.4x, 310 MB
+- **CPU / GPU-free serving** - use the OpenVINO INT8 model from the Hub; 0.9916 fidelity, 1.4x, 310 MB
 - **GPU serving** - apply the FP8 torchao recipe and `torch.compile` (ensure `CC`/`CXX` point at a C compiler); 0.999 fidelity, 2.13x throughput
 - **Closing the CPU gap** - per-token-dynamic INT8 fidelity (~0.99) on CPU would need a runtime that supports it (ONNX Runtime dynamic, torch.ao), not OpenVINO default - a future option if CPU fidelity must rise
 
