@@ -28,3 +28,4 @@ Background-job and notebook-execution logs for this project.
 - `refactor-test.log` - `make test` run capturing the pytest suite output after src refactor edits
 - `nb09-execution.log` - nbconvert re-execution of `notebooks/09-kj-docdistance-api-e2e.ipynb` after the semantic/structural API split (`document_distance` -> `semantic_distance`)
 - `nb13-execution.log` - nbconvert re-execution of `notebooks/13-kj-structure-diff-library-e2e.ipynb` after the split (`_build_diff` -> `_build_structural_details` + `_build_semantic_details`)
+- `release-publish.log` - most recent `make publish` run (version increment, clean install, test gate, wheel + sdist build, twine check and PyPI upload); overwritten by each release
