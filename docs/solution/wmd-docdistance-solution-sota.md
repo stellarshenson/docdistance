@@ -25,13 +25,14 @@ Lift the comparison to statements and optimal transport: segment each document, 
 
 Two documents in → one closeness score and a similar/not verdict; the transport plan is the statement-to-statement alignment.
 
-- **Segment** - split each document into statements with `sat-3l-sm`[<sup>ref4</sup>](#ref4) (nb 01); statements are the transport unit, so the comparison is position-invariant
+- **Segment** - split each document into statements with `sat-3l-sm`[<sup>ref4</sup>](#ref4) (nb 01); statements are the transport unit, so the comparison is position-invariant. Since 1.1.5 an optional markdown-aware mode makes each table row, heading, list item and fenced-code line one statement (markup stripped for embedding), and fragment filters (`min_words`, `skip_table_fragments`) drop noise fragments before encoding - filtering renormalizes the uniform marginals, so the SMD legitimately changes; the default prose path is unchanged and bit-identical
 - **Embed** - mmBERT[<sup>ref5</sup>](#ref5), mean-pooled and L2-normalized per statement; quantized encoder (OpenVINO INT8 on CPU, torchao FP8 on GPU)
 - **Anisotropy removal** - subtract the dominant principal component from the pooled statement embeddings and re-L2-normalize (all-but-the-top); de-bunches the mmBERT cosines so the cost matrix is not compressed - a standard step, not optional
 - **Ground cost** - Euclidean on L2-normalized embeddings `= √(2 − 2cos)`, metric-safe cosine; `1 − cos` and squared-Euclidean are rejected - they rank like cosine but void the triangle inequality
 - **Distance** - exact optimal transport between the two clouds, uniform weights `1/n`, solved with POT[<sup>ref6</sup>](#ref6) `ot.emd2`; this scalar is the SMD
 - **Lower bounds** - WCD (centroid distance, exactly the whole-document-cosine baseline) and RWMD (one-sided relaxation, greedy nearest-statement alignment) nest as `WCD ≤ RWMD ≤ SMD`; cheap prefetch-and-prune floors
-- **Verdict** - closeness `1 − SMD/√2` (1 identical, 0 orthogonal) plus a similar/not call against a threshold set by the gold cluster's own diameter
+- **Verdict** - closeness `1 − SMD/√2` (1 identical, 0 orthogonal) plus a similar/not call against a closeness threshold (shipped default `0.77`, recalibrated in 1.1.4; originally set from the gold cluster's own diameter)
+- **Diff flags** - the detail output names the drift per statement: `changed` when the cheapest match over the statement's full cost row exceeds `(1 − threshold)·√2`, `no_counterpart` (removed content) when it exceeds `0.6`, `identical` on normalized-text equality; a target-side view gives each B statement its cheapest incoming source, so added content reads directly
 
 ## Mechanism
 
@@ -137,7 +138,7 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 ## Limitations
 
 - **Boundary margin** - +4.58 closeness points at the gold/adversarial boundary on the raw axis (+18.48 after anisotropy removal); the ordering is clean and the margin is modest, on documents built to be hard to separate
-- **Intrinsic to the fixture** - all eleven summaries describe one article and share its content, so the margin is genuinely narrow, not a defect of the distance
+- **Intrinsic to the fixture** - all eleven summaries describe one article and share its content, so the margin is narrow by construction, not a defect of the distance
 - **Single source, single degradation design** - a controlled probe, not a benchmark; cross-fixture validation on a second article is pending
 - **`d'` raised by the isotropy step** - anisotropy removal widens the margin and the dynamic range and raises the effect-size `d'` (4.60 → 7.17); ordering is unaffected
 - **Selection vs grounding not separated** - a symmetric distance cannot tell same-source-different-picks from off-source fabrication; the source-conditioned variant `d(A,B|S)` in [`wmd-source-conditioned-docdistance-solution-sota.md`](wmd-source-conditioned-docdistance-solution-sota.md) adds that axis
@@ -156,9 +157,9 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 
 - **Notebooks** - `notebooks/01-kj-document-segmentation.ipynb` (segment), `notebooks/04-kj-wmd-document-distance.ipynb` (the distance, validated end-to-end)
 - **Experiments** - `docs/experiments/wmd-docdistance-experiments.md` (batch E01: five contrast levers, one promoted, four refuted)
-- **Functions** - `smd` (`ot.emd2`), `wcd` (centroid norm), `rwmd` (one-sided relaxation), `closeness` (`1 − SMD/√2`), `all_but_the_top` (anisotropy); pairwise verdict threshold is a heuristic closeness cutoff, calibrate per corpus
+- **Functions** - `smd` (`ot.emd2`), `wcd` (centroid norm), `rwmd` (one-sided relaxation), `closeness` (`1 − SMD/√2`), `all_but_the_top` (anisotropy); pairwise verdict threshold defaults to closeness `0.77` (`--threshold` / `threshold=` to recalibrate per corpus)
 - **References** - WMD (Kusner et al. 2015) and all-but-the-top postprocessing (Mu & Viswanath, ICLR 2018); digests under `../references/papers/`
-- **Library** - shipped as the `docdistance` package: `src/docdistance/distance.py` (pure-numpy OT core), `encoders.py` (SAT + mmBERT INT8 / torch backends), `pipeline.py` (`semantic_distance`, `source_conditioned_distance`, the reusable `DocDistance` class), and a `docdistance` CLI (`distance`, `distance-wrt-source`, `install`)
+- **Library** - shipped as the `docdistance` package: `src/docdistance/distance.py` (pure-numpy OT core), `encoders.py` (SAT + mmBERT INT8 / torch backends, `split_markdown`), `pipeline.py` (`semantic_distance`, `structural_distance`, `source_conditioned_distance`, the reusable `DocDistance` class), and a `docdistance` CLI (`distance-semantic`, `distance-structural`, `distance-wrt-source`, `init`; `--pairs` batches many pairs through one model load)
 - **Library validation** - `notebooks/09-kj-docdistance-api-e2e.ipynb` reproduces the `0/24` ordinality through the public API and confirms openvino-vs-torch backend agreement (Pearson 0.9991)
 
 ## Conclusions
@@ -166,7 +167,7 @@ Single core, full pipeline, AMD Ryzen Threadripper PRO 7975WX.
 A single metric distance with a bounded, interpretable readout, built for pipelines that cannot read model logits.
 
 - **Range** - the ground cost is `[0, 2]` in theory (`cos = −1`, antipodal); for these non-negatively-correlated embeddings it spans `[0, √2]`, so `SMD ∈ [0, √2]` and `closeness = 1 − SMD/√2 ∈ [0, 1]` (1 identical, 0 unrelated)
-- **Verdict** - similar when `SMD ≤ τ`, `τ` the gold cluster's own diameter; the transport plan is the statement alignment, so the number arrives with what moved, dropped, or was added
+- **Verdict** - similar when closeness clears the threshold (shipped default `0.77`); the transport plan is the statement alignment, so the number arrives with what changed (`changed`), was removed (`no_counterpart`), or was added (the target-side view)
 - **Use scenario** - agentic document conversion and extraction through frontier models, where token-level logits are not exposed so KL divergence cannot be computed; SMD is the embedding-grounded stand-in that flags when a converted or extracted output has drifted from its source, and the alignment localizes the drift
 - **Operating point** - exact, metric, deterministic, runs CPU-INT8 end-to-end; the transport is ~0.08 ms/pair at statement scale, so a document pair's cost is dominated by encoding, not the distance
 - **Performance** - a 2 × A4 document pair compares in ~5.55 s end-to-end on one core of the Threadripper 7975WX (segmentation 46%, embedding 54%, transport negligible); ~0.2 pairs/s/core, so a ~2 GB AWS Lambda ≈ one core and throughput scales ~linearly with vCPUs

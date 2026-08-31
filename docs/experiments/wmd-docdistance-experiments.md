@@ -138,6 +138,15 @@ Five independent levers, pre-registered before any run, one toggle each over the
 - **Result** - `V = 1`, margin `−0.23`, `d'` 2.47, `R` 1.292; numeric fallback E01-H2 same failure (`V = 1`, margin `−0.16`, `R` 1.309)
 - **Verdict** - Refuted; up-weighting numbers pulls the number-retaining adv2 tier into the gold band and breaks ordering, fallback confirms the mechanism not IDF noise
 
+### E01-H2 Numeric-density fallback weighting
+
+Run as E01-H1's fallback variant and recorded in its Result line and the E01 tables; declared here so the ledger parses the id - no new content.
+
+- **Hypothesis** - because numeric-density weighting alone removes the IDF noise from E01-H1's salience weights, the fallback will lift the boundary margin while holding `V = 0`
+- **Lever** - transport weights (numeric-density only, no IDF)
+- **Result** - `V = 1`, margin `−0.16`, `R` 1.309 (E01 results table)
+- **Verdict** - Refuted; same failure mode as E01-H1, confirming the mechanism (number up-weighting) not IDF noise
+
 ### E01-H3 Embedding anisotropy removal
 
 - **Hypothesis** - because mmBERT embeddings are anisotropic and statement cosines are compressed, subtracting the dominant principal component will raise distance dynamic range ≥ 1.5x while preserving `0/24` ordinality violations
