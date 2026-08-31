@@ -16,6 +16,7 @@ import contextlib
 import io
 import os
 from pathlib import Path
+import re
 
 from loguru import logger
 import numpy as np
@@ -141,6 +142,72 @@ class Segmenter:
     def split(self, text: str) -> list[str]:
         with contextlib.redirect_stderr(io.StringIO()):
             return [s.strip() for s in self._sat.split(text) if s.strip()]
+
+
+_HEADING_RE = re.compile(r"^#{1,6}\s+")
+_LIST_RE = re.compile(r"^(?:[-*+]|\d+[.)])\s+")
+
+
+def split_markdown(text: str, prose_split) -> tuple[list[str], list[str]]:
+    """Markdown-aware segmentation: one atomic statement per structural line, SaT only on prose.
+
+    Each line is classified as heading, table row, list item, fenced-code line or prose. A
+    structural line becomes one atomic statement: the reported text keeps the raw line, the
+    embedded text strips the markup (heading hashes, list markers, table pipes). Fence delimiter
+    lines, table separator rows (``|---|---|``) and marker-only lines carry no content and are
+    dropped. Prose paragraphs go through ``prose_split`` (the SaT segmenter's ``split``), where
+    reported and embedded text coincide. Returns the parallel ``(reported, embedded)`` lists,
+    row-aligned so ``embedded[i]`` is the encoder input for ``reported[i]``.
+    """
+    reported: list[str] = []
+    embedded: list[str] = []
+    prose: list[str] = []
+
+    def flush_prose() -> None:
+        if prose:
+            for s in prose_split("\n".join(prose)):
+                reported.append(s)
+                embedded.append(s)
+            prose.clear()
+
+    def atomic(raw: str, core: str) -> None:
+        core = core.strip()
+        if core:  # a marker-only line embeds nothing - drop it
+            reported.append(raw.rstrip())
+            embedded.append(core)
+
+    in_fence = False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith(("```", "~~~")):
+            flush_prose()
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            atomic(line, stripped)
+            continue
+        if not stripped:
+            flush_prose()
+            continue
+        if _HEADING_RE.match(stripped):
+            flush_prose()
+            atomic(line, _HEADING_RE.sub("", stripped))
+            continue
+        if stripped.startswith("|"):
+            flush_prose()
+            cells = [c.strip() for c in stripped.strip("|").split("|")]
+            if all(not c.strip("-: ") for c in cells):  # separator row, e.g. |---|---|
+                continue
+            atomic(line, " ".join(c for c in cells if c))
+            continue
+        marker = _LIST_RE.match(stripped)
+        if marker:
+            flush_prose()
+            atomic(line, stripped[marker.end() :])
+            continue
+        prose.append(stripped)
+    flush_prose()
+    return reported, embedded
 
 
 def _length_order(tok, sents: list[str]) -> list[int]:

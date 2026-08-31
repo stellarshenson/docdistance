@@ -222,3 +222,6 @@ cython_debug/
 
 # Reference papers: keep the digests, not the source PDFs (each digest links its original)
 references/papers/*.pdf
+
+# Graphify code-graph output and other transient analysis artefacts
+tmp/

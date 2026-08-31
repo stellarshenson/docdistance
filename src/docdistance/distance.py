@@ -247,9 +247,13 @@ def order_alignment(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
 
 
 def structure_displacement(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
-    """Rank-based position shift from the crisp alignment; ``0`` = in place, nonzero = moved."""
+    """Rank-based position shift from the crisp alignment; ``0`` = in place, nonzero = moved.
+
+    Both argsorts are ``kind="stable"`` so tied alignment targets (forced when ``len(X) > len(Y)``)
+    rank by source position, and an order-preserving shrinkage yields zero displacement everywhere.
+    """
     align = order_alignment(X, Y)
-    order = np.argsort(np.argsort(align))
+    order = np.argsort(np.argsort(align, kind="stable"), kind="stable")
     return order - np.arange(len(order))
 
 

@@ -5,7 +5,9 @@ that downloads), ``distance-semantic`` (symmetric SMD), ``distance-structural`` 
 ``distance-wrt-source`` (source-conditioned). A mode must be ``init``'d before its distance runs,
 else the command exits 1 with a clear message.
 Human output is rich and coloured; ``--json`` emits machine-readable JSON and ``--result-only`` the
-bare result. Logs go to stderr (loguru, ``--verbose`` for DEBUG), so stdout carries only the result.
+bare result. ``--pairs FILE`` batches many pairs through one model load, emitting JSONL - one JSON
+object per pair per line. Logs go to stderr (loguru, ``--verbose`` for DEBUG), so stdout carries
+only the result.
 """
 
 from __future__ import annotations
@@ -61,18 +63,76 @@ def main(
     """Semantic document distance grounded in optimal-transport theory."""
 
 
-def _run(fn):
-    """Call ``fn`` and turn a missing-model or un-init'd-mode error into a clean message + exit 1."""
+def _run(fn, machine: bool = False):
+    """Call ``fn`` and turn a missing-model or un-init'd-mode error into a clean message + exit 1.
+
+    ``machine`` marks --json / --result-only mode: a pipeline in that mode reads stdout only, so
+    the error must also land there as a one-line JSON object - stderr alone is discarded by
+    ``2>/dev/null`` and the empty stdout fails downstream with JSONDecodeError.
+    """
     from docdistance.encoders import ModelsNotInstalled
     from docdistance.settings import NotInitializedError
 
     try:
         return fn()
-    except (ModelsNotInstalled, NotInitializedError, ValueError) as exc:
+    except (ModelsNotInstalled, NotInitializedError, ValueError, OSError) as exc:
         # ValueError covers the empty-document case (pipeline.embed_statements), which a
         # title-only markdown reaches and which otherwise escapes as a stack trace
         _err.print(f"[bold red]error:[/bold red] {exc}")
+        if machine:
+            if isinstance(exc, NotInitializedError):
+                code = "not_initialized"  # the message already names the searched config path
+            elif isinstance(exc, ModelsNotInstalled):
+                code = "models_not_installed"
+            elif isinstance(exc, OSError):
+                code = "io_error"  # a --pairs file that cannot be read, or a --details-json / --source-map-json path that cannot be written
+            else:
+                code = "empty_document"
+            # plain json.dumps via typer.echo, not the rich console: colour codes and
+            # wrapping would corrupt the object (same constraint as the emitters)
+            typer.echo(json.dumps({"error": code, "message": str(exc)}))
         raise typer.Exit(1)
+
+
+def _apply_home(home: str | None) -> None:
+    """Pin ``--home`` as ``$DOCDISTANCE_HOME`` before the readiness gate, mirroring ``init --home``,
+    so docdistance.json and the model mirror resolve from that folder instead of cwd."""
+    if home:
+        import os
+
+        from docdistance import settings
+
+        os.environ[settings.ENV_HOME] = str(Path(home))
+
+
+# segmentation options shared by the three distance commands
+_MARKDOWN_OPTION = typer.Option(
+    False,
+    "--markdown",
+    help="markdown-aware segmentation - one statement per heading / table row / list item / "
+    "fenced-code line (markup stripped from the embedded text), only prose goes through SaT",
+)
+_MIN_WORDS_OPTION = typer.Option(
+    0,
+    "--min-words",
+    metavar="N",
+    help="drop statements under N words after segmentation, before encoding - the transport "
+    "marginals renormalise over the survivors, so the SMD changes",
+)
+_SKIP_TABLE_FRAGMENTS_OPTION = typer.Option(
+    False,
+    "--skip-table-fragments",
+    help="drop table-fragment statements (pipes or separator punctuation) after segmentation, "
+    "before encoding - the transport marginals renormalise over the survivors",
+)
+
+
+def _drop_extra(dd, min_words: int, skip_table_fragments: bool) -> dict:
+    """The n_dropped / drop_rules keys added to machine JSON when a drop rule is active."""
+    return {
+        "n_dropped": dd.last_n_dropped,
+        "drop_rules": {"min_words": min_words, "skip_table_fragments": skip_table_fragments},
+    }
 
 
 def _resolve_gpu(gpu: bool, backend: Backend) -> tuple[str, str | None]:
@@ -89,12 +149,71 @@ def _resolve_gpu(gpu: bool, backend: Backend) -> tuple[str, str | None]:
     return "torch", "cuda"
 
 
-def _emit_distance(r, json_out: bool, result_only: bool) -> None:
+def _check_pair_args(pairs: str | None, a: str | None, b: str | None) -> None:
+    """Positional documents and ``--pairs`` are mutually exclusive; one of the two is required."""
+    if pairs and (a is not None or b is not None):
+        _err.print("[bold red]error:[/bold red] pass two documents or --pairs FILE, not both")
+        raise typer.Exit(2)
+    if not pairs and (a is None or b is None):
+        _err.print("[bold red]error:[/bold red] two documents (or --pairs FILE) required")
+        raise typer.Exit(2)
+
+
+def _read_pairs(pairs_file: str) -> list[tuple[str, str, str]]:
+    """Parse the batch TSV - ``a-path<TAB>b-path[<TAB>id]`` per line, blank lines skipped.
+
+    Returns (a, b, pair) rows where ``pair`` is the given id or the 0-based row index.
+    A malformed line fails loudly naming its 1-based line number.
+    """
+    rows: list[tuple[str, str, str]] = []
+    for lineno, line in enumerate(Path(pairs_file).read_text().splitlines(), start=1):
+        if not line.strip():
+            continue
+        fields = line.split("\t")
+        if len(fields) not in (2, 3) or not fields[0] or not fields[1]:
+            # OSError so both _run-wrapped call sites emit the io_error object in machine mode
+            raise OSError(
+                f"{pairs_file} line {lineno}: "
+                f"expected a-path<TAB>b-path[<TAB>id], got {len(fields)} field(s)"
+            )
+        pair = fields[2] if len(fields) == 3 and fields[2] else str(len(rows))
+        rows.append((fields[0], fields[1], pair))
+    return rows
+
+
+def _details_path(details_json: str, pair: str) -> Path:
+    """Resolve the per-pair details file: a ``{pair}`` template, else a directory of ``<pair>.json``."""
+    if "{pair}" in details_json:
+        return Path(details_json.replace("{pair}", pair))
+    directory = Path(details_json)
+    directory.mkdir(parents=True, exist_ok=True)
+    return directory / f"{pair}.json"
+
+
+def _run_batch(rows, details_json: str | None, dist, dist_details, extra=None) -> None:
+    """ACC-CLI-12 batch loop: the caller built one DocDistance; emit one JSON object per pair per
+    line (JSONL) to stdout, writing a per-pair details file when ``--details-json`` is given.
+    ``extra`` is an optional callable evaluated after each pair - its dict (e.g. the per-pair
+    n_dropped of an active fragment filter) is merged into that pair's JSON line."""
+
+    def batch():
+        for a, b, pair in rows:
+            if details_json:
+                r, details = dist_details(a, b)
+                _details_path(details_json, pair).write_text(json.dumps(details, indent=2))
+            else:
+                r = dist(a, b)
+            typer.echo(json.dumps({"pair": pair, **r.to_dict(), **(extra() if extra else {})}))
+
+    _run(batch, machine=True)
+
+
+def _emit_distance(r, json_out: bool, result_only: bool, extra: dict | None = None) -> None:
     if result_only:
         typer.echo(str(r.smd))
         return
     if json_out:
-        typer.echo(json.dumps(r.to_dict(), indent=2))
+        typer.echo(json.dumps({**r.to_dict(), **(extra or {})}, indent=2))
         return
     color = "green" if r.verdict == "similar" else "red"
     grid = Table.grid(padding=(0, 2))
@@ -113,14 +232,14 @@ def _emit_distance(r, json_out: bool, result_only: bool) -> None:
     )
 
 
-def _emit_structural(r, json_out: bool, result_only: bool) -> None:
+def _emit_structural(r, json_out: bool, result_only: bool, extra: dict | None = None) -> None:
     # typer.echo, not _out.print: Rich colourizes and wraps, which corrupts both the
     # scalar and the JSON on any coloured or narrow terminal (the other emitters match)
     if result_only:
         typer.echo(str(r.structure_closeness))
         return
     if json_out:
-        typer.echo(json.dumps(r.to_dict(), indent=2))
+        typer.echo(json.dumps({**r.to_dict(), **(extra or {})}, indent=2))
         return
     color = "green" if r.verdict == "similar" else "red"
     grid = Table.grid(padding=(0, 2))
@@ -144,7 +263,7 @@ def _emit_structural(r, json_out: bool, result_only: bool) -> None:
     )
 
 
-def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
+def _emit_wrt_source(r, json_out: bool, result_only: bool, extra: dict | None = None) -> None:
     if result_only:
         if r.grd_a is not None:
             typer.echo(f"{r.d_sel},{r.grd_a},{r.grd_b}")
@@ -152,7 +271,7 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
             typer.echo(f"{r.d_sel},{r.residual_a},{r.residual_b}")
         return
     if json_out:
-        typer.echo(json.dumps(r.to_dict(), indent=2))
+        typer.echo(json.dumps({**r.to_dict(), **(extra or {})}, indent=2))
         return
     grid = Table.grid(padding=(0, 2))
     grid.add_column(style="bold cyan")
@@ -196,11 +315,12 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool) -> None:
     "  docdistance distance-semantic a.md b.md --json\n"
     "  docdistance distance-semantic a.md b.md --details-json content.json   [dim]# statement → statement content alignment[/dim]\n"
     "  docdistance distance-structural a.md b.md --details-json order.json   [dim]# per-statement displacement / moved[/dim]\n"
+    "  docdistance distance-semantic --pairs pairs.tsv                       [dim]# batch: one model load, JSONL out[/dim]\n"
     "  docdistance distance-semantic a.md b.md --result-only",
 )
 def distance_semantic(
-    a: str = typer.Argument(..., help="first document - a file path or raw text"),
-    b: str = typer.Argument(..., help="second document - a file path or raw text"),
+    a: str = typer.Argument(None, help="first document - a file path or raw text"),
+    b: str = typer.Argument(None, help="second document - a file path or raw text"),
     backend: Backend = typer.Option(
         Backend.openvino, "--backend", help="statement encoder backend"
     ),
@@ -219,35 +339,94 @@ def distance_semantic(
         "--threshold",
         help="closeness cutoff for the similar / not-similar verdict",
     ),
+    markdown: bool = _MARKDOWN_OPTION,
+    min_words: int = _MIN_WORDS_OPTION,
+    skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     details_json: str = typer.Option(
         None,
         "--details-json",
         metavar="FILE",
-        help="write per-statement content-alignment details (transport map) to FILE",
+        help="write per-statement content-alignment details (transport map) to FILE; "
+        "with --pairs, a directory or a template containing {pair} - one map per pair",
+    ),
+    pairs: str = typer.Option(
+        None,
+        "--pairs",
+        metavar="FILE",
+        help="batch mode: TSV of a-path<TAB>b-path[<TAB>id] - one model load, "
+        "one JSON object per pair per line (JSONL) to stdout",
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
         False, "--result-only", help="bare SMD scalar to stdout, no clutter"
     ),
+    home: str = typer.Option(
+        None,
+        "--home",
+        help="folder holding docdistance.json + the model mirror (default: $DOCDISTANCE_HOME or cwd)",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG logging to stderr"),
 ):
     """Symmetric distance between two documents - the exact Statement Mover's Distance."""
     configure_logging(verbose)
+    _apply_home(home)
+    _check_pair_args(pairs, a, b)
 
     backend_value, device = _resolve_gpu(gpu, backend)
+    seg = {
+        "markdown": markdown,
+        "min_words": min_words,
+        "skip_table_fragments": skip_table_fragments,
+    }
+    filters_on = min_words > 0 or skip_table_fragments
+    extra = None
+    if pairs:
+        from docdistance.pipeline import DocDistance
+
+        rows = _run(lambda: _read_pairs(pairs), machine=True)
+        dd = DocDistance(backend=backend_value, device=device)
+        _run_batch(
+            rows,
+            details_json,
+            lambda x, y: dd.semantic_distance(
+                x, y, anisotropy=anisotropy, threshold=threshold, **seg
+            ),
+            lambda x, y: dd.semantic_distance_with_details(
+                x, y, anisotropy=anisotropy, threshold=threshold, **seg
+            ),
+            extra=(lambda: _drop_extra(dd, min_words, skip_table_fragments))
+            if filters_on
+            else None,
+        )
+        return
     if details_json:
         from docdistance.pipeline import DocDistance
 
-        result, details = _run(
-            lambda: DocDistance(
-                backend=backend_value, device=device
-            ).semantic_distance_with_details(a, b, anisotropy=anisotropy, threshold=threshold)
-        )
-        Path(details_json).write_text(json.dumps(details, indent=2))
+        dd = DocDistance(backend=backend_value, device=device)
+
+        def _details_run():
+            res = dd.semantic_distance_with_details(
+                a, b, anisotropy=anisotropy, threshold=threshold, **seg
+            )
+            Path(details_json).write_text(json.dumps(res[1], indent=2))
+            return res
+
+        result, details = _run(_details_run, machine=json_out or result_only)
+        if filters_on:
+            extra = _drop_extra(dd, min_words, skip_table_fragments)
         _err.print(
             f"[green]details written:[/green] {details_json} "
             f"(A {details['n_statements']['a']} → B {details['n_statements']['b']} statements)"
         )
+    elif filters_on:
+        from docdistance.pipeline import DocDistance
+
+        dd = DocDistance(backend=backend_value, device=device)
+        result = _run(
+            lambda: dd.semantic_distance(a, b, anisotropy=anisotropy, threshold=threshold, **seg),
+            machine=json_out or result_only,
+        )
+        extra = _drop_extra(dd, min_words, skip_table_fragments)
     else:
         from docdistance.pipeline import semantic_distance
 
@@ -259,20 +438,23 @@ def distance_semantic(
                 anisotropy=anisotropy,
                 threshold=threshold,
                 device=device,
-            )
+                markdown=markdown,
+            ),
+            machine=json_out or result_only,
         )
-    _emit_distance(result, json_out, result_only)
+    _emit_distance(result, json_out, result_only, extra)
 
 
 @app.command(
     name="distance-structural",
     epilog="[bold]Examples[/bold]\n\n"
     "  docdistance distance-structural a.md b.md --details-json order.json   [dim]# per-statement displacement / moved[/dim]\n"
+    "  docdistance distance-structural --pairs pairs.tsv                     [dim]# batch: one model load, JSONL out[/dim]\n"
     "  docdistance distance-structural a.md b.md --result-only",
 )
 def distance_structural(
-    a: str = typer.Argument(..., help="first document - a file path or raw text"),
-    b: str = typer.Argument(..., help="second document - a file path or raw text"),
+    a: str = typer.Argument(None, help="first document - a file path or raw text"),
+    b: str = typer.Argument(None, help="second document - a file path or raw text"),
     backend: Backend = typer.Option(
         Backend.openvino, "--backend", help="statement encoder backend"
     ),
@@ -291,36 +473,97 @@ def distance_structural(
         "--threshold",
         help="structure_closeness cutoff for the similar / not-similar verdict",
     ),
+    markdown: bool = _MARKDOWN_OPTION,
+    min_words: int = _MIN_WORDS_OPTION,
+    skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     details_json: str = typer.Option(
         None,
         "--details-json",
         metavar="FILE",
-        help="write per-statement structural details (displacement / moved) to FILE",
+        help="write per-statement structural details (displacement / moved) to FILE; "
+        "with --pairs, a directory or a template containing {pair} - one map per pair",
+    ),
+    pairs: str = typer.Option(
+        None,
+        "--pairs",
+        metavar="FILE",
+        help="batch mode: TSV of a-path<TAB>b-path[<TAB>id] - one model load, "
+        "one JSON object per pair per line (JSONL) to stdout",
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
         False, "--result-only", help="bare structure_closeness scalar to stdout, no clutter"
     ),
+    home: str = typer.Option(
+        None,
+        "--home",
+        help="folder holding docdistance.json + the model mirror (default: $DOCDISTANCE_HOME or cwd)",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG logging to stderr"),
 ):
     """Structural (order) distance between two documents - the E11-H55 OPW order-gap."""
     configure_logging(verbose)
+    _apply_home(home)
+    _check_pair_args(pairs, a, b)
 
     backend_value, device = _resolve_gpu(gpu, backend)
+    seg = {
+        "markdown": markdown,
+        "min_words": min_words,
+        "skip_table_fragments": skip_table_fragments,
+    }
+    filters_on = min_words > 0 or skip_table_fragments
+    extra = None
+    if pairs:
+        from docdistance.pipeline import DocDistance
+
+        rows = _run(lambda: _read_pairs(pairs), machine=True)
+        dd = DocDistance(backend=backend_value, device=device)
+        _run_batch(
+            rows,
+            details_json,
+            lambda x, y: dd.structural_distance(
+                x, y, anisotropy=anisotropy, threshold=threshold, **seg
+            ),
+            lambda x, y: dd.structural_distance_with_details(
+                x, y, anisotropy=anisotropy, threshold=threshold, **seg
+            ),
+            extra=(lambda: _drop_extra(dd, min_words, skip_table_fragments))
+            if filters_on
+            else None,
+        )
+        return
     if details_json:
         from docdistance.pipeline import DocDistance
 
-        result, details = _run(
-            lambda: DocDistance(
-                backend=backend_value, device=device
-            ).structural_distance_with_details(a, b, anisotropy=anisotropy, threshold=threshold)
-        )
-        Path(details_json).write_text(json.dumps(details, indent=2))
+        dd = DocDistance(backend=backend_value, device=device)
+
+        def _details_run():
+            res = dd.structural_distance_with_details(
+                a, b, anisotropy=anisotropy, threshold=threshold, **seg
+            )
+            Path(details_json).write_text(json.dumps(res[1], indent=2))
+            return res
+
+        result, details = _run(_details_run, machine=json_out or result_only)
+        if filters_on:
+            extra = _drop_extra(dd, min_words, skip_table_fragments)
         _err.print(
             f"[green]details written:[/green] {details_json} "
             f"(order_gap={details['order_gap']}, "
             f"structure_closeness={details['structure_closeness']})"
         )
+    elif filters_on:
+        from docdistance.pipeline import DocDistance
+
+        dd = DocDistance(backend=backend_value, device=device)
+        result = _run(
+            lambda: dd.structural_distance(
+                a, b, anisotropy=anisotropy, threshold=threshold, **seg
+            ),
+            machine=json_out or result_only,
+        )
+        extra = _drop_extra(dd, min_words, skip_table_fragments)
     else:
         from docdistance.pipeline import structural_distance
 
@@ -332,9 +575,11 @@ def distance_structural(
                 anisotropy=anisotropy,
                 threshold=threshold,
                 device=device,
-            )
+                markdown=markdown,
+            ),
+            machine=json_out or result_only,
         )
-    _emit_structural(result, json_out, result_only)
+    _emit_structural(result, json_out, result_only, extra)
 
 
 @app.command(
@@ -362,6 +607,9 @@ def distance_wrt_source(
         "--anisotropy/--no-anisotropy",
         help="anisotropy removal on the conditioned selection axis - on by default (E04-H15), --no-anisotropy to opt out",
     ),
+    markdown: bool = _MARKDOWN_OPTION,
+    min_words: int = _MIN_WORDS_OPTION,
+    skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     source_map_json: str = typer.Option(
         None,
         "--source-map-json",
@@ -372,35 +620,68 @@ def distance_wrt_source(
     result_only: bool = typer.Option(
         False, "--result-only", help="bare comma-separated d_sel,grd_a,grd_b to stdout"
     ),
+    home: str = typer.Option(
+        None,
+        "--home",
+        help="folder holding docdistance.json + the model mirror (default: $DOCDISTANCE_HOME or cwd)",
+    ),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="DEBUG logging to stderr"),
 ):
     """Source-conditioned distance d(A, B | S) - selection divergence plus each document's distance to S."""
     configure_logging(verbose)
+    _apply_home(home)
 
     backend_value, device = _resolve_gpu(gpu, backend)
+    seg = {
+        "markdown": markdown,
+        "min_words": min_words,
+        "skip_table_fragments": skip_table_fragments,
+    }
+    filters_on = min_words > 0 or skip_table_fragments
+    extra = None
     if source_map_json:
         from docdistance.pipeline import DocDistance
 
-        result, smap = _run(
-            lambda: DocDistance(backend=backend_value, device=device).distance_wrt_source_with_map(
-                a, b, source, anisotropy=anisotropy
-            )
-        )
-        Path(source_map_json).write_text(json.dumps(smap, indent=2))
+        dd = DocDistance(backend=backend_value, device=device)
+
+        def _map_run():
+            res = dd.distance_wrt_source_with_map(a, b, source, anisotropy=anisotropy, **seg)
+            Path(source_map_json).write_text(json.dumps(res[1], indent=2))
+            return res
+
+        result, smap = _run(_map_run, machine=json_out or result_only)
+        if filters_on:
+            extra = _drop_extra(dd, min_words, skip_table_fragments)
         _err.print(
             f"[green]source map written:[/green] {source_map_json} "
             f"(A {smap['n_statements']['a']} + B {smap['n_statements']['b']} statements → "
             f"top-{smap['top_k']} of {smap['n_statements']['source']} source)"
         )
+    elif filters_on:
+        from docdistance.pipeline import DocDistance
+
+        dd = DocDistance(backend=backend_value, device=device)
+        result = _run(
+            lambda: dd.distance_wrt_source(a, b, source, anisotropy=anisotropy, **seg),
+            machine=json_out or result_only,
+        )
+        extra = _drop_extra(dd, min_words, skip_table_fragments)
     else:
         from docdistance.pipeline import source_conditioned_distance
 
         result = _run(
             lambda: source_conditioned_distance(
-                a, b, source, backend=backend_value, anisotropy=anisotropy, device=device
-            )
+                a,
+                b,
+                source,
+                backend=backend_value,
+                anisotropy=anisotropy,
+                device=device,
+                markdown=markdown,
+            ),
+            machine=json_out or result_only,
         )
-    _emit_wrt_source(result, json_out, result_only)
+    _emit_wrt_source(result, json_out, result_only, extra)
 
 
 @app.command(

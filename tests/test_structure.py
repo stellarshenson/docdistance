@@ -125,6 +125,15 @@ def test_displacement_recovers_a_cyclic_shift():
     assert (disp != 0).all()
 
 
+def test_displacement_zero_on_monotone_shrinkage_with_shared_targets():
+    """n_A > n_B forces tied crisp targets; stable rank keeps an order-preserving shrinkage at 0."""
+    B = _emb(4, seed=9)
+    targets = np.array([0, 0, 1, 1, 2, 2, 3, 3])  # monotone, every target shared
+    A = B[targets]
+    assert np.array_equal(d.order_alignment(A, B), targets)
+    assert np.array_equal(d.structure_displacement(A, B), np.zeros(8, dtype=int))
+
+
 # --- _build_structural_details dict shape and semantics ------------------------------------------
 
 
@@ -133,14 +142,25 @@ def test_build_structural_details_top_level_keys():
     sb, eb = [f"b{i}" for i in range(4)], _emb(4, seed=12)
     diff = _build_structural_details(sa, ea, sb, eb)
     assert set(diff) == {
+        "generator",
+        "version",
         "smd",
         "order_gap",
         "structure_closeness",
+        "structure_closeness_definition",
+        "thresholds",
+        "definitions",
+        "summary",
         "anisotropy",
         "n_statements",
+        "n_dropped",
+        "drop_rules",
+        "sections",
         "statements",
     }
     assert diff["n_statements"] == {"a": 5, "b": 4}
+    assert diff["n_dropped"] == {"a": 0, "b": 0}  # no filter active
+    assert diff["drop_rules"] == {"min_words": 0, "skip_table_fragments": False}
     assert diff["anisotropy"] is False
     assert diff["smd"] >= 0.0
     assert diff["order_gap"] >= 0.0
@@ -155,15 +175,29 @@ def test_build_structural_details_statement_records_and_json_serializable():
         assert set(st) == {
             "index",
             "text",
+            "section",
             "target_index",
             "target_text",
+            "target_section",
+            "cost",
+            "semantic_target_index",
+            "semantic_target_cost",
+            "targets_differ",
             "displacement",
+            "displacement_norm",
             "moved",
+            "no_counterpart",
         }
         assert st["index"] == i and st["text"] == sa[i]
         assert 0 <= st["target_index"] < len(sb)
         assert st["target_text"] == sb[st["target_index"]]
-        assert st["moved"] == (st["displacement"] != 0)
+        if st["no_counterpart"]:
+            # an absorber target names no position: displacement is undefined, nothing moved
+            assert st["displacement_norm"] is None and st["moved"] is False
+        else:
+            expected = st["target_index"] / len(sb) - st["index"] / len(sa)
+            assert st["displacement_norm"] == pytest.approx(expected, abs=1e-4)
+            assert st["moved"] == (abs(expected) > pipeline.MOVED_TOLERANCE)
     json.dumps(diff)  # whole dict round-trips through JSON
 
 
@@ -228,17 +262,68 @@ def test_structural_distance_with_details_returns_result_and_details(monkeypatch
     assert result.verdict in ("similar", "not similar")
     assert result.order_gap >= 0.0
     assert set(diff) == {
+        "generator",
+        "version",
         "smd",
         "order_gap",
         "structure_closeness",
+        "structure_closeness_definition",
+        "thresholds",
+        "definitions",
+        "summary",
         "anisotropy",
         "n_statements",
+        "n_dropped",
+        "drop_rules",
+        "sections",
         "statements",
     }
     assert diff["n_statements"] == {"a": 5, "b": 4}
     assert result.smd == pytest.approx(diff["smd"], abs=1e-5)
     assert result.order_gap == pytest.approx(diff["order_gap"], abs=1e-5)
     settings.reset()
+
+
+def test_build_structural_details_header_self_describing_and_summary():
+    """ACC-MAP-7 + ACC-MAP-8: the structural header stamps its writer, states the closeness formula
+    and consolidated thresholds/definitions, and the summary block mirrors the semantic one -
+    n_moved, n_no_counterpart and the median displacement_norm recomputed from the records."""
+    ea = np.eye(12, dtype=np.float32)
+    removed = {2, 5, 8, 11}
+    kept = [i for i in range(12) if i not in removed]
+    eb = ea[kept]
+    sa = [f"a{i}" for i in range(12)]
+    sb = [f"b{i}" for i in kept]
+    diff = _build_structural_details(sa, ea, sb, eb)
+
+    assert diff["generator"] == "docdistance"
+    assert isinstance(diff["version"], str) and diff["version"]
+    assert diff["structure_closeness_definition"] == "1 - order_gap/sqrt(2)"
+    assert diff["thresholds"] == {
+        "changed_cost": pipeline.DIFF_CHANGED_COST,
+        "no_counterpart_cost": pipeline.NO_COUNTERPART_COST,
+        "moved_tolerance": pipeline.MOVED_TOLERANCE,
+    }
+    assert {"displacement", "displacement_norm", "moved", "no_counterpart"} <= set(
+        diff["definitions"]
+    )
+
+    summary = diff["summary"]
+    recs = diff["statements"]
+    assert summary["n_moved"] == sum(r["moved"] for r in recs)
+    assert summary["n_no_counterpart"] == sum(r["no_counterpart"] for r in recs) == len(removed)
+    norms = [r["displacement_norm"] for r in recs if r["displacement_norm"] is not None]
+    assert summary["median_displacement_norm"] == pytest.approx(float(np.median(norms)), abs=1e-4)
+
+
+def test_build_structural_details_summary_median_null_when_no_counterparts():
+    """Every statement orthogonal to every target: no displacement_norm exists, the median is null."""
+    ea = np.eye(6, dtype=np.float32)[:3]
+    eb = np.eye(6, dtype=np.float32)[3:]
+    diff = _build_structural_details(["a0", "a1", "a2"], ea, ["b0", "b1", "b2"], eb)
+    assert diff["summary"]["n_no_counterpart"] == 3
+    assert diff["summary"]["n_moved"] == 0
+    assert diff["summary"]["median_displacement_norm"] is None
 
 
 # --- regressions: OPW plan validity and alignment tie-breaks -------------------------------------
@@ -306,3 +391,77 @@ def test_build_structural_details_duplicate_content_edit_does_not_leak_displacem
     for st in diff["statements"]:
         assert st["displacement"] == 0  # only content changed, nothing moved
         assert st["moved"] is False
+
+
+def test_build_structural_details_records_carry_aligned_pair_cost():
+    """ACC-MAP-5: each record's ``cost`` equals cost_matrix[i, align[i]] rounded to 4 places."""
+    sa, ea = [f"a{i}" for i in range(6)], _emb(6, seed=41)
+    sb, eb = [f"b{i}" for i in range(4)], _emb(4, seed=42)
+    diff = _build_structural_details(sa, ea, sb, eb)
+    cost = d.cost_matrix(ea, eb)
+    align = d.order_alignment(ea, eb)
+    for i, st in enumerate(diff["statements"]):
+        assert st["cost"] == round(float(cost[i, align[i]]), 4)
+
+
+def test_build_structural_details_semantic_target_beside_structural_target():
+    """ACC-MAP-6: the plan-argmax semantic target sits on the record with ``targets_differ``.
+
+    Duplicated A content makes the exact EMD degenerate: the raw plan's vertex maps a0 -> b2 and
+    a2 -> b0 while the crisp (diagonal tie-break) alignment keeps both in place - the disagreement
+    that locates moved-and-reworded content, computed from the already-solved plan.
+    """
+    u = np.eye(8, dtype=np.float32)
+    ea = np.stack([u[0], u[1], u[0]])  # a2 duplicates a0's content
+    eb = np.stack([u[0], u[1], u[2]])
+    sa = [f"a{i}" for i in range(3)]
+    sb = [f"b{i}" for i in range(3)]
+    diff = _build_structural_details(sa, ea, sb, eb)
+
+    plan = d.transport_plan(ea, eb)
+    cost = d.cost_matrix(ea, eb)
+    for i, st in enumerate(diff["statements"]):
+        k = int(plan[i].argmax())
+        assert st["semantic_target_index"] == k
+        assert st["semantic_target_cost"] == round(float(cost[i, k]), 4)
+        assert st["targets_differ"] == (k != st["target_index"])
+    # the degenerate rows disagree, the untied row does not
+    by_index = {st["index"]: st for st in diff["statements"]}
+    assert by_index[0]["targets_differ"] is True
+    assert by_index[2]["targets_differ"] is True
+    assert by_index[1]["targets_differ"] is False
+
+
+def test_shrinkage_does_not_saturate_moved_and_marks_removed_statements():
+    """DEF-TRANS-2: a document a third shorter must not flag every in-place statement as moved.
+
+    A is 12 orthogonal statements; B keeps 8 of them in order (every third removed). The raw rank
+    displacement shifts with the length change, but the target-relative ``displacement_norm`` of a
+    kept statement stays within tolerance, so ``moved`` is quiet. The 4 removed statements align to
+    absorbers above ``NO_COUNTERPART_COST``: displacement_norm null, moved False, no_counterpart True.
+    """
+    ea = np.eye(12, dtype=np.float32)
+    removed = {2, 5, 8, 11}
+    kept = [i for i in range(12) if i not in removed]
+    eb = ea[kept]
+    sa = [f"a{i}" for i in range(12)]
+    sb = [f"b{i}" for i in kept]
+    diff = _build_structural_details(sa, ea, sb, eb)
+
+    # header states the definitions the flags are computed against
+    assert diff["definitions"]["displacement_norm"] == "target_index/n_b - index/n_a"
+    assert diff["thresholds"]["moved_tolerance"] == pipeline.MOVED_TOLERANCE
+    assert diff["thresholds"]["no_counterpart_cost"] == pipeline.NO_COUNTERPART_COST
+
+    st = {rec["index"]: rec for rec in diff["statements"]}
+    for i in kept:
+        rec = st[i]
+        assert rec["no_counterpart"] is False  # a zero-cost twin exists in B
+        assert rec["moved"] is False  # uniform shrinkage: still in place on the relative scale
+        assert abs(rec["displacement_norm"]) <= 1.0 / 24.0 + 5e-5  # 4-decimal rounding quantum
+        assert isinstance(rec["displacement"], int)  # raw rank shift kept for continuity
+    for i in removed:
+        rec = st[i]
+        assert rec["no_counterpart"] is True  # the aligned target is an absorber, not a location
+        assert rec["displacement_norm"] is None
+        assert rec["moved"] is False

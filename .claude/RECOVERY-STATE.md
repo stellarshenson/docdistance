@@ -1,5 +1,9 @@
 # Recovery State
 
+## RESOLVED 2026-08-31T18:20Z
+
+The brace below was recovered in full: the confirming round relaunched from `.claude/brace/review-args-r2.json`, the loop ran rounds 2-5 and reached SHIP, all pending goal clauses closed (journal entry 70). Nothing in this file remains actionable.
+
 ## BRACE 2026-08-31T16:04Z - usage limit
 
 **HORIZON: LIMIT** - probe output: `LIMIT 98% five_hour resets 5:50pm (106m)`. The machine stays up; the SAME session returns after the reset (`claude --continue` in this project). Workflows resume from cache where agents completed.

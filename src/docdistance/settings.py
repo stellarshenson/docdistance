@@ -75,7 +75,9 @@ class NotInitializedError(RuntimeError):
         self.mode = mode
         super().__init__(
             f"mode '{mode}' is not initialized - run:  docdistance init {mode}  "
-            f"(Python: docdistance.init('{mode}')) to provision its models first"
+            f"(Python: docdistance.init('{mode}')) to provision its models first "
+            f"(config searched: {config_file_path()}; set {ENV_HOME} or {ENV_CONFIG} "
+            f"to point at an init'd folder)"
         )
 
 

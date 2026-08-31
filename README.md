@@ -21,6 +21,8 @@ docdistance measures how far apart two documents are - in meaning and in order -
 - **Points to what changed** - a per-statement diff that tells a reworded sentence apart from one that only moved, not just a single score
 - **Source-aware option** - compare two documents against a shared source to see which one drifted, and whether it dropped or invented content
 - **No model internals needed** - works from the text alone, so it runs on frontier-model output where token probabilities are unavailable
+- **Batch scoring** - `--pairs` scores a whole TSV of document pairs with one model load, one JSON line per pair
+- **Markdown-aware** - optional `--markdown` segmentation treats table rows, headings and list items as statements, with `--min-words` / `--skip-table-fragments` fragment filters
 - **Runs anywhere** - CPU-only by default (OpenVINO INT8), sub-millisecond for the meaning score, no GPU required
 - **CLI or Python** - `docdistance distance-semantic a.md b.md`, or `from docdistance import semantic_distance`
 - **Interpretable by design** - every score comes with the statement-to-statement alignment behind it
@@ -83,6 +85,13 @@ docdistance distance-semantic a.md b.md --details-json details.json   # + statem
 docdistance distance-structural a.md b.md                 # order-gap verdict (add --json for machine-readable)
 docdistance distance-structural a.md b.md --details-json details.json   # + per-statement order projection
 
+# batch - many pairs, one model load (distance-semantic and distance-structural)
+docdistance distance-semantic --pairs pairs.tsv          # TSV a<TAB>b[<TAB>id] → one JSONL line per pair
+docdistance distance-semantic --pairs pairs.tsv --details-json 'details/{pair}.json'   # + one detail file per pair
+
+# markdown-aware segmentation - table rows, headings and list items become statements
+docdistance distance-semantic a.md b.md --markdown --min-words 3 --skip-table-fragments
+
 # method 2 - source-conditioned d(A,B|S) (slower, runs the reranker × NLI grounding)
 docdistance distance-wrt-source a.md b.md --source s.md                       # two-axis verdict
 docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   # + statement → source map
@@ -121,6 +130,7 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 - **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on
 - **Offline after init** - distance calls run fully offline once `docdistance init <mode>` has provisioned the mode (from HuggingFace, S3, or a local mirror) and written `docdistance.json`
 - **Backend** - `--backend openvino|torch`, default `openvino` (CPU INT8)
+- **Machine-readable errors** - in `--json` / `--result-only` mode every failure writes a one-line `{"error": code, "message": ...}` object to stdout and exits 1 (codes `not_initialized`, `models_not_installed`, `io_error`, `empty_document`), so an agent parses stdout on both success and failure
 - **Full reference** - the [CLI reference](docs/cli-reference.md), the [API reference](docs/api-reference.md) and the [AWS deployment reference](docs/aws-deployment-reference.md)
 
 ### Transport map output
@@ -129,26 +139,42 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 
 ```json
 {
+  "generator": "docdistance",
+  "version": "1.1.4",
   "smd": 0.286827,
-  "anisotropy": false,
+  "closeness": 0.797183,
+  "closeness_definition": "1 - smd/sqrt(2)",
+  "thresholds": { "changed_cost": 0.325269, "no_counterpart_cost": 0.6 },
+  "summary": { "n_changed": 3, "n_no_counterpart": 1, "top_changed": [7, 4, 2] },
   "n_statements": { "a": 12, "b": 11 },
+  "sections": [ { "section": "Overview", "n_statements": 5, "mean_cost": 0.2519, "share_below_changed": 0.8 } ],
   "flows": [
     {
       "index": 1,
       "text": "Among large organizations with more than 1,000 …",
+      "section": "Overview",
       "matches": [
         { "target_index": 1, "target_text": "About 42% of organizations with more than 1,000 …", "weight": 1.0, "cost": 0.2237 }
       ],
-      "changed": false
+      "changed": false,
+      "identical": false,
+      "no_counterpart": false
     }
+  ],
+  "targets": [
+    { "index": 1, "text": "About 42% of organizations …", "section": "Overview", "best_source_index": 1, "min_incoming_cost": 0.2237, "total_incoming_weight": 1.0 }
   ]
 }
 ```
 
-- **flows** - one entry per statement of A; `index` / `text` name it, `matches` are the B statements its mass lands on
+- **Self-describing header** - `generator` / `version` name the producer, `closeness` ships beside its `closeness_definition`, and `thresholds` records every cutoff in force, so the file is interpretable without the CLI invocation that made it
+- **summary / sections** - document-level aggregates (`n_changed`, `n_no_counterpart`, cost bands, the top changed statements) and a per-heading-section table, for a triage read before the per-statement detail
+- **flows** - one entry per statement of A; `index` / `text` / `section` name it, `matches` are the B statements its mass lands on
 - **weight** - fraction of that statement's mass to the target, sums to 1 per statement; a lone `1.0` is a clean 1:1 match, several smaller weights mean the statement splits across B
 - **cost** - ground distance `√(2 − 2cos)` of the matched pair; low = semantically close, high = a forced move
-- **changed** - per flow, `true` once its best-match `cost` clears the change cutoff `(1 − threshold)·√2`; the statement's content drifted rather than staying within tolerance
+- **changed** - `true` once the statement's cheapest match over the whole cost row clears the change cutoff `(1 − threshold)·√2`; the content drifted rather than staying within tolerance
+- **no_counterpart / identical** - `no_counterpart` flags removed content (cheapest match above `no_counterpart_cost`), `identical` flags a normalised-text-equal counterpart
+- **targets** - the B-side view, one entry per statement of B: its cheapest incoming source and total incoming weight, so ADDED content (a target no source feeds cheaply) reads directly
 - **smd** - the distance the map realizes; `weight × cost` summed over all flows equals it
 - **Reading it** - a statement mapped to its counterpart at `weight 1.0` and low `cost` is preserved; high cost or scattered weights flag a statement with no clean equivalent in B
 
@@ -158,26 +184,40 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 
 ```json
 {
+  "generator": "docdistance",
+  "version": "1.1.4",
   "smd": 0.286827,
   "order_gap": 0.041185,
   "structure_closeness": 0.970878,
-  "anisotropy": false,
+  "structure_closeness_definition": "1 - order_gap/sqrt(2)",
+  "thresholds": { "moved_tolerance": 0.05, "no_counterpart_cost": 0.6 },
+  "summary": { "n_moved": 2, "n_no_counterpart": 1, "median_displacement_norm": 0.0076 },
   "n_statements": { "a": 12, "b": 11 },
   "statements": [
     {
       "index": 0,
       "text": "Among large organizations with more than 1,000 …",
+      "section": "Overview",
       "target_index": 0,
       "target_text": "About 42% of organizations with more than 1,000 …",
+      "target_section": "Overview",
+      "cost": 0.2237,
+      "semantic_target_index": 0,
+      "targets_differ": false,
       "displacement": 0,
-      "moved": false
+      "displacement_norm": 0.0,
+      "moved": false,
+      "no_counterpart": false
     }
   ]
 }
 ```
 
-- **statements** - one entry per statement of A; `index` / `text` name it, `target_index` / `target_text` are its aligned counterpart in B (crisp exact-EMD alignment, not the soft OPW plan)
-- **displacement** - rank shift of the statement from its aligned position; `0` = in place, nonzero = relocated, and `moved` mirrors it as a boolean
+- **statements** - one entry per statement of A; `index` / `text` / `section` name it, `target_index` / `target_text` / `target_section` are its aligned counterpart in B (crisp exact-EMD alignment, not the soft OPW plan)
+- **displacement / displacement_norm** - rank shift of the statement from its aligned position; `displacement` is the raw shift (`0` = in place), `displacement_norm` is the length-normalised form `target_index/n_b − index/n_a` that `moved` thresholds against `moved_tolerance`, so a one-slot slip in a long document no longer reads as a move
+- **cost** - ground distance of the aligned pair; above `no_counterpart_cost` the alignment names no real counterpart, `displacement_norm` goes null and `no_counterpart` flags it
+- **semantic_target_index / targets_differ** - the heaviest semantic target of the content-optimal plan beside the order alignment; `targets_differ: true` names a statement that MOVED AND was reworded
+- **Self-describing header** - `generator` / `version`, the closeness definition, every threshold in force, `summary` aggregates (`n_moved`, `n_no_counterpart`, median displacement) and a per-`sections` table, matching the semantic detail file
 - **smd** - the top-level semantic distance (content only), order-invariant - the same number `distance-semantic` reports
 - **order_gap** - the H55 OPW structural distance (order-gap = OPW cost − SMD), translation-invariant and `>= 0`; `0` = same order
 - **structure_closeness** - `1 − order_gap/√2`, the shipped SOTA 0..1 readout on the same scale as SMD closeness; `1` = same order, falling toward `0` as the arrangement diverges

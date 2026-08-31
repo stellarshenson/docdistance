@@ -20,7 +20,7 @@ read_time: "20 min read"
 
 **What this measures.** Whether a rewritten document still says what the original said, and which parts of it changed.
 
-You give it two documents as plain text. You get back two things: a number you can set a threshold against, and a statement-by-statement matching showing which sentence in one document corresponds to which sentence in the other, and what each of those pairings cost. Nothing else is required. No access to the model that did the rewriting, no training, no labelled data.
+You give it two documents as plain text. You get back two things: a number you can set a threshold against, and a statement-by-statement matching showing which statement in one document corresponds to which statement in the other, and what each of those pairings cost. Nothing else is required. No access to the model that did the rewriting, no training, no labelled data.
 
 It is a Python library called `docdistance`. The rest of this article is how it works, what it measures, and what it costs to run.
 
@@ -56,9 +56,9 @@ Three things stop it here.
 
 **It measures the writer, not the writing.** Even with full access, KL compares the generator's output distributions. It tells you how the model's behaviour shifted between two runs. It does not tell you whether the finished document still supports the claim on page four. Those are different questions, and the second one is the question being asked here.
 
-**It is not a distance.** KL is asymmetric: the divergence from A to B is not the divergence from B to A. There is no fixed zero point to anchor a threshold to, and no triangle inequality, so comparisons cannot be chained, cached, or carried from one corpus to the next.
+**It is not a distance.** KL is asymmetric: the divergence from A to B is not the divergence from B to A. It has no upper bound, so a threshold calibrated on one pair does not transfer to another, and no triangle inequality - the guarantee that A-to-C never exceeds A-to-B plus B-to-C - so comparisons cannot be chained, cached, or carried from one corpus to the next.
 
-A fourth problem is bad enough that it gets its own section below: two documents that say the same thing in different words share no identical tokens, and KL reads that non-overlap as infinite distance.
+A fourth problem is bad enough that it gets its own section below: two documents that say the same thing in different words share almost no identical statements, and KL reads that disjoint support as infinite distance.
 
 So the working constraint for everything that follows: two documents as plain text, nothing else. No model internals, no training, no labels.
 
@@ -70,7 +70,7 @@ If you can read logits, and the question you are actually asking is about the mo
 
 The reflex is to embed both documents and take a cosine. I did that first.
 
-Eleven executive summaries of one article - seven faithful, four deliberately degraded - all landed between 0.67 and 0.86 on the closeness scale. The spread of the underlying distances was **0.085**. Any threshold I picked sat close to the noise.
+Eleven executive summaries of one article - seven faithful, four deliberately degraded - each came back as a single number. I never scored that baseline against the tiers, so I cannot tell you how well it separated them. What I could see is that the number does not say where the two documents differ, and that is the question I needed answered.
 
 ![Eleven summaries, one narrow band](images/03-cosine-collapse.svg)
 
@@ -83,7 +83,7 @@ The guarantee is not an empirical observation. It falls out of **Jensen's inequa
 Any plan for moving one document's statements onto the other's has to move all of the mass. Add up the individual moves as vectors and they sum to exactly the gap between the two centroids. A distance function is convex, and Jensen's inequality says the length of a summed move never exceeds the sum of the individual lengths:
 
 $$
-\left\lVert \sum_{i,j} T_{ij}\,(x_i - x_j) \right\rVert \le \sum_{i,j} T_{ij}\,\left\lVert x_i - x_j \right\rVert
+\left\lVert \sum_{i,j} T_{ij}\,(x_i - y_j) \right\rVert \le \sum_{i,j} T_{ij}\,\left\lVert x_i - y_j \right\rVert
 $$
 
 The left side is the distance between the two centroids, which is the whole-document cosine you started with. The right side is the cost of the transport plan `T`. The inequality holds for every valid plan, including the cheapest one, so the centroid distance sits at or below the real answer no matter what.
@@ -92,11 +92,11 @@ In plain terms: averaging first and measuring once can never come out above meas
 
 ![Why the cheap number is always too small](images/04-jensen-lower-bound.svg)
 
-So whole-document cosine is not a wrong turn to reverse. It is the Word Centroid Distance, the loosest of the three lower bounds available. It fails for one reason: it is too permissive. A lower bound cannot separate a faithful summary from a degraded one when both sit above it.
+So whole-document cosine is not a wrong turn to reverse. It is the Word Centroid Distance, the looser of the two lower bounds that sit below the exact answer. Its limit is structural: a lower bound constrains the true distance from below and says nothing about the gap between two documents that both sit above it.
 
 So what are the tighter bounds, and how tight do you actually need?
 
-The instinct here is to chunk. Split both documents, embed the pieces, compare the pieces. Right instinct. Most attempts then settle for a looser bound than they need: average the chunk similarities, or give every chunk its nearest match on the other side. Both have names in the optimal-transport literature - the Word Centroid Distance and the Relaxed Word Mover's Distance - and both sit below the exact answer for the reason above. That pins the direction of the error, and the table below shows how.
+The instinct here is to chunk. Split both documents, embed the pieces, compare the pieces. Right instinct. Most attempts then settle for a looser bound than they need: average the chunk embeddings into one vector per document, or give every chunk its nearest match on the other side. Both have names in the optimal-transport literature - the Word Centroid Distance and the Relaxed Word Mover's Distance - and both sit below the exact answer for the reason above. That pins the direction of the error, and the table below shows how.
 
 Either way, chunking changes what you are comparing. You stop comparing two points and start comparing two sets of points.
 
@@ -122,7 +122,7 @@ The picture is a physical one. Each document is a set of small sand piles sittin
 
 The consequence is exactly what the problem demands: **it uses the distances between statements.** A paraphrased statement sits near its original in embedding space, so re-labelling it is cheap. A statement about something else entirely sits far away, so covering it is expensive. Non-overlapping support is no longer a catastrophe - it is a distance to be paid.
 
-That is the answer to "why Wasserstein". Not because it is fashionable in ML, but because it is the only family of distances that reads the geometry of the space the embeddings live in. Divergences discard it. Set-overlap measures like Jaccard never had it.
+That is the answer to "why Wasserstein". It reads the geometry of the space the embeddings live in. Divergences discard it. Set-overlap measures like Jaccard never had it.
 
 Two further properties earn it the job:
 
@@ -147,9 +147,9 @@ Each is a lower bound on the next: `WCD ≤ RWMD ≤ SMD`. Whole-document cosine
 
 Jensen's inequality gives you the bottom of that chain. The consequence is what matters in practice: a lower bound can understate a distance and can never overstate it. Both of the cheaper methods can call two documents closer than they really are. Neither can ever call them further apart. That makes them safe as a quick filter and unsafe as a final answer.
 
-It is also why a lower bound carries no promise about separation: it constrains the true distance from below and says nothing about the gap between two documents that both sit above it. On these eleven the Word Centroid Distance orders the tiers correctly anyway; how well it separates them was not measured here, so the case for the full transport is the lower-bound property and the statement-level alignment it buys, not a demonstrated win over the centroid.
+It is also why a lower bound promises nothing about separation: it constrains the true distance from below and says nothing about the gap between two documents that both sit above it. How the Word Centroid Distance ranks these eleven, and how far apart it puts them, I never measured, so the case for exact transport rests on the lower-bound property and the statement-level alignment, not on beating the centroid.
 
-That one-sided error is what makes the cheap methods worth running. If the Word Centroid Distance already clears your threshold, the exact distance does too. Skip the expensive computation, lose nothing.
+That one-sided error is what makes the cheap methods worth running. A lower bound only settles the question in one direction. If the Word Centroid Distance is already further apart than your cutoff, the exact distance is further too, so you can flag the pair and skip the expensive computation. The reverse proves nothing: a cheap score inside the cutoff still has to be checked.
 
 ![Three bounds, loosest to exact](images/07-three-bounds.svg)
 
@@ -163,7 +163,7 @@ When it finishes you have a table saying which statement in A corresponds to whi
 
 You do not get a number and then go hunting for the reason. The number and the reason are the same object.
 
-An LLM judge can also give you a number and a story, but the story is generated separately from the score and may not correspond to it. Here it corresponds by construction.
+An LLM judge produces its number and its explanation as two separate generations, so nothing ties one to the other. Here it corresponds by construction.
 
 ## One detail that decides whether the numbers hold up
 
@@ -185,13 +185,13 @@ $$
 
 Read it aloud: the straight-line distance between two unit vectors is the square root of two minus twice their cosine.
 
-Same ranking as cosine, and a real metric. You give up nothing. It also has fixed end points: as long as the encoder keeps cosines non-negative - which this one does on these documents, though nothing guarantees it - the distance sits between 0 and `√2`, so it converts to a 0-to-1 closeness score as `closeness = 1 - distance/√2`.
+Same ranking as cosine, and a real metric. You give up nothing. It also has fixed end points: while the encoder keeps cosines non-negative - this one does on these documents, though nothing guarantees it - the distance sits between 0 and `√2`, so it converts to a 0-to-1 closeness score as `closeness = 1 - distance/√2`.
 
 ## The embedding model makes everything look alike
 
 One property of transformer embeddings is not obvious from outside, and it distorts every distance you compute. They are **anisotropic**, which is an over-glorified term for a plain defect: a few shared directions dominate every vector, so everything looks similar to everything else. The distances you are about to measure are squashed together before you start.
 
-Fortunately, there is someone who thought about this already. [All-but-the-Top - Mu et al.](https://arxiv.org/abs/1702.01417) showed in 2018 that those directions largely encode token frequency rather than meaning. Subtracting them is a handful of lines. It widened my spread from **0.085 to 0.229**, roughly 2.7 times the room to place a threshold.
+Fortunately, there is someone who thought about this already. [All-but-the-Top - Mu et al.](https://arxiv.org/abs/1702.01417) showed in 2018 that those directions largely encode token frequency rather than meaning. Subtracting them is a handful of lines. It widened that standard deviation from **0.085 to 0.229**, 2.7 times the room to place a threshold.
 
 The limitation: the shared directions have to be estimated across a batch of documents. An isolated pair gives about two dozen vectors, which is not enough to estimate them, so single one-off comparisons run without the correction.
 
@@ -213,7 +213,7 @@ The test that decides whether this works uses **back-translation**. Take the Eng
 
 It reads **0.5%** of what a fully scrambled document reads.
 
-One property to know before you use it. The order number breaks the triangle inequality about **15%** of the time, which makes it a score rather than a distance. Never chain it across comparisons.
+One property to know before you use it. The order number breaks the triangle inequality on about **15%** of the triples I tested, which makes it a score rather than a distance. Never chain it across comparisons.
 
 ![Changed or only moved](images/10-changed-or-moved.svg)
 
@@ -221,13 +221,13 @@ One property to know before you use it. The order number breaks the triangle ine
 
 Two questions were tested. Does the meaning number rank summaries correctly, and does the order number react to order alone?
 
-**Does it rank correctly?** Eleven summaries of one article, seven faithful and four deliberately degraded, each scored against a reference. Every faithful summary came out closer to the reference than every degraded one. Comparing each faithful summary against each degraded one gives 24 comparisons, and all **24 of 24** came out the right way round.
+**Does it rank correctly?** Eleven summaries of one article, seven faithful and four deliberately degraded. One faithful summary is the reference; the other ten are scored against it. Comparing each of the six remaining faithful summaries against each of the four degraded ones gives 24 comparisons, and all **24 of 24** put the faithful summary closer to the reference.
 
-**How much room is there between good and bad?** The closest faithful summary and the furthest degraded one are **4.7 points** apart on a 0-to-100 scale (79.4 against 74.7). The ordering is perfect and the gap is still narrow, and I would rather say that than bury it. All eleven summarise the same source article, so they are alike by construction, which is the hardest case to separate and the reason the probe was built that way. Set your cutoff on your own documents rather than copying mine.
+**How much room is there between good and bad?** The weakest faithful summary scored **79.7%** closeness against the reference; the strongest degraded one **75.0%**. Nothing landed in between, so the cutoff goes in that gap - 4.7 percentage points wide, and the library defaults to 77%. The ordering is perfect and the gap is narrow, and I would rather say that than bury it. All eleven summarise the same source article, so they are alike by construction, which is the hardest case to separate and the reason the probe was built that way. Set your cutoff on your own documents rather than copying mine.
 
-**What the encoder correction cost.** I expected a trade: a wider spread bought by looser grouping inside the faithful set. Take the distance between the faithful group and the degraded group, and divide it by how scattered the two groups are internally. That ratio **rose from 4.60 to 7.17** - the correction widened the spread and tightened the separation at the same time, so the trade I was braced for did not appear. That is a better result than I expected, which is its own reason to state it plainly rather than keep the caveat that reads well.
+**What the encoder correction cost.** I expected a trade: a wider spread bought by looser grouping inside the faithful set. Divide the gap between the two groups by how scattered each group is internally and you get their separation in standard deviations, `d'`. It **rose from 4.60 to 7.17** - the spread widened and each group tightened at the same time, so the trade never appeared.
 
-**Does the order number stay out of the meaning number's business?** Across two articles, it rose every time the shuffling got worse, without one exception. A back-translated document, reworded throughout but in its original order, moves it by **0.5%** of what a full scramble moves it. And inserting a header at the top, which pushes every statement down one place while changing nothing about the document, moved it by **0.001** - because it measures where statements sit relative to each other, not what position number they carry.
+**Does the order number stay out of the meaning number's business?** Across six shuffle levels it rose at every step, Spearman 1.00, without one exception. A back-translated document, reworded throughout but in its original order, moves it by **0.5%** of what a full scramble moves it. And shifting every statement down two or four places while changing nothing else moved it by **0.00047** on the order-gap scale - because it measures where statements sit relative to each other, not what position number they carry.
 
 ![What the numbers say](images/11-what-the-numbers-say.svg)
 
@@ -235,13 +235,13 @@ Two questions were tested. Does the meaning number rank summaries correctly, and
 
 Two A4 pages, end to end, on a single CPU core: **5.55 seconds**.
 
-Segmentation 2.55 s, embedding 3.0 s, and the optimal transport this entire article is about: **0.4 milliseconds**. At statement scale the transport solve is free. The cost is the encoder, which here is **mmBERT - a multilingual ModernBERT encoder** - running **quantized to INT8**: the model's weights are stored as 8-bit integers instead of full-precision floats, which makes it several times faster on a CPU and costs a little accuracy.
+Segmentation 2.55 s, embedding 3.0 s, and the optimal transport this entire article is about: **0.4 milliseconds**. At statement scale the transport solve is free. The cost is the encoder, which here is **mmBERT - a multilingual ModernBERT encoder** - running **quantized to INT8**: the model's weights are stored as 8-bit integers instead of full-precision floats, which cuts CPU latency from 30.1 to 22.0 milliseconds per sentence and holds a 0.99 Pearson correlation with the full-precision embeddings.
 
-That is why I solve the transport exactly rather than using **Sinkhorn**, the standard fast approximation, which trades an exact answer for speed by blurring the plan slightly. Sinkhorn wins on large clouds. At a dozen to fifty statements it is slower than solving exactly, and it introduces a bias that exact solving does not have. At this size the exact answer is also the cheaper one, so there is no trade to weigh.
+That is why I solve the transport exactly rather than using **Sinkhorn**, the standard fast approximation, which adds an entropy term so the plan spreads mass instead of committing to one match. Sinkhorn pays off on point clouds of thousands. At a dozen to fifty statements the exact solve already runs in 0.4 milliseconds, so I never timed Sinkhorn against it. The entropy term also leaves a bias in the answer that exact solving does not have.
 
-About 0.2 document-pairs per second per core, CPU-only, scaling near-linearly with cores.
+About 0.2 document-pairs per second on one core, CPU-only. The multi-core figures below assume that scales linearly, which I have not measured.
 
-It is not enough to say a thing scales, so put a number on it. The fourth situation, a hundred thousand pairs, costs about 154 core-hours. That is just under five hours on one 32-core machine: an overnight batch, not a research project. The two cheaper bounds are there to prune that further, though I have not measured what they save on a real corpus.
+It is not enough to say a thing scales, so put a number on it. The fourth situation, a hundred thousand pairs, costs about 154 core-hours. That is just under five hours on one 32-core machine: an overnight batch, not a research project. The Word Centroid Distance and the Relaxed Word Mover's Distance are there to prune that further, though I have not measured what they save on a real corpus.
 
 ![Where the time goes](images/12-where-the-time-goes.svg)
 
@@ -289,11 +289,11 @@ For this setting that comparison is moot in any case. The pipeline is calling a 
 
 Three deployments, all of them high volume, none of them a demo.
 
-**Research-report triage for analysts.** Large research reports go in, excerpts come out, and analysts read the excerpts rather than the reports. The excerpt is only worth reading if it carries what the report actually said, so every excerpt is scored against its source and the ones that drifted are routed to a human instead of to an analyst. This runs at a scale that replaces several thousand hours of manual reading a month.
+**Research-report triage for analysts.** Large research reports go in, excerpts come out, and analysts read the excerpts rather than the reports. The excerpt is only worth reading if it carries what the report actually said, so every excerpt is scored against its source and the ones that drifted are routed to a human instead of to an analyst. This replaces manual reading of the full reports.
 
 **Marketing personalisation.** Matching a product to a customer means matching the customer's context to what the product actually does, and the failure mode is a generated pitch that describes a capability the product does not have. Scoring the pitch against the product documentation catches exactly that, statement by statement, before it reaches anyone.
 
-**Lead generation and targeting.** Whitepapers, service descriptions, delivery documentation and case studies on one side; customer records and account dossiers on the other. The transport map does not only say a document is relevant to an account, it says which passages of which case study line up with which parts of that account's situation. That is the difference between "this is relevant" and "lead with this paragraph".
+**Lead generation and targeting.** Whitepapers, service descriptions, delivery documentation and case studies on one side; customer records and account dossiers on the other. The transport plan does not only say a document is relevant to an account, it says which passages of which case study line up with which parts of that account's situation. That is the difference between "this is relevant" and "lead with this paragraph".
 
 **What it costs to run all of that: nothing per call.** No API tokens, no per-document charge, no rate limit. The whole pipeline is local inference on a CPU. The encoder is **mmBERT, a multilingual ModernBERT encoder**, quantized to 8-bit integers and published alongside the library as `stellars/mmBERT-base-openvino-int8`. It runs through **OpenVINO**, Intel's runtime for executing neural networks on ordinary processors. No GPU is needed, and none is used. The thousandth comparison costs what the first one did, which on hardware you already own is your electricity and nothing else.
 
@@ -313,16 +313,16 @@ The library is on PyPI as `docdistance`; the design notes and experiment logs ar
 
 ## Where it falls short
 
-- **Thin margin** - 4.7 points between the groups, on documents built to be hard to separate
+- **Thin margin** - the cutoff sits in a window 4.7 percentage points wide, from 75.0% to 79.7% closeness, on documents built to be hard to separate
 - **Thresholds do not transfer** - the cutoff is a per-corpus decision, so calibrate it on your own documents
-- **The structural number is a score** - 15% triangle violations, so never chain it
+- **The order number is a score** - it breaks the triangle inequality on 15% of the triples I tested, so never chain it
 - **The cheap baseline was never scored against this one** - the case for full transport here rests on the lower-bound property and the statement-level alignment it yields, not on a measured win over the centroid distance on these eleven documents. That comparison is still owed
 
 ![Where it falls short](images/17-where-it-falls-short.svg)
 
 ## References
 
-The distance, the bounds and the geometry correction come from the papers below. What is mine is the assembly and the evidence for it: transport run over statements rather than words, a ground cost chosen so the result stays a metric, meaning and order kept as two numbers instead of one fused score, the encoder correction adopted with its cost measured rather than assumed, and exact transport preferred to Sinkhorn at this scale. So are the measurements - 24 of 24, 4.7 points, 0.5% against a full scramble, 5.55 seconds a pair on one core. Grouped by what each paper contributed.
+The distance, the bounds and the geometry correction come from the papers below. What is mine is the assembly and the evidence for it: transport run over statements rather than words, a ground cost chosen so the result stays a metric, meaning and order kept as two numbers instead of one fused score, the encoder correction adopted with its cost measured rather than assumed, and exact transport preferred to Sinkhorn at this scale. So are the measurements - 24 of 24, a cutoff window 4.7 percentage points wide, 0.5% against a full scramble, 5.55 seconds a pair on one core. Grouped by what each paper contributed.
 
 **The distance itself**
 
@@ -339,7 +339,7 @@ The distance, the bounds and the geometry correction come from the papers below.
 - [Order-Preserving Wasserstein Distance for Sequence Matching - Su et al.](https://openaccess.thecvf.com/content_cvpr_2017/html/Su_Order-Preserving_Wasserstein_Distance_CVPR_2017_paper.html), CVPR 2017 - the transport plan taught to respect reading order. Its temporal regularizers are also why it stops being a strict metric, which is the same trade I ran into
 - [Order Constraints in Optimal Transport - Lim et al.](https://arxiv.org/abs/2110.07275), ICML 2022 - imposes ordering as explicit constraints on the plan rather than as a soft penalty
 - [Fused Gromov-Wasserstein Distance for Structured Objects - Vayer et al.](https://arxiv.org/abs/1811.02834), 2019 - a single distance combining feature cost and structural cost through one weight. A genuine metric, and a useful reference point for why this project keeps the two axes on separate numbers instead
-- [Kendall Tau Sequence Distance - Cicirello](https://arxiv.org/abs/1905.02752), 2019 - order distance for sequences with repeated elements, the closest classical relative of the displacement number
+- [Kendall Tau Sequence Distance - Cicirello](https://arxiv.org/abs/1905.02752), 2019 - order distance for sequences with repeated elements, the closest classical relative of the order number
 - [Soft-DTW: a Differentiable Loss Function for Time-Series - Cuturi et al.](https://arxiv.org/abs/1703.01541), ICML 2017 - order-preserving alignment made smooth
 - [Differentiable Divergences Between Time Series - Blondel et al.](https://arxiv.org/abs/2010.08354), AISTATS 2021 - fixes soft-DTW's entropic bias so the score is minimised when two series are equal. That bias argument is the same reason I dropped Sinkhorn
 
@@ -353,8 +353,6 @@ The distance, the bounds and the geometry correction come from the papers below.
 - [Nested-Wasserstein Self-Imitation Learning for Sequence Generation - Zhang et al.](https://proceedings.mlr.press/v108/zhang20b.html), AISTATS 2020 - Wasserstein distance as a reward signal
 - [Fine-Grained Human Feedback Gives Better Rewards - Wu et al.](https://papers.neurips.cc/paper_files/paper/2023/hash/b8c90b65739ae8417e61eadb521f63d5-Abstract-Conference.html), NeurIPS 2023 - per-unit feedback beats a single holistic score
 - [Self-Refine: Iterative Refinement with Self-Feedback - Madaan et al.](https://proceedings.neurips.cc/paper_files/paper/2023/hash/91edff07232fb1b55a505a9e9f6c0ff3-Abstract-Conference.html), NeurIPS 2023 - iterative critique loops
-
-None of the last four compares transport feedback against KL divergence. I looked, and I could not find a paper that does.
 
 The broader point has little to do with my library. If you are pushing documents through a model and assuming the meaning survived, the useful step is measuring at all.
 

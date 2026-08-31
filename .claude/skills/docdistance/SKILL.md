@@ -1,6 +1,6 @@
 ---
 name: docdistance
-description: Install and run the docdistance library (PyPI `docdistance`, CLI `docdistance`) to measure how far two documents are - semantic content distance and structural/order distance - with interpretable per-statement diffs. Use when an agent must check whether a converted, extracted, summarized, or rewritten document preserved the original, find what changed between two documents (meaning vs order), or get an embedding-grounded document distance without model logits/KL. Triggers - "how different are these two documents", "did the conversion/extraction drift", "compare doc A to doc B", "semantic distance between documents", "install/use docdistance". Ships a preflight that checks install and upgrades.
+description: Install and run the docdistance library (PyPI `docdistance`, CLI `docdistance`) to measure how far two documents are - semantic content distance and structural/order distance - with interpretable per-statement diffs. Use when an agent must check whether a converted, extracted, summarized, or rewritten document preserved the original, find what changed between two documents (meaning vs order), or get an embedding-grounded document distance without model logits/KL. Triggers - "how different are these two documents", "did the conversion/extraction drift", "compare doc A to doc B", "semantic distance between documents", "score many document pairs in batch", "install/use docdistance". Ships a preflight that checks install and upgrades.
 ---
 
 # docdistance
@@ -52,10 +52,18 @@ Machine-readable, for an agent to parse:
 
 - `--json` → full result dict (`smd`/`closeness`/`verdict`, or `order_gap`/`structure_closeness`/`verdict`)
 - `--result-only` → one bare number, pipe it straight
-- `--details-json FILE` → per-statement interpretable diff:
-  - on `distance-semantic`: content flows, each with its matched target, `cost` (the semantic gap) and a `changed` bool → what drifted in meaning
-  - on `distance-structural`: per statement `displacement` and `moved` → what moved in order
-- read both details to tell a reword (`changed`) from a pure rearrangement (`moved`)
+- errors in `--json`/`--result-only` mode still write a one-line JSON `{error, message}` object to stdout (exit 1) - parse stdout, never treat empty as success
+- `--details-json FILE` → per-statement interpretable diff; the header is self-describing: `generator`, `version`, `closeness` + `closeness_definition`, every threshold in force (`thresholds`), a `summary` aggregate block (cost bands, `n_changed`, `n_no_counterpart`, top changed) and a per-`sections` table
+  - on `distance-semantic`: `flows` per source statement with matched targets and `cost`, plus `changed` (cheapest-match cost above `changed_cost`), `identical` (normalised-text equality), `no_counterpart` (removed content - cheapest match above `no_counterpart_cost`), `section` heading path; a `targets` array gives the B-side view (`best_source_index`, `min_incoming_cost`, `total_incoming_weight`) → added content reads directly
+  - on `distance-structural`: per statement `displacement_norm` (length-normalised, null without counterpart), `moved` (|displacement_norm| above `moved_tolerance`), ground `cost`, `semantic_target_index` + `targets_differ` (true → moved-and-reworded), `section`/`target_section`
+- read both details to tell a reword (`changed`) from a pure rearrangement (`moved`); removed content is `no_counterpart` on the source side, added content is a target with a high `min_incoming_cost`
+
+Batch and input options:
+
+- `--pairs FILE` (`distance-semantic` and `distance-structural` only) → TSV `a<TAB>b[<TAB>id]`: one model load for the whole sweep, one JSONL line per pair to stdout; `--details-json` takes a directory or a `{pair}` template
+- `--home PATH` → name the init home explicitly instead of relying on cwd / `DOCDISTANCE_HOME` discovery
+- `--markdown` → structure-aware segmentation: each table row, heading, list item and fenced-code line becomes one statement (markup stripped for embedding, raw line reported); default feeds the whole body to the prose splitter and fragments tables
+- `--min-words N` / `--skip-table-fragments` → drop fragments before encoding; `n_dropped` + `drop_rules` appear in detail headers and machine JSON; filtering renormalises the transport marginals, so the SMD legitimately changes
 
 ## Use it - Python
 
@@ -72,6 +80,7 @@ res, order   = dd.structural_distance_with_details("a.md", "b.md")   # (Structur
 
 - set `DOCDISTANCE_HOME` (env) to the init home before import, else calls raise "not initialized"
 - args accept a path or a raw string
+- both `*_with_details` take `markdown=`, `min_words=`, `skip_table_fragments=` - same semantics as the CLI flags; `semantic_distance_with_details` additionally takes `changed_cost=` (recompute the `changed` flag against your own band); details dicts match the `--details-json` schema above
 
 ## Why - the agentic use
 
@@ -80,7 +89,9 @@ res, order   = dd.structural_distance_with_details("a.md", "b.md")   # (Structur
 
 ## Gotchas
 
-- preflight then `init` before first use; distance needs `docdistance.json` reachable via `DOCDISTANCE_HOME` (or cwd)
+- preflight then `init` before first use; distance needs `docdistance.json` reachable via `DOCDISTANCE_HOME`, cwd or `--home`; on a miss the error names the searched path
+- a mistyped file path is scored as its literal text (exit 0, plausible number) - a stderr warning flags it, check stderr when a path argument is involved
+- detail-file fields and batch/segmentation flags above need the release after 1.1.4; the preflight `-U` upgrade covers it
 - python 3.13 only
 - `openvino` backend is CPU, portable, no GPU; `--gpu` / `--backend torch` are opt-in
 - `distance-wrt-source` needs the `wmd-wrt-source` mode provisioned and is slower (reranker × NLI)
