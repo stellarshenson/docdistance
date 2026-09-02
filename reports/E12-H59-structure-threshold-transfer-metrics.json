@@ -1,0 +1,1284 @@
+{
+  "id": "E12-H59",
+  "slug": "structure-threshold-transfer",
+  "model": "opus",
+  "type": "read-only probe (structural verdict layer)",
+  "device": "cpu",
+  "docdistance_version": "1.1.5",
+  "config": {
+    "shipped_structure_threshold": 0.9,
+    "sweep": {
+      "lo": 0.85,
+      "hi": 0.99,
+      "step": 0.005,
+      "n_points": 29
+    },
+    "opw": {
+      "l1": 50.0,
+      "l2": 0.1,
+      "sigma": 1.0,
+      "iters": 100
+    },
+    "rung_intent": {
+      "similar_order": [
+        1
+      ],
+      "not_similar_order": [
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "closeness_definition": "1 - order_gap / sqrt(2)",
+    "smd_max": 1.4142135623730951
+  },
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "ibm_rung2_closeness": 0.8928167541077432,
+    "wergeland_rung2_closeness": 0.9080478341745014,
+    "reading": "ibm rung-2 0.892817 < 0.9 <= wergeland rung-2 0.908048; the cross-article verdict flip exists"
+  },
+  "reproduction_check": {
+    "bar_abs_median_diff": 0.001,
+    "max_abs_median_diff": 0.00014063263660063496,
+    "passed": true,
+    "rebuilt_pair_sets": {
+      "cross_summary_ibm": 55,
+      "cross_summary_wergeland": 3,
+      "paraphrase": 14
+    },
+    "rows": [
+      {
+        "quantity": "diffuse ibm median",
+        "rebuilt": 0.04825457452968701,
+        "E11 report": 0.048113941893086376,
+        "abs diff": 0.00014063263660063496
+      },
+      {
+        "quantity": "diffuse wergeland median",
+        "rebuilt": 0.030904424502385675,
+        "E11 report": 0.030960484398296406,
+        "abs diff": 5.605989591073168e-05
+      },
+      {
+        "quantity": "paraphrase backtranslation median",
+        "rebuilt": 0.0011153233600690315,
+        "E11 report": 0.00112,
+        "abs diff": 4.676639930968358e-06
+      },
+      {
+        "quantity": "paraphrase ab_regen median",
+        "rebuilt": 0.02434497752785804,
+        "E11 report": 0.02443,
+        "abs diff": 8.502247214196151e-05
+      }
+    ]
+  },
+  "ladders": [
+    {
+      "article": "ibm",
+      "rung": 1,
+      "order_gap": 0.04208,
+      "closeness": 0.9702449466476701,
+      "intent": "similar order"
+    },
+    {
+      "article": "ibm",
+      "rung": 2,
+      "order_gap": 0.15158,
+      "closeness": 0.8928167541077432,
+      "intent": "not similar order"
+    },
+    {
+      "article": "ibm",
+      "rung": 3,
+      "order_gap": 0.25493,
+      "closeness": 0.8197372682721135,
+      "intent": "not similar order"
+    },
+    {
+      "article": "ibm",
+      "rung": 4,
+      "order_gap": 0.33811,
+      "closeness": 0.7609201262130164,
+      "intent": "not similar order"
+    },
+    {
+      "article": "ibm",
+      "rung": 5,
+      "order_gap": 0.38618,
+      "closeness": 0.7269295032413791,
+      "intent": "not similar order"
+    },
+    {
+      "article": "ibm",
+      "rung": 6,
+      "order_gap": 0.41611,
+      "closeness": 0.7057657972804657,
+      "intent": "not similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 1,
+      "order_gap": 0.03302,
+      "closeness": 0.9766513340852202,
+      "intent": "similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 2,
+      "order_gap": 0.13004,
+      "closeness": 0.9080478341745014,
+      "intent": "not similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 3,
+      "order_gap": 0.27583,
+      "closeness": 0.8049587365453146,
+      "intent": "not similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 4,
+      "order_gap": 0.34135,
+      "closeness": 0.758629100241972,
+      "intent": "not similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 5,
+      "order_gap": 0.37885,
+      "closeness": 0.7321125959474765,
+      "intent": "not similar order"
+    },
+    {
+      "article": "wergeland",
+      "rung": 6,
+      "order_gap": 0.39641,
+      "closeness": 0.7196958008698408,
+      "intent": "not similar order"
+    }
+  ],
+  "unreordered_summary": {
+    "ibm": {
+      "n": 66,
+      "min_closeness": 0.9061443333537553,
+      "median_closeness": 0.9713050430075534,
+      "max_order_gap": 0.1327319566766873,
+      "floor_pair": "gold-2 ~ haiku (diffuse)"
+    },
+    "wergeland": {
+      "n": 6,
+      "min_closeness": 0.9736759746715052,
+      "median_closeness": 0.9930610147573264,
+      "max_order_gap": 0.037227793635810136,
+      "floor_pair": "werg-b ~ werg-c (diffuse)"
+    }
+  },
+  "unreordered_pairs": [
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "gold-2",
+      "order_gap": 0.13077715308399535,
+      "closeness": 0.9075265882300356
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "v1",
+      "order_gap": 0.06831171859453977,
+      "closeness": 0.9516963205472938
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "v2",
+      "order_gap": 0.0654515948373518,
+      "closeness": 0.9537187334510341
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "opus",
+      "order_gap": 0.1323275450848348,
+      "closeness": 0.9064302955327447
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "sonnet",
+      "order_gap": 0.10176925701396661,
+      "closeness": 0.9280382682491076
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "haiku",
+      "order_gap": 0.05290056858453507,
+      "closeness": 0.9625936492252513
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "adv1-a",
+      "order_gap": 0.020931533210845232,
+      "closeness": 0.9851991709259799
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "adv1-b",
+      "order_gap": 0.022370909564360608,
+      "closeness": 0.9841813781457296
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "adv2-a",
+      "order_gap": 0.04081162488901158,
+      "closeness": 0.9711418232897382
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold",
+      "b": "adv2-b",
+      "order_gap": 0.062383630126888245,
+      "closeness": 0.9558881121022439
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "v1",
+      "order_gap": 0.11115905386974342,
+      "closeness": 0.9213986792184237
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "v2",
+      "order_gap": 0.13085008850540447,
+      "closeness": 0.9074750150989686
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "opus",
+      "order_gap": 0.10344485570346698,
+      "closeness": 0.9268534410532145
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "sonnet",
+      "order_gap": 0.09538275079141101,
+      "closeness": 0.9325542101071668
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "haiku",
+      "order_gap": 0.1327319566766873,
+      "closeness": 0.9061443333537553
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "adv1-a",
+      "order_gap": 0.030472908262979825,
+      "closeness": 0.9784523999247714
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "adv1-b",
+      "order_gap": 0.02708830679076718,
+      "closeness": 0.9808456745773869
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "adv2-a",
+      "order_gap": 0.04505069308850762,
+      "closeness": 0.9681443494199623
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "adv2-b",
+      "order_gap": 0.05100542732415847,
+      "closeness": 0.96393371646177
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "v2",
+      "order_gap": 0.02868603964886446,
+      "closeness": 0.9797159068389018
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "opus",
+      "order_gap": 0.1041697699579881,
+      "closeness": 0.9263408492680639
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "sonnet",
+      "order_gap": 0.08821486537269285,
+      "closeness": 0.9376226704935106
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "haiku",
+      "order_gap": 0.05779124950895387,
+      "closeness": 0.959135415578975
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "adv1-a",
+      "order_gap": 0.02177823536257445,
+      "closeness": 0.9846004620928469
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "adv1-b",
+      "order_gap": 0.022125192569858843,
+      "closeness": 0.9843551262987946
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "adv2-a",
+      "order_gap": 0.03367257280716629,
+      "closeness": 0.976189895428055
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v1",
+      "b": "adv2-b",
+      "order_gap": 0.04825457452968701,
+      "closeness": 0.9658788631267866
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "opus",
+      "order_gap": 0.09886805335852858,
+      "closeness": 0.930089729027471
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "sonnet",
+      "order_gap": 0.10538330718820943,
+      "closeness": 0.9254827488633521
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "haiku",
+      "order_gap": 0.09181039501688565,
+      "closeness": 0.9350802471001446
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "adv1-a",
+      "order_gap": 0.019455132482548765,
+      "closeness": 0.9862431438927071
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "adv1-b",
+      "order_gap": 0.02409874938350698,
+      "closeness": 0.982959610892807
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "adv2-a",
+      "order_gap": 0.03620242537310514,
+      "closeness": 0.9744010195232774
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "v2",
+      "b": "adv2-b",
+      "order_gap": 0.05024445784755727,
+      "closeness": 0.9644718031389506
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "sonnet",
+      "order_gap": 0.10574438065399205,
+      "closeness": 0.9252274313671907
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "haiku",
+      "order_gap": 0.10117252009576228,
+      "closeness": 0.9284602249705542
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "adv1-a",
+      "order_gap": 0.03599419530211512,
+      "closeness": 0.9745482604185214
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "adv1-b",
+      "order_gap": 0.030593473165765106,
+      "closeness": 0.9783671476644388
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "adv2-a",
+      "order_gap": 0.054852845806325434,
+      "closeness": 0.9612131807629672
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "opus",
+      "b": "adv2-b",
+      "order_gap": 0.030115101371216257,
+      "closeness": 0.9787054076042927
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "haiku",
+      "order_gap": 0.08038462529484658,
+      "closeness": 0.9431594863508743
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "adv1-a",
+      "order_gap": 0.01822709185663246,
+      "closeness": 0.9871114997468651
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "adv1-b",
+      "order_gap": 0.019131248124877265,
+      "closeness": 0.9864721647183369
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "adv2-a",
+      "order_gap": 0.028992650197319447,
+      "closeness": 0.9794991004409059
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "adv2-b",
+      "order_gap": 0.05421850971983816,
+      "closeness": 0.9616617241112737
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "haiku",
+      "b": "adv1-a",
+      "order_gap": 0.014042616076024417,
+      "closeness": 0.9900703709470439
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "haiku",
+      "b": "adv1-b",
+      "order_gap": 0.017869191274221374,
+      "closeness": 0.9873645736756785
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "haiku",
+      "b": "adv2-a",
+      "order_gap": 0.042598323606820476,
+      "closeness": 0.9698784365104383
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "haiku",
+      "b": "adv2-b",
+      "order_gap": 0.05112342089770611,
+      "closeness": 0.963850282405778
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv1-a",
+      "b": "adv1-b",
+      "order_gap": 0.02000391540685162,
+      "closeness": 0.9858550957655332
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv1-a",
+      "b": "adv2-a",
+      "order_gap": 0.065798376717146,
+      "closeness": 0.953473521632239
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv1-a",
+      "b": "adv2-b",
+      "order_gap": 0.04034996981184985,
+      "closeness": 0.9714682627253685
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv1-b",
+      "b": "adv2-a",
+      "order_gap": 0.04597860266822923,
+      "closeness": 0.9674882182638133
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv1-b",
+      "b": "adv2-b",
+      "order_gap": 0.02315281257425411,
+      "closeness": 0.9836284892252037
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "ibm",
+      "a": "adv2-a",
+      "b": "adv2-b",
+      "order_gap": 0.01578289938526456,
+      "closeness": 0.9888398048178945
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "wergeland",
+      "a": "werg-a",
+      "b": "werg-b",
+      "order_gap": 0.01766278215188527,
+      "closeness": 0.9875105269657812
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "wergeland",
+      "a": "werg-a",
+      "b": "werg-c",
+      "order_gap": 0.030904424502385675,
+      "closeness": 0.9781472718656954
+    },
+    {
+      "kind": "diffuse",
+      "subkind": "cross_summary",
+      "article": "wergeland",
+      "a": "werg-b",
+      "b": "werg-c",
+      "order_gap": 0.037227793635810136,
+      "closeness": 0.9736759746715052
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "gold",
+      "b": "gold~bt",
+      "order_gap": 0.00044076461270492473,
+      "closeness": 0.9996883323534493
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "gold-2",
+      "b": "gold-2~bt",
+      "order_gap": 0.001420326055445148,
+      "closeness": 0.9989956778146988
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "v1",
+      "b": "v1~bt",
+      "order_gap": 0.0008774708072973869,
+      "closeness": 0.9993795344418668
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "v2",
+      "b": "v2~bt",
+      "order_gap": 0.0009540264567950152,
+      "closeness": 0.9993254014229689
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "opus",
+      "b": "opus~bt",
+      "order_gap": 0.0016545707267278387,
+      "closeness": 0.998830041819178
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "sonnet",
+      "b": "sonnet~bt",
+      "order_gap": 0.0005486568924622237,
+      "closeness": 0.9996120409907953
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "ibm",
+      "a": "haiku",
+      "b": "haiku~bt",
+      "order_gap": 0.0023951049637301047,
+      "closeness": 0.9983064050384929
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "wergeland",
+      "a": "werg-a",
+      "b": "werg-a~bt",
+      "order_gap": 0.0004356894500086306,
+      "closeness": 0.9996919210354075
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "wergeland",
+      "a": "werg-b",
+      "b": "werg-b~bt",
+      "order_gap": 0.001276620263343048,
+      "closeness": 0.99909729315479
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "backtranslation",
+      "article": "wergeland",
+      "a": "werg-c",
+      "b": "werg-c~bt",
+      "order_gap": 0.0019636319267059554,
+      "closeness": 0.9986115025488718
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "ab_regen",
+      "article": "ibm",
+      "a": "gold",
+      "b": "gold-2",
+      "order_gap": 0.13077715308399535,
+      "closeness": 0.9075265882300356
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "ab_regen",
+      "article": "ibm",
+      "a": "v1",
+      "b": "v2",
+      "order_gap": 0.02868603964886446,
+      "closeness": 0.9797159068389018
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "ab_regen",
+      "article": "ibm",
+      "a": "adv1-a",
+      "b": "adv1-b",
+      "order_gap": 0.02000391540685162,
+      "closeness": 0.9858550957655332
+    },
+    {
+      "kind": "paraphrase",
+      "subkind": "ab_regen",
+      "article": "ibm",
+      "a": "adv2-a",
+      "b": "adv2-b",
+      "order_gap": 0.01578289938526456,
+      "closeness": 0.9888398048178945
+    }
+  ],
+  "sweep": [
+    {
+      "threshold": 0.85,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.855,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.86,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.865,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.87,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.875,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.88,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.885,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.89,
+      "ibm_mis": 1,
+      "ibm_false": 0,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.895,
+      "ibm_mis": 0,
+      "ibm_false": 0,
+      "ibm_ok": true,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 1,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.9,
+      "ibm_mis": 0,
+      "ibm_false": 0,
+      "ibm_ok": true,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 1,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.905,
+      "ibm_mis": 0,
+      "ibm_false": 0,
+      "ibm_ok": true,
+      "wergeland_mis": 1,
+      "wergeland_false": 0,
+      "wergeland_ok": false,
+      "mis_total": 1,
+      "false_total": 0,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.91,
+      "ibm_mis": 0,
+      "ibm_false": 5,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 5,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.915,
+      "ibm_mis": 0,
+      "ibm_false": 5,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 5,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.92,
+      "ibm_mis": 0,
+      "ibm_false": 5,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 5,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.925,
+      "ibm_mis": 0,
+      "ibm_false": 6,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 6,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.93,
+      "ibm_mis": 0,
+      "ibm_false": 12,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 12,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.935,
+      "ibm_mis": 0,
+      "ibm_false": 14,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 14,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.94,
+      "ibm_mis": 0,
+      "ibm_false": 16,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 16,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.945,
+      "ibm_mis": 0,
+      "ibm_false": 17,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 17,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.95,
+      "ibm_mis": 0,
+      "ibm_false": 17,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 17,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.955,
+      "ibm_mis": 0,
+      "ibm_false": 20,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 20,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.96,
+      "ibm_mis": 0,
+      "ibm_false": 22,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 22,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.965,
+      "ibm_mis": 0,
+      "ibm_false": 28,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 28,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.97,
+      "ibm_mis": 0,
+      "ibm_false": 32,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 0,
+      "wergeland_ok": true,
+      "mis_total": 0,
+      "false_total": 32,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.975,
+      "ibm_mis": 1,
+      "ibm_false": 36,
+      "ibm_ok": false,
+      "wergeland_mis": 0,
+      "wergeland_false": 1,
+      "wergeland_ok": false,
+      "mis_total": 1,
+      "false_total": 37,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.98,
+      "ibm_mis": 1,
+      "ibm_false": 43,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 2,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 45,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.985,
+      "ibm_mis": 1,
+      "ibm_false": 49,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 2,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 51,
+      "cross_ok": false
+    },
+    {
+      "threshold": 0.99,
+      "ibm_mis": 1,
+      "ibm_false": 58,
+      "ibm_ok": false,
+      "wergeland_mis": 1,
+      "wergeland_false": 3,
+      "wergeland_ok": false,
+      "mis_total": 2,
+      "false_total": 61,
+      "cross_ok": false
+    }
+  ],
+  "bands": {
+    "per_article_continuous": {
+      "ibm": {
+        "lower_open": 0.8928167541077432,
+        "upper_closed": 0.9061443333537553,
+        "rung1": 0.9702449466476701,
+        "unreordered_floor": 0.9061443333537553,
+        "floor_pair": "gold-2 ~ haiku (diffuse)",
+        "binding_upper": "un-reordered floor",
+        "width": 0.013327579246012133
+      },
+      "wergeland": {
+        "lower_open": 0.9080478341745014,
+        "upper_closed": 0.9736759746715052,
+        "rung1": 0.9766513340852202,
+        "unreordered_floor": 0.9736759746715052,
+        "floor_pair": "werg-b ~ werg-c (diffuse)",
+        "binding_upper": "un-reordered floor",
+        "width": 0.06562814049700383
+      }
+    },
+    "per_article_grid": {
+      "ibm": [
+        0.895,
+        0.9,
+        0.905
+      ],
+      "wergeland": [
+        0.91,
+        0.915,
+        0.92,
+        0.925,
+        0.93,
+        0.935,
+        0.94,
+        0.945,
+        0.95,
+        0.955,
+        0.96,
+        0.965,
+        0.97
+      ]
+    },
+    "cross_article_grid": [],
+    "cross_article_continuous": {
+      "lower_open": 0.9080478341745014,
+      "upper_closed": 0.9061443333537553,
+      "empty": true,
+      "overshoot": 0.0019035008207460846
+    }
+  },
+  "shipped_threshold_readings": {
+    "rungs_mis_sided": 1,
+    "rungs_total": 12,
+    "mis_sided_detail": [
+      {
+        "article": "wergeland",
+        "rung": 2,
+        "order_gap": 0.13004,
+        "closeness": 0.9080478341745014,
+        "intent": "not similar order"
+      }
+    ],
+    "unreordered_falsely_flagged": 0,
+    "unreordered_total": 72,
+    "margin_to_ibm_band": {
+      "lower": 0.007183245892256829,
+      "upper": 0.006144333353755305
+    },
+    "margin_to_wergeland_band": {
+      "lower": -0.00804783417450139,
+      "upper": 0.07367597467150522
+    }
+  },
+  "acceptance": {
+    "bar": "PASS = (a) a non-empty cross-article band excluding 0.90 with a midpoint recalibration proposal re-verified against all 12 rungs and every un-reordered pair, or (b) a demonstrated empty band filed as the per-corpus-calibration verdict",
+    "branch": "b",
+    "branch_text": "empty cross-article band - per-corpus structural calibration is the shipped guidance",
+    "proposal": null,
+    "met": true
+  },
+  "prediction_check": {
+    "predicted": "0.90 mis-sides 1 of 12 rungs (wergeland rung-2, closeness 0.908); safe-band lower edge >= 0.908; band empty if the minimum un-reordered closeness is below ~0.91",
+    "observed": "0.90 mis-sides 1 of 12 rungs (wergeland rung-2, closeness 0.908048); required lower edge 0.908048; minimum un-reordered closeness 0.906144 -> band empty",
+    "direction_matched": true
+  },
+  "guardrails": {
+    "V": "0/24",
+    "V_panel": {
+      "margin_pts": 4.708317407970153,
+      "dprime": 4.683998012459891,
+      "R": 1.669675503342983,
+      "DR": 0.08728241853520123
+    },
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "detail_json_bytes_identical": true,
+    "detail_json_byte_diff": 0,
+    "module_constants_unchanged": true,
+    "metric_property": "untouched - verdict layer only; H55 remains a score, E11 triangle-violation rate 0.15",
+    "all_held": true
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "id": "E12-H60",
+  "slug": "no-counterpart-valley",
+  "generated": "2026-09-01T20:08:12+00:00",
+  "docdistance_version": "1.1.5",
+  "verdict": "Killed-at-gate",
+  "verdict_number": "0 of 5 fully-matched pairs with a nonzero >0.6 band (0 of 61 statements above 0.6; pooled matched maximum 0.3477)",
+  "config": {
+    "shipped_cut": 0.6,
+    "smd_max": 1.4142135623730951,
+    "cost_band_edges": [
+      0.1,
+      0.35,
+      0.6
+    ],
+    "sweep_cuts": [
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75
+    ],
+    "candidate_cuts": [
+      0.45,
+      0.7,
+      0.75
+    ],
+    "delete_fraction": 0.2,
+    "delete_seeds": 5,
+    "seed": 0,
+    "backend": "openvino-int8-cpu",
+    "fully_matched_pairs": [
+      "gold vs gold-2",
+      "v1 vs v2",
+      "werg-a vs werg-a~bt",
+      "werg-b vs werg-b~bt",
+      "werg-c vs werg-c~bt"
+    ],
+    "roundtrip_exact": true,
+    "roundtrip": {
+      "gold": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "gold-2": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "gold-2~bt": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "gold~bt": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "haiku": {
+        "n_fixture": 14,
+        "n_resegmented": 14,
+        "text_equal": true
+      },
+      "haiku~bt": {
+        "n_fixture": 14,
+        "n_resegmented": 14,
+        "text_equal": true
+      },
+      "opus": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "opus~bt": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "sonnet": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "sonnet~bt": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "v1": {
+        "n_fixture": 12,
+        "n_resegmented": 12,
+        "text_equal": true
+      },
+      "v1~bt": {
+        "n_fixture": 12,
+        "n_resegmented": 12,
+        "text_equal": true
+      },
+      "v2": {
+        "n_fixture": 12,
+        "n_resegmented": 12,
+        "text_equal": true
+      },
+      "v2~bt": {
+        "n_fixture": 12,
+        "n_resegmented": 12,
+        "text_equal": true
+      },
+      "werg-a": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "werg-a~bt": {
+        "n_fixture": 11,
+        "n_resegmented": 11,
+        "text_equal": true
+      },
+      "werg-b": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "werg-b~bt": {
+        "n_fixture": 13,
+        "n_resegmented": 13,
+        "text_equal": true
+      },
+      "werg-c": {
+        "n_fixture": 14,
+        "n_resegmented": 14,
+        "text_equal": true
+      },
+      "werg-c~bt": {
+        "n_fixture": 14,
+        "n_resegmented": 14,
+        "text_equal": true
+      }
+    }
+  },
+  "kill_gate": {
+    "rule": "summary.cost_bands['>0.6'] on the fully-matched pairs only; zero everywhere kills",
+    "passed": false,
+    "pairs_with_nonzero_band": 0,
+    "n_pairs": 5,
+    "statements_above_cut": 0,
+    "statements_total": 61,
+    "all_readings_zero_including_file_reading": true,
+    "derived_bands_match_shipped": true,
+    "rows": [
+      {
+        "pair": "gold vs gold-2",
+        "kind": "ab_regen",
+        "reading": "fixture text",
+        "n_a": 11,
+        "n_b": 13,
+        "smd": 0.22343884174015136,
+        "bands": {
+          "0-0.1": 0,
+          "0.1-0.35": 11,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "v1 vs v2",
+        "kind": "ab_regen",
+        "reading": "fixture text",
+        "n_a": 12,
+        "n_b": 12,
+        "smd": 0.2299994099885225,
+        "bands": {
+          "0-0.1": 1,
+          "0.1-0.35": 11,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "werg-a vs werg-a~bt",
+        "kind": "backtranslation",
+        "reading": "fixture text",
+        "n_a": 11,
+        "n_b": 11,
+        "smd": 0.13851599192077463,
+        "bands": {
+          "0-0.1": 3,
+          "0.1-0.35": 8,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "werg-b vs werg-b~bt",
+        "kind": "backtranslation",
+        "reading": "fixture text",
+        "n_a": 13,
+        "n_b": 13,
+        "smd": 0.1723743774569952,
+        "bands": {
+          "0-0.1": 1,
+          "0.1-0.35": 12,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "werg-c vs werg-c~bt",
+        "kind": "backtranslation",
+        "reading": "fixture text",
+        "n_a": 14,
+        "n_b": 14,
+        "smd": 0.13139689554061207,
+        "bands": {
+          "0-0.1": 2,
+          "0.1-0.35": 12,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "gold vs gold-2",
+        "kind": "ab_regen",
+        "reading": "file (CLI)",
+        "n_a": 10,
+        "n_b": 12,
+        "smd": 0.22648980232576527,
+        "bands": {
+          "0-0.1": 0,
+          "0.1-0.35": 10,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      },
+      {
+        "pair": "v1 vs v2",
+        "kind": "ab_regen",
+        "reading": "file (CLI)",
+        "n_a": 11,
+        "n_b": 11,
+        "smd": 0.24237144128842789,
+        "bands": {
+          "0-0.1": 0,
+          "0.1-0.35": 11,
+          "0.35-0.6": 0,
+          ">0.6": 0
+        },
+        "above": 0,
+        "n_no_counterpart": 0
+      }
+    ],
+    "pooled_row_min": {
+      "n": 61,
+      "min": 0.0,
+      "median": 0.16314074397087097,
+      "p90": 0.24962396919727325,
+      "p95": 0.25719308853149414,
+      "max": 0.347685307264328,
+      "above_cut": 0,
+      "headroom_to_cut": 0.2523147165775299
+    }
+  },
+  "registered_experiment": {
+    "ran": false,
+    "reason": "kill-gate failed: 0/5 fully-matched pairs carry a nonzero >0.6 band (0 of 61 statements, pooled max 0.3477). The record ends the run here - no deletion fixture is built."
+  },
+  "byproduct_ibm_pool": {
+    "stats": {
+      "n_pairs": 55,
+      "n_rows": 579,
+      "min": 0.0,
+      "median": 0.3414672017097473,
+      "p90": 0.46087491512298584,
+      "p95": 0.4952417314052582,
+      "p99": 0.5706902742385864,
+      "max": 0.5774260759353638,
+      "above_cut": 0
+    },
+    "derived_bands_match_shipped": true,
+    "sweep": [
+      {
+        "cut": 0.45,
+        "n_flagged": 76,
+        "pct_flagged": 13.126079447322972,
+        "flips": 76,
+        "flips_pct": 13.126079447322972
+      },
+      {
+        "cut": 0.5,
+        "n_flagged": 27,
+        "pct_flagged": 4.66321243523316,
+        "flips": 27,
+        "flips_pct": 4.66321243523316
+      },
+      {
+        "cut": 0.55,
+        "n_flagged": 12,
+        "pct_flagged": 2.072538860103627,
+        "flips": 12,
+        "flips_pct": 2.072538860103627
+      },
+      {
+        "cut": 0.6,
+        "n_flagged": 0,
+        "pct_flagged": 0.0,
+        "flips": 0,
+        "flips_pct": 0.0
+      },
+      {
+        "cut": 0.65,
+        "n_flagged": 0,
+        "pct_flagged": 0.0,
+        "flips": 0,
+        "flips_pct": 0.0
+      },
+      {
+        "cut": 0.7,
+        "n_flagged": 0,
+        "pct_flagged": 0.0,
+        "flips": 0,
+        "flips_pct": 0.0
+      },
+      {
+        "cut": 0.75,
+        "n_flagged": 0,
+        "pct_flagged": 0.0,
+        "flips": 0,
+        "flips_pct": 0.0
+      }
+    ]
+  },
+  "acceptance": {
+    "bar": "PASS if >2% of ground-truth-matched statements exceed 0.6 while <5% of true-removed statements fall below it",
+    "met": false,
+    "reading": "not evaluated - the kill-gate ended the run before the matched and removed populations were built"
+  },
+  "guardrails": {
+    "V": "0/24",
+    "V_separation": 0.06658566334308719,
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "metric_property_triangle_violations": 0,
+    "metric_property_checks": 495,
+    "metric_property_ok": true,
+    "guard_pairs": [
+      "gold vs gold-2",
+      "v1 vs v2",
+      "werg-a vs werg-a~bt",
+      "werg-b vs werg-b~bt",
+      "werg-c vs werg-c~bt",
+      "gold vs opus",
+      "gold vs sonnet",
+      "gold vs haiku",
+      "gold vs adv1-a",
+      "gold vs adv2-a"
+    ],
+    "rows": [
+      {
+        "cut": 0.45,
+        "smd_identical": true,
+        "gap_identical": true,
+        "sem_json_identical": true,
+        "str_json_identical": true,
+        "sem_flags": 6,
+        "str_flags": 7
+      },
+      {
+        "cut": 0.7,
+        "smd_identical": true,
+        "gap_identical": true,
+        "sem_json_identical": true,
+        "str_json_identical": true,
+        "sem_flags": 0,
+        "str_flags": 0
+      },
+      {
+        "cut": 0.75,
+        "smd_identical": true,
+        "gap_identical": true,
+        "sem_json_identical": true,
+        "str_json_identical": true,
+        "sem_flags": 0,
+        "str_flags": 0
+      }
+    ],
+    "shipped_cut_flags": {
+      "semantic": 0,
+      "structural": 0
+    }
+  },
+  "field_anchors": {
+    "def_trans_1_synthetic_removal_cost": 1.414,
+    "def_trans_1_field_absorber_cost": 0.76,
+    "def_docs_7_copyedit_median_cost": 0.096,
+    "e11_backtranslation_smd": 0.15229,
+    "note": "re-derived from docs/defects-docdistance.md, the corrected recount; the corrections.json forensics archive is not present in this repository"
+  }
+}

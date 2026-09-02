@@ -1,0 +1,84 @@
+{
+  "id": "E12-H69",
+  "slug": "relevance-gate-form",
+  "model": "opus",
+  "verdict": "Killed-at-gate",
+  "verdict_number": "Set 2 max-r share >= 0.6 is 1.000 (4/4, mean 0.996, min 0.993) alongside gold's 0.961 (74/77, mean 0.942); both tiers' mass sits above the 0.6 bar",
+  "kill_gate": {
+    "ran": true,
+    "passed": false,
+    "reading": "KILL. Per-statement max reranker relevance: gold share >= 0.6 = 0.961 (74/77, mean 0.942, median 0.995), Set 1 = 0.529 (17 stmts, mean 0.664), Set 2 = 1.000 (4/4, mean 0.996, min 0.993). Gold-vs-Set-2 overlap coefficient 0.818, Mann-Whitney AUC (gold over Set 2) 0.429, best single-threshold balanced accuracy 0.714 at max r 0.992. Both tiers' mass sits above 0.6, so no threshold separates fabrication from faithful compression and the hard-gate variant dies as registered."
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "The record names no sanity check. The natural reproduction target was run anyway: the re-derived shipped soft-gate arm reproduces reports/E06-trained-scorers-cpu-metrics.json exactly, 6 gold intrusions and severity Set1>Set2 against E06's recorded 6 and Set1>Set2, on the CPU INT8 artefacts where E06 measured the fp16 torch reference cross-encoder."
+  },
+  "prediction_check": {
+    "predicted": "gate mechanism real, functional form incidental (hard and soft gates agree once max-r is re-derived)",
+    "observed": "gate mechanism absent and functional form decisively load-bearing: max-r overlap coefficient 0.818, AUC 0.429, best threshold balanced accuracy 0.714; hard gate at tau* 0.9984 reads 0 intrusions and Set2>Set1 while the shipped soft gate reads 6 intrusions and Set1>Set2, intrusion delta 6 against a bar of 1 and Set 2 tier mean 0.6376 vs 0.0029, a 21772% relative difference against a 10% bar, with 0 of 28 tau grid points meeting both agreement conditions",
+    "direction_matched": false
+  },
+  "acceptance": {
+    "bar": "As a lean this claims no result; the eventual modelled test passes if hard and soft gates agree on intrusion count within 1 and Set 2 tier mean within 10% (form incidental) or diverge by more (soft form load-bearing). Guardrails: selection axis and V = 0 untouched, symmetric-path smd/order_gap unchanged, D_grd remains a score not a metric.",
+    "met": false,
+    "readings": {
+      "intrusions_soft_shipped": 6,
+      "intrusions_hard_tau_star": 0,
+      "intrusion_delta": 6,
+      "intrusion_tolerance": 1,
+      "set2_tier_mean_soft": 0.0029,
+      "set2_tier_mean_hard": 0.6376,
+      "set2_relative_delta": 217.72,
+      "set2_tolerance": 0.1,
+      "tau_star": 0.9984,
+      "tau_points_meeting_both": 0,
+      "tau_points_total": 28
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "D_grd stays a score, not a metric: |grd_a - grd_b| on a scalar residual, no identity of indiscernibles; D_sel untouched and still metric optimal transport",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "np.array_equal over all 10 non-anchor pairs against a snapshot taken before any arm was prototyped; the bare shipped smd() also agrees bit-for-bit with the DistanceResult path. No code path in the notebook modifies the selection axis. Symmetric SMD reference row: V 0/24, margin +4.71 points, d' 4.68, R 1.670, DR 0.0873, consistent with the E01 baseline row (+4.58, 4.60, 1.680, 0.0854). Nothing under src/, docs/, tests/ or the ledger was edited."
+  },
+  "key_numbers": {
+    "n_source_statements": 70,
+    "n_statements_gold": 77,
+    "n_statements_set1": 17,
+    "n_statements_set2": 4,
+    "max_r_mean_gold": 0.9418,
+    "max_r_mean_set1": 0.6645,
+    "max_r_mean_set2": 0.9956,
+    "max_r_share_ge_06_gold": 0.961,
+    "max_r_share_ge_06_set1": 0.529,
+    "max_r_share_ge_06_set2": 1.0,
+    "overlap_coefficient_gold_set2": 0.818,
+    "mannwhitney_auc_gold_over_set2": 0.429,
+    "best_threshold_balanced_accuracy": 0.714,
+    "best_threshold_max_r": 0.9925,
+    "no_gate_intrusions": 0,
+    "no_gate_severity_Set2_over_Set1": 1,
+    "no_gate_tier_mean_gold": 0.2137,
+    "no_gate_tier_mean_set1": 0.2716,
+    "no_gate_tier_mean_set2": 0.6319,
+    "soft_gate_intrusions": 6,
+    "soft_gate_tier_mean_gold": 0.043,
+    "soft_gate_tier_mean_set1": 0.291,
+    "soft_gate_tier_mean_set2": 0.0029,
+    "hard_gate_tau_star": 0.9984,
+    "hard_gate_intrusions": 0,
+    "hard_gate_tier_mean_set2": 0.6376,
+    "e06_shipped_intrusions_reproduced": 6,
+    "reranker_grid_seconds": 339.7
+  },
+  "result_summary": "Killed at gate. The re-derived per-statement max reranker relevance puts all 4 Set 2 statements above the 0.6 bar (mean 0.996, minimum 0.993) alongside 74 of gold's 77 (share 0.961, mean 0.942), with overlap coefficient 0.818 and Mann-Whitney AUC 0.429, so no threshold on max relevance separates fabrication from faithful compression and the hard-gate variant dies as registered. The set-diff the kill clause calls for confirms the soft weighting is load-bearing but in the wrong direction: ungated R2 reads 0 gold intrusions with correct Set2>Set1 severity (tier means 0.2137 / 0.2716 / 0.6319), while the shipped soft gate reads 6 intrusions with inverted Set1>Set2 severity and collapses the Set 2 tier mean from 0.6319 to 0.0029. The re-derivation reproduces the E06 record exactly (6 intrusions, Set1>Set2), repairing the failing reference the ledger WARNING names and showing the E03-H11 headline 2 -> 0 is inverted to 0 -> 6 on the current models; per-statement max-r is persisted for the first time, closing the artefact gap. Guardrails held: V 0/24, smd and order_gap bit-identical over all 10 anchor pairs, D_sel untouched, D_grd still a score.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H69-kj-relevance-gate-form.ipynb",
+    "metrics_json": "reports/E12-H69-relevance-gate-form-metrics.json",
+    "log": "logs/E12-H69-relevance-gate-form.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Registered as a research lean; the registered single-phase experiment was executed, which turns it into a modelled test, and the verdict above is that test's, not the lean's. Set 2 is 4 statements from 2 documents (adv2-a segments to a single run-on sentence), so every Set 2 max-r statistic rests on n = 4: the kill-gate's literal condition is met without ambiguity (4/4 above 0.6, minimum 0.993) but the overlap coefficient and AUC are coarse. One fixture only, the same ibm-ai-adoption set E02 through E06 used. The collapse mechanism is the reranker saturating near 1.0 on long fabricated statements that reuse source vocabulary, which may not transfer to fabrication written in genuinely novel language. The hard gate reaches 0 intrusions only at tau 0.9984 and 0.9992, where it excludes almost nothing and its tier means converge back onto the ungated arm's, so its apparent win is the ungated baseline, not a gate. The E03 notebook's stored 0 -> 4 reading differs from both because it scored a two-component Euclidean signature (ungrounded, contradiction) rather than the shipped scalar |grd_a - grd_b|. A follow-up decision on whether to keep the shipped soft gate is out of this hypothesis's scope. The log records the final clean execution; the first full execution built the reranker grid in 339.7 s and cached it to data/interim/E12-H69-grounding-signals.npz, so the re-run restored the signals from cache."
+}

@@ -1,0 +1,101 @@
+{
+  "id": "E12-H63",
+  "slug": "semantic-threshold-band",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "band 4.71 closeness points wide; dropping haiku moves the upper edge +2.30 pts and dropping adv2-b moves the lower edge -1.64 pts; the INT8-to-fp backend swap shifts both edges (+0.92 lower, +0.82 upper) and consumes 40.6% of adv2-b's 2.26-pt margin to 0.77; the provenance comment's recorded band sits 0.26 pts above both recomputed edges because it came from notebook 09 cell 10's dd.embed path, not from the shipped semantic_distance path",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "recorded margins haiku 2.7 pts and adv2-b 2.0 pts, both at or below the 5-point kill bar; shipped emb_cos 0.9939 below 1.0 - both kill conditions had to hold together, neither does"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "the record names no harness sanity check for H63; the fixture's recorded readings were re-derived instead - V 0/24 reproduced on both backends and the same edge documents (haiku upper, adv2-b lower) as the recorded band, but the recorded edge values do not reproduce: the shipped semantic_distance path gives 79.44 / 74.74 against the recorded 79.7 / 75.0, 0.26 points lower on each edge. The reconciliation cell traces that gap to the path, not the version: the recorded band comes from notebook 09 cell 10's dd.embed path at docdistance 1.1.2, which disagreed with cell 13's shipped semantic_distance inside that same notebook on all three documents cell 13 also scored (gold-2 0.2258 vs 0.2265, adv1-a 0.4579 vs 0.4569, adv2-a 0.3811 vs 0.3806), while on those same three documents the shipped path is unchanged at 1.1.5 (gold-2 closeness 0.8398475249058507 bit-identical, smd within one ulp, 2.8e-17)"
+  },
+  "prediction_check": {
+    "predicted": "band half-width <= 2.7 closeness points; dropping haiku or adv2-b moves the respective edge by >= 1 point; at least one document's INT8-vs-fp closeness drift exceeds 20% of its margin to 0.77; the deliverable is a fragility card, not a threshold change",
+    "observed": "half-width 2.35 pts INT8 and 2.30 pts fp; dropping haiku +2.30 pts on the upper edge, dropping adv2-b -1.64 pts on the lower edge; adv2-b drifts -0.920 pts, 40.6% of its 2.26-pt margin, with 3 of 10 documents above the 20% bar; DEFAULT_THRESHOLD stays 0.77 and the card is published",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS = the per-document margin table, LOO edge table, backend-drift column and threshold-flip curve are published and the safe band restated with both caveats in the distance.py provenance comment's terms; no threshold change ships, V re-verified 0/24 on both backends, metric property untouched, default-path smd unchanged",
+    "met": true,
+    "readings": {
+      "band_int8_lo": 0.7473565462130423,
+      "band_int8_hi": 0.7944397202927438,
+      "band_int8_width_pts": 4.708317407970153,
+      "band_int8_half_width_pts": 2.3541587039850764,
+      "band_fp_lo": 0.7565590317137484,
+      "band_fp_hi": 0.802657195417208,
+      "band_fp_half_width_pts": 2.3049081851729825,
+      "edge_shift_int8_to_fp_lower_pts": 0.9202485500706126,
+      "edge_shift_int8_to_fp_upper_pts": 0.8217475124464246,
+      "loo_n_subsets_scored_documents": 10,
+      "loo_drop_haiku_upper_edge_pts": 2.298513708790051,
+      "loo_drop_adv2b_lower_edge_pts": -1.64468937472112,
+      "loo_n_edge_movers_ge_1pt": 2,
+      "loo_width_range_min_pts": 4.708317407970153,
+      "loo_width_range_max_pts": 7.006831116760203,
+      "anchor_swap_band_lo": 0.7466558028754355,
+      "anchor_swap_band_hi": 0.8131557953385804,
+      "max_drift_frac_of_margin": 0.40640820906952807,
+      "n_docs_drift_over_20pct_of_margin": 3,
+      "zero_tier_error_both_backends_lo": 0.76,
+      "zero_tier_error_both_backends_hi": 0.79,
+      "n_sweep_points_with_backend_disagreement": 10,
+      "provenance_edge_gap_upper_pts": 0.25602797072562566,
+      "provenance_edge_gap_lower_pts": 0.26434537869577923,
+      "provenance_gold2_smd_delta_across_versions": 2.7755575615628914e-17
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "triangle inequality counted over every triple of the 11 embedded documents: 0/495 violations on INT8 and 0/495 on fp; verdict layer only, the ground cost was not touched",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "V re-verified on both backends: INT8 0/24 and fp 0/24, no backend regression to name. Default-path smd checked with np.array_equal over the 10 anchor pairs - dd.semantic_distance equals the probe's arm-0 distances and a second invocation returns the same bits; the provenance reconciliation adds a third np.array_equal, dd.embed against arm 0 over the same 10 documents, also True. Default-path order_gap bit-identical across two invocations on 3 pairs (gold-2~gold 0.145118, haiku~gold 0.051239, adv2-b~gold 0.026671). DEFAULT_THRESHOLD still reads 0.77 on disk; no file under src/, docs/ or tests/ was touched."
+  },
+  "key_numbers": {
+    "int8_min_gold_pct": 79.44,
+    "int8_max_adv_pct": 74.74,
+    "fp_min_gold_pct": 80.27,
+    "fp_max_adv_pct": 75.66,
+    "recorded_min_gold_pct": 79.7,
+    "recorded_max_adv_pct": 75.0,
+    "band_width_pts_int8": 4.71,
+    "band_width_pts_fp": 4.61,
+    "loo_drop_haiku_upper_pts": 2.3,
+    "loo_drop_adv2b_lower_pts": -1.64,
+    "loo_max_width_pts": 7.01,
+    "anchor_swap_upper_edge_pts": 1.87,
+    "adv2b_drift_pts": -0.92,
+    "adv2b_drift_frac_of_margin": 0.406,
+    "haiku_drift_frac_of_margin": 0.336,
+    "adv2a_drift_frac_of_margin": 0.239,
+    "fixture_stmt_emb_cos_int8_vs_fp": 0.9956,
+    "shipped_corpus_emb_cos": 0.9939,
+    "backend_verdict_flips_at_077": 0,
+    "V_int8": 0,
+    "V_fp": 0,
+    "triangle_violations_int8": 0,
+    "triangle_violations_fp": 0,
+    "triangle_checks": 495,
+    "provenance_gap_upper_pts": 0.26,
+    "provenance_gap_lower_pts": 0.26,
+    "nb09_version": "1.1.2",
+    "nb09_cell10_minus_cell13_smd_gold2": -0.0007,
+    "nb09_cell10_minus_cell13_smd_adv1a": 0.001,
+    "nb09_cell10_minus_cell13_smd_adv2a": 0.0005,
+    "n_docs_cell10_differs_from_arm0_at_4dp": 10
+  },
+  "result_summary": "The 0.77 verdict band is single-document fragile, backend-sensitive, and was never computed on the shipped path, and the probe changes nothing. On the live 11-document ibm fixture the shipped INT8 path gives the band [0.747, 0.794] (max adversarial adv2-b 74.74%, min gold haiku 79.44%), 4.71 closeness points wide; dropping haiku moves the upper edge +2.30 points and dropping adv2-b moves the lower edge -1.64 points, so 2 of the 10 scored documents each own an edge while the other 8 leave it untouched. Re-encoding the same statements on the fp backbone shifts both edges upward (+0.92 lower, +0.82 upper) and drifts adv2-b by -0.920 points, 40.6% of its 2.26-point margin to 0.77, with 3 of 10 documents above 20% of margin, though no document's verdict at 0.77 flips between backends. The provenance comment's recorded 79.7 / 75.0 does not reproduce: both edges land 0.26 points lower, and the reconciliation traces that to notebook 09 cell 10's dd.embed path, which disagreed with the shipped semantic_distance inside that same 1.1.2 notebook on all three documents both cells scored, while the shipped path itself is unchanged at 1.1.5 (gold-2 closeness 0.8398475249058507 bit-identical). The threshold sweep gives zero tier errors over 0.750-0.790 on INT8 and 0.760-0.800 on fp, so only 0.760-0.790 is safe on both. Guardrails hold: V 0/24 on INT8 and 0/24 on fp, default-path smd and order_gap bit-identical by np.array_equal, 0/495 triangle-inequality violations per backend, DEFAULT_THRESHOLD unchanged at 0.77.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H63-kj-semantic-threshold-band.ipynb",
+    "metrics_json": "reports/E12-H63-semantic-threshold-band-metrics.json",
+    "log": "logs/E12-H63-semantic-threshold-band.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "No corpus swap: notebook 09's recorded cell text names the same 11 live opus-4-6 / sonnet-4-6 / haiku-4-5 filenames scored here, so the named archived-generation confound does not apply and no archive directory was opened. The provenance confound is a path mismatch instead: the recorded band comes from notebook 09 cell 10 (dd.embed plus smd), whose 1.1.2 SMDs differ from arm 0 on all 10 documents at 4 decimal places, while the three documents notebook 09 also scored through semantic_distance reproduce here (gold-2 bit-identical in closeness, one ulp in smd). haiku and adv2-b, the two edges, were never scored through semantic_distance at 1.1.2, so how much of their 0.26-point gap is the path difference and how much is a later change in the embed path cannot be decided from the recorded outputs; what is decided is that the recorded band is not a shipped-path band and that shipped-path version drift did not move it. Leave-one-out covers the 10 scored documents; the eleventh document is the anchor, whose removal re-bases every distance rather than dropping a band edge, so it is reported separately as an anchor swap onto gold-2 (band [0.747, 0.813]) and is excluded from the leave-one-out width range. The fp arm re-encodes the INT8 arm's own segmented statements, which isolates encoder numerics exactly but does not measure a fully independent fp pipeline. Leave-one-out on n = 11 measures this sample's instability, not the population band; only a second corpus turns the safe band into a calibrated one, which is the single-fixture-trust weakness the ledger already names. Backend drift is uniformly negative (INT8 reads every document as slightly farther from the anchor than fp), so it shifts the whole scale rather than reordering it - V stays 0/24 on both arms and no verdict flips at 0.77. Open follow-up: the card is published in the notebook and the metrics JSON only. Shipping it into the calibration documentation, and restating the distance.py provenance comment on the shipped-path band, needs edits under docs/ and src/ that this executor may not make. Wall-clock was not measured: the 64-thread CPU was shared with the other phase-1 executors."
+}

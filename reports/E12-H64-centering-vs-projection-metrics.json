@@ -1,0 +1,364 @@
+{
+  "id": "E12-H64",
+  "slug": "centering-vs-projection",
+  "fixture": {
+    "path": "data/interim/exec-summaries/ibm-ai-adoption/summaries",
+    "documents": 11,
+    "statements": 98,
+    "anchor": "gold",
+    "statements_by_doc": {
+      "gold": 10,
+      "gold-2": 12,
+      "v1": 11,
+      "v2": 11,
+      "opus": 11,
+      "sonnet": 9,
+      "haiku": 13,
+      "adv1-a": 8,
+      "adv1-b": 9,
+      "adv2-a": 1,
+      "adv2-b": 3
+    },
+    "encoder": "mmBERT OpenVINO INT8 (CPU)",
+    "docdistance_version": "1.1.5"
+  },
+  "kill_gate": {
+    "criterion": "||pooled mean|| >= 0.15",
+    "pooled_mean_norm": 0.9538519382476807,
+    "passed": true
+  },
+  "sanity_check": {
+    "tolerance_relative": 0.1,
+    "tolerance_source": "executor-declared in the configuration cell; the record and the primer register no tolerance",
+    "tolerance_relative_strict": 0.05,
+    "required_row": "baseline",
+    "passed": true,
+    "passed_within_strict_band_by_row": {
+      "baseline": true,
+      "full": false
+    },
+    "max_rel_delta_by_row": {
+      "baseline": 0.028016901303526808,
+      "full": 0.05056257918964408
+    },
+    "rows": {
+      "baseline": {
+        "registered": {
+          "V": 0,
+          "margin_pts": 4.58,
+          "dprime": 4.6,
+          "R": 1.68,
+          "DR": 0.0854
+        },
+        "observed": {
+          "V": 0,
+          "margin_pts": 4.708317407970153,
+          "dprime": 4.683998012459891,
+          "R": 1.669675503342983,
+          "DR": 0.08728241853520123
+        },
+        "rel_delta": {
+          "margin_pts": 0.028016901303526808,
+          "dprime": 0.018260437491280684,
+          "R": 0.006145533724414789,
+          "DR": 0.02204237160657175
+        }
+      },
+      "full": {
+        "registered": {
+          "V": 0,
+          "margin_pts": 18.48,
+          "dprime": 7.17,
+          "R": 1.482,
+          "DR": 0.2286
+        },
+        "observed": {
+          "V": 0,
+          "margin_pts": 19.414396463424623,
+          "dprime": 7.310049184864293,
+          "R": 1.4754817113727638,
+          "DR": 0.22533667125962623
+        },
+        "rel_delta": {
+          "margin_pts": 0.05056257918964408,
+          "dprime": 0.019532661766289133,
+          "R": 0.00439830541648862,
+          "DR": 0.014275278829281592
+        }
+      }
+    }
+  },
+  "arms": {
+    "baseline": {
+      "V": 0,
+      "margin_pts": 4.708317407970153,
+      "margin_gain_pts": 0.0,
+      "recovery_fraction": null,
+      "recovery_fraction_registered_denominator": null,
+      "dprime": 4.683998012459891,
+      "R": 1.669675503342983,
+      "DR": 0.08728241853520123,
+      "DR_x_baseline": 1.0,
+      "distances": {
+        "gold-2": 0.2264898023257653,
+        "v1": 0.25820024284449494,
+        "v2": 0.2081689582285684,
+        "opus": 0.2365863060409373,
+        "sonnet": 0.25371288773086337,
+        "haiku": 0.2907061354472087,
+        "adv1-a": 0.45690302252769466,
+        "adv1-b": 0.44583740731080373,
+        "adv2-a": 0.3805512189865113,
+        "adv2-b": 0.3572917987902959
+      }
+    },
+    "a center+renorm": {
+      "V": 0,
+      "margin_pts": 19.952554955749292,
+      "margin_gain_pts": 15.24423754777914,
+      "recovery_fraction": 1.0365942880012649,
+      "recovery_fraction_registered_denominator": 1.0967077372502978,
+      "dprime": 7.384320592704309,
+      "R": 1.6144572921410345,
+      "DR": 0.27121554432516853,
+      "DR_x_baseline": 3.107333056035639,
+      "distances": {
+        "gold-2": 0.8087340071797371,
+        "v1": 0.8759130586277357,
+        "v2": 0.7522210115736181,
+        "opus": 0.8286638119003988,
+        "sonnet": 0.9072127434942459,
+        "haiku": 1.0226209619870552,
+        "adv1-a": 1.44891654253006,
+        "adv1-b": 1.4131747166315718,
+        "adv2-a": 1.4249132871627805,
+        "adv2-b": 1.3047927002112067
+      }
+    },
+    "b project-only": {
+      "V": 0,
+      "margin_pts": 4.044454232474026,
+      "margin_gain_pts": -0.6638631754961271,
+      "recovery_fraction": -0.04514209212345427,
+      "recovery_fraction_registered_denominator": -0.04775994068317461,
+      "dprime": 6.320730269476042,
+      "R": 1.474373037631897,
+      "DR": 0.05878107419066151,
+      "DR_x_baseline": 0.6734583571026386,
+      "distances": {
+        "gold-2": 0.22164758332073686,
+        "v1": 0.24819091328165746,
+        "v2": 0.20520547736774788,
+        "opus": 0.23166863200339408,
+        "sonnet": 0.24522843592696716,
+        "haiku": 0.2816698778134126,
+        "adv1-a": 0.36176066026091575,
+        "adv1-b": 0.3535154951943291,
+        "adv2-a": 0.3549749374389648,
+        "adv2-b": 0.33886709809303284
+      }
+    },
+    "c full shipped": {
+      "V": 0,
+      "margin_pts": 19.414396463424623,
+      "margin_gain_pts": 14.70607905545447,
+      "recovery_fraction": 1.0,
+      "recovery_fraction_registered_denominator": 1.057991298953559,
+      "dprime": 7.310049184864293,
+      "R": 1.4754817113727638,
+      "DR": 0.22533667125962623,
+      "DR_x_baseline": 2.5816960052355484,
+      "distances": {
+        "gold-2": 0.869516993065675,
+        "v1": 0.9613741739229726,
+        "v2": 0.8220780540596357,
+        "opus": 0.8798916621641679,
+        "sonnet": 0.964581506782108,
+        "haiku": 1.0635447460871474,
+        "adv1-a": 1.36922342479229,
+        "adv1-b": 1.338105773925781,
+        "adv2-a": 1.4177283167839052,
+        "adv2-b": 1.3450323621431983
+      }
+    }
+  },
+  "diagnostic": {
+    "cos_uncentered_pc1_mean": 0.9999992251396179,
+    "cos_centered_pc1_mean": 0.021381409838795662,
+    "singular_values_uncentered_top3": [
+      9.444049835205078,
+      1.514784336090088,
+      0.9423373341560364
+    ],
+    "singular_values_centered_top3": [
+      1.5151348114013672,
+      0.9447194337844849,
+      0.8329139351844788
+    ]
+  },
+  "acceptance": {
+    "bar": "exactly one isolate arm >= 60% of the full-composition margin gain at V=0/24, metric property intact",
+    "full_composition_gain_pts": 14.70607905545447,
+    "full_composition_gain_pts_registered": 13.9,
+    "arms_reaching_bar": [
+      "a center+renorm"
+    ],
+    "attribution": "a center+renorm",
+    "met": true
+  },
+  "guardrails": {
+    "V_by_arm": {
+      "baseline": "0/24",
+      "a center+renorm": "0/24",
+      "b project-only": "0/24",
+      "c full shipped": "0/24"
+    },
+    "V_all_zero": true,
+    "raw_embeddings_unchanged_byte_diff": true,
+    "default_path_pair": [
+      "gold",
+      "opus"
+    ],
+    "smd_before_hex": "7c4a90c77548ce3f",
+    "smd_after_hex": "7c4a90c77548ce3f",
+    "smd_bit_identical": true,
+    "order_gap_before_hex": "0264b939ae08c13f",
+    "order_gap_after_hex": "0264b939ae08c13f",
+    "order_gap_bit_identical": true,
+    "metric_property": {
+      "baseline raw (shipped)": {
+        "max_unit_norm_dev": 1.7881393432617188e-07,
+        "max_cost_identity_dev_unit_float64": 4.470348358154297e-08,
+        "max_triangle_slack_all_triples": 0.0,
+        "float32_arithmetic_band": 0.0005732607196626611,
+        "holds": true
+      },
+      "a center+renorm": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_unit_float64": 4.712160915387242e-08,
+        "max_triangle_slack_all_triples": 0.0,
+        "float32_arithmetic_band": 0.0006228589026947017,
+        "holds": true
+      },
+      "b project-only": {
+        "max_unit_norm_dev": 2.384185791015625e-07,
+        "max_cost_identity_dev_unit_float64": 5.1619136559035694e-08,
+        "max_triangle_slack_all_triples": 0.0,
+        "float32_arithmetic_band": 0.0007720404537394643,
+        "holds": true
+      },
+      "c full shipped": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_unit_float64": 4.470348358154297e-08,
+        "max_triangle_slack_all_triples": 0.0,
+        "float32_arithmetic_band": 0.0004847462784967071,
+        "holds": true
+      }
+    },
+    "metric_property_holds": true,
+    "src_tests_clean": true,
+    "all_hold": true
+  },
+  "closeness_saturation": {
+    "smd_max": 1.4142135623730951,
+    "clipped_docs_by_geometry": {
+      "baseline": [],
+      "a center+renorm": [
+        "adv1-a",
+        "adv2-a"
+      ],
+      "b project-only": [],
+      "c full shipped": [
+        "adv2-a"
+      ]
+    },
+    "margin_defining_pair_by_geometry": {
+      "baseline": {
+        "adversary": "adv2-b",
+        "adversary_distance": 0.3572917987902959,
+        "gold": "haiku",
+        "gold_distance": 0.2907061354472087
+      },
+      "a center+renorm": {
+        "adversary": "adv2-b",
+        "adversary_distance": 1.3047927002112067,
+        "gold": "haiku",
+        "gold_distance": 1.0226209619870552
+      },
+      "b project-only": {
+        "adversary": "adv2-b",
+        "adversary_distance": 0.33886709809303284,
+        "gold": "haiku",
+        "gold_distance": 0.2816698778134126
+      },
+      "c full shipped": {
+        "adversary": "adv1-b",
+        "adversary_distance": 1.338105773925781,
+        "gold": "haiku",
+        "gold_distance": 1.0635447460871474
+      }
+    },
+    "margin_unaffected_by_clipping": true
+  },
+  "prediction_check": {
+    "margin_band_pts": [
+      12.0,
+      18.0
+    ],
+    "margin_band_held": false,
+    "dr_clause_multiple": 2.0,
+    "dr_clause_held": true,
+    "direction_held": true
+  },
+  "result_key_numbers": {
+    "pooled_mean_norm": 0.9538519382476807,
+    "baseline_margin_pts": 4.708317407970153,
+    "baseline_DR": 0.08728241853520123,
+    "baseline_dprime": 4.683998012459891,
+    "baseline_R": 1.669675503342983,
+    "arm_a_margin_pts": 19.952554955749292,
+    "arm_a_gain_pts": 15.24423754777914,
+    "arm_a_recovery": 1.0365942880012649,
+    "arm_a_recovery_registered_denominator": 1.0967077372502978,
+    "arm_a_DR": 0.27121554432516853,
+    "arm_a_DR_x_baseline": 3.107333056035639,
+    "arm_a_dprime": 7.384320592704309,
+    "arm_a_R": 1.6144572921410345,
+    "arm_b_margin_pts": 4.044454232474026,
+    "arm_b_gain_pts": -0.6638631754961271,
+    "arm_b_recovery": -0.04514209212345427,
+    "arm_b_recovery_registered_denominator": -0.04775994068317461,
+    "arm_b_DR": 0.05878107419066151,
+    "arm_b_dprime": 6.320730269476042,
+    "arm_b_R": 1.474373037631897,
+    "arm_c_margin_pts": 19.414396463424623,
+    "arm_c_gain_pts": 14.70607905545447,
+    "arm_c_DR": 0.22533667125962623,
+    "arm_c_dprime": 7.310049184864293,
+    "full_composition_margin_gain_pts": 14.70607905545447,
+    "full_composition_margin_gain_pts_registered": 13.9,
+    "cos_uncentered_pc1_mean": 0.9999992251396179,
+    "cos_centered_pc1_mean": 0.021381409838795662,
+    "singular_value_1_uncentered": 9.444049835205078,
+    "singular_value_2_uncentered": 1.514784336090088,
+    "singular_value_1_centered": 1.5151348114013672,
+    "n_statements": 98,
+    "n_documents": 11
+  },
+  "acceptance_readings": {
+    "full_composition_margin_gain_pts": 14.70607905545447,
+    "arm_a_center_renorm_recovery": 1.0365942880012649,
+    "arm_b_project_only_recovery": -0.04514209212345427,
+    "arm_a_recovery_registered_denominator": 1.0967077372502978,
+    "arm_b_recovery_registered_denominator": -0.04775994068317461,
+    "arms_reaching_bar": 1,
+    "arm_a_V": 0,
+    "arm_b_V": 0,
+    "arm_c_V": 0
+  },
+  "transform_cost_ms_indicative": {
+    "a center+renorm": 0.09627294930396602,
+    "c full shipped": 168.81189539999468
+  },
+  "verdict": "Confirmed"
+}

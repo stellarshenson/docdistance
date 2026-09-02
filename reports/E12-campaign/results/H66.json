@@ -1,0 +1,84 @@
+{
+  "id": "E12-H66",
+  "slug": "norm-mass-marginals",
+  "model": "opus",
+  "verdict": "Refuted (null)",
+  "verdict_number": "d' 4.673 vs the same harness's uniform baseline 4.684 - delta -0.011 against a predicted +0.2 to +0.8; margin +4.720 pts vs +4.708 pts, delta +0.012",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "pooled pre-L2 norm CV 0.0446 (death below 0.03) and corr(norm, token count) Pearson -0.1597, Spearman -0.1033 (death above 0.8) over 98 statements in one encode pass, zero OT solves - both death conditions cleared, but the per-document CV that actually shapes the mass vector runs 0.0003 to 0.0378, median 0.0198, below the death line the pooled figure cleared"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "naive baseline row reproduced: V 0/24 exact, margin +4.71 pts vs registered +4.58 (+2.80%), d' 4.68 vs 4.60 (+1.83%), R 1.670 vs 1.680 (-0.61%), DR 0.0873 vs 0.0854 (+2.20%); max relative deviation 2.80% against the 5% tolerance fixed before scoring. The registered row was measured on the torch bf16 GPU backbone in E01, this notebook runs the shipped OpenVINO INT8 encoder (emb_cos 0.9939 vs fp) with the CPU fp32 segmenter"
+  },
+  "prediction_check": {
+    "predicted": "d' up +0.2 to +0.8 over the 4.60 naive baseline, margin unchanged to +1 closeness point, DR roughly flat, latency unchanged",
+    "observed": "d' -0.011 over the harness baseline (4.684 to 4.673), margin +0.012 pts (+4.708 to +4.720), DR -0.00008 (0.08728 to 0.08720), R -0.0018, latency 0.877x",
+    "direction_matched": false
+  },
+  "acceptance": {
+    "bar": "PASS iff V = 0/24 AND boundary margin >= +4.58 closeness pts AND d' >= 4.60 AND default-path smd on the identity pair stays 0 AND the order_gap default path is unchanged",
+    "met": true,
+    "readings": {
+      "V": 0,
+      "margin_pts": 4.72,
+      "dprime": 4.673,
+      "identity_smd_default_path": 0.0,
+      "order_gap_bit_identical": 1,
+      "baseline_margin_pts": 4.708,
+      "baseline_dprime": 4.684,
+      "delta_margin_pts": 0.012,
+      "delta_dprime": -0.011
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "metric_property": "holds - identity d(A,A) exactly 0.0 on all 11 fixtures under both the default path and the norm-mass marginals, symmetry max |d(A,B)-d(B,A)| 2.2e-16 over 55 unordered pairs, triangle inequality 0 violations in 495 checks (165 triples in 3 orientations each), worst slack +1.77e-01",
+    "notes": "smd and order_gap default paths captured before the weighted arms and recomputed after every weighted solve, compared with np.array_equal on the 10 reference pairs - both True. git diff --stat -- src/ empty: the variant is prototyped entirely in the notebook, the shipped library is untouched. The probe encode path is bit-identical to OpenVINOEncoder.encode on all 11 documents (np.array_equal), and distance.smd equals the E01 replica solve to exact float equality on all 10 pairs"
+  },
+  "key_numbers": {
+    "gate_pooled_norm_cv": 0.0446,
+    "gate_corr_norm_tokencount_pearson": -0.1597,
+    "gate_corr_norm_tokencount_spearman": -0.1033,
+    "per_document_cv_median": 0.0198,
+    "per_document_cv_max": 0.0378,
+    "norm_mean": 30.1676,
+    "norm_std": 1.3456,
+    "mass_total_variation_to_uniform_median": 0.0078,
+    "mass_total_variation_to_uniform_max": 0.0141,
+    "max_weight_over_uniform_fixturewide": 1.084,
+    "baseline_V": 0,
+    "baseline_margin_pts": 4.708,
+    "baseline_dprime": 4.684,
+    "baseline_R": 1.6697,
+    "baseline_DR": 0.08728,
+    "baseline_ms_per_pair": 0.0962,
+    "normmass_V": 0,
+    "normmass_margin_pts": 4.72,
+    "normmass_dprime": 4.673,
+    "normmass_R": 1.6679,
+    "normmass_DR": 0.0872,
+    "normmass_ms_per_pair": 0.0844,
+    "delta_margin_pts": 0.012,
+    "delta_dprime": -0.011,
+    "delta_R": -0.0018,
+    "delta_DR": -0.00008,
+    "latency_ratio": 0.877,
+    "max_per_document_distance_change": 0.00148,
+    "triangle_violations": 0,
+    "triangle_checked": 495
+  },
+  "result_summary": "Norm-mass marginals produce no effect on the ibm 11-summary panel: d' 4.684 to 4.673 (delta -0.011) against a predicted +0.2 to +0.8 gain, margin +4.708 to +4.720 closeness pts (delta +0.012), R 1.6697 to 1.6679, DR 0.08728 to 0.08720, largest per-document distance change +0.00148, ranking unchanged. The bar reads met literally (V 0/24, margin +4.720 >= +4.58, d' 4.673 >= 4.60, identity smd 0.0, order_gap bit-identical), but the harness's own uniform baseline already clears those absolute thresholds, so the bar does not separate the lever from doing nothing. The cause is visible in the gate that passed it: the pooled norm CV 0.0446 cleared the 0.03 death line, yet the mass vector is a within-document object whose per-document CV median is 0.0198, giving mass vectors 0.0001 to 0.0141 in total variation from uniform and a heaviest statement at 1.084x its uniform share - and two of the four adversarial documents segment to 1 and 3 statements, so their masses are uniform by construction. The premise survives, only the magnitude fails: corr(norm, token count) is -0.1597, so the discarded norm is a genuine content signal and not statement length, but mmBERT statement norms (mean 30.17, sd 1.35) are too concentrated to reshape an exact EMD.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E12-H66-kj-norm-mass-marginals.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E12-H66-norm-mass-marginals-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E12-H66-norm-mass-marginals.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Single fixture, in-sample: the 11 ibm-ai-adoption summaries that set the calibration are the same 11 that score it, and the null result is a statement about this corpus's norm spread (4.5% pooled, 2.0% within-document), not a general refutation of norm-scaled mass. Two adversarial fixtures carry 1 and 3 statements, so the lever has almost no purchase on the adversarial side of the boundary the margin measures - a wider or better-segmented adversarial tier could change the reading. The acceptance bar's absolute thresholds (+4.58, 4.60) come from the E01 torch bf16 GPU row while this run uses the shipped OpenVINO INT8 encoder on CPU, which reproduces that row within 2.80%; the bar is therefore recorded as met while the verdict follows the delta over the co-measured baseline. The latency reading 0.877x is not a measurement - the 64-thread CPU was shared with concurrent campaign executors; the defensible claim is only that the weights cost nothing, as predicted. The registered second stage (feeding the same masses to the OPW order axis) was not run, correctly, since it was conditioned on the semantic axis passing; it would inherit the same near-uniform mass vectors."
+}

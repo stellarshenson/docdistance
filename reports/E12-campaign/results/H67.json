@@ -1,0 +1,88 @@
+{
+  "id": "E12-H67",
+  "slug": "pairs-embed-memo",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "9.94x median batch wall time on the 55-row all-pairs sweep (11.032 s to 1.110 s, bar >= 3x), segment-and-encode calls 110 -> 11, disjoint-pairs control -0.63% (bar < 2% regression), all 9 arms and the end-to-end CLI byte-identical",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "gate (a) duplicate paths: worst intended-sweep unique/total 0.750 (1-source-x2), all-pairs sweep 0.100, both under the 0.9 death line, 99 of 110 all-pairs slots reusable. gate (b) stage split: segment+encode of one document 107.9 ms median against 198.7 ms median pair latency = 54.3% share, above the 30% death line, measured on all 11 fixtures with zero cache written"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "the E12-H67 record names no harness sanity check; the E01 naive-baseline row was reproduced anyway as a cross-check and as the V measurement - V 0/24 exact, margin +4.708 vs +4.58 pts (2.80% rel), d' 4.684 vs 4.60 (1.83%), R 1.6697 vs 1.680 (0.61%), DR 0.08728 vs 0.0854 (2.20%), all inside the 5% tolerance fixed before scoring"
+  },
+  "prediction_check": {
+    "predicted": "embed calls 110 -> 11 (90% skipped) on the 55-row all-pairs sweep, encode-component wall time down 5-10x, disjoint-pairs overhead under 1%, JSONL byte-identical throughout",
+    "observed": "embed calls 110 -> 11 (90% skipped), batch wall time 9.94x median (10.03x min-of-3), disjoint-pairs control -0.63%, all 9 arms plus the end-to-end CliRunner invocation byte-identical",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS: byte-identical JSONL and per-pair --details-json files versus the uncached run on the same TSV AND >= 3x wall-time reduction on the 55-row fixture sweep AND < 2% regression on a worst-case disjoint-pairs TSV. FAIL: any output byte differs, or the disjoint-pairs overhead exceeds 2%",
+    "met": true,
+    "readings": {
+      "jsonl_byte_identical_arms": "9/9",
+      "details_files_byte_identical": "55 files x 3 repeats",
+      "speedup_allpairs_median": 9.9361,
+      "speedup_allpairs_min_of_3": 10.0324,
+      "median_off_s": 11.032,
+      "median_on_s": 1.11,
+      "disjoint_regression": -0.0063,
+      "embed_calls_off": 110,
+      "embed_calls_on": 11
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "metric_property": "holds - identity d(A,A) exactly 0.0 on all 11 fixtures, symmetry max |d(A,B)-d(B,A)| 2.2e-16 over 55 unordered pairs, triangle inequality 0 violations in 495 checks (165 triples in 3 orientations each), worst slack +1.77e-01, all computed on memo-served embeddings",
+    "order_gap_bit_identical_source": "the 55 order_gap values parsed out of the structural arm's two JSONL streams, np.array_equal",
+    "notes": "smd bit-identity is the 55 smd values parsed out of the all-pairs arm's uncached and cached JSONL streams, compared with np.array_equal - True; order_gap the same on the structural arm - True. Memo-served embeddings are np.array_equal to freshly computed ones on all 11 fixtures. The empty set-diff is the primary proof: 9 of 9 arms emit byte-identical JSONL (sha256 equal), the 55 per-pair details files match on all 3 repeats, and the end-to-end CliRunner run of distance-semantic --pairs gives sha256 682ad33b... under both arms. git diff --stat -- src/ empty: the memo is a class-level monkeypatch inside the notebook, the shipped library is untouched. Five memo properties measured at the unit level before any batch ran - hit returns the miss's array, markdown and min_words occupy separate keys, _last_n_dropped restored on hits (13 statements dropped over 11 docs, non-zero n_dropped on 49 of 55 filtered rows), mtime change invalidates, raw text bypasses"
+  },
+  "key_numbers": {
+    "speedup_allpairs_55_median": 9.9361,
+    "median_off_s_allpairs_55": 11.032,
+    "median_on_s_allpairs_55": 1.11,
+    "embed_calls_off": 110,
+    "embed_calls_on": 11,
+    "hits_allpairs_55": 99,
+    "speedup_allpairs_55_details": 9.549,
+    "speedup_structural": 9.467,
+    "speedup_filtered": 9.844,
+    "speedup_markdown": 9.947,
+    "speedup_1source_x2": 1.814,
+    "speedup_1source_x5": 3.241,
+    "speedup_1source_x11": 5.175,
+    "disjoint_median_off_s": 17.856,
+    "disjoint_median_on_s": 17.745,
+    "disjoint_delta_pct": -0.63,
+    "disjoint_key_overhead_ms_110_slots": 17.5,
+    "gate_a_worst_unique_over_total": 0.75,
+    "gate_b_encode_share": 0.5431,
+    "gate_b_median_segment_encode_ms": 107.891,
+    "gate_b_median_pair_ms": 198.671,
+    "cli_end_to_end_off_s": 20.542,
+    "cli_end_to_end_on_s": 10.36,
+    "cli_end_to_end_speedup": 1.9828,
+    "model_load_s": 13.539,
+    "panel_V": 0,
+    "panel_margin_pts": 4.7083,
+    "panel_dprime": 4.684,
+    "panel_R": 1.6697,
+    "panel_DR": 0.087282,
+    "load_average_median_before_timed_runs": 7.26,
+    "load_average_max_before_timed_runs": 7.97,
+    "load_ceiling_breaches": 0
+  },
+  "result_summary": "A per-DocDistance embed memo keyed on (resolved path, mtime, size, segmentation kwargs) cuts the shipped 55-row --pairs batch from a median 11.032 s to 1.110 s, 9.94x against a 3x bar, with segment-and-encode calls falling 110 to 11 (90% skipped) and 99 cache hits. Every emitted byte is unchanged: 9 of 9 arms produce byte-identical JSONL, the 55 per-pair --details-json files match on all 3 repeats, and the end-to-end CliRunner run of distance-semantic --pairs gives the same sha256 under both arms, so V stays 0/24, the 55 default-path smd and order_gap values are np.array_equal across arms, and the metric property is untouched (identity 0.0, symmetry 2.2e-16, 0/495 triangle violations). The worst case costs nothing measurable: on a zero-hit disjoint-pairs control of 110 unique files the memo pays 17.50 ms of key construction over 110 slots, 0.10% of the batch, and wall time moves -0.63%, inside the run-to-run spread and well under the 2% ceiling. The saving tracks the reusable slot fraction rather than row count, so 1-source-x-N returns 1.81x at N=2, 3.24x at N=5 and 5.18x at N=11, and end to end with the 13.5 s model load included the same sweep runs 1.98x.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H67-kj-pairs-embed-memo.ipynb",
+    "metrics_json": "reports/E12-H67-pairs-embed-memo-metrics.json",
+    "log": "logs/E12-H67-pairs-embed-memo.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Batch wall time excludes the model load, which is the correct comparison for the loop but flatters the deployment figure; the end-to-end CliRunner number including the 13.5 s load is 1.98x and is reported alongside. Timings are wall-clock on a machine running this notebook alone, with the 1-minute load average checked before each of the 56 timed runs (min 5.97, median 7.26, max 7.97, ceiling 8.0, zero breaches); the ceiling forced idle gaps between runs, which quiets each measurement but does not remove the platform dependence of the ratio. The disjoint-pairs control is a generated corpus of 110 documents assembled from the fixture's own 30 paragraphs, since the project holds no natural set of 110 distinct documents; it matches the fixture on size (2565 vs 2359 mean bytes) but segments to more statements, which is why its uncached batch is 17.9 s rather than 11.0 s. A two-row sweep does not clear 3x (1-source-x2 reads 1.81x), so the bar's speedup clause is specific to sweeps with a high reusable-slot fraction. Cache memory grows without bound in the number of distinct documents per instance and was not measured; a shipping memo needs a size bound. The memo does not reach distance-wrt-source, whose reranker and NLI work is per-pair, and one-shot convenience functions build a fresh instance per call so they are unaffected. Nothing under src/ was changed - the memo is a class-level monkeypatch inside the notebook and ships only if this Promoted verdict is acted on in a follow-up."
+}

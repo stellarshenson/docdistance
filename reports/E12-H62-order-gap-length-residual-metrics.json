@@ -1,0 +1,197 @@
+{
+  "id": "E12-H62",
+  "slug": "order-gap-length-residual",
+  "encoder": "openvino INT8 mmBERT (CPU)",
+  "docdistance_version": "1.1.5",
+  "seed": 0,
+  "kill_gate": {
+    "call": "opw_gap(gold, gold[:-1])",
+    "value": 0.114415,
+    "smd": 0.039045,
+    "bar": 0.005,
+    "multiple_of_bar": 22.88,
+    "passed": true
+  },
+  "harness_reproduction": {
+    "paraphrase_median_e11": 0.00112,
+    "paraphrase_median_here": 0.001164,
+    "paraphrase_p95_here": 0.002227,
+    "paraphrase_relative_deviation": 0.0394,
+    "scramble_top_e11": 0.41611,
+    "reversal_median_ibm_here": 0.430151,
+    "reversal_median_all_here": 0.416745,
+    "scramble_relative_deviation": 0.0337,
+    "tolerance": 0.15,
+    "passed": true
+  },
+  "sweep": {
+    "n_pairs": 280,
+    "bases": [
+      "gold",
+      "gold-2",
+      "v1",
+      "v2",
+      "opus",
+      "sonnet",
+      "haiku",
+      "werg-a",
+      "werg-b",
+      "werg-c"
+    ],
+    "ks": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "families": [
+      "head",
+      "tail",
+      "interior"
+    ],
+    "interior_reps": 5,
+    "per_k": {
+      "1": {
+        "median": 0.071645,
+        "min": 0.055093,
+        "max": 0.114415,
+        "p05": 0.057209,
+        "p95": 0.106125,
+        "smd_median": 0.036287,
+        "n": 70
+      },
+      "2": {
+        "median": 0.134041,
+        "min": 0.057359,
+        "max": 0.233079,
+        "p05": 0.059073,
+        "p95": 0.227432,
+        "smd_median": 0.069481,
+        "n": 70
+      },
+      "3": {
+        "median": 0.121486,
+        "min": 0.041979,
+        "max": 0.276171,
+        "p05": 0.049626,
+        "p95": 0.26336,
+        "smd_median": 0.102306,
+        "n": 70
+      },
+      "4": {
+        "median": 0.155277,
+        "min": 0.017529,
+        "max": 0.280982,
+        "p05": 0.048455,
+        "p95": 0.259839,
+        "smd_median": 0.134935,
+        "n": 70
+      }
+    },
+    "per_family_median": {
+      "head": {
+        "1": 0.096685,
+        "2": 0.210179,
+        "3": 0.245437,
+        "4": 0.240859
+      },
+      "tail": {
+        "1": 0.099404,
+        "2": 0.223598,
+        "3": 0.251895,
+        "4": 0.254633
+      },
+      "interior": {
+        "1": 0.063879,
+        "2": 0.102105,
+        "3": 0.096657,
+        "4": 0.118786
+      }
+    },
+    "family_monotone": {
+      "head": false,
+      "tail": true,
+      "interior": false
+    },
+    "overall_medians": [
+      0.071645,
+      0.134041,
+      0.121486,
+      0.155277
+    ],
+    "overall_monotone": false,
+    "spearman_rho": 0.3973,
+    "spearman_p": 5.059317097082606e-12,
+    "per_base_rho_min": -0.1108,
+    "per_base_rho_median": 0.4529,
+    "fraction_above_not_clean_bar": 1.0,
+    "min_gap_any_pair": 0.017529,
+    "max_gap_any_pair": 0.280982,
+    "gap_over_smd_median": 1.6775,
+    "gap_over_smd_median_paraphrase": 0.006952,
+    "structure_closeness_at_k1": 0.9493,
+    "structure_closeness_at_k2": 0.9052,
+    "structure_threshold": 0.9,
+    "structure_closeness_per_k": {
+      "1": 0.9493,
+      "2": 0.9052,
+      "3": 0.9141,
+      "4": 0.8902
+    },
+    "shipped_structural_verdict_per_k": {
+      "1": "similar",
+      "2": "similar",
+      "3": "similar",
+      "4": "not similar"
+    },
+    "structure_closeness_per_family": {
+      "head": {
+        "1": 0.9316,
+        "2": 0.8514,
+        "3": 0.8265,
+        "4": 0.8297
+      },
+      "tail": {
+        "1": 0.9297,
+        "2": 0.8419,
+        "3": 0.8219,
+        "4": 0.8199
+      },
+      "interior": {
+        "1": 0.9548,
+        "2": 0.9278,
+        "3": 0.9317,
+        "4": 0.916
+      }
+    }
+  },
+  "acceptance": {
+    "bar": "dual: 'not clean' if median deletion gap > 2x paraphrase p95 (0.010) at k>=2 with a monotone trend; 'clean' if gap <= 0.005 through k=4",
+    "registered_paraphrase_p95": 0.005,
+    "not_clean_bar": 0.01,
+    "magnitude_met": true,
+    "trend_met": true,
+    "not_clean": true,
+    "clean": false,
+    "branch": "not clean",
+    "median_k2plus": {
+      "2": 0.134041,
+      "3": 0.121486,
+      "4": 0.155277
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "content_boundary_margin_pts": 5.4586,
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "array_equal": true,
+    "source_sha256_unchanged": true,
+    "git_status_src": "clean",
+    "metric_property": "unchanged - E11-H55 already registered a score, triangle violations 0.15"
+  },
+  "anchors": {
+    "reorder_full_reversal_median": 0.416745,
+    "paraphrase_median": 0.001164
+  }
+}

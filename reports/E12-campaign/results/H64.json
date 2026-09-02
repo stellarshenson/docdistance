@@ -1,0 +1,87 @@
+{
+  "id": "E12-H64",
+  "slug": "centering-vs-projection",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "arm a (center+renorm) recovers 103.7% of the full composition's +14.71 pt margin gain (+15.24 pts, margin +4.71 -> +19.95) at V 0/24, while arm b (clean projection isolate) recovers -4.5%; on the registered +13.90 pt denominator the same gains read 109.7% and -4.8%",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "norm of the pooled mean of the 98 raw statement embeddings = 0.9539, threshold >= 0.15"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "naive baseline (the row the primer requires) reproduced at margin +4.71 pts / d' 4.68 / R 1.670 / DR 0.0873 / V 0/24 against the registered +4.58 / 4.60 / 1.680 / 0.0854 / 0/24, max relative delta 2.80%; the optional E01-H3 full-composition row reproduced at margin +19.41 pts / d' 7.31 / R 1.475 / DR 0.2253 / V 0/24 against the registered +18.48 / 7.17 / 1.482 / 0.2286, max relative delta 5.06% on margin. The 10% relative band is the executor's own declaration, made in the configuration cell before any measurement, because neither the record nor the primer registers a tolerance; under the stricter 5% band the sibling H66 declared, the required baseline row still passes (2.80%) and only the optional full row falls outside (5.06%). The residual is the encoder swap: the registered rows came from a torch bf16 GPU encoder, this run re-encodes with the shipped OpenVINO INT8 CPU encoder named in the record's Experiment section"
+  },
+  "prediction_check": {
+    "predicted": "centering-only margin in [+12, +18] pts and DR >= 2x the registered 0.0854 baseline, most of the gain surviving without projection; the clean projection-only arm near baseline",
+    "observed": "centering-only margin +19.95 pts, above the band, so the point band did not hold; DR 0.2712 = 3.18x the registered 0.0854 (3.11x this run's own 0.0873), so the DR clause held; the clean projection-only arm at +4.04 pts against a +4.71 pt baseline, DR 0.0588 = 0.67x, so the direction clause held",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "attribution stands if exactly one arm reaches >= 60% of the full-composition margin gain at V = 0/24 with the metric property intact; both arms partial would instead record 'effect real, mechanism composite'",
+    "met": true,
+    "readings": {
+      "full_composition_margin_gain_pts": 14.70607905545447,
+      "arm_a_center_renorm_recovery": 1.0365942880012649,
+      "arm_b_project_only_recovery": -0.04514209212345427,
+      "arm_a_recovery_registered_denominator": 1.0967077372502978,
+      "arm_b_recovery_registered_denominator": -0.04775994068317461,
+      "arms_reaching_bar": 1,
+      "arm_a_V": 0,
+      "arm_b_V": 0,
+      "arm_c_V": 0
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "metric_property": "holds on every geometry including the shipped raw one: unit norms to 2.4e-07, cost equal to sqrt(2-2cos) to 5.2e-08 on exactly-unit float64 vectors, zero triangle slack over all 98^3 statement triples",
+    "notes": "V counted 0/24 in all four scored geometries (baseline, a, b, c). Raw embeddings byte-identical after every arm ran (byte diff, not allclose). Default-path smd and order_gap on the gold/opus pair bit-identical before and after: 0x7c4a90c77548ce3f and 0x0264b939ae08c13f. The ~6e-04 float32 deviation in the sqrt(2-2cos) identity is arithmetic and the shipped raw geometry carries it identically (5.7e-04), which is why the identity is gated on float64 unit-normalized copies. Closeness saturation measured per geometry: arm a puts two documents at or above sqrt(2) (adv1-a 1.44892, adv2-a 1.42491) and the shipped composition one (adv2-a 1.41773), where closeness clips to 0; the margin is unaffected in every arm because the adversary that sets it stays below the ceiling (adv2-b 1.30479 in arm a, adv1-b 1.33811 in arm c) and d', R, DR are computed on raw distances. Nothing under src/ or tests/ touched (git status clean); every arm prototyped inside the notebook, shipped defaults (anisotropy=False symmetric, k=1) unchanged; measurement only, no default-path recalibration"
+  },
+  "key_numbers": {
+    "pooled_mean_norm": 0.9538519382476807,
+    "baseline_margin_pts": 4.708317407970153,
+    "baseline_DR": 0.08728241853520123,
+    "baseline_dprime": 4.683998012459891,
+    "baseline_R": 1.669675503342983,
+    "arm_a_margin_pts": 19.952554955749292,
+    "arm_a_gain_pts": 15.24423754777914,
+    "arm_a_recovery": 1.0365942880012649,
+    "arm_a_recovery_registered_denominator": 1.0967077372502978,
+    "arm_a_DR": 0.27121554432516853,
+    "arm_a_DR_x_baseline": 3.107333056035639,
+    "arm_a_dprime": 7.384320592704309,
+    "arm_a_R": 1.6144572921410345,
+    "arm_b_margin_pts": 4.044454232474026,
+    "arm_b_gain_pts": -0.6638631754961271,
+    "arm_b_recovery": -0.04514209212345427,
+    "arm_b_recovery_registered_denominator": -0.04775994068317461,
+    "arm_b_DR": 0.05878107419066151,
+    "arm_b_dprime": 6.320730269476042,
+    "arm_b_R": 1.474373037631897,
+    "arm_c_margin_pts": 19.414396463424623,
+    "arm_c_gain_pts": 14.70607905545447,
+    "arm_c_DR": 0.22533667125962623,
+    "arm_c_dprime": 7.310049184864293,
+    "full_composition_margin_gain_pts": 14.70607905545447,
+    "full_composition_margin_gain_pts_registered": 13.9,
+    "cos_uncentered_pc1_mean": 0.9999992251396179,
+    "cos_centered_pc1_mean": 0.021381409838795662,
+    "singular_value_1_uncentered": 9.444049835205078,
+    "singular_value_2_uncentered": 1.514784336090088,
+    "singular_value_1_centered": 1.5151348114013672,
+    "n_statements": 98,
+    "n_documents": 11
+  },
+  "result_summary": "Centering carries the E01-H3 anisotropy gain and the SVD projection carries none of it. On the 11-summary ibm fixture re-encoded with the shipped OpenVINO INT8 encoder (baseline reproduced at margin +4.71 pts against the registered +4.58, V 0/24), mean-centering plus re-L2-normalization alone reaches margin +19.95 pts, a gain of +15.24 pts or 103.7 percent of the full composition's +14.71 (109.7 percent of the registered +13.90), at DR 0.2712 (3.11x baseline) and V 0/24, while the clean projection isolate (center, remove PC1, restore the mean, renormalize) reaches +4.04 pts, a recovery of -4.5 percent, at DR 0.0588. The misattribution is explained by cos(uncentered PC1, mean direction) = 0.999999 with the first uncentered singular value 9.44 against 1.51 for the second: removing the top component of an uncentered matrix is the centering. Exactly one arm clears the 60 percent bar at V 0/24 with the metric property intact, so the attribution stands and the SVD in the shipped all_but_the_top(k=1) is apparatus riding on the centering.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H64-kj-centering-vs-projection.ipynb",
+    "metrics_json": "reports/E12-H64-centering-vs-projection-metrics.json",
+    "log": "logs/E12-H64-centering-vs-projection.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "One fixture, one anchor, k=1 only: 11 documents and 98 statements, so the attribution is about this corpus's geometry and a corpus whose centered PC1 carried more tier signal could score arm b differently. adv2-a segments into a single statement, so its distance is a one-point cloud. The registered rows came from a torch bf16 GPU encoder and this run re-encodes with the shipped OpenVINO INT8 CPU encoder, so the sanity check is a 10% tolerance match declared by the executor before the run, not a registered tolerance and not a bit-identical reproduction; under a 5% band the required baseline row still passes at 2.80% and only the optional full-composition row falls outside at 5.06%. The registered margin band [+12, +18] did not hold: centering recovers slightly more than the whole composition's gain, so Confirmed rests on the acceptance bar and the prediction's direction and DR clauses, not on the point band. Centering pushes two adversarial distances past sqrt(2), where the shipped closeness() clips to 0; the margin is unaffected because the margin-setting adversary stays below the ceiling in every arm, and the same saturation is inherited from the shipped E01-H3 composition, but the module comment at distance.py:22 that assumes non-negative cosines stops holding after centering. The transform-cost panel is indicative only: the CPU is shared with concurrent campaign executors and the SVD-to-centering ratio moves between runs. Dropping the SVD from the shipped lever and correcting the docstring's mechanism claim is a follow-up decision, not taken here."
+}

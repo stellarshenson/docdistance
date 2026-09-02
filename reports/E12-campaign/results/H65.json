@@ -1,0 +1,86 @@
+{
+  "id": "E12-H65",
+  "slug": "cmr-pool-crossover",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "Spearman(direction cosine, d' gain) = 1.000 across the six pool sizes (0.884 across all 48 draws); d' rises monotonically 5.020 -> 7.161 with every pool-size mean above the 4.613 naive baseline",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "|cos| between the 2-doc pooled top-1 direction and the 11-doc top-1 direction over all 55 fixture document pairs: max 0.9369, median 0.8834, min 0.0965, 0/55 above the 0.95 bar - not uniformly above it, so pool composition stays a live explanatory variable"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "torch CPU fp32 reproduces E01: naive baseline V 0/24, margin +4.61, d' 4.613, R 1.679, DR 0.0853 against E01 +4.58 / 4.60 / 1.680 / 0.0854; full-pool arm V 0/24, margin +18.52, d' 7.161, R 1.481, DR 0.2284 against E01-H3 +18.48 / 7.17 / 1.482 / 0.2286. OpenVINO INT8 read alongside lands wider (+4.71 baseline, +19.41 full pool) and was not used for the sweep"
+  },
+  "prediction_check": {
+    "predicted": "d' crosses the 4.60 baseline between pool sizes 4 and 6; direction cosine < 0.90 at p=2 and > 0.98 at p>=8; V returns to 0/24 only above the crossover; a monotone rise with no dip below baseline is pre-registered as mechanism-confirmed-with-fixture-term",
+    "observed": "no crossover - the d' curve is above baseline at every pool size and rises strictly monotonically 5.020 (p=2) -> 5.908 -> 5.950 -> 6.357 -> 6.683 -> 7.161 (p=11); direction cosine 0.8664 at p=2 (predicted < 0.90) and 0.9834 at p=8 (predicted > 0.98); V is 0/24 at every pool size including the degenerate p=2 per-pair arm, so the V clause is falsified. The pre-registered monotone-rising alternative branch is the outcome",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "confirmed if the d' curve crosses baseline within the sweep (or rises monotonically per the pre-registered alternative) AND direction-cosine correlates with d' gain at Spearman >= 0.8 across pool sizes; the deliverable is a measured minimum-pool guardrail",
+    "met": true,
+    "readings": {
+      "spearman_cos_vs_dprime_gain_across_pool_sizes": 1.0,
+      "spearman_across_all_48_draws": 0.8841,
+      "spearman_bar": 0.8,
+      "dprime_baseline": 4.6133,
+      "dprime_pool_2": 5.0199,
+      "dprime_pool_3": 5.9081,
+      "dprime_pool_4": 5.9503,
+      "dprime_pool_6": 6.3574,
+      "dprime_pool_8": 6.6833,
+      "dprime_pool_11": 7.1611,
+      "crossed_baseline": 0,
+      "monotone_rising_means": 1,
+      "no_dip_below_baseline_means": 1,
+      "min_dprime_any_single_draw": 4.5655,
+      "n_draws_below_baseline": 1,
+      "n_draws": 48,
+      "cos_pool_2": 0.8664,
+      "cos_pool_8": 0.9834,
+      "minimum_pool_documents": 8,
+      "minimum_pool_statements": 71.3
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "preserved - unit vectors in (max |1 - ||v||| = 5.96e-08), sqrt(2-2cos) ground cost out (max |C - sqrt(2-2cos)| = 1.19e-07), 0 triangle violations over 4000 random triples of the transformed statements",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "smd and opw_gap re-read on the raw embeddings after the sweep are bit-identical to the pre-sweep readings (np.array_equal true and byte-diff clean over the 10 scored pairs). The notebook's fit/apply split reproduces the shipped all_but_the_top bit-for-bit (np.array_equal plus byte diff over all 11 documents). V is 0/24 on the baseline, on the full-pool arm and at every point of the sweep (max over 48 draws = 0). Shipped defaults untouched: nothing under src/ was edited, anisotropy stays False on the single-pair path, this is measurement only"
+  },
+  "key_numbers": {
+    "kill_gate_max_cos": 0.9369,
+    "kill_gate_median_cos": 0.8834,
+    "kill_gate_min_cos": 0.0965,
+    "kill_gate_pairs": 55,
+    "baseline_margin_pts": 4.61,
+    "baseline_dprime": 4.6133,
+    "baseline_DR": 0.0853,
+    "full_pool_margin_pts": 18.52,
+    "full_pool_dprime": 7.1611,
+    "full_pool_DR": 0.2284,
+    "pool_2_margin_pts": 11.61,
+    "pool_8_margin_pts": 17.64,
+    "dprime_sd_pool_3": 0.6473,
+    "dprime_sd_pool_4": 0.4834,
+    "dprime_sd_pool_6": 0.3441,
+    "dprime_sd_pool_8": 0.264,
+    "cos_pool_4": 0.9285,
+    "cos_pool_6": 0.9652,
+    "dprime_frac_of_full_pool_8": 0.9333,
+    "seeds_per_pool": 8,
+    "total_statements_11_doc_pool": 98
+  },
+  "result_summary": "The estimation pool controls the CMR gain as the mechanism predicts, but there is no crossover on the E01 eleven-summary fixture: d' rises strictly monotonically from 5.020 at pool 2 to 7.161 at pool 11 and no pool-size mean touches the 4.613 naive baseline, which is the pre-registered alternative branch. Spearman between the fitted direction's cosine to the 11-doc reference and the d' gain is 1.000 across the six pool sizes (0.884 across all 48 draws), clearing the 0.80 bar, with the cosine reading 0.8664 at pool 2 and 0.9834 at pool 8 exactly as predicted. V stays 0/24 at every pool size including the degenerate pool-2 per-pair arm, so the E09-H53 hurt endpoint (d' down, one violation) does not reproduce here and the E01/E09 discrepancy is a fixture term, not a pool-size term. Deliverable: the measured minimum estimation pool is 8 documents, about 71 pooled statements, the smallest pool whose direction reaches |cos| >= 0.98 of the full-pool reference while retaining 93.3% of the full-pool d'.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H65-kj-cmr-pool-crossover.ipynb",
+    "metrics_json": "reports/E12-H65-cmr-pool-crossover-metrics.json",
+    "log": "logs/E12-H65-cmr-pool-crossover.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "The harness reproduces E01 to within 0.05 closeness points and 0.02 in d', not bit-identically: E01 was measured on GPU bf16 and the GPUs are held by foreign jobs, so torch CPU fp32 is the reproduction path. The shipped OpenVINO INT8 encoder reads a little wider (+4.71 baseline margin, +19.41 full pool, d' 4.684 / 7.310) and changes no conclusion. Pool sizes 2 and 11 are deterministic by construction, so only four of the six points carry real error bars; the pool-3 spread is wide enough (+-0.647) that one draw of 48 lands at 4.566, 0.048 below baseline, while the pool-3 mean stays 1.29 above it. The minimum-pool number is measured on one fixture of eleven short executive summaries, so the eight-document floor should be re-read against the pooled-statement count (~71) for corpora of a different document length."
+}

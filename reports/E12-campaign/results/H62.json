@@ -1,0 +1,93 @@
+{
+  "id": "E12-H62",
+  "slug": "order-gap-length-residual",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "branch 'not clean': median deletion-pair order_gap 0.13404 at k=2, 13.4x the 0.010 not-clean bar (2x the registered paraphrase p95 0.005); 280/280 pairs above the bar",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "opw_gap(gold, gold minus its last statement) = 0.114415 on the re-encoded structure-paraphrase fixture (n_a 11, n_b 10), 22.9x the 0.005 deprioritization threshold; the gate did not fire and the sweep proceeded"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "the record names no mandatory sanity check; the CPU OpenVINO INT8 re-encode reproduces both registered E11 anchors - paraphrase order-gap median 0.00116 against 0.00112 (3.9% relative) and the ibm full-scramble rung 0.43015 against 0.41611 (3.4% relative), both inside the 15% tolerance"
+  },
+  "prediction_check": {
+    "predicted": "order_gap grows monotonically in k and exceeds the paraphrase p95 0.005 by k=2 on 12-statement documents; 0.01-0.05 at k=4 stated as an expectation, not a bar",
+    "observed": "order_gap exceeds the p95 at every depth including k=1 (median 0.07165, 14.3x p95); pooled medians 0.07165 / 0.13404 / 0.12149 / 0.15528 for k=1..4; Spearman rho(k, gap) 0.3973 at p 5.06e-12 over 280 pairs, positive in 9 of 10 base documents, but strict median monotonicity holds only in the tail family (0.09940 / 0.22360 / 0.25190 / 0.25463); the k=4 median 0.15528 is about 3x the top of the 0.01-0.05 expectation",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "pre-registered dual verdict: 'not clean' if median deletion-pair gap > 2x the registered paraphrase p95 (0.010) at k >= 2 with a monotone trend; 'clean' if the p95 0.005 holds through k = 4",
+    "met": true,
+    "readings": {
+      "branch": "not clean",
+      "median_gap_k1": 0.071645,
+      "median_gap_k2": 0.134041,
+      "median_gap_k3": 0.121486,
+      "median_gap_k4": 0.155277,
+      "not_clean_bar": 0.01,
+      "registered_paraphrase_p95": 0.005,
+      "multiple_of_bar_k2": 13.4,
+      "multiple_of_bar_k3": 12.1,
+      "multiple_of_bar_k4": 15.5,
+      "fraction_pairs_above_bar": 1.0,
+      "min_gap_any_pair": 0.017529,
+      "max_gap_any_pair": 0.280982,
+      "spearman_rho_k_gap": 0.3973,
+      "spearman_p": 5.06e-12,
+      "strict_median_monotone_pooled": false,
+      "strict_median_monotone_tail_family": true,
+      "clean_branch_met": false
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "unchanged - E11-H55 is already registered a score, not a metric (0.15 triangle violations, reports/E11-structure-sota-decision.json .triangle.H55); no metric claim was made or altered here",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "order_gap_bit_identical_note": "default path on (gold, gold-2): smd 0.22343884174015136 and order_gap 0.1343654387715936 identical as packed doubles between the opening and closing reads, and np.array_equal True on both",
+    "notes": "measurement only, no code path changed: sha256 of src/docdistance/distance.py, pipeline.py and encoders.py identical before and after, git status src/ clean. Content panel margin +5.46 points alongside V 0/24"
+  },
+  "key_numbers": {
+    "kill_gate_gap": 0.114415,
+    "kill_gate_multiple_of_p95": 22.9,
+    "median_gap_k1": 0.071645,
+    "median_gap_k2": 0.134041,
+    "median_gap_k3": 0.121486,
+    "median_gap_k4": 0.155277,
+    "min_gap_any_pair": 0.017529,
+    "max_gap_any_pair": 0.280982,
+    "n_pairs": 280,
+    "fraction_above_not_clean_bar": 1.0,
+    "spearman_rho": 0.3973,
+    "gap_over_smd_median_deletion": 1.6775,
+    "gap_over_smd_median_paraphrase": 0.006952,
+    "pairs_residual_over_content": "218/280",
+    "paraphrase_median_reencoded": 0.001164,
+    "paraphrase_p95_reencoded": 0.002227,
+    "reorder_anchor_full_reversal_median": 0.416745,
+    "structure_closeness_k1": 0.9493,
+    "structure_closeness_k2": 0.9052,
+    "structure_closeness_k3": 0.9141,
+    "structure_closeness_k4": 0.8902,
+    "structure_closeness_tail_k3": 0.8219,
+    "structure_closeness_head_k3": 0.8265,
+    "structure_threshold": 0.9,
+    "median_head_gap_k3": 0.245437,
+    "median_tail_gap_k3": 0.251895,
+    "median_interior_gap_k3": 0.096657,
+    "V": "0/24",
+    "content_margin_pts": 5.4586
+  },
+  "result_summary": "The shipped OPW order-gap does not cancel content under length mismatch. On 280 order-preserving deletion pairs across 10 base documents the median gap is 0.13404 at k=2, 13.4x the 0.010 not-clean bar (twice the registered paraphrase p95 0.005), and all 280 pairs clear that bar with a minimum of 0.01753; the kill-gate read 0.114415, 22.9x its 0.005 threshold, and the CPU re-encode reproduced both E11 anchors within 4 percent (paraphrase median 0.00116 against 0.00112, ibm full-scramble 0.43015 against 0.41611). The residual exceeds the content distance it is supposed to remove in 218 of 280 pairs (median gap/smd 1.677) against 0.00695 on the equal-length paraphrase pairs, and the trend in k is positive and significant (Spearman rho 0.3973, p 5.06e-12) though strictly monotone only in the tail family. Practically, structure_closeness falls to 0.8902 pooled at k=4 and to 0.8219 for tail deletions at k=3, below the shipped STRUCTURE_THRESHOLD 0.90, so an order-preserving content drop is reported as a structural rearrangement; V held 0/24 and the default-path smd and order_gap were byte-identical.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H62-kj-order-gap-length-residual.ipynb",
+    "metrics_json": "reports/E12-H62-order-gap-length-residual-metrics.json",
+    "log": "logs/E12-H62-order-gap-length-residual.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Measurement only, no code changed, so a length correction remains a follow-up and per the record stays labelled a score. The prediction's strict-monotone wording is only partly borne out: the pooled medians rise overall but k=3 sits 9 percent below k=2, and strict step-by-step monotonicity holds only for tail deletions; the trend clause was read as a positive significant rank correlation (rho 0.3973, p 5.06e-12), not as strict median monotonicity. The bar uses the registered paraphrase p95 0.005; the re-encoded p95 here is 0.00223, which would only tighten it. The k=4 magnitude is about 3x the record's unbarred 0.01-0.05 expectation. Interior deletion positions are drawn independently per repetition, so a few interior pairs at small k repeat the same deletion, which affects the interior family's spread but not the edge medians or the pooled magnitude. The run does not separate the two mechanism terms (entropic diffuseness against prior-diagonal distortion) and does not cover insertions, substitutions, or reorder combined with deletion. Encoder is the CPU OpenVINO INT8 mmBERT because the GPUs are held by foreign jobs, so absolute values differ from E11's fp GPU reads by a few percent."
+}

@@ -91,6 +91,34 @@ The OT plan, its marginals, and the changed/moved flags derived from it
   - test-tags: UNIT
   - log: 2026-08-31T12:31:07Z @kj added
   - log: 2026-08-31T13:43:16Z @kj closed
+- [ ] `ACC-TRANS-14` **moved is the conjunction of rank displacement and norm displacement** - HIGH; moved fires only when displacement != 0 AND abs(displacement_norm) > MOVED_TOLERANCE (E12-H61); one statement inserted at position 0 of the 6-statement worked example flags 0 of 6 untouched statements (shipped norm-only flag: 4 of 6)
+  - test: insertion fixture from E12-H61 (doc-a plus B with one novel statement at position 0); assert n_moved == 0
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-15` **Edge: genuine swap still flagged** - HIGH; on the unmodified worked example (docs/example-map-interpretations.md doc-a / doc-b) both swapped statements read moved under the conjunction
+  - test: run structural_distance_with_details on doc-a / doc-b; assert both swapped statements carry moved
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-16` **Edge: reversal control 12/12** - HIGH; a fully reversed 12-statement document flags all 12 statements moved under the conjunction
+  - test: reverse a 12-statement document; assert n_moved == 12
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-17` **Edge: shrinkage stays quiet** - MEDIUM; a 12 to 8 shrinkage (four statements removed, order kept) flags 0 of the 8 kept statements moved
+  - test: build the 12->8 pair from E12-H61; assert no kept statement carries moved
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-18` **Edge: reorder pool retains every true relocation** - HIGH; across the structure-fixture reorder pool (data/processed/structure-fixture, 1680 permutations) no statement flagged moved by the shipped definition and relocated in ground truth loses its flag (E12-H61 read 0 of 13675)
+  - test: re-run the E12-H61 pool sweep against the shipped build; assert lost == 0
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-19` **Conjunction leaves the distance layer bit-identical** - CRITICAL; default-path smd, order_gap and every non-flag field of the details dict are byte-identical to the 1.1.5 output on the six E12-H61 fixtures and the ibm 11-summary panel (V stays 0/24)
+  - test: np.array_equal on smd / order_gap and a byte diff of the flag-stripped details dict before and after; count V on the ibm panel
+  - test-tags: UNIT, FUNCTIONAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-TRANS-20` **Definitions follow the conjunction** - MEDIUM; the pipeline header definitions block, the thresholds/definitions field of the structural detail JSON and the moved table in docs/example-map-interpretations.md all state the conjunction definition
+  - test: read the definitions field of a structural --details-json output and the docs table; assert both name displacement AND norm
+  - test-tags: UNIT, MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
 
 ## CLI and config operation `CLI`
 
@@ -109,4 +137,106 @@ Command-line behaviour, config discovery, error output and batch execution
   - test-tags: FUNCTIONAL
   - log: 2026-08-31T12:31:07Z @kj added
   - log: 2026-08-31T13:43:16Z @kj closed
+- [ ] `ACC-CLI-29` **Embed memo on --pairs batches** - HIGH; DocDistance memoises segment-and-encode per (resolved path, mtime, size, segmentation kwargs including fragment filters) so the E12-H67 55-row all-pairs sweep performs 11 real encodes for 110 slots
+  - test: run the E12-H67 all-pairs TSV with an encoder call counter; assert real encodes == 11
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-CLI-30` **Memo output byte-identical** - CRITICAL; distance-semantic --pairs JSONL, distance-structural --pairs JSONL and every per-pair --details-json file are byte-identical with the memo on and off across the nine E12-H67 arms
+  - test: sha256 each arm's JSONL and details files under both settings; assert equal
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-31` **Batch speed-up at least 3x** - HIGH; median wall time of the 55-row all-pairs sweep with the memo on is at most one third of the memo-off time on a quiet CPU (E12-H67 measured 9.94x)
+  - test: three interleaved off/on repeats at 1-minute load below 8; assert median ratio >= 3
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-32` **Edge: zero-hit batch within 2%** - MEDIUM; on a disjoint-pairs sweep of 110 unique files the memo-on wall time is within 2% of memo-off (E12-H67 control -0.63%)
+  - test: run the E12-H67 disjoint-55 TSV both ways; assert abs(delta) <= 2%
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-33` **Edge: rewritten file re-encodes** - HIGH; a file rewritten between two rows (new mtime or size) is segmented and encoded again, never served from the memo
+  - test: score a pair, rewrite one file, score again; assert one new real encode and the new distance
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-34` **Edge: memo is bounded** - HIGH; the embed memo carries a size bound (entries or bytes) and evicts beyond it, so a long sweep cannot grow memory without limit
+  - test: set the bound to 3 and encode 4 distinct documents; assert the first is re-encoded on its next use
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-35` **Edge: raw text bypasses the memo** - MEDIUM; inputs given as text rather than a path are never memoised and never served from the memo
+  - test: score the same raw text twice with a call counter; assert two real encodes
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-36` **Edge: dropped-fragment count restored on a hit** - MEDIUM; the segmentation drop count reported for a document is identical whether the document was encoded or served from the memo
+  - test: encode a document that drops fragments, read n_dropped, score it again from the memo; assert equal
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-37` **--pairs on distance-wrt-source** - HIGH; distance-wrt-source accepts --pairs <tsv> with a fixed --source and emits one JSON line per row in row order, the same shape as the one-shot --json output
+  - test: 55-row TSV against one source; assert 55 lines, ids in order, keys equal to the one-shot output
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-38` **Grounding-grid memo per (doc, source)** - HIGH; within one DocDistance instance the reranker relevance grid and the NLI entailment vector are computed once per (doc, source) and reused, so the E12-H68 55-pair sweep evaluates 11 grids for 110 slots
+  - test: run the sweep with a grid call counter; assert grids == 11
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-39` **Wrt-source batch lines byte-identical** - CRITICAL; each of the 55 batch lines is byte-identical to the one-shot distance-wrt-source --json output for that pair, with the memo on and off
+  - test: sha256 each batch line against its one-shot run; assert 55/55 equal
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-40` **Wrt-source sweep speed-up at least 5x** - HIGH; wall time of the 55-pair sweep with the memo on is at most one fifth of the warm sequential loop (E12-H68 measured 10.03x)
+  - test: one interleaved off/on pass at 1-minute load below 8; assert ratio >= 5
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-41` **Edge: memo hits return copies** - HIGH; a grid or entailment vector returned from the memo is a copy, so a caller mutating it does not change a later hit
+  - test: take a hit, mutate it in place, take a second hit; assert the second equals the original
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-42` **Edge: grid memo is bounded** - HIGH; the grounding memo carries a size bound and evicts beyond it
+  - test: set the bound to 2 and score 3 distinct documents against one source; assert the first grid is recomputed on its next use
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:04Z @kj added
+- [ ] `ACC-CLI-43` **Edge: no-fanout sweep within 2%** - MEDIUM; a wrt-source sweep where every document appears once records 0 memo hits and a wall time within 2% of the memo-off loop (E12-H68 control +0.22%)
+  - test: run the E12-H68 nofanout TSV both ways; assert hits == 0 and abs(delta) <= 2%
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:04Z @kj added
+
+## Embedding geometry pre-pass `GEOM`
+
+The anisotropy (common-mode rejection) pre-pass on the conditioned selection axis: what it computes and how much corpus it needs
+
+- [ ] `ACC-GEOM-21` **Anisotropy pre-pass is centering plus renormalisation** - MEDIUM; the conditioned-path anisotropy pre-pass centers the pooled statement matrix and re-L2-normalises without the SVD projection (E12-H64: centering carries 103.7% of the gain, the projection isolate -4.5%); ships only after a second fixture reproduces the attribution, and the ibm panel reads V 0/24 with margin within 1 pt of the E12-H64 arm a (+19.95 pts INT8)
+  - test: re-run the E01 metric panel on the shipped path after the change; assert V == 0 and margin within 1 pt of +19.95 (INT8)
+  - test-tags: FUNCTIONAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-GEOM-22` **Minimum estimation pool stated in statements** - MEDIUM; the anisotropy docstring (src/docdistance/distance.py, anisotropy parameter) and the --anisotropy rows of docs/cli-reference.md state the minimum estimation pool as about 71 pooled statements (the E12-H65 reading: 8 of the ibm summaries, direction cosine >= 0.98 to the full-pool direction, 93% of the full-pool d'), with the statement count as the rule and the document count only as that fixture's example
+  - test: grep the docstring and the CLI reference for the pooled-statement minimum; assert the rule is stated in statements
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-GEOM-23` **Edge: pool below the minimum warns** - LOW; a --pairs or corpus run whose pooled statement count is below the documented minimum logs one warning naming the count and the minimum and proceeds
+  - test: run distance-semantic --pairs on a 2-document TSV with anisotropy on; assert one warning line with both numbers
+  - test-tags: UNIT
+  - log: 2026-09-02T05:35:03Z @kj added
+
+## Verdict calibration guidance `CALIB`
+
+How the shipped verdict thresholds were placed, how fragile they are, and how a user recalibrates them on their own corpus
+
+- [ ] `ACC-CALIB-24` **Structural threshold comment names its corpus** - MEDIUM; the STRUCTURE_THRESHOLD comment in src/docdistance/distance.py states 0.90 is placed on the ibm ladder with 0.006144 headroom, quotes the ibm band (0.892817, 0.906144] and the wergeland band (0.908048, 0.973676], and says no cross-article band exists (E12-H59)
+  - test: read the comment; assert the two bands and the empty-band sentence are present
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-CALIB-25` **Per-corpus structural calibration procedure** - HIGH; docs/solution/wmd-structure-distance-sota.md carries a per-corpus procedure for STRUCTURE_THRESHOLD: build the corpus's own k-swap ladder and un-reordered pairs, sweep 0.85-0.99, take the band that keeps every rung on its side, with the E12-H59 two-article sweep as the worked example and the empty cross-article band stated
+  - test: read the section; assert the four steps, the worked example and the empty-band statement are present
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-CALIB-26` **Semantic threshold fragility card published** - HIGH; docs/solution/wmd-docdistance-solution-sota.md carries the E12-H63 card for DEFAULT_THRESHOLD 0.77: shipped-path band [0.7474, 0.7944] on INT8 and [0.7566, 0.8027] on fp, safe on both over 0.760-0.790, leave-one-out edge moves (haiku +2.30 pts, adv2-b -1.64 pts) and INT8-to-fp drift up to 40.6% of a margin
+  - test: read the card; assert both bands, the safe range and the two edge documents are present
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-CALIB-27` **Provenance comment quotes the shipped-path band** - MEDIUM; the DEFAULT_THRESHOLD comment in src/docdistance/distance.py quotes the shipped semantic_distance band (79.44 / 74.74 on INT8) and names notebook 09 cell 10's dd.embed path as the origin of the former 79.7 / 75.0
+  - test: read the comment; assert the shipped-path numbers and the origin sentence are present
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
+- [ ] `ACC-CALIB-28` **Structural verdict caveat under deletions** - MEDIUM; the structural verdict documentation states that order-preserving deletions lower structure_closeness below 0.90 (E12-H62: 0.8902 pooled at k=4, 0.8219 for tail deletions at k=3), so a content drop can read as a rearrangement until a length correction ships
+  - test: read docs/solution/wmd-structure-distance-sota.md; assert the deletion caveat with both numbers is present
+  - test-tags: MANUAL
+  - log: 2026-09-02T05:35:03Z @kj added
 

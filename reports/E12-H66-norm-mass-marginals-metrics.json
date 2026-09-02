@@ -1,0 +1,218 @@
+{
+  "id": "E12-H66",
+  "slug": "norm-mass-marginals",
+  "verdict": "Refuted (null)",
+  "verdict_number": "d' 4.673 vs harness baseline 4.684 (delta -0.011 against a predicted +0.2 to +0.8); margin +4.720 pts vs +4.708 pts (delta +0.012)",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "pooled_norm_cv": 0.044604,
+    "cv_death_below": 0.03,
+    "corr_norm_tokencount_pearson": -0.159735,
+    "corr_norm_tokencount_spearman": -0.103318,
+    "corr_death_above": 0.8,
+    "norm_mean": 30.167621,
+    "norm_std": 1.345607,
+    "norm_min": 28.089449,
+    "norm_max": 33.425171,
+    "per_document_cv": {
+      "gold": 0.020515,
+      "gold-2": 0.02602,
+      "v1": 0.037797,
+      "v2": 0.025341,
+      "opus": 0.018165,
+      "sonnet": 0.027819,
+      "haiku": 0.016691,
+      "adv1-a": 0.018986,
+      "adv1-b": 0.014018,
+      "adv2-a": 0.0,
+      "adv2-b": 0.000316
+    },
+    "n_statements": 98
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "rel_tol": 0.05,
+    "registered_row": {
+      "V": 0,
+      "margin": 0.0458,
+      "dprime": 4.6,
+      "R": 1.68,
+      "DR": 0.0854
+    },
+    "reproduced": {
+      "V": 0,
+      "margin": 0.047083,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282
+    },
+    "relative_deviation": {
+      "margin (pts)": 0.028017,
+      "d'": 0.01826,
+      "R": -0.006146,
+      "DR": 0.022042
+    },
+    "shipped_smd_equals_replica": true,
+    "probe_encode_bit_identical_to_shipped": true
+  },
+  "arms": {
+    "baseline_uniform": {
+      "V": 0,
+      "margin": 0.047083,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282,
+      "ms_per_pair": 0.096227,
+      "distances": {
+        "gold-2": 0.2264898,
+        "v1": 0.25820024,
+        "v2": 0.20816896,
+        "opus": 0.23658631,
+        "sonnet": 0.25371289,
+        "haiku": 0.29070614,
+        "adv1-a": 0.45690302,
+        "adv1-b": 0.44583741,
+        "adv2-a": 0.38055122,
+        "adv2-b": 0.3572918
+      },
+      "closeness": {
+        "gold-2": 0.839848,
+        "v1": 0.817425,
+        "v2": 0.852802,
+        "opus": 0.832708,
+        "sonnet": 0.820598,
+        "haiku": 0.79444,
+        "adv1-a": 0.676921,
+        "adv1-b": 0.684745,
+        "adv2-a": 0.73091,
+        "adv2-b": 0.747357
+      }
+    },
+    "norm_mass": {
+      "V": 0,
+      "margin": 0.047203,
+      "dprime": 4.673086,
+      "R": 1.667867,
+      "DR": 0.087203,
+      "ms_per_pair": 0.084394,
+      "distances": {
+        "gold-2": 0.2269578,
+        "v1": 0.25967902,
+        "v2": 0.20826972,
+        "opus": 0.23651307,
+        "sonnet": 0.25396744,
+        "haiku": 0.29061508,
+        "adv1-a": 0.45711892,
+        "adv1-b": 0.4459933,
+        "adv2-a": 0.38070065,
+        "adv2-b": 0.35737019
+      },
+      "closeness": {
+        "gold-2": 0.839517,
+        "v1": 0.816379,
+        "v2": 0.852731,
+        "opus": 0.83276,
+        "sonnet": 0.820418,
+        "haiku": 0.794504,
+        "adv1-a": 0.676768,
+        "adv1-b": 0.684635,
+        "adv2-a": 0.730804,
+        "adv2-b": 0.747301
+      }
+    }
+  },
+  "deltas": {
+    "margin_pts": 0.011982,
+    "dprime": -0.010912,
+    "R": -0.001809,
+    "DR": -7.9e-05,
+    "latency_ratio": 0.877034
+  },
+  "mass_vs_uniform": {
+    "total_variation": {
+      "gold": 0.006511,
+      "gold-2": 0.010443,
+      "v1": 0.014066,
+      "v2": 0.011052,
+      "opus": 0.007197,
+      "sonnet": 0.011837,
+      "haiku": 0.00668,
+      "adv1-a": 0.008488,
+      "adv1-b": 0.006329,
+      "adv2-a": 0.0,
+      "adv2-b": 0.000147
+    },
+    "max_weight_over_uniform": {
+      "gold": 1.029959,
+      "gold-2": 1.051518,
+      "v1": 1.083981,
+      "v2": 1.041015,
+      "opus": 1.035391,
+      "sonnet": 1.046491,
+      "haiku": 1.033731,
+      "adv1-a": 1.025231,
+      "adv1-b": 1.02214,
+      "adv2-a": 1.0,
+      "adv2-b": 1.000287
+    }
+  },
+  "acceptance": {
+    "bar": "V = 0/24 AND margin >= +4.58 pts AND d' >= 4.60 AND default-path identity smd = 0 AND default-path order_gap unchanged",
+    "met": true,
+    "readings": {
+      "V": 0,
+      "margin_pts": 4.72,
+      "dprime": 4.673,
+      "identity_smd_default": 0.0,
+      "order_gap_bit_identical": true
+    }
+  },
+  "prediction": {
+    "predicted": "d' +0.2 to +0.8 over the 4.60 naive baseline, margin unchanged to +1 pt, DR flat, latency unchanged",
+    "observed": "d' -0.011 vs harness baseline, margin +0.012 pts, DR -0.00008, latency 0.877x",
+    "direction_matched": false
+  },
+  "guardrails": {
+    "V": "0/24",
+    "V_baseline": "0/24",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "identity_default_zero": true,
+    "identity_normmass_max_abs": 0.0,
+    "symmetry_max_abs_diff": 2.220446049250313e-16,
+    "symmetry_pairs": 55,
+    "triangle_checked": 495,
+    "triangle_violations": 0,
+    "triangle_worst_slack": 0.177133091022,
+    "src_untouched": true,
+    "all_hold": true
+  },
+  "config": {
+    "fixture": "data/interim/exec-summaries/ibm-ai-adoption/summaries",
+    "reference": "gold",
+    "n_documents": 11,
+    "statements_per_document": {
+      "gold": 10,
+      "gold-2": 12,
+      "v1": 11,
+      "v2": 11,
+      "opus": 11,
+      "sonnet": 9,
+      "haiku": 13,
+      "adv1-a": 8,
+      "adv1-b": 9,
+      "adv2-a": 1,
+      "adv2-b": 3
+    },
+    "encoder": "mmBERT OpenVINO INT8 (shipped), mean-pooled, CPU",
+    "segmenter": "sat-3l-sm (shipped), CPU",
+    "device": "cpu",
+    "docdistance_version": "1.1.5",
+    "pot_version": "0.9.7.post1",
+    "bench_reps": 10,
+    "seed": 42,
+    "triangle_tol": 1e-09
+  }
+}

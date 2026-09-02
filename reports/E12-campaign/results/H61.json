@@ -1,0 +1,84 @@
+{
+  "id": "E12-H61",
+  "slug": "moved-conjunction",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "false moved on the insertion fixture 4/6 -> 0/6, with 0 of 13675 true relocations lost across 1680 reorder-pool permutations",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "order_alignment on the insertion fixture = [1, 2, 3, 4, 5, 6], the expected monotone shift; structure_displacement = [0, 0, 0, 0, 0, 0]; band arithmetic (n-i)/(n(n+1)) > 0.05 for n=6 predicts 4 of 6 shipped fires"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "reversal control under the shipped definition reads 12/12 moved (orthogonal 12-statement synthetic, the DEF-TRANS-2 closing-evidence shape); the real-text reversal also reads 12/12"
+  },
+  "prediction_check": {
+    "predicted": "shipped flag fires moved on 4 of 6 untouched statements at norms 6/42, 5/42, 4/42, 3/42; conjunction fires 0 of 6; the worked-example swap pair still fires 2; false-moved count drops 4 -> 0 with zero true-moved loss",
+    "observed": "shipped fired 4 of 6 at displacement_norm 0.1429, 0.1190, 0.0952, 0.0714 (exactly 6/42, 5/42, 4/42, 3/42); conjunction fired 0 of 6; worked-example swap pair 2/2 under both definitions; 0 true-moved loss on every control",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS if the conjunction gives 0 false moved on the insertion fixture, keeps both swap statements flagged on the worked example, keeps the reversal control at 12/12, and stays quiet on all kept statements of a locally rebuilt 12->8 shrinkage synthetic; FAIL if any true swap or relocation in the structure-fixture reorder pool loses its flag",
+    "met": true,
+    "readings": {
+      "insertion_false_moved_shipped": 4,
+      "insertion_false_moved_conjunction": 0,
+      "insertion_n_statements": 6,
+      "worked_example_swap_flagged_shipped": 2,
+      "worked_example_swap_flagged_conjunction": 2,
+      "reversal_control_conjunction": 12,
+      "reversal_control_total": 12,
+      "shrink_orth_kept_moved_conjunction": 0,
+      "shrink_text_kept_moved_conjunction": 0,
+      "shrink_kept_statements": 8,
+      "reorder_pool_permutations": 1680,
+      "reorder_pool_relocated_statements": 13675,
+      "reorder_pool_true_positives_shipped": 13675,
+      "reorder_pool_true_positives_conjunction": 13675,
+      "reorder_pool_true_positives_lost": 0
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "smd triangle inequality holds: 0 violations in 990 ordered triples over the ibm 11-summary fixture; the moved flag is an annotation, so no transport quantity can observe the change",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "Measured, not asserted. On all 6 fixtures the two details dicts serialize to identical bytes once the three flag-derived fields (statement moved, summary n_moved, definitions moved) are removed; smd, order_gap and structure_closeness compare equal exactly, and the plan-derived columns semantic_target_index / semantic_target_cost compare equal by np.array_equal. The conjunction variant is compiled inside the notebook from the shipped function's own source with exactly 3 substituted lines, so src/ is untouched; the notebook's shipped arm is byte-identical to DocDistance.structural_distance_with_details on the insertion fixture. V counted on the ibm 11-summary fixture through the shipped OpenVINO INT8 path: 0 of 24 gold-versus-adversarial pairs ranked wrong."
+  },
+  "key_numbers": {
+    "insertion_norms": [0.1429, 0.119, 0.0952, 0.0714, 0.0476, 0.0238],
+    "insertion_displacements_all_zero": true,
+    "insertion_false_moved_shipped": 4,
+    "insertion_false_moved_conjunction": 0,
+    "worked_example_n_moved_shipped": 4,
+    "worked_example_n_moved_conjunction": 4,
+    "worked_example_smd": 0.171318,
+    "worked_example_order_gap": 0.218512,
+    "shrink_kept_max_abs_norm": 0.0417,
+    "shrink_orth_removed_no_counterpart": 4,
+    "shrink_text_removed_no_counterpart": 1,
+    "reorder_pool_false_fires_shipped": 0,
+    "reorder_pool_false_fires_conjunction": 0,
+    "V": 0,
+    "V_total": 24,
+    "margin_points": 4.71,
+    "R": 1.67,
+    "DR": 0.0873,
+    "dprime": 4.68,
+    "triangle_checks": 990,
+    "triangle_violations": 0,
+    "changed_lines_vs_shipped_source": 3,
+    "model_load_and_embed_s": 15.9,
+    "reorder_pool_sweep_s": 2.87
+  },
+  "result_summary": "The shipped norm-only moved flag fires on 4 of 6 untouched statements when one statement is inserted at the top of a 6-statement document, at exactly the four predicted norms 6/42, 5/42, 4/42 and 3/42, while every raw rank displacement stays 0 because the alignment is the monotone shift [1,2,3,4,5,6]; the conjunction (displacement != 0) AND (abs(displacement_norm) > 0.05) fires on 0 of 6. No true positive is paid for that: the worked-example swap pair stays at 2/2, the reversal control stays at 12/12, both 12->8 shrinkage fixtures stay quiet on all 8 kept statements, and across 1,680 reorder-pool permutations over 10 base documents 0 of 13,675 relocated statements lose their flag. Guardrails held: on all 6 fixtures every non-flag field of the details dict is byte-identical across the two definitions, smd and order_gap compare equal exactly, V reads 0/24 on the ibm 11-summary fixture and the shipped smd shows 0 triangle violations in 990 checks. The defect is confirmed and the conjunction is the strictly better estimator in this regime, at the cost of inheriting the raw rank signal's own failure mode when a length change makes the stable-rank alignment non-monotone.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H61-kj-moved-conjunction.ipynb",
+    "metrics_json": "reports/E12-H61-moved-conjunction-metrics.json",
+    "log": "logs/E12-H61-moved-conjunction.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "The conjunction inherits the raw rank displacement's own defect regime: under a length change large enough to make the stable-rank alignment non-monotone, the raw signal turns on and the conjunction reduces to the shipped behaviour. The insertion fixture is a single leading insertion into a 6-statement document; scattered insertion patterns that perturb the alignment were not tested. On the real-text 12->8 shrinkage only 1 of the 4 removed statements exceeded the 0.6 no-counterpart cost, so 1 removed statement reads moved under both definitions; this is outside the bar, which is stated on the 8 kept statements, and those stayed quiet under both. The reorder pool is equal-length permutations, where a rank change and a relative-position change are the same event, so retention there is a consistency check rather than an independent test of the conjunction. Shipping still owes the documentation updates the record names (the pipeline header definitions block and the moved table of docs/example-map-interpretations.md), which were not made because no file under src/ or docs/ may change in this campaign. The context row margin +4.71 pts, R 1.67, DR 0.0873, d' 4.68 is the shipped OpenVINO INT8 path, not the E01 torch fp path whose registered naive row reads +4.58, 1.68, 0.0854, 4.60; only V is a guardrail here and it reads 0/24 on both."
+}

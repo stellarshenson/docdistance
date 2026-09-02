@@ -1,0 +1,95 @@
+{
+  "id": "E12-H68",
+  "slug": "grounding-grid-memo",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "10.03x wall time on the 55-pair sweep (2671.72 s to 266.32 s, bar >= 5x), grounding grids 110 -> 11, 55/55 payloads byte-identical",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "repeated (doc, source) slots counted on the intended sweep specifications before any build: the registered 55-pair fixture occupies 110 grid slots over 11 distinct (doc, source) combinations, 99 repeated (90.0%, 10.00x fewer grid evaluations); across all six intended sweeps the repeat fraction runs 25.0% to 90.0%, against a death line of 0% everywhere. The two controls (this notebook's no-fanout sweep and E12-H67's disjoint-55 corpus) read 0%, the fatal shape the gate names. The intended set is the campaign's own registered fixture specifications, because the repository holds no production sweep specification, so the gate states what the E12 shapes are, not what deployed traffic is"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "the record's pre-merge check: two instrumented runs on (A,B|S) and (A,C|S) with the memo off produced 4 grids; R(A,S) is bit-identical across the two pairs by np.array_equal (max |difference| 0.0e+00) and so is its entailment vector (max |difference| 0.0e+00)"
+  },
+  "prediction_check": {
+    "predicted": "grounding grids 110 -> 11 on the 55-pair all-pairs sweep, end-to-end 6-8x versus the warm sequential loop, per-pair JSON identical to the one-shot outputs",
+    "observed": "grounding grids 110 -> 11 exactly as predicted, 10.03x wall time (2671.72 s to 266.32 s), 55/55 payloads byte-identical. The ratio lands above the predicted 6-8x band, not inside it: the measured baseline was 44.5 min against the prediction's ~61 min of pairwise work, so the overshoot comes from the baseline being cheaper than assumed while the grid count matched the prediction exactly",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS: 55 payloads byte-identical to the one-shot distance-wrt-source --json output AND >= 5x wall-time reduction versus the warm-instance sequential baseline AND the default-path smd/order_gap byte-identical with V 0/24 and the metric property preserved. FAIL: any per-pair number differs, or the end-to-end gain is < 3x",
+    "met": true,
+    "readings": {
+      "pairs_byte_identical": "55/55",
+      "cold_cli_pairs_byte_identical": "10/10",
+      "speedup_allpairs_55": 10.0319,
+      "wall_off_s": 2671.717,
+      "wall_on_s": 266.322,
+      "grid_evals_off": 110,
+      "grid_evals_on": 11,
+      "V_dsel_baseline": "0/24",
+      "V_dsel_memo": "0/24",
+      "smd_bit_identical": true,
+      "order_gap_bit_identical": true,
+      "smd_metric_readings_identical_off_on": true,
+      "triangle_violations_dsel": "0/495",
+      "triangle_violations_smd": "0/495"
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "metric_property": "holds on both axes, each measured with the anisotropy pre-pass off, because that pre-pass pools a, b and source jointly and neither a fixed statement matrix nor a coverage profile is pair-independent with it on. Default-path SMD, the axis the record's clause names: identity max 0.0e+00, symmetry max 2.2e-16, 0/495 triangle violations, worst slack +1.77e-01, and every one of those readings identical with the memo off and with it on (preserved, not merely unbroken). D_sel selection axis over the 11 coverage profiles: identity max 0.0e+00, symmetry max 1.0e-08, 0/495 triangle violations, worst slack +1.80e-03. Tolerance 1e-6 for the network-simplex EMD",
+    "notes": "V is counted on the D_sel anchor panel the arm-A payloads already contain, six gold-tier summaries against four adversarial ones, 24 ordered comparisons, independently from the baseline payloads (0/24) and from the memo payloads (0/24); all 55 d_sel values are np.array_equal across the two arms (True). The default-path fixture rerun scores the same 55 pairs through semantic_distance and structural_distance with the memo off and then on: the 55 smd values are np.array_equal (True) and so are the 55 order_gap values (True); the grounding memo cannot reach them in any case, because the symmetric path never calls _grounding. The primary proof is the empty byte diff: 73 of 73 pair payloads across all four arms are byte-identical, and 10 of 10 pairs re-scored by the shipped distance-wrt-source --json in a fresh subprocess print stdout byte-identical to the in-process payload, those 10 pairs covering all 11 documents. Memo-served embeddings are np.array_equal to fresh ones on all 11 fixtures (True). n_dropped blocks are identical under the fragment filters (True), with 6 of 6 filtered rows carrying a non-zero drop count. git diff --stat -- src/ empty (True): the memo is a class-level monkeypatch plus a notebook-level replica of distance_wrt_source; the shipped library is untouched. 7 memo properties were measured at the unit level before any sweep ran: hit returns the miss's arrays, _last_n_dropped restored on a hit, segmentation kwargs in separate keys, mtime invalidation, raw-text bypass, a repeated pair costing zero grid evaluations for the same bytes, and the replica's payload equal to the shipped distance_wrt_source output"
+  },
+  "key_numbers": {
+    "speedup_allpairs_55": 10.0319,
+    "wall_off_s_allpairs_55": 2671.717,
+    "wall_on_s_allpairs_55": 266.322,
+    "grid_evals_off": 110,
+    "grid_evals_on": 11,
+    "grid_hits_on": 99,
+    "embed_real_off": 165,
+    "embed_real_on": 12,
+    "median_pair_off_s": 50.327,
+    "median_pair_on_s": 0.112,
+    "speedup_anchor_fanout_10_derived": 1.9933,
+    "grid_evals_anchor_off": 20,
+    "grid_evals_anchor_on": 11,
+    "speedup_fragment_filter_6": 3.0199,
+    "nofanout_control_delta_pct": 0.22,
+    "nofanout_grid_hits": 0,
+    "nofanout_key_overhead_ms": 6.464,
+    "gate_headline_repeat_fraction": 0.9,
+    "gate_intended_repeat_fraction_min": 0.25,
+    "gate_intended_repeat_fraction_max": 0.9,
+    "unit_properties_held": 7,
+    "cold_cli_pairs_measured": 10,
+    "cold_cli_docs_covered": 11,
+    "cold_cli_bytes_identical": 10,
+    "model_load_s": 26.511,
+    "cold_cli_median_s": 78.094,
+    "cold_cli_55_extrapolated_s": 4295.2,
+    "warm_sequential_55_plus_load_s": 2698.2,
+    "memo_55_plus_load_s": 292.8,
+    "load_amortisation_x": 1.5919,
+    "memo_on_top_load_included_x": 9.2142,
+    "V_dsel": 0,
+    "panel_V_default_path": 0,
+    "load_precondition_1m": 4.25,
+    "load_readings_median": 7.2,
+    "load_readings_max": 10.75
+  },
+  "result_summary": "A per-DocDistance memo over (doc, source) for the reranker relevance grid and the NLI entailment vector cuts the 55-pair all-pairs sweep of the 11 IBM summaries from 2671.72 s to 266.32 s, 10.03x against a 5x bar, with grounding-grid evaluations falling 110 to 11 exactly as predicted and document embeds 165 to 12. Every emitted byte is unchanged: 73 of 73 pair payloads across four arms are byte-identical to the shipped one-shot distance_wrt_source output, 10 of 10 pairs re-scored through the shipped CLI in a fresh subprocess print the same bytes while covering all 11 documents, V reads 0/24 on the D_sel anchor panel from both arms, and the default-path smd and order_gap values are np.array_equal over the 55 pairs with their metric readings identical off and on. The saving tracks the reusable slot fraction rather than the row count: the anchor-fanout shape reuses only the anchor's grid across ten rows and returns 1.99x, while the no-fanout control where every document appears once records 0 grid hits and +0.22% wall time, the zero-reuse floor the kill gate names. Model-load amortisation is reported separately and is the smaller line: 55 cold CLI invocations extrapolate to 71.6 minutes against 45.0 for the warm loop, 1.59x from the load alone, with the memo adding 9.21x on top.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H68-kj-grounding-grid-memo.ipynb",
+    "metrics_json": "reports/E12-H68-grounding-grid-memo-metrics.json",
+    "log": "logs/E12-H68-grounding-grid-memo.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Arm timings are a single interleaved off/on pass rather than a median of repeats, because one baseline pass is 45 minutes of INT8 cross-encoder work; off and on run back to back so drift falls on both. The 8.0 load-average ceiling is a foreign-load precondition read once with the notebook idle (4.25); it cannot be enforced between sweeps because this notebook saturates 64 threads, so the between-sweep readings (median 7.20, max 10.75, 3 of 11 above the ceiling after a 60 s settle) are dominated by the notebook's own residual load and are not evidence of foreign contention. The ratio remains platform-dependent. Arm D's baseline is derived from arm A's recorded per-pair times rather than measured a second time, so its 1.99x is a derived figure; its memo pass is measured. Byte-identity against the shipped command itself is direct for 10 of 55 pairs, chosen to cover all 11 documents; the other 45 are diffed against the shipped in-process DocDistance.distance_wrt_source payload, which is the strongest available comparison while --pairs is unbuilt. The cold-CLI line extrapolates 55 invocations from 10 measured runs (median 78.09 s) rather than paying for all 55. The kill gate counts the campaign's registered fixture specifications, since no production sweep specification exists in the repository, so it cannot fail on the registered fixture by construction; the two zero-repeat controls show the shape that would kill it. The grid cache is unbounded in the number of distinct documents per instance and its memory was not measured; a grid is n_doc x n_source floats, larger than an embedding row, so a shipping memo needs a size bound. Cached arrays are handed back by reference, not copied, so a caller that mutated them would corrupt later hits; nothing in the shipped path does. Nothing under src/ was changed and the --pairs option on distance-wrt-source is not built here, the batch loop was driven in-process, so acting on this verdict means building both halves of the registered lever in a follow-up."
+}

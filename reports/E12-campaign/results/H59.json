@@ -1,0 +1,78 @@
+{
+  "id": "E12-H59",
+  "slug": "structure-threshold-transfer",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "cross-article safe band empty: wergeland's required lower edge 0.908048 overshoots ibm's un-reordered ceiling 0.906144 by 0.001904 closeness, 0 of 29 swept thresholds safe on both articles",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "closeness arithmetic on reports/E11-structure-sota-decision.json .scramble: ibm rung-2 0.892817 < 0.90 <= wergeland rung-2 0.908048, so the cross-article verdict flip at the shipped boundary exists"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "record names no harness sanity check; the E11-path rebuild was checked against the E11 report instead - recomputed medians diffuse ibm 0.048255 vs 0.048114, diffuse wergeland 0.030904 vs 0.030960, paraphrase backtranslation 0.001115 vs 0.001120, paraphrase ab_regen 0.024345 vs 0.024430, max absolute difference 0.000141 against a 0.001 bar"
+  },
+  "prediction_check": {
+    "predicted": "0.90 mis-sides 1 of 12 ladder rungs (wergeland rung-2, closeness 0.908, verdicted 'similar order'); the safe band's lower edge is >= 0.908; the cross-article band is empty if the minimum un-reordered diffuse closeness is below ~0.91",
+    "observed": "0.90 mis-sides exactly 1 of 12 rungs, wergeland rung-2 at closeness 0.908048; the required cross-article lower edge is 0.908048; the minimum un-reordered closeness is 0.906144 (ibm gold-2 ~ haiku diffuse pair), below 0.91, so the band is empty",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS = (a) a non-empty cross-article band excluding 0.90 with a recalibration proposal at its midpoint re-verified against all 12 rungs and every un-reordered pair, or (b) a demonstrated empty band, filed as the per-corpus-calibration verdict",
+    "met": true,
+    "readings": {
+      "branch": "b (demonstrated empty band)",
+      "cross_article_safe_grid_points": 0,
+      "grid_points_swept": 29,
+      "cross_article_band_lower_open": 0.908048,
+      "cross_article_band_upper_closed": 0.906144,
+      "band_overshoot_closeness": 0.001904,
+      "rungs_mis_sided_at_0.90": 1,
+      "rungs_total": 12,
+      "unreordered_falsely_flagged_at_0.90": 0,
+      "unreordered_total": 72,
+      "ibm_band_lower_open": 0.892817,
+      "ibm_band_upper_closed": 0.906144,
+      "wergeland_band_lower_open": 0.908048,
+      "wergeland_band_upper_closed": 0.973676
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "untouched - the probe reads the verdict layer only and changes nothing on the distance axis; H55 stays a score, E11 triangle-violation rate 0.15",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "V counted on the ibm 11-summary fixture through the shipped default path (OpenVINO INT8): 0/24, margin +4.71 pts, d' 4.68, R 1.670, DR 0.0873 against the E01 torch-bf16 reference row +4.58 / 4.60 / 1.680 / 0.0854. Bit-identity measured by np.array_equal on the float64 smd / order_gap pair of the worked-example documents before and after the probe (0.17131764193375904 and 0.21851211798274506 both times) plus a byte diff over the serialized semantic and structural detail JSON: 0 differing bytes of 7194. STRUCTURE_THRESHOLD 0.90 and DEFAULT_THRESHOLD 0.77 verified unmutated at the end of the run."
+  },
+  "key_numbers": {
+    "ibm_rung2_closeness": 0.892817,
+    "wergeland_rung2_closeness": 0.908048,
+    "shipped_structure_threshold": 0.9,
+    "ibm_unreordered_floor_closeness": 0.906144,
+    "wergeland_unreordered_floor_closeness": 0.973676,
+    "cross_article_band_overshoot": 0.001904,
+    "cross_article_safe_grid_points": 0,
+    "grid_points_swept": 29,
+    "rungs_mis_sided_at_shipped": 1,
+    "rungs_total": 12,
+    "unreordered_pairs_rebuilt": 72,
+    "unreordered_falsely_flagged_at_shipped": 0,
+    "ibm_band_width": 0.013328,
+    "wergeland_band_width": 0.065628,
+    "margin_0.90_to_ibm_lower_edge": 0.007183,
+    "margin_0.90_to_ibm_upper_edge": 0.006144,
+    "margin_0.90_to_wergeland_lower_edge": -0.008048,
+    "repro_max_abs_median_diff": 0.000141,
+    "V": 0
+  },
+  "result_summary": "The fixed STRUCTURE_THRESHOLD 0.90 does not transfer across articles. Converted to closeness, the E11 H55 ladders put ibm rung-2 at 0.892817 and wergeland rung-2 at 0.908048, so 0.90 mis-sides exactly 1 of 12 rungs, reading wergeland's genuine rearrangement as 'similar order', while falsely flagging 0 of 72 un-reordered pairs. A sweep of 0.85 to 0.99 at 0.005 steps finds 0 of 29 thresholds safe on both articles: wergeland needs a threshold above 0.908048 while ibm cannot exceed 0.906144 without flagging its gold-2 ~ haiku diffuse pair, an overshoot of 0.001904 closeness, so ibm's band (0.892817, 0.906144] and wergeland's (0.908048, 0.973676] are disjoint. Acceptance passes on branch (b), the demonstrated empty band, and per-corpus structural calibration is the guidance; the shipped 0.90 stays correct for ibm with 0.006144 of headroom and is an ibm constant, not a transferable one.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H59-kj-structure-threshold-transfer.ipynb",
+    "metrics_json": "reports/E12-H59-structure-threshold-transfer-metrics.json",
+    "log": "logs/E12-H59-structure-threshold-transfer.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "The 12 ladder rungs are displacement-bin means read from the E11 report, not per-permutation readings, so each rung averages its bin's sampled permutations and carries a spread this probe does not resolve; wergeland's un-reordered population is only 3 diffuse plus 3 paraphrase pairs, so its band's upper edge rests on few observations. Per-pair diffuse values are not in the E11 report (medians only), so all 72 un-reordered pairs were rebuilt through the E11 notebook path: the 55 ibm and 3 wergeland cross_summary pairs and the 14 paraphrase pairs from data/processed/structure-fixture/pairs.json, re-encoded with the torch mmBERT encoder on CPU where E11 used an RTX 5000 Ada; the medians agree to 0.000141 order-gap units, well inside the 0.001904 band overshoot, so the empty-band conclusion does not depend on that difference. Two articles are the whole evidence base for the transfer claim, so the direction is established but the size of the disagreement on a third corpus is not. Process note for the orchestrator: the campaign scratchpad is shared by all executors and a filename collision on build_nb.py made one command of mine rebuild E12-H61's notebook from its own builder; it held no outputs at the time and H61's executor has since rebuilt and executed it, so no H61 artefact carries anything of mine."
+}

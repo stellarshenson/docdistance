@@ -1,0 +1,796 @@
+{
+  "id": "E12-H63",
+  "slug": "semantic-threshold-band",
+  "docdistance_version": "1.1.5",
+  "fixture": {
+    "dir": "data/interim/exec-summaries/ibm-ai-adoption/summaries",
+    "anchor": "exec-summary-gold-opus-4-6.md",
+    "n_documents": 11,
+    "n_scored": 10,
+    "n_statements": {
+      "gold": 10,
+      "gold-2": 12,
+      "v1": 11,
+      "v2": 11,
+      "opus": 11,
+      "sonnet": 9,
+      "haiku": 13,
+      "adv1-a": 8,
+      "adv1-b": 9,
+      "adv2-a": 1,
+      "adv2-b": 3
+    },
+    "v_pairs": 24
+  },
+  "kill_gate": {
+    "ran": true,
+    "killed": false,
+    "passed": true,
+    "recorded_min_gold_pct": 79.7,
+    "recorded_min_gold_doc": "haiku",
+    "recorded_max_adv_pct": 75.0,
+    "recorded_max_adv_doc": "adv2-b",
+    "recorded_margin_pts": {
+      "haiku": 2.700000000000003,
+      "adv2-b": 2.0
+    },
+    "gate_margin_bar_pts": 5.0,
+    "shipped_emb_cos": 0.9938685297966003,
+    "part_a_scheme_emb_cos": 0.9984450340270996,
+    "reading": "recorded margins haiku 2.7 pts and adv2-b 2.0 pts, both at or below 5.0; shipped emb_cos 0.9939 below 1.0"
+  },
+  "corpus_provenance": {
+    "corpus_swap": false,
+    "note": "no corpus swap: notebook 09's recorded cell text names the same 11 live opus-4-6 / sonnet-4-6 / haiku-4-5 filenames this notebook scores",
+    "nb09_recorded_files": [
+      "exec-summary-1-opus-4-6.md",
+      "exec-summary-2-opus-4-6.md",
+      "exec-summary-adv1-a-sonnet-4-6.md",
+      "exec-summary-adv1-b-sonnet-4-6.md",
+      "exec-summary-adv2-a-haiku-4-5.md",
+      "exec-summary-adv2-b-haiku-4-5.md",
+      "exec-summary-gold-2-opus-4-6.md",
+      "exec-summary-gold-opus-4-6.md",
+      "exec-summary-haiku-4-5.md",
+      "exec-summary-opus-4-6.md",
+      "exec-summary-sonnet-4-6.md"
+    ],
+    "live_files": [
+      "exec-summary-1-opus-4-6.md",
+      "exec-summary-2-opus-4-6.md",
+      "exec-summary-adv1-a-sonnet-4-6.md",
+      "exec-summary-adv1-b-sonnet-4-6.md",
+      "exec-summary-adv2-a-haiku-4-5.md",
+      "exec-summary-adv2-b-haiku-4-5.md",
+      "exec-summary-gold-2-opus-4-6.md",
+      "exec-summary-gold-opus-4-6.md",
+      "exec-summary-haiku-4-5.md",
+      "exec-summary-opus-4-6.md",
+      "exec-summary-sonnet-4-6.md"
+    ],
+    "nb09_version": "1.1.2",
+    "nb09_recorded_V": "0/24",
+    "nb09_recorded_min_gold_pct": 79.7,
+    "nb09_recorded_max_adv_pct": 75.0
+  },
+  "path_provenance": {
+    "recorded_band_source": "notebook 09 cell 10 (dd.embed + smd) at docdistance 1.1.2",
+    "path_mismatch_inside_nb09": true,
+    "docs_scored_by_both_nb09_cells": [
+      "gold-2",
+      "adv1-a",
+      "adv2-a"
+    ],
+    "nb09_cell10_smd": {
+      "v2": 0.2074,
+      "gold-2": 0.2258,
+      "opus": 0.2312,
+      "sonnet": 0.253,
+      "v1": 0.254,
+      "haiku": 0.287,
+      "adv2-b": 0.3543,
+      "adv2-a": 0.3811,
+      "adv1-b": 0.4463,
+      "adv1-a": 0.4579
+    },
+    "nb09_cell13_semantic_distance_smd": {
+      "gold-2": 0.2265,
+      "adv2-a": 0.3806,
+      "adv1-a": 0.4569
+    },
+    "nb09_cell13_todict": {
+      "smd": 0.22648980232576527,
+      "wcd": 0.06940142065286636,
+      "rwmd": 0.20323101617395875,
+      "closeness": 0.8398475249058507,
+      "threshold": 0.725,
+      "verdict": "similar",
+      "anisotropy": false,
+      "n_statements_a": 10,
+      "n_statements_b": 12
+    },
+    "cell10_minus_cell13_smd": {
+      "gold-2": -0.0007000000000000062,
+      "adv1-a": 0.0010000000000000009,
+      "adv2-a": 0.0005000000000000004
+    },
+    "edge_docs_scored_by_cell13": [],
+    "edge_gap_pts": {
+      "upper": 0.25602797072562566,
+      "lower": 0.26434537869577923
+    },
+    "gold2_closeness_bit_identical_across_versions": true,
+    "gold2_smd_delta_across_versions": 2.7755575615628914e-17,
+    "gold2_smd_ulp": 2.7755575615628914e-17,
+    "embed_path_equals_shipped_path_now": true,
+    "embed_path_smd_now": {
+      "gold-2": 0.2264898023257653,
+      "v1": 0.25820024284449494,
+      "v2": 0.2081689582285684,
+      "opus": 0.2365863060409373,
+      "sonnet": 0.25371288773086337,
+      "haiku": 0.2907061354472087,
+      "adv1-a": 0.45690302252769466,
+      "adv1-b": 0.44583740731080373,
+      "adv2-a": 0.3805512189865113,
+      "adv2-b": 0.3572917987902959
+    },
+    "note": "the recorded band traces to notebook 09 cell 10's dd.embed path at docdistance 1.1.2, not to the shipped semantic_distance path. Inside that same notebook and version, cell 13 scored gold-2, adv1-a, adv2-a through semantic_distance and disagreed with cell 10 on every one (gold-2 0.2258 vs 0.2265, adv1-a 0.4579 vs 0.4569, adv2-a 0.3811 vs 0.3806), so the two paths were already separate when the band was recorded. On all 3 documents notebook 09 recorded through semantic_distance the shipped path is unchanged between 1.1.2 and 1.1.5 - gold-2's closeness reproduces bit-identically (0.8398475249058507) and its smd to within one ulp (2.8e-17) - so shipped-path version drift is not what moved the band. At 1.1.5 semantic_distance calls embed itself, and re-running cell 10's construction here reproduces arm 0 over all 10 documents (np.array_equal True), so the two paths are no longer separable. haiku and adv2-b, the two band edges, were never scored through semantic_distance at 1.1.2, so how much of their 0.26 / 0.26 point gap is the path difference and how much is a change in the embed path cannot be decided from the recorded outputs. What is decided: the provenance comment's band was not produced by the shipped path, and version drift on the shipped path is ruled out."
+  },
+  "per_document": {
+    "gold-2": {
+      "tier": "gold",
+      "n_statements": 12,
+      "smd_int8": 0.2264898023257653,
+      "closeness_int8": 0.8398475249058507,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 6.984752490585066,
+      "smd_fp": 0.22021231514712175,
+      "closeness_fp": 0.8442863786586812,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.4438853752830485,
+      "drift_frac_of_margin": 0.06355062343030385,
+      "stmt_emb_cos_int8_vs_fp": 0.9956886768341064
+    },
+    "v1": {
+      "tier": "gold",
+      "n_statements": 11,
+      "smd_int8": 0.25820024284449494,
+      "closeness_int8": 0.8174248573806443,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 4.742485738064428,
+      "smd_fp": 0.2463311645117673,
+      "closeness_fp": 0.8258175631561504,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.8392705775506104,
+      "drift_frac_of_margin": 0.17696849793651584,
+      "stmt_emb_cos_int8_vs_fp": 0.9960149526596069
+    },
+    "v2": {
+      "tier": "gold",
+      "n_statements": 11,
+      "smd_int8": 0.2081689582285684,
+      "closeness_int8": 0.8528023180040402,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 8.280231800404014,
+      "smd_fp": 0.19963284307529897,
+      "closeness_fp": 0.8588382629139062,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.6035944909866031,
+      "drift_frac_of_margin": 0.07289584464980221,
+      "stmt_emb_cos_int8_vs_fp": 0.9957082271575928
+    },
+    "opus": {
+      "tier": "gold",
+      "n_statements": 11,
+      "smd_int8": 0.2365863060409373,
+      "closeness_int8": 0.8327082186625774,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 6.270821866257736,
+      "smd_fp": 0.22564767707477917,
+      "closeness_fp": 0.8404429973814314,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.7734778718853974,
+      "drift_frac_of_margin": 0.12334553402758176,
+      "stmt_emb_cos_int8_vs_fp": 0.9954292178153992
+    },
+    "sonnet": {
+      "tier": "gold",
+      "n_statements": 9,
+      "smd_int8": 0.25371288773086337,
+      "closeness_int8": 0.8205978966110853,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 5.0597896611085265,
+      "smd_fp": 0.24814212073882422,
+      "closeness_fp": 0.8245370237275664,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.3939127116481145,
+      "drift_frac_of_margin": 0.077851598195055,
+      "stmt_emb_cos_int8_vs_fp": 0.995489776134491
+    },
+    "haiku": {
+      "tier": "gold",
+      "n_statements": 13,
+      "smd_int8": 0.2907061354472087,
+      "closeness_int8": 0.7944397202927438,
+      "verdict_int8": "similar",
+      "margin_to_077_pts_int8": 2.443972029274377,
+      "smd_fp": 0.27908487067772775,
+      "closeness_fp": 0.802657195417208,
+      "verdict_fp": "similar",
+      "backend_drift_pts": -0.8217475124464246,
+      "drift_frac_of_margin": 0.3362344178261336,
+      "stmt_emb_cos_int8_vs_fp": 0.9949974417686462
+    },
+    "adv1-a": {
+      "tier": "adv1",
+      "n_statements": 8,
+      "smd_int8": 0.45690302252769466,
+      "closeness_int8": 0.6769207744260373,
+      "verdict_int8": "not similar",
+      "margin_to_077_pts_int8": -9.307922557396274,
+      "smd_fp": 0.4452318482100964,
+      "closeness_fp": 0.6851735409304212,
+      "verdict_fp": "not similar",
+      "backend_drift_pts": -0.825276650438389,
+      "drift_frac_of_margin": 0.0886638930813414,
+      "stmt_emb_cos_int8_vs_fp": 0.9959636330604553
+    },
+    "adv1-b": {
+      "tier": "adv1",
+      "n_statements": 9,
+      "smd_int8": 0.44583740731080373,
+      "closeness_int8": 0.6847453459839019,
+      "verdict_int8": "not similar",
+      "margin_to_077_pts_int8": -8.52546540160981,
+      "smd_fp": 0.43130187094211575,
+      "closeness_fp": 0.6950235223183848,
+      "verdict_fp": "not similar",
+      "backend_drift_pts": -1.0278176334482914,
+      "drift_frac_of_margin": 0.12055853669340033,
+      "stmt_emb_cos_int8_vs_fp": 0.9953975677490234
+    },
+    "adv2-a": {
+      "tier": "adv2",
+      "n_statements": 1,
+      "smd_int8": 0.3805512189865113,
+      "closeness_int8": 0.7309096524658311,
+      "verdict_int8": "not similar",
+      "margin_to_077_pts_int8": -3.9090347534168957,
+      "smd_fp": 0.36734825223684314,
+      "closeness_fp": 0.7402455597863019,
+      "verdict_fp": "not similar",
+      "backend_drift_pts": -0.9335907320470849,
+      "drift_frac_of_margin": 0.2388289669798999,
+      "stmt_emb_cos_int8_vs_fp": 0.9959806203842163
+    },
+    "adv2-b": {
+      "tier": "adv2",
+      "n_statements": 3,
+      "smd_int8": 0.3572917987902959,
+      "closeness_int8": 0.7473565462130423,
+      "verdict_int8": "not similar",
+      "margin_to_077_pts_int8": -2.2643453786957757,
+      "smd_fp": 0.3442775189876556,
+      "closeness_fp": 0.7565590317137484,
+      "verdict_fp": "not similar",
+      "backend_drift_pts": -0.9202485500706126,
+      "drift_frac_of_margin": 0.40640820906952807,
+      "stmt_emb_cos_int8_vs_fp": 0.995344340801239
+    }
+  },
+  "band": {
+    "int8": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "width_pts": 4.708317407970153,
+      "half_width_pts": 2.3541587039850764
+    },
+    "fp": {
+      "lo": 0.7565590317137484,
+      "hi": 0.802657195417208,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "width_pts": 4.609816370345965,
+      "half_width_pts": 2.3049081851729825
+    },
+    "edge_shift_int8_to_fp_pts": {
+      "lower": 0.9202485500706126,
+      "upper": 0.8217475124464246
+    },
+    "safe_on_both_backends": {
+      "lo": 0.76,
+      "hi": 0.79
+    }
+  },
+  "leave_one_out": {
+    "gold-2": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "v1": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "v2": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "opus": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "sonnet": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "haiku": {
+      "lo": 0.7473565462130423,
+      "hi": 0.8174248573806443,
+      "lo_doc": "adv2-b",
+      "hi_doc": "v1",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 2.298513708790051,
+      "width_pts": 7.006831116760203
+    },
+    "adv1-a": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "adv1-b": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "adv2-a": {
+      "lo": 0.7473565462130423,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "d_lo_pts": 0.0,
+      "d_hi_pts": 0.0,
+      "width_pts": 4.708317407970153
+    },
+    "adv2-b": {
+      "lo": 0.7309096524658311,
+      "hi": 0.7944397202927438,
+      "lo_doc": "adv2-a",
+      "hi_doc": "haiku",
+      "d_lo_pts": -1.64468937472112,
+      "d_hi_pts": 0.0,
+      "width_pts": 6.353006782691272
+    }
+  },
+  "leave_one_out_summary": {
+    "n_loo_subsets": 10,
+    "eleventh_document": "gold (the anchor) - dropping it re-bases every distance rather than removing a band edge, so it is reported as the anchor swap below and not as a leave-one-out row",
+    "edge_movers_ge_1pt": [
+      "haiku",
+      "adv2-b"
+    ],
+    "n_edge_movers": 2,
+    "width_range_pts": [
+      4.708317407970153,
+      7.006831116760203
+    ],
+    "drop_upper_edge_doc": {
+      "doc": "haiku",
+      "d_hi_pts": 2.298513708790051
+    },
+    "drop_lower_edge_doc": {
+      "doc": "adv2-b",
+      "d_lo_pts": -1.64468937472112
+    },
+    "anchor_swap": {
+      "new_anchor": "gold-2",
+      "lo": 0.7466558028754355,
+      "hi": 0.8131557953385804,
+      "lo_doc": "adv2-b",
+      "hi_doc": "haiku",
+      "V": "0/24",
+      "note": "not a leave-one-out row - removing the anchor re-bases every distance"
+    }
+  },
+  "backend_drift_summary": {
+    "max_frac_doc": "adv2-b",
+    "max_frac_of_margin": 0.40640820906952807,
+    "n_over_20pct_bar": 3,
+    "verdict_flips_at_077": [],
+    "fixture_stmt_emb_cos": 0.9955651760101318,
+    "shipped_corpus_emb_cos": 0.9938685297966003
+  },
+  "threshold_sweep": [
+    {
+      "threshold": 0.7,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.705,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.71,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.715,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.72,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.725,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.73,
+      "n_similar_int8": 8,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.735,
+      "n_similar_int8": 7,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.74,
+      "n_similar_int8": 7,
+      "n_similar_fp": 8,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.745,
+      "n_similar_int8": 7,
+      "n_similar_fp": 7,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.75,
+      "n_similar_int8": 6,
+      "n_similar_fp": 7,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.755,
+      "n_similar_int8": 6,
+      "n_similar_fp": 7,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.76,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.765,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.77,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.775,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.78,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.785,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.79,
+      "n_similar_int8": 6,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 0,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 0,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.795,
+      "n_similar_int8": 5,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.8,
+      "n_similar_int8": 5,
+      "n_similar_fp": 6,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 0,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 0,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.805,
+      "n_similar_int8": 5,
+      "n_similar_fp": 5,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.81,
+      "n_similar_int8": 5,
+      "n_similar_fp": 5,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.815,
+      "n_similar_int8": 5,
+      "n_similar_fp": 5,
+      "tier_errors_int8": 1,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 1,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.82,
+      "n_similar_int8": 4,
+      "n_similar_fp": 5,
+      "tier_errors_int8": 2,
+      "tier_errors_fp": 1,
+      "flips_vs_077_int8": 2,
+      "flips_vs_077_fp": 1,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.825,
+      "n_similar_int8": 3,
+      "n_similar_fp": 4,
+      "tier_errors_int8": 3,
+      "tier_errors_fp": 2,
+      "flips_vs_077_int8": 3,
+      "flips_vs_077_fp": 2,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.83,
+      "n_similar_int8": 3,
+      "n_similar_fp": 3,
+      "tier_errors_int8": 3,
+      "tier_errors_fp": 3,
+      "flips_vs_077_int8": 3,
+      "flips_vs_077_fp": 3,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.835,
+      "n_similar_int8": 2,
+      "n_similar_fp": 3,
+      "tier_errors_int8": 4,
+      "tier_errors_fp": 3,
+      "flips_vs_077_int8": 4,
+      "flips_vs_077_fp": 3,
+      "backend_disagreements": 1
+    },
+    {
+      "threshold": 0.84,
+      "n_similar_int8": 1,
+      "n_similar_fp": 3,
+      "tier_errors_int8": 5,
+      "tier_errors_fp": 3,
+      "flips_vs_077_int8": 5,
+      "flips_vs_077_fp": 3,
+      "backend_disagreements": 2
+    },
+    {
+      "threshold": 0.845,
+      "n_similar_int8": 1,
+      "n_similar_fp": 1,
+      "tier_errors_int8": 5,
+      "tier_errors_fp": 5,
+      "flips_vs_077_int8": 5,
+      "flips_vs_077_fp": 5,
+      "backend_disagreements": 0
+    },
+    {
+      "threshold": 0.85,
+      "n_similar_int8": 1,
+      "n_similar_fp": 1,
+      "tier_errors_int8": 5,
+      "tier_errors_fp": 5,
+      "flips_vs_077_int8": 5,
+      "flips_vs_077_fp": 5,
+      "backend_disagreements": 0
+    }
+  ],
+  "threshold_sweep_summary": {
+    "zero_tier_error_int8": [
+      0.75,
+      0.79
+    ],
+    "zero_tier_error_fp": [
+      0.76,
+      0.8
+    ],
+    "zero_tier_error_both": [
+      0.76,
+      0.79
+    ],
+    "n_thresholds_with_backend_disagreement": 10
+  },
+  "predictions": {
+    "p1_half_width_le_2.7pts": true,
+    "p2_loo_edge_move_ge_1pt": true,
+    "p3_drift_gt_20pct_of_margin": true,
+    "p4_card_not_threshold_change": true,
+    "all_held": true
+  },
+  "guardrails": {
+    "V": "INT8 0/24, fp 0/24",
+    "V_int8": "0/24",
+    "V_fp": "0/24",
+    "V_regression_backends": [],
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "triangle_violations_int8": 0,
+    "triangle_violations_fp": 0,
+    "triangle_checks": 495,
+    "default_threshold_unchanged": true
+  },
+  "acceptance": {
+    "bar": "per-document margin table, LOO edge table, backend-drift column and threshold-flip curve published, safe band restated with both caveats in the distance.py provenance terms; no threshold change, V re-verified on both backends, metric property untouched, default-path smd unchanged",
+    "met": true
+  },
+  "fragility_card": "Band on the shipped semantic_distance path (11 ibm-ai-adoption fixtures, OpenVINO INT8,\ndocdistance 1.1.5): min gold 79.4% (haiku) vs max adversarial 74.7%\n(adv2-b), so any cutoff in [0.747, 0.794] separates the tiers. In-sample: the same 11 documents set it\nand are scored by it.\n\nCaveat 1 - single-document fragility. Both edges are order statistics of n = 11 and each is set by one\ndocument. Dropping haiku moves the upper edge +2.30 points to 81.7%;\ndropping adv2-b moves the lower edge -1.64 points to 73.1%. Across all ten\nleave-one-out subsets the band width ranges 4.71 to 7.01 points against a\n4.71-point baseline, and 2 of 10 documents move an edge by at least one point.\n\nCaveat 2 - backend sensitivity. On the fp backbone the same 11 documents give the band\n[0.757, 0.803] (adv2-b / haiku), the edges shifting +0.92 and +0.82 points.\nPer-document INT8-vs-fp closeness drift reaches -0.920 points on adv2-b,\n41% of that document's 2.26-point margin to 0.77;\n3 of 10 documents drift by more than 20% of their margin. Verdicts at 0.77 flip between\nbackends on 0 document(s). A threshold calibrated on one backend is not automatically valid on the other.\n\nCaveat 3 - provenance. The comment's recorded band is 79.7% / 75.0% from notebook 09 cell 10,\n0.26 and 0.26 points above the numbers here, and that cell scores through dd.embed\nplus smd rather than through semantic_distance. At docdistance 1.1.2 the two paths disagreed inside that\none notebook on every document cell 13 also scored (gold-2 0.2258 vs 0.2265, adv1-a 0.4579 vs 0.4569, adv2-a 0.3811 vs 0.3806),\nwhile on those same 3 documents the shipped path is unchanged from 1.1.2 to\n1.1.5 (gold-2 closeness 0.8398475249058507 identical, smd within one ulp).\nThe recorded band was therefore never a shipped-path band. Corpus: no corpus swap: notebook 09's recorded cell text names the same 11 live opus-4-6 / sonnet-4-6 / haiku-4-5 filenames this notebook scores.\n\nSafe on both backends: any cutoff in [0.760, 0.790] gives zero tier errors under\nINT8 and fp alike. The shipped 0.77 sits inside it. V stays 0/24 on INT8 and 0/24 on fp.",
+  "deliverable": {
+    "card_published_in": [
+      "notebooks/experiments/E12-H63-kj-semantic-threshold-band.ipynb",
+      "reports/E12-H63-semantic-threshold-band-metrics.json"
+    ],
+    "open_follow_up": "ship the sensitivity card into the calibration documentation and restate the src/docdistance/distance.py provenance comment on the shipped-path band - this notebook may not edit docs/ or src/, so the documentation shipment stays open"
+  }
+}

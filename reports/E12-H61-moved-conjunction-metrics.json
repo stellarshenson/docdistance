@@ -1,0 +1,269 @@
+{
+  "id": "E12-H61",
+  "slug": "moved-conjunction",
+  "library_version": "1.1.5",
+  "definitions": {
+    "shipped": "abs(displacement_norm) > moved_tolerance",
+    "conjunction": "displacement != 0 and abs(displacement_norm) > moved_tolerance",
+    "moved_tolerance": 0.05,
+    "no_counterpart_cost": 0.6,
+    "changed_lines_vs_shipped_source": 3
+  },
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "order_alignment": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "expected_alignment": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "structure_displacement": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "arithmetic_predicted_fires": 4,
+    "reading": "order_alignment = [1, 2, 3, 4, 5, 6] (expected [1, 2, 3, 4, 5, 6]), structure_displacement = [0, 0, 0, 0, 0, 0]; arithmetic predicts 4 of 6 shipped fires"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reversal_orthogonal_n_moved": 12,
+    "reversal_text_n_moved": 12,
+    "expected": 12,
+    "reading": "reversal control, shipped definition: 12/12 moved"
+  },
+  "entry_point_byte_identical": true,
+  "insertion": {
+    "n_a": 6,
+    "n_b": 7,
+    "false_moved_shipped": 4,
+    "false_moved_conjunction": 0,
+    "displacement_norms": [
+      0.1429,
+      0.119,
+      0.0952,
+      0.0714,
+      0.0476,
+      0.0238
+    ],
+    "displacements": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "costs": [
+      0.0,
+      0.0005,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "shipped_moved": [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false
+    ],
+    "conjunction_moved": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "worked_example": {
+    "swap_indices": [
+      2,
+      3
+    ],
+    "swap_flagged_shipped": 2,
+    "swap_flagged_conjunction": 2,
+    "n_moved_shipped": 4,
+    "n_moved_conjunction": 4
+  },
+  "shrinkage": {
+    "shrink_orth": {
+      "kept_moved_shipped": 0,
+      "kept_moved_conjunction": 0,
+      "kept_max_abs_norm": 0.0417,
+      "removed_no_counterpart": 4,
+      "removed_moved_conjunction": 0
+    },
+    "shrink_text": {
+      "kept_moved_shipped": 0,
+      "kept_moved_conjunction": 0,
+      "kept_max_abs_norm": 0.0417,
+      "removed_no_counterpart": 1,
+      "removed_moved_conjunction": 1
+    }
+  },
+  "reversal": {
+    "reversal_orth": {
+      "shipped": 12,
+      "conjunction": 12
+    },
+    "reversal_text": {
+      "shipped": 12,
+      "conjunction": 12
+    }
+  },
+  "reorder_pool": {
+    "n_permutations": 1680,
+    "n_bases": 10,
+    "relocated_statements": 13675,
+    "true_positives_shipped": 13675,
+    "true_positives_conjunction": 13675,
+    "true_positives_lost": 0,
+    "false_fires_shipped": 0,
+    "false_fires_conjunction": 0,
+    "wall_seconds": 2.87
+  },
+  "moved_counts": {
+    "insertion": {
+      "shipped": 4,
+      "conjunction": 0
+    },
+    "worked_example": {
+      "shipped": 4,
+      "conjunction": 4
+    },
+    "shrink_orth": {
+      "shipped": 0,
+      "conjunction": 0
+    },
+    "shrink_text": {
+      "shipped": 1,
+      "conjunction": 1
+    },
+    "reversal_orth": {
+      "shipped": 12,
+      "conjunction": 12
+    },
+    "reversal_text": {
+      "shipped": 12,
+      "conjunction": 12
+    }
+  },
+  "guardrails": {
+    "per_fixture": [
+      {
+        "fixture": "insertion",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.074169,
+        "order_gap": 0.150501
+      },
+      {
+        "fixture": "worked_example",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.171318,
+        "order_gap": 0.218512
+      },
+      {
+        "fixture": "shrink_orth",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.471405,
+        "order_gap": 0.017751
+      },
+      {
+        "fixture": "shrink_text",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.188981,
+        "order_gap": 0.09651
+      },
+      {
+        "fixture": "reversal_orth",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.0,
+        "order_gap": 1.179905
+      },
+      {
+        "fixture": "reversal_text",
+        "body_bytes_equal": true,
+        "smd_equal": true,
+        "order_gap_equal": true,
+        "structure_closeness_equal": true,
+        "plan_fields_equal": true,
+        "displacement_equal": true,
+        "smd": 0.000382,
+        "order_gap": 0.511523
+      }
+    ],
+    "smd_bit_identical": true,
+    "order_gap_bit_identical": true,
+    "body_bytes_identical": true,
+    "plan_fields_untouched": true,
+    "V": 0,
+    "V_total": 24,
+    "margin_points": 4.71,
+    "R": 1.67,
+    "DR": 0.0873,
+    "dprime": 4.68,
+    "triangle_checks": 990,
+    "triangle_violations": 0,
+    "metric_property_held": true
+  },
+  "acceptance": {
+    "conditions": {
+      "insertion_false_moved_zero": true,
+      "worked_example_swaps_kept": true,
+      "reversal_control_12_of_12": true,
+      "shrinkage_kept_quiet": true
+    },
+    "fail_condition_triggered": false,
+    "met": true,
+    "guardrails_held": true
+  },
+  "verdict": "Promoted",
+  "timings": {
+    "model_load_and_embed_s": 15.9,
+    "reorder_pool_s": 2.87
+  }
+}

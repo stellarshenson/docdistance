@@ -1,0 +1,81 @@
+{
+  "id": "E12-H60",
+  "slug": "no-counterpart-valley",
+  "model": "opus",
+  "verdict": "Killed-at-gate",
+  "verdict_number": "0 of 5 fully-matched pairs with a nonzero >0.6 band (0 of 61 statements above 0.6; pooled matched maximum 0.3477)",
+  "kill_gate": {
+    "ran": true,
+    "passed": false,
+    "reading": "summary.cost_bands['>0.6'] is 0 on every fully-matched pair: gold vs gold-2 0/11, v1 vs v2 0/12, werg-a vs werg-a~bt 0/11, werg-b vs werg-b~bt 0/13, werg-c vs werg-c~bt 0/14. 0 of 61 statements exceed the shipped 0.6 cut; pooled matched cheapest-row cost max 0.3477, headroom to the cut 0.2523. The file reading the CLI uses is also 0 on both A/B pairs (gold vs gold-2 0/10, v1 vs v2 0/11). Derived bands reproduce the shipped summary.cost_bands on every pair."
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "no sanity check is registered for H60. Harness precondition measured instead: the joined fixture text re-segments to the fixture's own statement list exactly on all 10 documents used (statement count and text equal), so each cheapest-row cost is attributable to a known statement; derived cost bands equal the shipped summary.cost_bands on all 5 fully-matched pairs and all 55 ibm pairs"
+  },
+  "prediction_check": {
+    "predicted": "matched-paraphrase cheapest-row costs right-skewed with p90 near 0.45-0.55 and 3-10% of matched statements above 0.6; true-removed concentrated above 0.7; optimal valley at 0.65-0.75",
+    "observed": "matched cheapest-row costs median 0.1631, p90 0.2496, p95 0.2572, max 0.3477, 0% above 0.6. Over the wider 55-pair ibm pool (579 statements) the maximum is 0.5774 and p99 0.5707, still below 0.6. The removed population was never built: the kill-gate stops the run before the deletion fixture, so the valley is unmeasured",
+    "direction_matched": false
+  },
+  "acceptance": {
+    "bar": "PASS (defect confirmed) if >2% of ground-truth-matched statements across the construction-guaranteed paraphrase pairs exceed 0.6 while <5% of true-removed statements fall below it; FAIL if matched mass above 0.6 is <2%",
+    "met": false,
+    "readings": {
+      "matched_statements_above_0.6_pct": 0.0,
+      "matched_statements_above_0.6_count": 0,
+      "matched_statements_total": 61,
+      "matched_pool_p90": 0.2496,
+      "matched_pool_max": 0.3477,
+      "removed_statements_below_0.6_pct": null,
+      "bar_evaluated": 0
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "metric_property": "triangle inequality intact: 0 violations in 495 checks over the 165 triples of the 11 ibm documents (tolerance 1e-9)",
+    "order_gap_bit_identical": true,
+    "smd_bit_identical": true,
+    "notes": "Measured, not asserted. V = 0/24 on the shipped default path with the gold maximum below the adversarial minimum by +0.0666. pipe.NO_COUNTERPART_COST was patched to 0.45, 0.70 and 0.75 over 10 pairs (the 5 fully-matched plus gold vs opus / sonnet / haiku / adv1-a / adv2-a): smd and order_gap equal under np.array_equal at every cut, and both the semantic and the structural detail JSON are byte-identical once the cut-derived annotation keys are removed (semantic: flows[].no_counterpart, summary.n_no_counterpart, thresholds.no_counterpart_cost; structural: statements[].displacement_norm / moved / no_counterpart, sections[].median_displacement_norm / share_target_other_section, summary.n_moved / n_no_counterpart, thresholds.no_counterpart_cost). The 0.45 patch fires 6 semantic and 7 structural flags, so the identity is measured against a cut that genuinely changed the annotations, not a no-op. The shipped value was restored after the probe; no file under src/, docs/, tests/ or data/ was written."
+  },
+  "key_numbers": {
+    "gate_pairs_with_nonzero_band": 0,
+    "gate_pairs_total": 5,
+    "gate_statements_above_cut": 0,
+    "gate_statements_total": 61,
+    "matched_pool_median": 0.1631,
+    "matched_pool_p90": 0.2496,
+    "matched_pool_p95": 0.2572,
+    "matched_pool_max": 0.3477,
+    "matched_headroom_to_cut": 0.2523,
+    "ibm_pool_pairs": 55,
+    "ibm_pool_statements": 579,
+    "ibm_pool_median": 0.3415,
+    "ibm_pool_p90": 0.4609,
+    "ibm_pool_p99": 0.5707,
+    "ibm_pool_max": 0.5774,
+    "ibm_pool_above_0.6": 0,
+    "sweep_flagged_at_0.45": 76,
+    "sweep_flagged_at_0.50": 27,
+    "sweep_flagged_at_0.55": 12,
+    "sweep_flagged_at_0.60": 0,
+    "sweep_flagged_at_0.75": 0,
+    "sweep_flag_pct_at_0.45": 13.13,
+    "sweep_flag_pct_at_0.50": 4.66,
+    "sweep_flag_pct_at_0.55": 2.07,
+    "V_separation": 0.0666,
+    "triangle_violations": 0,
+    "triangle_checks": 495,
+    "guardrail_flags_at_cut_0.45": 6,
+    "shipped_cut": 0.6
+  },
+  "result_summary": "Killed at the gate. summary.cost_bands['>0.6'] is zero on all 5 fully-matched pairs (gold vs gold-2, v1 vs v2, werg-a/b/c against their back-translations): 0 of 61 statements exceed the shipped 0.6 cut, the pooled matched cheapest-row cost tops out at 0.3477, and the file reading the CLI uses is zero as well, so no_counterpart never over-fires on construction-guaranteed matched content and no deletion fixture was built. The prediction is falsified in its own direction, matched p90 measuring 0.2496 against a predicted 0.45-0.55. The registered by-product widens the reading: over 55 ibm summary pairs (579 statements) the cheapest-row cost maximum is 0.5774 with p99 0.5707, so the +/-0.15 sweep flags 0 statements at 0.60 through 0.75, 12 (2.07%) at 0.55, 27 (4.66%) at 0.50 and 76 (13.13%) at 0.45 - the cut sits 0.023 above the largest cost this corpus produces and the flag is inert here rather than over-firing. Guardrails hold: V 0/24 at separation +0.0666, smd and order_gap bit-identical under cuts patched to 0.45, 0.70 and 0.75 on both the semantic and the structural detail JSON, triangle inequality 0 violations in 495 checks.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E12-H60-kj-no-counterpart-valley.ipynb",
+    "metrics_json": "reports/E12-H60-no-counterpart-valley-metrics.json",
+    "log": "logs/E12-H60-no-counterpart-valley.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "Three limits on the reading. First, the kill-gate list 'werg-a/b/c' names no partner, and it was read as the three back-translation pairs (werg-a vs werg-a~bt and so on), because the wergeland documents are separate sections of one article and cross-pairing them would not be fully matched; the two named A/B pairs were additionally read through the file path to remove the fixture-text-versus-file question, and both readings are zero. Second, the gate closes the over-firing question only: no true-removed population was scored, so the density valley between the matched and removed modes stays unlocated and nothing here says where between the observed 0.5774 maximum and the DEF-TRANS-1 field absorber at 0.76 the boundary belongs; NO_COUNTERPART_COST stays at 0.6 and its exact placement is deferred, not answered. Third, the field anchors quoted (synthetic removal at 1.414, field absorber 0.76 at weight 0.95, copy-edit cost median 0.096) were re-derived from docs/defects-docdistance.md, the corrected recount, because the corrections.json forensics archive the record names is not present in this repository."
+}
