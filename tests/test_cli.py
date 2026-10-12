@@ -4,6 +4,7 @@ The real end-to-end behaviour (segment -> embed -> distance) is exercised in
 ``notebooks/09-kj-docdistance-api-e2e.ipynb`` and by running the CLI against the fixtures.
 """
 
+import pytest
 from typer.testing import CliRunner
 
 from docdistance.cli import app
@@ -57,6 +58,7 @@ def test_wrt_source_help_has_source_option():
     assert "--source" in res.output
     assert "--result-only" in res.output
     assert "--source-map-json" in res.output
+    assert "--pairs" in res.output
 
 
 def test_init_help_has_mode_and_source_flags():
@@ -65,6 +67,67 @@ def test_init_help_has_mode_and_source_flags():
     assert "--source" in res.output
     assert "--backend" in res.output
     assert "--aws-profile" in res.output
+
+
+def test_init_prints_the_message_of_a_missing_model_and_exits_1(monkeypatch):
+    """DEF-DEPS-17: ``init`` turns ``ModelsNotInstalled`` into its message and exit code 1, the
+    code the distance commands use for that error. The stub raises it as ``bootstrap.init`` does
+    when the tokenizer of the segmenter is in no place it reads."""
+    import re
+
+    from docdistance import bootstrap
+    from docdistance.encoders import ModelsNotInstalled
+
+    def init(mode, **kwargs):
+        raise ModelsNotInstalled(
+            "the tokenizer of the segmenter, facebookAI/xlm-roberta-base, is not in the source"
+        )
+
+    monkeypatch.setattr(bootstrap, "init", init)
+    res = runner.invoke(app, ["init", "wmd", "--source", "models"], env=_WIDE)
+    assert res.exit_code == 1
+    assert isinstance(res.exception, SystemExit)  # the command handled the error
+    # Rich highlights the name with ANSI codes regardless of NO_COLOR - strip them
+    plain = re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+    assert "error: the tokenizer of the segmenter, facebookAI/xlm-roberta-base" in plain
+
+
+# the help of an option is built when the command line module is imported, so the constant is
+# changed before that import, in a process of its own
+_ANISOTROPY_HELP_SCRIPT = """\
+import typer
+
+from docdistance import distance
+
+distance.ANISOTROPY_MIN_POOL = 123
+
+from docdistance.cli import app
+
+commands = typer.main.get_command(app).commands
+for name in ("distance-semantic", "distance-structural"):
+    (option,) = [param for param in commands[name].params if param.name == "anisotropy"]
+    print(option.help)
+"""
+
+
+def test_anisotropy_help_reads_the_minimum_pool_from_the_constant(tmp_path):
+    """The ``--anisotropy`` help of both symmetric commands names ``ANISOTROPY_MIN_POOL``.
+
+    The two help texts carried the literal 71, which a change of the constant would have left
+    behind.
+    """
+    import subprocess
+    import sys
+
+    script = tmp_path / "anisotropy_help.py"
+    script.write_text(_ANISOTROPY_HELP_SCRIPT, encoding="utf-8")
+    res = subprocess.run(
+        [sys.executable, str(script)], capture_output=True, text=True, check=False
+    )
+    assert res.returncode == 0, res.stderr
+    lines = res.stdout.splitlines()
+    assert len(lines) == 2
+    assert all("needs about 123 pooled statements" in line for line in lines)
 
 
 def test_distance_without_init_exits_with_clear_error(tmp_path):
@@ -227,6 +290,71 @@ def test_distance_structural_details_json_writes_order_details(monkeypatch, tmp_
     settings.reset()
 
 
+def test_distance_structural_output_shows_the_matched_order_gap(monkeypatch):
+    """ACC-CLI-74: the panel names the matched order gap and the matched statement count, --json
+    carries both keys and --result-only still prints the bare structure_closeness; embedding is
+    monkeypatched. docB is docA minus statements 3 and 6, order kept, plus one unrelated statement
+    at the end: 6 matched statements against 8 and 7 statements."""
+    import json
+    import re
+
+    import numpy as np
+
+    from docdistance import settings
+
+    E = _emb(8, seed=5)
+    docs = {
+        "docA": ([f"a{i}" for i in range(8)], E),
+        "docB": (
+            [f"a{i}" for i in (0, 1, 2, 4, 5, 7)] + ["b0"],
+            np.concatenate([E[[0, 1, 2, 4, 5, 7]], _emb(1, seed=6)]),
+        ),
+    }
+    _wire_embeddings(monkeypatch, docs)
+
+    res = runner.invoke(app, ["distance-structural", "docA", "docB", "--json"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    obj = json.loads(res.stdout)
+    assert obj["n_matched"] == 6
+    assert obj["matched_order_gap"] < 1e-6 < obj["order_gap"]
+
+    res = runner.invoke(app, ["distance-structural", "docA", "docB"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    # Rich highlights numbers with ANSI codes regardless of NO_COLOR - strip them
+    plain = re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+    assert re.search(r"matched order gap\s+0\.0000\b", plain)
+    assert re.search(r"matched statements\s+6\b", plain)
+
+    res = runner.invoke(app, ["distance-structural", "docA", "docB", "--result-only"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    assert res.stdout.strip() == str(obj["structure_closeness"])
+    settings.reset()
+
+
+def test_distance_structural_panel_when_no_statement_is_matched(monkeypatch):
+    """ACC-CLI-74 / ACC-TRANS-52: two unrelated documents - the panel states that no statement is
+    matched and --json carries a null matched_order_gap; embedding is monkeypatched."""
+    import json
+
+    from docdistance import settings
+
+    docs = {
+        "docA": ([f"a{i}" for i in range(4)], _emb(4, seed=1)),
+        "docB": ([f"b{i}" for i in range(3)], _emb(3, seed=2)),
+    }
+    _wire_embeddings(monkeypatch, docs)
+
+    res = runner.invoke(app, ["distance-structural", "docA", "docB"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    assert "no statement matched" in res.output
+
+    res = runner.invoke(app, ["distance-structural", "docA", "docB", "--json"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    obj = json.loads(res.stdout)
+    assert obj["n_matched"] == 0 and obj["matched_order_gap"] is None
+    settings.reset()
+
+
 def test_version():
     res = runner.invoke(app, ["--version"], env=_WIDE)
     assert res.exit_code == 0
@@ -339,6 +467,56 @@ def test_pairs_structural_batch_emits_structure_fields(monkeypatch, tmp_path):
     settings.reset()
 
 
+def test_pairs_with_anisotropy_warns_once_per_pool_below_the_minimum(monkeypatch, tmp_path):
+    """ACC-GEOM-23: distance-semantic --pairs with anisotropy on logs one warning line per pre-pass
+    pool below the minimum on stderr, naming the pooled statement count and the minimum of 71;
+    stdout still carries the JSON line of each pair. Without --anisotropy no such line is logged.
+    Embedding is monkeypatched."""
+    import json
+    import re
+
+    from docdistance import settings
+
+    docs = {
+        "docA": ([f"a{i}" for i in range(4)], _emb(4, seed=1)),
+        "docB": ([f"b{i}" for i in range(5)], _emb(5, seed=2)),
+        "docC": ([f"c{i}" for i in range(6)], _emb(6, seed=3)),
+    }
+    _wire_embeddings(monkeypatch, docs)
+
+    def pool_lines(res):
+        # loguru colours its lines with ANSI codes regardless of NO_COLOR - strip them
+        plain = re.sub(r"\x1b\[[0-9;]*m", "", res.stderr)
+        return [line for line in plain.splitlines() if "pre-pass pool" in line]
+
+    one_pair = tmp_path / "one-pair.tsv"
+    one_pair.write_text("docA\tdocB\n")  # the 2-document TSV: one pool of 4 + 5 statements
+    res = runner.invoke(
+        app, ["distance-semantic", "--pairs", str(one_pair), "--anisotropy"], env=_WIDE
+    )
+    assert res.exit_code == 0, res.output
+    lines = pool_lines(res)
+    assert len(lines) == 1
+    assert "holds 9 statements" in lines[0] and "minimum of 71" in lines[0]
+    assert json.loads(res.stdout)["anisotropy"] is True  # the pair is scored
+
+    two_pairs = tmp_path / "two-pairs.tsv"
+    two_pairs.write_text("docA\tdocB\ndocB\tdocC\n")  # two pools: 9 and 11 statements
+    res = runner.invoke(
+        app, ["distance-semantic", "--pairs", str(two_pairs), "--anisotropy"], env=_WIDE
+    )
+    assert res.exit_code == 0, res.output
+    lines = pool_lines(res)
+    assert len(lines) == 2
+    assert "holds 9 statements" in lines[0] and "holds 11 statements" in lines[1]
+    assert len(res.stdout.splitlines()) == 2
+
+    res = runner.invoke(app, ["distance-semantic", "--pairs", str(one_pair)], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    assert pool_lines(res) == []
+    settings.reset()
+
+
 def test_pairs_details_json_directory_writes_one_map_per_pair(monkeypatch, tmp_path):
     """ACC-CLI-12: in --pairs mode --details-json takes a directory and writes <pair>.json per pair."""
     import json
@@ -380,14 +558,14 @@ def test_pairs_details_json_template_writes_one_map_per_pair(monkeypatch, tmp_pa
 
     tsv = tmp_path / "pairs.tsv"
     tsv.write_text("docA\tdocB\tfirst\n")
-    template = tmp_path / "order-{pair}.json"
+    template = tmp_path / "maps" / "order-{pair}.json"
     res = runner.invoke(
         app,
         ["distance-structural", "--pairs", str(tsv), "--details-json", str(template)],
         env=_WIDE,
     )
     assert res.exit_code == 0, res.output
-    details = json.loads((tmp_path / "order-first.json").read_text())
+    details = json.loads((tmp_path / "maps" / "order-first.json").read_text())
     assert details["n_statements"] == {"a": 3, "b": 3}
     settings.reset()
 
@@ -454,3 +632,275 @@ def test_pairs_malformed_line_emits_machine_error_object(tmp_path):
     obj = json.loads(res.stdout)
     assert obj["error"] == "io_error"
     assert "line 2" in obj["message"]
+
+
+def test_wrt_source_pairs_and_positionals_mutually_exclusive(tmp_path):
+    """ACC-CLI-37: distance-wrt-source takes two documents or --pairs FILE, as the other two
+    distance commands do - both, or neither, exits 2 with the error of those commands."""
+    import re
+
+    def plain(res):
+        # Rich highlights brackets with ANSI codes regardless of NO_COLOR - strip them
+        return re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+
+    tsv = tmp_path / "pairs.tsv"
+    tsv.write_text("docA\tdocB\n")
+    res = runner.invoke(
+        app, ["distance-wrt-source", "a", "b", "--pairs", str(tsv), "--source", "s"], env=_WIDE
+    )
+    assert res.exit_code == 2
+    assert "pass two documents or --pairs FILE, not both" in plain(res)
+
+    res = runner.invoke(app, ["distance-wrt-source", "--source", "s"], env=_WIDE)
+    assert res.exit_code == 2
+    assert "two documents (or --pairs FILE) required" in plain(res)
+
+
+def test_wrt_source_pairs_missing_file_emits_machine_error_object(tmp_path):
+    """ACC-CLI-37: batch mode is machine output on distance-wrt-source too - a --pairs path that
+    cannot be read gives the one-line io_error JSON on stdout, exit 1."""
+    import json
+
+    res = runner.invoke(
+        app,
+        ["distance-wrt-source", "--pairs", str(tmp_path / "absent.tsv"), "--source", "s"],
+        env=_WIDE,
+    )
+    assert res.exit_code == 1
+    obj = json.loads(res.stdout)
+    assert obj["error"] == "io_error"
+    assert "absent.tsv" in obj["message"]
+
+
+# ------------------------------------------------------------------ ACC-CLI-88: --input-format
+
+# per distance command: the option that writes its per-pair file and the documents of one call
+_FORMAT_COMMANDS = {
+    "distance-semantic": ("--details-json", 2),
+    "distance-structural": ("--details-json", 2),
+    "distance-wrt-source": ("--source-map-json", 3),
+}
+_FORMAT_MODES = ["one-shot", "details", "filtered", "pairs", "pairs-details"]
+
+
+def _record_embed_kwargs(monkeypatch):
+    """Both modes ready and stub embeddings; returns the keyword arguments of every
+    ``embed_statements`` call, one dict per document, in call order."""
+    import numpy as np
+
+    from docdistance import pipeline, settings
+
+    docs = {
+        name: ([f"{name}{i}" for i in range(3)], _emb(3, seed=seed))
+        for seed, name in enumerate(("docA", "docB", "docS"), start=1)
+    }
+    calls = []
+
+    def embed_statements(self, doc, **kwargs):
+        calls.append(kwargs)
+        return docs[doc]
+
+    def grounding(self, doc_sents, src_sents):
+        return (
+            np.full((len(doc_sents), len(src_sents)), 0.5, dtype=np.float32),
+            np.full(len(doc_sents), 0.5, dtype=np.float32),
+        )
+
+    settings.reset()
+    settings.mark_ready("wmd")
+    settings.mark_ready("wmd-wrt-source")
+    monkeypatch.setattr(pipeline.DocDistance, "_ensure_base", lambda self: None)
+    monkeypatch.setattr(pipeline.DocDistance, "_ensure_grounding", lambda self: None)
+    monkeypatch.setattr(pipeline.DocDistance, "embed_statements", embed_statements)
+    monkeypatch.setattr(pipeline.DocDistance, "_grounding", grounding)
+    return calls
+
+
+def _format_args(command, mode, tmp_path):
+    """The arguments of ``command`` in ``mode``, without the options under test."""
+    file_option, _ = _FORMAT_COMMANDS[command]
+    args = [command]
+    if mode.startswith("pairs"):
+        tsv = tmp_path / "pairs.tsv"
+        tsv.write_text("docA\tdocB\tfirst\n")
+        args += ["--pairs", str(tsv)]
+    else:
+        args += ["docA", "docB"]
+    if command == "distance-wrt-source":
+        args += ["--source", "docS"]
+    if mode == "details":
+        args += [file_option, str(tmp_path / "details.json")]
+    if mode == "pairs-details":
+        args += [file_option, str(tmp_path / "details")]
+    if mode == "filtered":
+        args += ["--min-words", "1"]
+    return args
+
+
+@pytest.mark.parametrize("mode", _FORMAT_MODES)
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_input_format_auto_reaches_the_pipeline(command, mode, monkeypatch, tmp_path):
+    """ACC-SEGM-94: ``auto`` is the default of the pipeline, so ``--input-format auto`` reaches
+    the read of every document in the call shape of a command without the option: no
+    ``input_format`` argument. On the three distance commands, for a single pair on its three
+    paths and for ``--pairs`` with and without per-pair files."""
+    from docdistance import settings
+
+    calls = _record_embed_kwargs(monkeypatch)
+    args = _format_args(command, mode, tmp_path)
+    res = runner.invoke(app, [*args, "--input-format", "auto"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    expected = {"min_words": 1} if mode == "filtered" else {}
+    assert calls == [expected] * _FORMAT_COMMANDS[command][1]
+    settings.reset()
+
+
+@pytest.mark.parametrize("mode", _FORMAT_MODES)
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_explicit_input_format_reaches_the_pipeline_on_every_path(
+    command, mode, monkeypatch, tmp_path
+):
+    """ACC-SEGM-94: ``--input-format plain``, the value that returns the 1.1.5 reading, is passed
+    to the read of every document of the call, on the three distance commands, for a single pair
+    on its three paths and for ``--pairs`` with and without per-pair files."""
+    from docdistance import settings
+
+    calls = _record_embed_kwargs(monkeypatch)
+    args = _format_args(command, mode, tmp_path)
+    res = runner.invoke(app, [*args, "--input-format", "plain"], env=_WIDE)
+    assert res.exit_code == 0, res.output
+    expected = {"input_format": "plain"} | ({"min_words": 1} if mode == "filtered" else {})
+    assert calls == [expected] * _FORMAT_COMMANDS[command][1]
+    settings.reset()
+
+
+@pytest.mark.parametrize(
+    ("options", "expected"),
+    [
+        ([], {}),
+        (["--input-format", "auto"], {}),
+        (["--input-format", "plain"], {"input_format": "plain"}),
+        (["--input-format", "markdown"], {"input_format": "markdown"}),
+        (["--input-format", "html"], {"input_format": "html"}),
+        (["--markdown"], {"input_format": "markdown"}),
+        (["--markdown", "--input-format", "markdown"], {"input_format": "markdown"}),
+    ],
+    ids=[
+        "default",
+        "auto",
+        "plain",
+        "markdown",
+        "html",
+        "markdown flag",
+        "markdown flag and value",
+    ],
+)
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_input_format_values_and_the_markdown_flag(
+    command, options, expected, monkeypatch, tmp_path
+):
+    """ACC-SEGM-94: every value reaches the pipeline as given; without the option, and with
+    ``auto``, the read keeps the call shape of the default reader. ``--markdown`` alone equals
+    ``--input-format markdown``, and the two together are no conflict."""
+    from docdistance import settings
+
+    calls = _record_embed_kwargs(monkeypatch)
+    for mode in ("one-shot", "pairs"):
+        calls.clear()
+        res = runner.invoke(app, [*_format_args(command, mode, tmp_path), *options], env=_WIDE)
+        assert res.exit_code == 0, res.output
+        assert calls == [expected] * _FORMAT_COMMANDS[command][1]
+    settings.reset()
+
+
+@pytest.mark.parametrize("value", ["html", "auto", "plain"])
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_markdown_flag_beside_another_input_format_exits_2(command, value, monkeypatch, tmp_path):
+    """ACC-SEGM-94: ``--markdown`` beside ``--input-format html``, ``plain`` or an explicit
+    ``auto`` is a usage error: exit code 2, both options named, no document read. The command
+    line tells a given ``auto`` from the default, which ``--markdown`` alone leaves in place."""
+    import re
+
+    from docdistance import settings
+
+    calls = _record_embed_kwargs(monkeypatch)
+    for mode in ("one-shot", "pairs"):
+        args = _format_args(command, mode, tmp_path)
+        res = runner.invoke(app, [*args, "--markdown", "--input-format", value], env=_WIDE)
+        assert res.exit_code == 2, res.output
+        plain = re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+        assert "--markdown" in plain and f"--input-format {value}" in plain
+        assert res.stdout == ""
+    assert calls == []
+    settings.reset()
+
+
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_unknown_input_format_exits_2(command, monkeypatch, tmp_path):
+    """ACC-CLI-88: a value outside ``plain``, ``markdown``, ``html``, ``auto`` is a usage error
+    that names the option and the value."""
+    import re
+
+    from docdistance import settings
+
+    calls = _record_embed_kwargs(monkeypatch)
+    for mode in ("one-shot", "pairs"):
+        args = _format_args(command, mode, tmp_path)
+        res = runner.invoke(app, [*args, "--input-format", "pdf"], env=_WIDE)
+        assert res.exit_code == 2, res.output
+        plain = re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+        assert "Invalid value for '--input-format'" in plain and "'pdf'" in plain
+    assert calls == []
+    settings.reset()
+
+
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_distance_help_lists_the_input_format_option(command):
+    """ACC-CLI-88: the help of each distance command lists the option; its choices are the four
+    values of the pipeline and its help text names the default."""
+    import typer
+
+    from docdistance import pipeline
+
+    res = runner.invoke(app, [command, "--help"], env=_WIDE)
+    assert res.exit_code == 0
+    assert "--input-format" in res.output
+
+    params = typer.main.get_command(app).commands[command].params
+    (option,) = [param for param in params if param.name == "input_format"]
+    assert tuple(option.type.choices) == pipeline.INPUT_FORMATS
+    assert "auto (the default" in option.help
+    for extension in (".md", ".markdown", ".html", ".htm"):
+        assert extension in option.help
+    (flag,) = [param for param in params if param.name == "markdown"]
+    assert "--input-format markdown" in flag.help
+
+
+@pytest.mark.parametrize(
+    "options",
+    [["--markdown", "--input-format", value] for value in ("plain", "html", "auto")]
+    + [["--input-format", "pdf"]],
+    ids=["markdown flag and plain", "markdown flag and html", "markdown flag and auto"]
+    + ["unknown value"],
+)
+@pytest.mark.parametrize("command", _FORMAT_COMMANDS)
+def test_reader_error_of_the_command_line_loads_no_model(command, options, monkeypatch, tmp_path):
+    """ACC-SEGM-94: a reader error of the command line ends the command with exit code 2 before
+    a ``DocDistance`` is built and before the segmenter or a model loads, for a single pair and
+    for ``--pairs``."""
+    from docdistance import pipeline, settings
+
+    settings.reset()
+    settings.mark_ready("wmd")
+    settings.mark_ready("wmd-wrt-source")
+    loads: list[str] = []
+    for name in ("DocDistance", "Segmenter", "load_encoder", "load_reranker", "load_nli"):
+        monkeypatch.setattr(
+            pipeline, name, lambda *args, _name=name, **kwargs: loads.append(_name)
+        )
+    for mode in ("one-shot", "pairs"):
+        res = runner.invoke(app, [*_format_args(command, mode, tmp_path), *options], env=_WIDE)
+        assert res.exit_code == 2, res.output
+        assert res.stdout == ""
+    assert loads == []
+    settings.reset()

@@ -1,0 +1,307 @@
+{
+ "run": "wf_1d07273f-fc6",
+ "script": "reports/E13-campaign/workflow-build.run3.js",
+ "rows": [
+  {
+   "started": "build:review-followup"
+  },
+  {
+   "result": {
+    "package": "review-followup",
+    "status": "done",
+    "items": [
+     {
+      "id": "DEF-DEPS-17",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_segmenter_loads_after_init_from_a_source_folder_without_the_tokenizer passes on 1.1.19 with the real models: step 1 runs init on a sat folder with config.json and the weights only (HF_HUB_OFFLINE=1, proxies on the closed port 9), step 2 loads Segmenter in a child process with an empty HF_HOME and the same proxies; its 4 statements equal those of the load by Hub name. With bootstrap.py and encoders.py reverted on a scratch copy placed first on PYTHONPATH, the same test fails at step 2 with docdistance.encoders.ModelsNotInstalled. Stub tests pass: 4 init tests and _save_tokenizer[True/False] in tests/test_bootstrap.py, test_segmenter_loads_the_tokenizer_from_the_model_folder_when_it_is_there[True/False] in tests/test_e2e.py. 13 of 13 mutations of the change fail at least one test. Real run of the error path (empty cache, closed port): docdistance init exits 1, names facebookAI/xlm-roberta-base and both remedies, writes no docdistance.json."
+     },
+     {
+      "id": "ACC-TRANS-84",
+      "met": true,
+      "evidence": "Manual read of the three sites on 1.1.19: docstring of ungrounded_residual (src/docdistance/distance.py:489-492), docstring of SourceConditionedResult (src/docdistance/distance.py:596-600), row n_unsupported_a / n_unsupported_b of docs/api-reference.md:137. grep for 'reading of content the source does not support' in src/, README.md and docs/ outside the two registers: 0 matches. Each site names the count of statements with no near source statement (nearest-source cost above SOURCE_SUPPORT_CUTOFF), reads 'not a reading of entailment' and names grd_a / grd_b (grounding_residual) as the model-graded reading. The partial-coverage sentence and the pointer to n_unsupported_a / n_unsupported_b are unchanged in both docstrings."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/config.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/bootstrap.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_bootstrap.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/docs/aws-deployment-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/cli-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/api-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-structure-distance-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/notebooks/05-kj-source-conditioned-distance.ipynb",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/held-out-readings/readings.py",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml (version 1.1.18 to 1.1.19, written by make install, no hand edit)"
+    ],
+    "tests_added": [
+     "tests/test_bootstrap.py::test_init_local_source_without_the_sat_tokenizer_saves_it_beside_the_weights",
+     "tests/test_bootstrap.py::test_init_s3_source_without_the_sat_tokenizer_saves_it_beside_the_weights",
+     "tests/test_bootstrap.py::test_init_hf_source_makes_no_tokenizer_save",
+     "tests/test_bootstrap.py::test_init_source_with_an_unavailable_sat_tokenizer_raises_and_names_it",
+     "tests/test_bootstrap.py::test_save_tokenizer_reads_the_cached_snapshot_folder_and_else_the_hub_name[True]",
+     "tests/test_bootstrap.py::test_save_tokenizer_reads_the_cached_snapshot_folder_and_else_the_hub_name[False]",
+     "tests/test_e2e.py::test_segmenter_loads_the_tokenizer_from_the_model_folder_when_it_is_there[True]",
+     "tests/test_e2e.py::test_segmenter_loads_the_tokenizer_from_the_model_folder_when_it_is_there[False]",
+     "tests/test_e2e.py::test_segmenter_loads_after_init_from_a_source_folder_without_the_tokenizer",
+     "tests/test_cli.py::test_anisotropy_help_reads_the_minimum_pool_from_the_constant"
+    ],
+    "make_test": "282 passed, 1 skipped in 54.49s (1.1.18 tree before the package: 272 passed, 1 skipped; the skip is the opt-in S3 test)",
+    "make_lint": "clean (uvx ruff@0.16.2 format --check: 18 files already formatted; check: All checks passed!)",
+    "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s)",
+    "out_of_scope_needs": [
+     "logs/README.md: one line for the new log family review-followup-<check>.log (make-test, baseline-verify, held-out-readings); the three logs are in logs/ and are ignored by git",
+     "docs/experiments/wmd-docdistance-experiments.md, E15-H78: the record does not state the rule of the reading 0.9052 / 0.9143. The script shows it is rule 1 (own statements scored at each leave-one-out cutoff). The orchestrator can add the rule and the script path reports/E13-campaign/checks/held-out-readings/readings.py",
+     "E04-H15, ledger against stored notebook output: the ledger reads 3.39x at best k = 2 (GPU fp16). The stored output of the re-executed notebooks/experiments/E04-kj-source-conditioned-performance.ipynb and reports/E04-source-conditioned-performance-metrics.json read best_k 1 at 6.47x (k = 2: 4.08x), and markdown cell 29 of that notebook reads 7.45x at k = 3. I wrote the ledger reading into the solution document as the brief directs and edited neither the ledger nor that notebook",
+     "notebooks/05-kj-source-conditioned-distance.ipynb, code cell 16: the print statement writes '(resolution lever, ordering preserved)' beside '1 violations'. It is a code cell with a stored output, so I did not change it",
+     "docs/solution/wmd-source-conditioned-docdistance-solution-sota.md line 78 keeps the clause 'the gold/adversarial contrast is unchanged'; the E04-H15 record reads contrast 4.34 to 1.91. The clause is outside entry G6, so I left it",
+     "graphify update was not run after the code change: it writes graphify-out/ at the repository root, outside the files of this package"
+    ],
+    "notes": "Version after make install: 1.1.19 (uv.lock still names 1.1.18; the target syncs before it increments). All six entries are applied. One detail of G1 differs from the brief and is explained first.\n\nG1 deviation, measured before the edit: the brief's literal call AutoTokenizer.from_pretrained(config.SAT_TOKENIZER) cannot read the cache inside init. init holds the Hub library online whatever HF_HUB_OFFLINE says (DEF-DEPS-16), and transformers 5.0.0 then sends a request also when every file is cached: with the proxies on the closed port 9 the load by name raised ConnectError after 5 connection attempts, and with local_files_only=True after 1. Under those conditions step 1 of the brief's real-model test either reaches the Hub or fails. bootstrap._save_tokenizer therefore loads from the cached snapshot folder when huggingface_hub.try_to_load_from_cache finds tokenizer.json (0 connection attempts measured) and by Hub name otherwise. The change stays in the three files the brief names.\n\nG1 done - config.py: SAT_TOKENIZER. bootstrap.py: _save_tokenizer, _add_sat_tokenizer (skips when tokenizer.json exists, maps any failure to ModelsNotInstalled naming the tokenizer and both remedies), one call in the loop of init after a source hit for sat, module docstring rewritten. encoders.py Segmenter.__init__: passes the folder as tokenizer_name_or_path when it holds tokenizer.json, else SaT(sat_src) as before. Tests: the 9 test cases listed in tests_added for test_bootstrap.py and test_e2e.py; test_init_local_source_records_local_and_never_touches_hf keeps its name, _fake_local_mirror writes tokenizer.json in the sat folder and the tokenizer save raises there. Documents rewritten: docs/aws-deployment-reference.md lines 3 and 12, README.md line 136, docs/cli-reference.md line 11, one line under Fixed in CHANGELOG.md.\nG1 real-model test, two details: the sat source folder is <home>/models/sat-3l-sm with symbolic links to the cached snapshot, so init copies no 816 MB; step 1 sets HF_HUB_OFFLINE=1 and also the closed-port proxies. Pre-fix confirmation: on a scratch copy of the package first on PYTHONPATH, with bootstrap.py and encoders.py taken from the copy saved before the first edit, step 2 raised docdistance.encoders.ModelsNotInstalled: model not found in cache. Each file reverted alone (mutations M9 and M12) also fails the test.\nG2 done - distance.py docstrings of ungrounded_residual and SourceConditionedResult, docs/api-reference.md line 137; bullet 'Limits of the count' of the source-conditioned solution document now carries 17 of 98 flagged, 43 not entailed (label: 1 - entailment above 0.5, the rule of the experiment), 10 of them flagged, 33 not flagged. Meets ACC-TRANS-84.\nG3 done - ot.emd2 replaced by ot.emd at 8 sites: wmd-docdistance-solution-sota.md lines 32, 63, 201, 223 and wmd-structure-distance-sota.md lines 34, 120, 187, 208. distance.py:229 and the defects register are unchanged.\nG4 done - cli.py imports ANISOTROPY_MIN_POOL and both --anisotropy help strings read it. The help text of both options is identical before and after (compared on the saved copy and the build). Test: tests/test_cli.py::test_anisotropy_help_reads_the_minimum_pool_from_the_constant sets the constant to 123 in a child process before the CLI import; it failed on the unchanged cli.py.\nG5 done - reports/E13-campaign/checks/held-out-readings/readings.py and its README line. All three readings reproduce to 4 decimals on 1.1.19. E15-H78, cutoff from half A scored on half B: rule 1 (own statements at each leave-one-out cutoff) 0.905186, ledger 0.9052; rule 2 (own statements at the full-calibration cutoff) 0.901703. Other direction: rule 1 0.914321, ledger 0.9143; rule 2 0.914015. The ledger values are rule 1, the reviewer's 0.9017 / 0.9140 are rule 2. E14-H76: 0.539038 on gold-2, v2, opus, sonnet, haiku, adv1-b, adv2-a (the three read at E14-H75 are v1, adv1-a, adv2-b), ledger 0.5390. Harness readings inside the script: cutoffs 0.3375 / 0.3550 and held-out balanced accuracy 0.941176 / 0.927173 equal the stored values; largest D_sel difference from the stored values 0.00e+00.\nG6 done - solution document lines 10, 65, 78, 121, 137 now give 6.3433x at 0 of 28 violations for the shipped k = 1 on the pool of one triple (E14-H76) and 3.39x at k = 2 on one pool of all 11 summaries plus the source (E04-H15). Notebook 05, markdown cell 15, edited through nbformat, not executed, only that cell differs. Before: 'widening the `D_sel` dynamic range ~7.4x at `0` violations. Resolution only - it spreads the band, the gold/adversarial ordering is unchanged.' After: 'widening the `D_sel` dynamic range 5.93x (0.0370 → 0.2191) at `1` violation, against `0` on the raw axis. Resolution only - it spreads the band, and in the output below one gold summary reads at or above one adversarial summary.'\n\nGate lines: make lint - 'All checks passed!'; make test - '282 passed, 1 skipped in 54.49s'; guardrail - 'verify: 55 pairs, 3 grounded, 0 difference(s)'. Every real-model step ran with HF_HUB_OFFLINE=1; no request left the machine.\n\nNot done: no journal entry and no edit to the two registers or the ledger (PRIMER rule). tests/test_segmentation.py needed no change.\n\nTwo observations, not acted on. (1) tests/test_e2e.py::test_offline_load_of_cached_models_works_with_the_hub_unreachable skips when the load fails with and without the flag, so a Segmenter change that breaks every load reads there as a skip (seen in mutation M10); the new real-model test skips only when the cached files are absent. (2) wtpsplit takes its default split threshold from the model string, 0.25 when it contains 'sm' and 0.025 otherwise, so a probe folder not named sat-3l-sm returns different statements; the init folder always carries that name.\n\nAlso written outside the package list: logs/env-install.log and three logs/review-followup-*.log (ignored by git), and my agent memory under .claude/agent-memory/senior-backend-engineer/ (ignored by git): one note updated, one added, index updated."
+   }
+  },
+  {
+   "started": "verify:review-followup"
+  },
+  {
+   "result": {
+    "package": "review-followup",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The command line step of the new DEF-DEPS-17 error has no test. The evidence 'docdistance init exits 1, names facebookAI/xlm-roberta-base and both remedies' rests on one manual run by the implementer.",
+      "evidence": "MATERIALITY: a user who runs `docdistance init --source` on a host without the tokenizer and without Hub access; with the mapping removed the command prints a traceback, the exit code stays 1 and the message stays in the last line, so the harm is the output format only. FACT: on a scratch copy of src/ first on PYTHONPATH I removed ModelsNotInstalled from the except tuple of the init command (`except (ModelsNotInstalled, ValueError, OSError)` → `except (ValueError, OSError)`); tests/test_cli.py, tests/test_bootstrap.py and tests/test_settings.py stayed green (51 passed, 1 skipped). The only CliRunner call of `init` in tests/ is `init --help` (tests/test_cli.py:64). The mapping existed before this package and the brief asked for no test of it. REMEDY: DEFER, or one CliRunner case in tests/test_cli.py with bootstrap.init stubbed to raise ModelsNotInstalled, asserting exit code 1 and the tokenizer name in the output.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+      "line": 787
+     },
+     {
+      "severity": "minor",
+      "claim": "The grep that the ACC-TRANS-84 evidence cites cannot find the retired phrase when a line break splits it, so '0 matches' from that grep does not prove the phrase is absent. The claim itself holds.",
+      "evidence": "MATERIALITY: nobody is harmed in this tree; the instrument is weak, the result is right. FACT: on the pre-package snapshot (1.1.18) `grep -rn 'reading of content the source does not support'` finds 2 of the 3 sites (distance.py:490, docs/api-reference.md:137) and misses the SourceConditionedResult docstring, where the phrase was split across two lines ('are the reading' / 'of content the source does not support'). My search with `\\s+` between the words over src/**/*.py, README.md and docs/**/*.md outside the two registers finds 0 files on the 1.1.19 tree. All three sites read 'not a reading of entailment' and name grd_a / grd_b; the partial-coverage sentence (0.958) and the pointer to n_unsupported_a / n_unsupported_b are present in both docstrings. REMEDY: record the whitespace-tolerant search as the evidence of ACC-TRANS-84; no code change.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 596
+     },
+     {
+      "severity": "minor",
+      "claim": "JUDGEMENT: the real-model test passes the model folder of the home as the source (`source=<home>/models`), so `init` does not copy and saves the tokenizer into the source folder itself. The brief's step 1 names a source folder that is provisioned. The implementer disclosed this and the reason holds.",
+      "evidence": "MATERIALITY: none for a user; it bounds what the real-model test proves. FACT: `_mirror_one` skips `shutil.copytree` when `dest.resolve() == src.resolve()` (src/docdistance/bootstrap.py:153-155), and the test builds `sat_dir = home / 'models' / 'sat-3l-sm'` and calls `init('wmd', source=<home>/models)`. The copy into a separate destination, the save destination and 'the source folder is read, never written' are asserted only with the save stubbed (tests/test_bootstrap.py:86-115). The stated reason (copytree follows the symbolic links and would copy the weights) is correct. All 8 of my mutations of the fix are still killed, so no changed line is left unguarded. REMEDY: DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+      "line": 970
+     },
+     {
+      "severity": "minor",
+      "claim": "(taste) G4 received a test the brief did not ask for; it starts a child process and takes 2.57 s of a 48 s suite to guard one f-string in a help text.",
+      "evidence": "MATERIALITY: none for a user; the cost is paid on every run. FACT: `--durations` reads 2.57 s for tests/test_cli.py::test_anisotropy_help_reads_the_minimum_pool_from_the_constant, second slowest of the package's tests after the real-model test (18.46 s). The brief's G4 says only 'if a test compares the help text, it stays green'; the PRIMER rule 'every new behaviour gets a test that fails on the unchanged tree' supports the addition, and the test does fail on the literal 71 by construction (it sets the constant to 123 before the import). The printed help of both commands is byte-identical between the pre-package snapshot and the tree (my cmp of `--help` output at COLUMNS=200). REMEDY: DEFER; keep or delete is the orchestrator's decision. The belief lost by a delete is only that the help follows the constant.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+      "line": 89
+     }
+    ],
+    "gates": {
+     "make_test": "282 passed, 1 skipped in 48.24s (exit 0; the skip is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in S3)",
+     "make_lint": "All checks passed! (uvx ruff@0.16.2 format --check: 18 files already formatted; uvx ruff@0.16.2 check --target-version py312: All checks passed!)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP - no blocking or major finding; 4 minor. Both items hold, all three gates are green on 1.1.19, and every entry G1 to G6 is applied as written or deviates with a disclosed reason that I reproduced.\n\nHow I isolated the package: the orchestrator's snapshot of 04:55 (scratchpad/pre-followup-snapshot) against the tree. 19 files differ, all inside the package list, plus pyproject.toml (version line only, 1.1.18 → 1.1.19; logs/env-install.log shows make install wrote it). tests/test_segmentation.py is unchanged. The two registers, the ledger and .claude/JOURNAL.md are unchanged since before the first package edit (05:03). No commit (HEAD bd0002e, reflog unchanged), nothing staged, no tag on HEAD. I ran no make install.\n\nDEF-DEPS-17 (G1) - met. The real-model test passes on the tree (18.46 s, HF_HUB_OFFLINE=1). By my own means: 8 scratch copies of src/ under scratchpad/qa-followup/mut, each first on PYTHONPATH, edited by string replacement, run against tests/test_bootstrap.py and tests/test_e2e.py:\n- both source edits removed: 5 failed; the real-model test fails at step 2 with docdistance.encoders.ModelsNotInstalled: model not found in cache\n- encoders.py edit removed alone: 2 failed (real-model test and the stub test [True])\n- bootstrap.py call removed alone: 4 failed (real-model test and 3 init tests)\n- _save_tokenizer always loads by Hub name (the brief's literal call): 2 failed; step 1 of the real-model test fails with httpx.ConnectError on the closed port. This confirms the reason for the implementer's deviation\n- S3 hit not served, early return removed, Segmenter always passes the folder, tokenizer save moved outside the online scope: each fails at least 1 test\nThe deviation adds one branch (try_to_load_from_cache) beyond the brief; it is needed and it has a stub test for both arms. Further checks: a real _save_tokenizer run from the cache with the proxies on the closed port wrote tokenizer.json and tokenizer_config.json (transformers 5.0.0), which matches docs/aws-deployment-reference.md; config.SAT_TOKENIZER equals the wtpsplit default; segmentation by Hub name and by a folder that holds the saved tokenizer gives identical statements on 13 of 13 fixture documents (ibm source, wergeland source, 11 ibm summaries), which is a wider reading than the 4-statement text of the test. The documents and the module docstring state the fixed behaviour and say nothing about the S3 bucket content.\n\nACC-TRANS-84 (G2) - met, by reading the three sites and by the whitespace-tolerant search (finding 2). The added counts equal reports/E15-H78-raw-nearest-source-count-metrics.json (n 98, flagged 17, not entailed 43, flagged and not entailed 10, not flagged and not entailed 33). The label rule the bullet names (1 - entailment above 0.5) is in the E15-H78 notebook, cells 7 and 8.\n\nG3 - applied at the 8 named sites; distance.py:130 calls ot.emd with log=True. Not in the brief's list and not reported: docs/acceptance-criteria/acc-crit-structure-diff.md:13 still names `ot.emd2` for the SMD solve. The remaining matches are the ledger, the defects register and distance.py:229, which the brief leaves.\n\nG4 - applied; ANISOTROPY_MIN_POOL is 71 and the help output is byte-identical before and after.\n\nG5 - /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/held-out-readings/readings.py ran with exit 0 on 1.1.19. Readings against the ledger: A→B rule 1 0.905186 (ledger 0.9052, difference -0.000014), rule 2 0.901703; B→A rule 1 0.914321 (ledger 0.9143, difference +0.000021), rule 2 0.914015; E14-H76 0.539038 (ledger 0.5390, difference +0.000038). All three reproduce to 4 decimals under rule 1. The harness readings equal the stored values (cutoffs 0.3375 / 0.3550, largest D_sel difference 0.00e+00). The script holds the ledger values only for the printed difference; nothing is tuned to them. It always exits 0, as the brief specifies (print, not assert).\n\nG6 - applied. 6.3433x, 0.034535 → 0.219067 and 0 of 28 equal the E14-H76 metrics; 3.39x, 0.0370 → 0.1253, best k 2 and the sweep 1 to 3 equal the E04-H15 ledger block; the pool 'all 11 summaries plus the source' matches cell 16 of the E04 notebook. Notebook 05: one line of the file differs, the source of markdown cell 15; the file validates with nbformat; the new sentence matches the stored output of code cell 16 (5.93x, 0.0370 → 0.2191, 1 violation, 0 on the raw axis). The two leftovers the implementer reported (the clause 'the gold/adversarial contrast is unchanged' at line 78 against contrast 4.34 → 1.91, and the print text of code cell 16) are real and are outside the entry.\n\nAdditive policy: 0 differences on 55 pairs and 3 grounded pairs. The development environment records no sat folder in docdistance.json, so the guardrail runs the unchanged Hub-name branch; the new folder branch is covered by the real-model test and by my 13-document comparison.\n\nRisk census, from src/docdistance/bootstrap.py and encoders.py: tokenizer save after a local or S3 hit (COVERED, stub tests and real-model test), no save when the folder carries it or the source is the Hub (COVERED), save while the Hub library is held online (COVERED, flag assertion), cache-folder load without a request (COVERED, real-model test under the closed port), error type and message and no docdistance.json (COVERED at the API; command line step UNTESTED, finding 1), Segmenter argument for both folder states (COVERED), statements equal to the Hub-name load (COVERED).\n\nCut list: nothing to delete. One candidate by taste, finding 4.\n\nOutside this package, confirmed as the implementer observed: tests/test_e2e.py::test_offline_load_of_cached_models_works_with_the_hub_unreachable skips when the load fails with and without HF_HUB_OFFLINE, so a change that breaks every Segmenter load reads there as a skip; the new real-model test skips only on missing cache files.\n\nMachine load during my runs was about 35 (uptime at 05:38), so the durations above are not measurements."
+   }
+  },
+  {
+   "started": "build:input-format"
+  },
+  {
+   "result": {
+    "package": "input-format",
+    "status": "done",
+    "items": [
+     {
+      "id": "ACC-SEGM-85",
+      "met": true,
+      "evidence": "tests/test_segmentation.py, 22 test functions named test_html_*: one per row of the conversion table (headings, list items, nested list, table rows, th table, pre, 9 paragraph tags, text outside a block, hard-wrapped paragraph, br and hr, 4 dropped elements, comments, inline tags and img, character references), plus list item and cell that hold paragraphs, pre inside a list item, empty heading and item, 8 malformed inputs with exact output (unclosed p, li, td, tr, head; cells outside a row; row outside a table; end tags without a start) and 7 truncated inputs. The parser is html.parser of the standard library; no dependency was added. 70 of 70 mutations of the converter fail a test. The converter returns the same output on 401 texts on Python 3.12.3, 3.12.13, 3.13.15 and 3.14.8."
+     },
+     {
+      "id": "ACC-SEGM-86",
+      "met": true,
+      "evidence": "tests/test_segmentation.py: test_html_twin_splits_into_the_statements_of_the_markdown_twin (reported lines, embedded texts and prose paragraphs equal for TWIN_HTML and TWIN_MD), test_embed_statements_html_returns_the_statements_of_the_markdown_twin (raw text: statements, encoder input and vectors equal), test_embed_statements_html_file_drops_the_title_like_a_markdown_file (files), test_details_of_the_html_twin_carry_the_sections_of_the_markdown_twin[raw text|files] (semantic and structural detail dicts equal key for key). tests/test_pipeline.py: test_input_format_reaches_the_reader_of_every_document (11 calls, the source map included) and test_detail_records_of_html_files_carry_the_heading_of_their_section (3 detail calls, both documents). The 6 mutations that put _read back into a section scan each fail a test."
+     },
+     {
+      "id": "ACC-SEGM-87",
+      "met": true,
+      "evidence": "tests/test_segmentation.py, 11 test functions named test_detect_format_*: full HTML document, fragment without html and body, each of the 3 document markers, the share boundary (2 of 4 lines is html, 2 of 5 is not), markdown with inline tags, a marker inside a sentence, 8 markdown signals (one heading only, separator row, two fences, two list forms), 9 plain texts (empty string, prose, one dash line, rule line, one pipe row, signals inside lines), and the corpus check test_detect_format_reads_no_corpus_markdown_file_as_html on 15 files (all 15 read markdown). detect_format takes the text only; test_embed_statements_auto_chooses_the_reader_per_document[files] reads three files that all end in .txt as html, markdown and plain. 34 of 34 detector mutations fail a test."
+     },
+     {
+      "id": "ACC-CLI-88",
+      "met": true,
+      "evidence": "tests/test_cli.py: test_input_format_auto_reaches_the_pipeline (3 commands x 5 modes: one-shot, details, filtered, --pairs, --pairs with per-pair files), test_input_format_values_and_the_markdown_flag (3 commands x 6 option sets, single pair and --pairs; --markdown alone gives input_format markdown), test_markdown_flag_beside_another_input_format_exits_2 (html, auto, explicit plain: exit code 2, no document read), test_unknown_input_format_exits_2 (exit code 2, message 'Invalid value for --input-format'), test_distance_help_lists_the_input_format_option (choices equal pipeline.INPUT_FORMATS). tests/test_e2e.py: test_cli_input_format_auto_reads_an_html_file_as_its_markdown_twin for the 3 commands through the real CLI path with stub models, single pair and --pairs. 20 of 20 CLI mutations fail a test."
+     },
+     {
+      "id": "ACC-SEGM-89",
+      "met": true,
+      "evidence": "tests/test_pipeline.py: test_every_call_that_takes_markdown_takes_input_format_with_the_default_plain (the 8 DocDistance methods and the 3 one-shot functions are every public callable with a markdown parameter; each has input_format with default 'plain'), test_input_format_reaches_the_reader_of_every_document (11 cases: html and auto on HTML files equal markdown=True on the markdown twins; the default reader differs). tests/test_segmentation.py: test_embed_statements_markdown_flag_equals_input_format_markdown, test_embed_statements_input_format_plain_is_the_default_reader, test_embed_statements_auto_chooses_the_reader_per_document[raw text|files], test_reader_line_names_a_requested_reader_without_detection, test_markdown_flag_beside_another_reader_raises[html|auto], test_unknown_input_format_raises_and_lists_the_four_values. The 14 mutations that make one scoring call ignore input_format or the markdown flag each fail a test."
+     },
+     {
+      "id": "ACC-SEGM-90",
+      "met": true,
+      "evidence": "CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded on the installed build 1.1.20 printed 'verify: 55 pairs, 3 grounded, 0 difference(s)' (log logs/input-format-baseline-verify.log). The default call shape is also pinned by test_input_format_values_and_the_markdown_flag[*-default] and [*-plain] (embed_statements receives no keyword argument) and by the existing tests that replace embed_statements with a one-argument function."
+     },
+     {
+      "id": "ACC-SEGM-91",
+      "met": true,
+      "evidence": "tests/test_pipeline.py: test_memo_holds_one_entry_per_requested_input_format (markdown=True and input_format markdown share one key; auto and plain are two more keys; key element 3 is the requested value; a second pass encodes nothing), test_memo_key_is_taken_before_an_html_file_is_read, test_marker_warning_on_a_memo_hit_follows_the_reader_that_ran (plain file under auto: 3 warnings for 1 encode and 2 hits; markdown and HTML files that keep the statement '?!': none). tests/test_segmentation.py: test_marker_warning_is_logged_under_auto_when_the_plain_reader_ran (advice names --input-format auto), test_marker_warning_is_not_logged_when_the_markdown_or_the_html_reader_ran. The mutations 'memo key without the format', 'memo key taken after the read', 'hit: warning follows the request', 'hit: warning always', 'read: warning always' and 'memo entry stores the request' each fail a test."
+     },
+     {
+      "id": "ACC-SEGM-92",
+      "met": true,
+      "evidence": "MANUAL item, checked with a script that reads the five documents against the code (session scratchpad, not in the repository): each of README.md, docs/cli-reference.md, docs/api-reference.md, .claude/skills/docdistance/SKILL.md and CHANGELOG.md names the 3 document markers, the share 0.5, the 2 list lines, the heading, separator-row and fence rules, every tag of the conversion, the default plain and that auto on a markdown file returns the numbers of --markdown and not those of the default reader. 0 failures on the changed documents, 198 on the copies taken before the edit. The two reference documents hold the conversion as a table; README, the skill and CHANGELOG state the same rows in one sentence. In docs/cli-reference.md each of the three distance commands has one table row for every option of its --help, the six named ones included (--home, --markdown, --min-words, --skip-table-fragments, --pairs, --input-format)."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_segmentation.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/cli-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/api-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/skills/docdistance/SKILL.md",
+     "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml (version 1.1.19 to 1.1.20, written by make install, no hand edit)",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock (written by make install)"
+    ],
+    "tests_added": [
+     "tests/test_segmentation.py: 44 test functions - test_html_* (22, ACC-SEGM-85), test_html_twin_splits_into_the_statements_of_the_markdown_twin, test_embed_statements_html_returns_the_statements_of_the_markdown_twin, test_embed_statements_html_file_drops_the_title_like_a_markdown_file, test_details_of_the_html_twin_carry_the_sections_of_the_markdown_twin (ACC-SEGM-86), test_detect_format_* (11, ACC-SEGM-87), test_embed_statements_markdown_flag_equals_input_format_markdown, test_embed_statements_input_format_plain_is_the_default_reader, test_embed_statements_auto_chooses_the_reader_per_document, test_reader_line_names_a_requested_reader_without_detection, test_markdown_flag_beside_another_reader_raises, test_unknown_input_format_raises_and_lists_the_four_values (ACC-SEGM-89), test_marker_warning_is_logged_under_auto_when_the_plain_reader_ran, test_marker_warning_is_not_logged_when_the_markdown_or_the_html_reader_ran (ACC-SEGM-91)",
+     "tests/test_pipeline.py: test_every_call_that_takes_markdown_takes_input_format_with_the_default_plain, test_input_format_reaches_the_reader_of_every_document (11 cases), test_detail_records_of_html_files_carry_the_heading_of_their_section (3 cases), test_memo_holds_one_entry_per_requested_input_format, test_memo_key_is_taken_before_an_html_file_is_read, test_marker_warning_on_a_memo_hit_follows_the_reader_that_ran",
+     "tests/test_cli.py: test_input_format_auto_reaches_the_pipeline (15 cases), test_input_format_values_and_the_markdown_flag (18 cases), test_markdown_flag_beside_another_input_format_exits_2 (9 cases), test_unknown_input_format_exits_2 (3 cases), test_distance_help_lists_the_input_format_option (3 cases)",
+     "tests/test_e2e.py: test_cli_input_format_auto_reads_an_html_file_as_its_markdown_twin (3 cases)"
+    ],
+    "make_test": "456 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s)",
+    "out_of_scope_needs": [
+     "logs/README.md needs one line for a new log family: `input-format-<check>.log` - output of one check of the input-format package on the installed build: `make test`, `baseline.py verify`. I wrote logs/input-format-make-test.log and logs/input-format-baseline-verify.log and did not edit the index.",
+     "reports/E13-campaign/checks/batch-memos/measure.py line 179 calls `_memo_key(doc, False, 0, False)`. The second parameter is now the requested input_format; the value of the default reader is \"plain\". The script still runs, but its keys no longer equal the keys a DocDistance takes.",
+     "Decision for the orchestrator: block-level tags outside the conversion table of the brief (header, footer, main, nav, aside, figure, summary, address, form) are read as inline tags. Text that stands directly inside two such adjacent elements with no whitespace between them joins one paragraph line. Adding them to the paragraph tags is one set entry each in `_HTML_PARAGRAPHS` and changes the registered table.",
+     "The graphify graph under tmp/graphify-out was not used and not updated: the no-argument `graphify update` writes to the repository root. Callers were read with grep."
+    ],
+    "notes": "Version after `make install`: 1.1.20 (from 1.1.19).\n\nGate result lines, verbatim, all on the installed build after the last source edit:\n- make test: `456 passed, 1 skipped in 60.29s (0:01:00)` (282 passed, 1 skipped before the package; 174 new cases in 56 new test functions)\n- make lint: `18 files already formatted`, `All checks passed!`\n- guardrail: `verify: 55 pairs, 3 grounded, 0 difference(s)`\n\nDetector constants I ended with: `HTML_TAG_LINE_SHARE = 0.5` and `MARKDOWN_LIST_LINES = 2`, module constants of src/docdistance/encoders.py. No number changed. One boundary case changed the form of rule 1: the three document markers count at the start of a line (after leading spaces) and need the end of the tag name after them, not anywhere in the text. With the substring rule reports/E13-campaign/input-format-brief.md reads as html (1 of the 210 markdown files of the repository), and the five documents of this package would as well, because they state the rule. Test: test_detect_format_reads_a_marker_inside_a_sentence_as_text. With the shipped rule 0 of the 210 files read as html, the highest tag-line share is 0.055 (6 of 109 lines), and the 15 corpus files all read markdown.\n\nDeviations from the brief:\n1. A nested `li` is indented by two spaces per list level. The brief writes `- ` without indentation; the raw line of a nested markdown item is indented, and without it the statements of the twins differ.\n2. Files are read format-aware (`pipeline._read_as`). `auto` detects on the file content before the title lines are removed. For an HTML file the conversion runs first and the title lines are removed after it. With the order of the brief (`_read`, then convert) the `h1` of an HTML file stays a statement while the `# ` title of its markdown conversion is removed, and a `# ` comment line inside a `pre` block is deleted before the conversion. For this `_read` was split into `_file_of` + `_read` and `_load_body` into `_strip_titles` + `_load_body`; both keep their behaviour and signature.\n3. A `p` inside an `li` stays text of the item and every block inside a cell stays text of the cell (rendered loose lists, `td` with `p`). `ul`, `ol` start and end also end the open block, and `body` ends a `head` that is not closed.\n4. The CLI resolves `--markdown` and `--input-format` to one value and passes `input_format` only. `_seg_kwargs` now takes that merged value, and a memo entry holds the reader that ran as a fourth element.\n5. `detect_format` and `html_to_markdown` are not exported from the package root, because `split_markdown` is not; src/docdistance/__init__.py and tests/test_sections.py are unchanged.\n\nLimits that ship, stated in the docstrings and the two reference documents: an HTML fragment without a document marker whose paragraphs are wrapped over several lines can stay below the share 0.5 and then reads as markdown or plain; inline markup that a markdown file keeps as characters (`**bold**`) has no counterpart in the converted text; a paragraph line that starts with a markdown marker is read as that structure.\n\nHow I confirmed that each new test fails when its behaviour is removed: 181 single mutations applied one at a time to a scratch copy of src/docdistance on PYTHONPATH (70 converter, 34 detector, 57 pipeline, 20 CLI). The first run left 11 alive and 3 not applied. I added 8 tests or fixtures for them and removed one branch without effect (`</td>`). The second run, on the final code, read 181 killed, 0 alive, 0 not applied. On the saved copy of the old package tests/test_segmentation.py fails at import, 66 of the 69 new cases of the three other files fail, and 3 pass: test_input_format_values_and_the_markdown_flag[*-default], which pins the unchanged default call shape (the mutation 'seg kwargs always pass the format' fails an existing test).\n\nSmoke run on the real models, 1.1.20, not criterion evidence (the twin files were written to the session scratchpad from the strings of tests/test_segmentation.py; no script is in the repository): `distance-semantic twin.html twin.md --input-format auto` read 18 and 18 statements, smd 5.43e-05, equal texts and equal section fields in the detail file; the default reader read 36 and 21 statements, smd 0.648. On the ibm gold and sonnet summaries the default reader read smd 0.2537128877 and `auto` read 0.2536090299, the value of `--input-format markdown`.\n\nNot done: no journal, tracker or ledger edit; no commit. I updated the agent memory: two files under .claude/agent-memory/senior-backend-engineer/ (four bullets in the stage B verifier note, one new note on the interpreters for standard-library probes) and its index."
+   }
+  },
+  {
+   "started": "verify:input-format"
+  },
+  {
+   "result": {
+    "package": "input-format",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "`detect_format` reads a markdown document as `html` when a fenced code line starts with `<!doctype html`, `<html` or `<body`, or when HTML blocks make up half of its lines. `auto` then returns other statements than `--markdown`, which README.md:110 and SKILL.md:71 state without a condition. The limit is absent from the stated limits (encoders.py:446-450, docs/cli-reference.md:133, docs/api-reference.md:58).",
+      "evidence": "Own repro on the shipped functions with the stub splitter of the tests. A markdown guide with one ```html fence that holds a page skeleton: `detect_format` → `html`; markdown reader 14 statements (`<!DOCTYPE html>`, `<html>`, ... kept as fenced lines), HTML reader 8 statements (the fenced lines are reduced to `Hello`). A 9-line markdown text with one fenced line `<body class=\"x\">` → `html`. A README with `<p align=...>`, `<details>`, `<summary>` blocks → `html`. 0 of 188 markdown files of this repository are hit, and all 15 corpus files read markdown. MATERIALITY: a heuristic miss outside the registered corpus; ACC-SEGM-87 names inline tags only, so no criterion clause is broken. Harm is limited to an `auto` user whose markdown document shows an HTML page in a code block. REMEDY: EDIT - add the case to the three limit texts and count it in E16-H81; a fence-aware scan in the detector would be NEW MECHANISM.",
+      "file": "src/docdistance/encoders.py",
+      "line": 455
+     },
+     {
+      "severity": "minor",
+      "claim": "Three behaviours of the package have no test that fails when they are removed: 3 of 12 own single mutations pass the four test files. The implementer's line '181 killed, 0 alive' holds for the implementer's mutant set, not for the behaviours the docstrings state.",
+      "evidence": "Scratch copy of src/docdistance on PYTHONPATH, `pytest tests/test_segmentation.py tests/test_pipeline.py tests/test_cli.py tests/test_e2e.py`: (a) pipeline.py:217 changed to detect on the file text after `_strip_titles` → 331 passed; the docstring of `_read_as` and deviation 2 state detection on the content before the title lines are removed. (b) encoders.py:422 `[\\s/>]` → `[\\s>]` (a line that starts with `<br/>` no longer counts) → 331 passed. (c) encoders.py:422 `[\\w-]*` → `[\\w]*` (custom-element line) → 331 passed. The other 9 mutations were killed (title strip after conversion, list depth, cell pipe, memo copy, conflict for auto, list constant 3, strict share, body ends head, the word 'detected'). MATERIALITY: (a) changes the reader of a file whose only markdown signal is its `# ` title line; (b) and (c) move a document across the share only at the boundary. REMEDY: one case each - a file with only a `# ` title and prose read under `auto` with the DEBUG line naming the markdown reader; `<br/>` lines in the 2-of-4 boundary text.",
+      "file": "src/docdistance/pipeline.py",
+      "line": 217
+     },
+     {
+      "severity": "minor",
+      "claim": "Under `--input-format auto` the marker warning advises the user to pass `--input-format auto`. The advice cannot change the result: `auto` already ran and chose the plain reader.",
+      "evidence": "pipeline.py:412-415 builds one fixed message; tests/test_segmentation.py:999-1006 pins that the message under `input_format=\"auto\"` holds `--input-format auto`. Repro text: `Adoption held steady.\\n-\\nBarriers remain.\\n` reads plain (one dash line), logs '1 of 3 statements hold no letter and no digit ... remove them with --markdown / markdown=True, --input-format auto / input_format='auto' or --min-words'. The brief asks for this wording (line 41), so the code follows the contract. MATERIALITY: a user on `auto` receives one instruction with no effect; `--markdown` and `--min-words` in the same line still work. REMEDY: DEFER to the orchestrator; leaving the `auto` clause out when the request was `auto` needs the requested value inside `_warn_marker_statements`, which is NEW MECHANISM (one parameter).",
+      "file": "src/docdistance/pipeline.py",
+      "line": 412
+     },
+     {
+      "severity": "minor",
+      "claim": "A document marker counts only as the first characters of a line, so an HTML document on one line behind a byte order mark, an `<?xml ...?>` declaration or a comment reads `plain`. An HTML file with a byte order mark and several lines reads `html` but gains one statement that holds U+FEFF only.",
+      "evidence": "Own repro: `﻿<!DOCTYPE html><html>...</html>` on one line → `plain`; `<?xml version='1.0'?><!DOCTYPE html><html><body><p>x</p></body></html>` → `plain`; `<!-- saved from url --><!DOCTYPE html>...` → `plain`. File with BOM and 6 lines under `input_format=\"auto\"` with the stub models: statements `['﻿', 'One sentence']`; no marker warning is logged because the reader is html. The markdown reader has the same gap before this package: a BOM markdown file keeps `'﻿# Title'` as a statement. MATERIALITY: outside the tested corpus; the BOM statement carries 1/n of the mass of the HTML side. REMEDY: DEFER; reading files as utf-8-sig is in `_load_body`, shared with the default reader, and is not part of this package.",
+      "file": "src/docdistance/encoders.py",
+      "line": 420
+     },
+     {
+      "severity": "minor",
+      "claim": "Block-level tags outside the conversion table of the brief are inline: text directly inside adjacent elements joins into one word. The implementer reported this as a decision for the orchestrator; the repro output is given here for that decision.",
+      "evidence": "`<header>Site</header><nav>Home</nav><main>Body text</main><footer>Foot</footer>` → `SiteHomeBody textFoot`. `<details><summary>Sum</summary>Hidden text</details><address>Addr</address>` → `SumHidden textAddr`. `<noscript>Enable JS</noscript><svg><title>icon</title>...` → `Enable JSiconsvgtext`; `textarea` and `button` text is kept; a `title` in a document that omits the optional `head` tag is kept as a paragraph. Pretty-printed HTML has whitespace between such elements and is not affected. The code matches the brief table (every other tag is inline). REMEDY: orchestrator decision; each added tag is one entry in `_HTML_PARAGRAPHS` (encoders.py:288) and changes the registered table and the five documents.",
+      "file": "src/docdistance/encoders.py",
+      "line": 288
+     },
+     {
+      "severity": "minor",
+      "claim": "An `ol` item is written `- item`. Against the markdown conversion `1. item` the detail file reads `identical: false` at cost 0 for every ordered-list item. This limit is absent from the stated limits.",
+      "evidence": "Stub-model repro, `semantic_distance_with_details(html, md, input_format=\"auto\")` with `<ol><li>open the valve</li>...` against `1. open the valve`: flow `{'text': '- open the valve', 'changed': False, 'identical': False}`; the embedded texts are equal, the reported lines differ (pipeline.py:642 compares the reported lines). The twin fixtures use `ul` only. The brief table asks for `- ` for `ol` as well, so the code follows the contract. MATERIALITY: one detail-file flag on ordered lists of an HTML document against its markdown conversion; no distance changes. REMEDY: EDIT - one clause in the limits sentence of docs/api-reference.md:76 and the `html_to_markdown` docstring.",
+      "file": "src/docdistance/encoders.py",
+      "line": 370
+     },
+     {
+      "severity": "minor",
+      "claim": "Resolution runs twice per document in the three details calls, not once in `embed_statements` as brief line 38 states: `_read_as` reads the file, detects and converts a second time for the section scan. Disclosed as deviation 2. (judgement)",
+      "evidence": "pipeline.py:1189-1190, 1248-1249, 1337-1338 call `_read_as(a, requested)[0]` after `embed_statements` already called it at pipeline.py:1048. The tree before the package also read the file twice (`_read`), so the count of reads is unchanged; the conversion is new work: 0.35 to 0.64 s per MB of HTML measured standalone at load average above 80. On a memo hit the statements come from the memo and the sections from a new read of the file. No number differs while the file is unchanged. REMEDY: DEFER; keeping the converted text beside the statements would be NEW MECHANISM (a fifth memo element or a second return value).",
+      "file": "src/docdistance/pipeline.py",
+      "line": 1189
+     },
+     {
+      "severity": "minor",
+      "claim": "A raw HTML text on one line under 256 characters logs the warning 'looks like a file path but no such file exists', twice in a details call. Every closing tag holds `/`, which `_looks_like_path` reads as a path separator.",
+      "evidence": "Stub-model repro with a 190-character one-line fragment `<h2>Steps</h2><ol>...</p>` under `input_format=\"auto\"`: the WARNING is logged once in `embed_statements` and once in the section scan. `_looks_like_path` (pipeline.py:148-151) is older than this package and fires for the same string under the default reader; the package adds the input class that always matches it. Multi-line HTML and files are not affected. MATERIALITY: a false warning for short one-line HTML passed as raw text through the Python API; no number changes. REMEDY: DEFER; a rule that excludes text starting with `<` would be NEW MECHANISM.",
+      "file": "src/docdistance/pipeline.py",
+      "line": 165
+     },
+     {
+      "severity": "minor",
+      "claim": "The table-separator arm of `_MARKDOWN_LINE_RE` backtracks in quadratic time on a line that starts with `|`, continues with many separator characters and ends in another character. Out of the input universe.",
+      "evidence": "`detect_format(\"prose\\n|\" + \"-\"*n + \"x\\n\")`: 0.021 s at n=2000, 0.082 s at 4000, 0.389 s at 8000, 1.334 s at 16000 (about 4 times per doubling), so one such line of 1 MB does not finish in practical time. A realistic row of 8000 characters (`| --- |` cells, then text) takes 0.17 s. A 1 MB HTML document: detect 0.001 to 0.034 s, convert 0.35 to 0.64 s; 9 further 1 MB inputs (unclosed comment, unclosed script, 100000 nested div, one row of 100000 cells) convert in at most 0.64 s and raise nothing. MATERIALITY: none; no document of the stated use holds such a line. REMEDY: DEFER.",
+      "file": "src/docdistance/encoders.py",
+      "line": 424
+     },
+     {
+      "severity": "minor",
+      "claim": "The output of `html_to_markdown` depends on the patch version of the interpreter for abruptly closed comments. No shipped test holds such an input, so the CI matrix is not affected.",
+      "evidence": "Standalone copy of the converter on 4 interpreters. `<p>a</p><!-- x --!><p>b</p><!--> c --><p>d</p><!---><p>e</p>-->`: Python 3.12.3 and 3.12.13 give `a\\n\\nb\\n\\nd`; 3.13.15 and 3.14.8 give `a\\n\\nb\\n\\nc -->\\n\\nd\\n\\ne\\n\\n-->`. The other 27 own malformed and truncated probes are equal on the 4 interpreters, and so are the 98 HTML strings of the three test files (converter output and detector reading, one md5 for all four). MATERIALITY: none for the stated use; `<!-->` is not written by HTML producers. REMEDY: none needed; recorded because the implementer's sentence 'the same output on 401 texts' does not extend to every malformed text.",
+      "file": "src/docdistance/encoders.py",
+      "line": 413
+     }
+    ],
+    "gates": {
+     "make_test": "456 passed, 1 skipped in 93.86s (0:01:33)",
+     "make_lint": "18 files already formatted; All checks passed! (exit 0). `uvx ruff@0.16.2 check --target-version py312`: All checks passed!",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP - the three gates are green on my own runs, the eight criteria hold in the code with tests that can fail, and all 10 findings are minor.\n\nBar: the prompt carries no separate bar block. I rated materiality against the brief: purpose = comparing an HTML document with its markdown conversion, input universe = HTML, markdown and plain documents of the fixture corpus, primary path = `--input-format auto` and `html` with the default `plain` unchanged.\n\nRisk census (from src/docdistance/encoders.py:281-462, pipeline.py:121-251, 378-419, 988-1076, cli.py:120-165):\n- Default call unchanged (pipeline.py:378-390): baseline gate reads 0 differences and the `[*-default]` and `[*-plain]` CLI cases pin the empty keyword set - COVERED\n- Twin property (encoders.py:356-371): tests/test_segmentation.py:717-733 asserts equal reported lines, equal embedded texts and equal inputs to the prose splitter, so the equality carries to the real segmenter - COVERED\n- Title lines removed after the conversion (pipeline.py:220): mutant killed by tests/test_segmentation.py:747 - COVERED\n- Memo key per requested value, taken before the read, warning on a hit (pipeline.py:1036-1047): tests/test_pipeline.py:1422-1488; own probe read key element 3 as html, auto, plain, markdown and 4 distinct keys for 6 calls - COVERED\n- Detector boundaries (encoders.py:452-462): share 2 of 4 against 2 of 5, list constant and marker word end are killed by own mutants - COVERED; fenced HTML lines and HTML blocks in markdown - UNTESTED (finding 1)\n- Detection before the title strip (pipeline.py:217) - UNTESTED (finding 2)\n- CLI conflict and unknown value (cli.py:151-165): tests/test_cli.py:764-801, exit code 2 and no document read - COVERED\n- Parser differences between interpreters: 98 test strings equal on 3.12.3, 3.12.13, 3.13.15, 3.14.8 - COVERED for the suite\n\nConfidence ladder: one tier. `make test` runs the whole suite without markers; .github/workflows/ci.yml runs lint and the suite on Python 3.12, 3.13 and 3.14 and a smoke of the packaged wheel. No rung with the real models exists in the suite for this package: the implementer's real-model reading (smd 5.43e-05 for the twins) came from files in a session scratchpad and cannot be re-run from the repository. The registered experiment E16-H81 is the place where `auto` is measured on real models.\n\nCut list: nothing that returns no confidence. Two overlaps, both taste: `ONE_DASH_DOC` (tests/test_pipeline.py:1318) repeats `DOC_ONE_DASH` (tests/test_segmentation.py:62); `test_embed_statements_markdown_flag_equals_input_format_markdown` (tests/test_segmentation.py:928) overlaps the `embed_statements` case of tests/test_pipeline.py:1378 except for raw text. The suite grew from 60 s to 94 s wall time at load average above 80.\n\nChecks of the prompt:\n(1) every item has a test that fails without its behaviour; 9 of 12 own mutations were killed and the 3 survivors are finding 2. ACC-SEGM-92: a script over the Typer parameters found a table row for every option of the three distance commands in docs/cli-reference.md; the five documents state the rule, 0.5, 2, the conversion rows and the default\n(2) gates above\n(3) no default, number or detail-file key changed; `_memo_key` and the memo entry are private, and the stale call in reports/E13-campaign/checks/batch-memos/measure.py:179 was reported by the implementer\n(4) file times show this package wrote the listed source, test and document files, pyproject.toml and uv.lock through `make install`, two logs and three agent-memory files. docs/experiments/wmd-docdistance-experiments.md and logs/README.md carry the time 06:28:22 and eight experiment notebooks 06:43 and 06:49, inside the package window. logs/README.md holds no input-format line, the ledger holds no text of this package, and reports/E13-campaign/results/reexec-drift-audit.md was written at 06:59 by another running lane that logs into the ledger, so I attribute none of these writes to the package. A git diff cannot separate packages here: HEAD is 1.1.5 and the tree holds every stage B package\n(5) no new quantity; nothing approximate is called exact\n(6) py312 syntax check passes\n(7) no dead code and no impossible-state branch found; `max(self._dropping - 1, 0)` guards a state a test produces\n(8) HEAD is still bd0002e of 2026-09-17, no tag, journal and trackers last written at 04:51 to 04:52 before the package started\n\nOne count in the implementer's evidence is off by one: tests/test_segmentation.py holds 10 functions named `test_detect_format_*`, not 11; the total of 44 new functions in that file is right.\n\nMy runs wrote only ignored files in the repository (.coverage, .pytest_cache, .ruff_cache) and scratch files under the session scratchpad. I did not run `make install`."
+   }
+  },
+  {
+   "started": "verify:final-gate"
+  },
+  {
+   "result": {
+    "package": "final-gate",
+    "verified": true,
+    "findings": [],
+    "gates": {
+     "make_test": "456 passed, 1 skipped in 57.98s (exit 0)",
+     "make_lint": "All checks passed! (exit 0; format check: 18 files already formatted)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0, 0 DIFF lines)"
+    },
+    "items_not_met": [],
+    "notes": "All five commands exited 0. `git status --short` is identical before and after the gate runs: 101 lines, 77 modified and unstaged, 24 untracked, 0 staged.\n\nLast line of each command:\n- `make lint`: `All checks passed!`\n- `make test`: `456 passed, 1 skipped in 57.98s`\n- baseline verify: the result line is `verify: 55 pairs, 3 grounded, 0 difference(s)`. With stderr merged, the literal last line is `<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute`, printed at interpreter exit.\n- `uvx ruff@0.16.2 check --target-version py312`: `All checks passed!`\n- `git status --short`: `?? reports/E15-H80-moved-on-matched-pairs-metrics.json`\n\nNo commit or tag happened. HEAD is `bd0002e chore: refresh uv.lock`, committed 2026-09-17, and equals the local `origin/main` ref. The reflog shows no HEAD movement after that date. `git tag --points-at HEAD` prints nothing. The only tag, `CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5`, points at d6ee033 and its ref file was written 2026-09-01. There are no stash entries.\n\nVersion: `pyproject.toml:7` reads `version = \"1.1.20\"`. HEAD holds 1.1.5. The installed package also reports 1.1.20, so the gates ran on the current build.\n\nSkipped test: `tests/test_bootstrap.py:293` `test_init_s3_source_downloads_the_mmbert_ir`, opt-in through the environment variable `DOCDISTANCE_S3_TEST`. The two model-absent skips in `tests/test_e2e.py` (lines 762 and 1013) did not fire, so the model-backed end-to-end tests ran.\n\nBaseline reference: `reports/E13-campaign/baseline/default-path.json.gz` was written 2026-10-07 13:04 and carries 110 version stamps, all `1.1.5`. It is older than every edit under `src/` (2026-10-10), so the comparison is against 1.1.5 output. `--allow moved,n_moved` excluded 527 `moved` keys and 55 `n_moved` keys, the registered exception in PRIMER line 72. The file is untracked, like all of `reports/E13-campaign/`.\n\nScope: the task gave no bar (purpose, input universe, primary path), so I ran no test-suite audit and rated no findings. `verified=true` covers these gates and the commit, tag and version checks only.\n\nLoad average was 30 to 34 on 64 cores during the runs. `make test` took 63 s and the baseline verify took 200 s, run concurrently.\n\nI also ran `git ls-remote --tags origin`, a read-only query to the remote that the task did not ask for. Its stderr was discarded and it printed 0 lines, so I draw no conclusion from it."
+   }
+  }
+ ]
+}

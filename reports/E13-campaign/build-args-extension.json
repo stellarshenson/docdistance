@@ -1,0 +1,42 @@
+{
+ "allow": "moved,n_moved",
+ "packages": [
+  {
+   "key": "extension-default",
+   "title": "reader chosen by file extension, on by default (the user's decisions of 2026-10-10), and four findings of the final review",
+   "items": [
+    "ACC-SEGM-93",
+    "ACC-SEGM-94",
+    "ACC-SEGM-95",
+    "ACC-SEGM-96",
+    "ACC-SEGM-97",
+    "DEF-DEPS-17-1"
+   ],
+   "files": [
+    "src/docdistance/encoders.py",
+    "src/docdistance/pipeline.py",
+    "src/docdistance/cli.py",
+    "src/docdistance/bootstrap.py",
+    "src/docdistance/__init__.py",
+    "tests/test_segmentation.py",
+    "tests/test_pipeline.py",
+    "tests/test_cli.py",
+    "tests/test_e2e.py",
+    "tests/test_bootstrap.py",
+    "tests/test_sections.py",
+    "tests/test_structure.py",
+    "README.md",
+    "docs/cli-reference.md",
+    "docs/api-reference.md",
+    "docs/aws-deployment-reference.md",
+    ".claude/skills/docdistance/SKILL.md",
+    "CHANGELOG.md",
+    "reports/E13-campaign/baseline.py",
+    "reports/E13-campaign/checks/"
+   ],
+   "brief": "Read reports/E13-campaign/extension-default-brief.md in full: it is the contract (entries Z1 to Z7, tests, gates, report). It changes the design of reports/E13-campaign/input-format-brief.md and reports/E13-campaign/input-format-fixes-brief.md in three places: the content detector is removed, the default is auto by file extension, an HTML paragraph is one line. PRIMER.md names the third registered exception: with the default reader the numbers for .md, .markdown, .html and .htm files differ from 1.1.5, and the guardrail pins the plain reader. In `notes` report one line per entry Z1 to Z7, the existing tests whose expectation changed, and the readings of the new check.",
+   "verify_note": "the brief of this package is reports/E13-campaign/extension-default-brief.md. Check each entry Z1 to Z7 and each item. Probe the extension rule yourself (upper case, a.md.txt, a folder, a missing file, raw text that ends in .md, Path against str) and the default on .md, .html, .txt and raw text. Confirm that `--input-format plain` on the .md fixtures equals 1.1.5 (the baseline line) and that the default path differs from it only as the new check reports. Probe `html_to_markdown` with paragraphs wrapped over several lines and with a head that is not closed. Reproduce DEF-DEPS-17-1 with the two Hub-style tokenizer files from the cache snapshot and confirm that `init` repairs the folder or raises the named error, never a TypeError at the first split. `grep -rn detect_format` over src, tests, docs, README.md, CHANGELOG.md and .claude/skills must print nothing. A design element the brief does not ask for is a finding. No network request: HF_HUB_OFFLINE=1.",
+   "grounded": true
+  }
+ ]
+}

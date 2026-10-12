@@ -1,0 +1,1809 @@
+{
+  "id": "E15-H79",
+  "slug": "matching-tie-break",
+  "model": "opus",
+  "environment": {
+    "python": "3.14.8",
+    "docdistance": "1.1.5",
+    "pot": "0.9.6.post1",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "encoder": "mmBERT OpenVINO INT8 (CPU)"
+  },
+  "seed": 0,
+  "build_constants": {
+    "c": 0.325,
+    "eps": 1e-06,
+    "assignment_cost": "np.minimum(cost, c) + eps * abs(i / n - j / m)",
+    "position_index": "i and j counted from 0 (i = 0 .. n-1, j = 0 .. m-1); n and m are the statement counts of A and B",
+    "unmatched_rule": "a pair whose ground cost without the position term is >= c stays unmatched",
+    "ground_cost_dtype": "float32",
+    "fully_matched_equal_length_pairs_at_c": 1840,
+    "fully_matched_equal_length_pairs_at_c_without_tie_break": 1840,
+    "fully_matched_equal_length_pairs_at_0.6": 1847,
+    "equal_length_fixture_pairs": 1847,
+    "fixture_pairs": 1913,
+    "shipped_DIFF_CHANGED_COST": 0.3252691193458119
+  },
+  "arms": {
+    "c060": {
+      "c": 0.6,
+      "eps": null,
+      "position_base": 0,
+      "label": "c = 0.6, no tie-break (E13-H70)"
+    },
+    "c0325": {
+      "c": 0.325,
+      "eps": null,
+      "position_base": 0,
+      "label": "c = 0.325, no tie-break"
+    },
+    "c0325_e6": {
+      "c": 0.325,
+      "eps": 1e-06,
+      "position_base": 0,
+      "label": "c = 0.325, eps = 1e-06 (registered)"
+    },
+    "c0325_e4": {
+      "c": 0.325,
+      "eps": 0.0001,
+      "position_base": 0,
+      "label": "c = 0.325, eps = 0.0001 (no bar)"
+    },
+    "c0325_e8": {
+      "c": 0.325,
+      "eps": 1e-08,
+      "position_base": 0,
+      "label": "c = 0.325, eps = 1e-08 (no bar)"
+    },
+    "c0325_e6_b1": {
+      "c": 0.325,
+      "eps": 1e-06,
+      "position_base": 1,
+      "label": "c = 0.325, eps = 1e-06, positions from 1 (no bar)"
+    }
+  },
+  "kill_gate": {
+    "arm": "c = 0.6, no tie-break (E13-H70)",
+    "passed": true,
+    "harness_reproduced": true,
+    "exact_tie_exists": true,
+    "recorded": {
+      "third_pass_cases": 120,
+      "third_pass_recovered": 88,
+      "third_pass_above_shipped": 21
+    },
+    "here": {
+      "cases": 120,
+      "survivors_recovered": 88,
+      "text_equal": 88,
+      "at_or_below_shipped": 99,
+      "above_shipped": 21,
+      "above_gap_bar": 23,
+      "equal_to_floor_copy": 88,
+      "same_matching_as_no_tie_break": 120,
+      "shipped_median": 0.036939,
+      "matched_median": 0.00321056,
+      "matched_max": 0.324574
+    },
+    "per_prefix_length": {
+      "14": {
+        "cases": 20,
+        "survivors_recovered": 14,
+        "text_equal": 14,
+        "at_or_below_shipped": 20,
+        "above_shipped": 0,
+        "above_gap_bar": 1,
+        "equal_to_floor_copy": 14,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.0487001,
+        "matched_median": 6.45904e-05,
+        "matched_max": 0.0280725
+      },
+      "20": {
+        "cases": 20,
+        "survivors_recovered": 18,
+        "text_equal": 18,
+        "at_or_below_shipped": 20,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 18,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.042495,
+        "matched_median": 0.000953331,
+        "matched_max": 0.00199944
+      },
+      "30": {
+        "cases": 20,
+        "survivors_recovered": 13,
+        "text_equal": 13,
+        "at_or_below_shipped": 15,
+        "above_shipped": 5,
+        "above_gap_bar": 5,
+        "equal_to_floor_copy": 13,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.037801,
+        "matched_median": 0.0021335,
+        "matched_max": 0.324574
+      },
+      "40": {
+        "cases": 20,
+        "survivors_recovered": 10,
+        "text_equal": 10,
+        "at_or_below_shipped": 10,
+        "above_shipped": 10,
+        "above_gap_bar": 10,
+        "equal_to_floor_copy": 10,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.0383381,
+        "matched_median": 0.031829,
+        "matched_max": 0.100611
+      },
+      "50": {
+        "cases": 20,
+        "survivors_recovered": 16,
+        "text_equal": 16,
+        "at_or_below_shipped": 17,
+        "above_shipped": 3,
+        "above_gap_bar": 4,
+        "equal_to_floor_copy": 16,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.0322418,
+        "matched_median": 0.00417801,
+        "matched_max": 0.076149
+      },
+      "62": {
+        "cases": 20,
+        "survivors_recovered": 17,
+        "text_equal": 17,
+        "at_or_below_shipped": 17,
+        "above_shipped": 3,
+        "above_gap_bar": 3,
+        "equal_to_floor_copy": 17,
+        "same_matching_as_no_tie_break": 20,
+        "shipped_median": 0.0291554,
+        "matched_median": 0.00455732,
+        "matched_max": 0.0640585
+      }
+    },
+    "deletions_that_removed_a_repeated_statement": 43,
+    "not_recovered_among_those": 32,
+    "not_recovered_among_the_others": 0,
+    "document": "source",
+    "statements": 62,
+    "repeated_text": "-",
+    "repeated_positions": [
+      4,
+      6,
+      8,
+      21,
+      23,
+      26,
+      35,
+      40,
+      51
+    ],
+    "repeated_embedding_rows_bitwise_equal": true,
+    "cases_with_a_tie_group": 120,
+    "cases_with_one_bit_pattern": 120,
+    "cases_with_one_bit_pattern_and_survivors_not_recovered": 32,
+    "tied_cost_values": {
+      "0.0": 60,
+      "0.0003452669770922512": 60
+    },
+    "shown_tie": {
+      "prefix_length": 30,
+      "deleted_positions": [
+        4,
+        6
+      ],
+      "tie_group_shape": [
+        6,
+        4
+      ],
+      "bit_patterns": [
+        "0x00000000"
+      ],
+      "tied_cost": 0.0,
+      "matched_without_tie_break": 0.324574,
+      "matched_with_tie_break": 0.00288237,
+      "shipped": 0.0586776,
+      "unmatched_without_tie_break": [
+        23,
+        26
+      ],
+      "unmatched_with_tie_break": [
+        4,
+        8
+      ]
+    }
+  },
+  "sanity_check": {
+    "passed": true,
+    "supporting_rows_reproduced": "9/9",
+    "rows": [
+      {
+        "reading": "deletion cases <= 0.005, c = 0.6",
+        "recorded": "280/280",
+        "here": "280/280",
+        "decides": true,
+        "reproduced": true
+      },
+      {
+        "reading": "AUC deleted-only against reordered-and-deleted, c = 0.6",
+        "recorded": "0.999903",
+        "here": "0.999903",
+        "decides": true,
+        "reproduced": true
+      },
+      {
+        "reading": "fully matched equal-length pairs equal to shipped opw_gap, c = 0.6",
+        "recorded": "1847/1847",
+        "here": "1847/1847",
+        "decides": true,
+        "reproduced": true
+      },
+      {
+        "reading": "macro-F1 half A, c = 0.325",
+        "recorded": "0.9674",
+        "here": "0.9674",
+        "decides": true,
+        "reproduced": true
+      },
+      {
+        "reading": "macro-F1 half B, c = 0.325",
+        "recorded": "0.9772",
+        "here": "0.9772",
+        "decides": true,
+        "reproduced": true
+      },
+      {
+        "reading": "shipped median at k=2 (E13-H70 metrics)",
+        "recorded": "0.134041",
+        "here": "0.134041",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "matched median at k=2, c = 0.6 (E13-H70 metrics)",
+        "recorded": "9.67076e-05",
+        "here": "9.67076e-05",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "negatives / positives of the AUC (E13-H70 metrics)",
+        "recorded": "70 / 10010",
+        "here": "70 / 10010",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "shipped AUC (E13-H70 metrics)",
+        "recorded": "0.950980",
+        "here": "0.950980",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "fixture pairs / of equal length (E13-H70 metrics)",
+        "recorded": "1913 / 1847",
+        "here": "1913 / 1847",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "edited pairs / pairs with pinned statement units (E13-H71 metrics)",
+        "recorded": "900 / 37",
+        "here": "900 / 37",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "macro-F1 all pairs, c = 0.325 (E13-H71 metrics)",
+        "recorded": "0.9723",
+        "here": "0.9723",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "macro-F1 all pairs, c = 0.6 (E13-H71 metrics)",
+        "recorded": "0.7771",
+        "here": "0.7771",
+        "decides": false,
+        "reproduced": true
+      },
+      {
+        "reading": "cost matrices computed by this notebook equal to the E13-H71 checkpoint",
+        "recorded": "300/300",
+        "here": "300/300",
+        "decides": false,
+        "reproduced": true
+      }
+    ],
+    "paraphrase_alignment": "10/10",
+    "edit_fixture_key": "3e396129ed50",
+    "edit_fixture_key_equals_e13_h71": true,
+    "pairs_computed_by_this_notebook": 300,
+    "pairs_computed_in_this_execution": 0,
+    "pairs_read_from_e13_h71_checkpoint": 600,
+    "bases_of_pairs_computed_by_this_notebook": [
+      "gold",
+      "gold-2",
+      "v1",
+      "v2"
+    ],
+    "own_cost_matrices_equal_to_e13_h71_checkpoint": "300/300",
+    "own_stored_readings_equal_to_e13_h71_checkpoint": "300/300",
+    "pairs_with_pinned_statement_units": 37
+  },
+  "clause_1_repeated_statements": {
+    "arm": "c = 0.325, eps = 1e-06 (registered)",
+    "met": false,
+    "cases": 120,
+    "at_or_below_shipped": 120,
+    "text_equal": 111,
+    "text_equal_bar": 114,
+    "misses": 9,
+    "misses_with_a_deleted_repeated_statement": 9,
+    "misses_with_returned_position_sum_below_survivor_sum": 7,
+    "misses_with_exactly_equal_position_sums": 2,
+    "misses_above_shipped": 0,
+    "exact_ties_with_float64_returned_sum_below_survivor_sum": 2,
+    "exact_ties_with_float64_sums_equal": 0,
+    "misses_above_gap_bar": 0,
+    "misses_matched_max": 0.00353769,
+    "position_sum_comparison_all_cases": {
+      "equal": 113,
+      "returned < survivors": 7
+    },
+    "cases_with_equal_ground_cost_of_returned_and_survivor_matching": 120,
+    "mechanism_per_arm": {
+      "c060": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 88,
+        "matching_equal_to_registered_arm": 85
+      },
+      "c0325": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 88,
+        "matching_equal_to_registered_arm": 85
+      },
+      "c0325_e6": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 111,
+        "matching_equal_to_registered_arm": 120
+      },
+      "c0325_e4": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 111,
+        "matching_equal_to_registered_arm": 120
+      },
+      "c0325_e8": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 111,
+        "matching_equal_to_registered_arm": 120
+      },
+      "c0325_e6_b1": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 111,
+        "matching_equal_to_registered_arm": 120
+      }
+    },
+    "text_equal_among_cases_with_a_deleted_repeated_statement": "34/43",
+    "miss_cases": [
+      {
+        "prefix_length": 14,
+        "draw": 2,
+        "deleted_positions": [
+          8,
+          11
+        ],
+        "unmatched_positions": [
+          6,
+          11
+        ],
+        "position_sum_returned": 0.428571,
+        "position_sum_survivors": 0.428571,
+        "position_sum_comparison": "equal",
+        "matched": 0.000420239,
+        "shipped": 0.0458642,
+        "identity_gap_of_shortened": 6.04682e-05
+      },
+      {
+        "prefix_length": 14,
+        "draw": 7,
+        "deleted_positions": [
+          2,
+          4
+        ],
+        "unmatched_positions": [
+          2,
+          6
+        ],
+        "position_sum_returned": 0.547619,
+        "position_sum_survivors": 0.595238,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.000491099,
+        "shipped": 0.0390201,
+        "identity_gap_of_shortened": 0.000109486
+      },
+      {
+        "prefix_length": 14,
+        "draw": 16,
+        "deleted_positions": [
+          1,
+          4
+        ],
+        "unmatched_positions": [
+          1,
+          6
+        ],
+        "position_sum_returned": 0.595238,
+        "position_sum_survivors": 0.642857,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.000470806,
+        "shipped": 0.0373084,
+        "identity_gap_of_shortened": 9.81651e-05
+      },
+      {
+        "prefix_length": 14,
+        "draw": 19,
+        "deleted_positions": [
+          8,
+          12
+        ],
+        "unmatched_positions": [
+          6,
+          12
+        ],
+        "position_sum_returned": 0.452381,
+        "position_sum_survivors": 0.452381,
+        "position_sum_comparison": "equal",
+        "matched": 0.000408288,
+        "shipped": 0.0547977,
+        "identity_gap_of_shortened": 4.85178e-05
+      },
+      {
+        "prefix_length": 30,
+        "draw": 5,
+        "deleted_positions": [
+          4,
+          5
+        ],
+        "unmatched_positions": [
+          5,
+          8
+        ],
+        "position_sum_returned": 0.642857,
+        "position_sum_survivors": 0.728571,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.00234763,
+        "shipped": 0.0617898,
+        "identity_gap_of_shortened": 0.00223065
+      },
+      {
+        "prefix_length": 30,
+        "draw": 7,
+        "deleted_positions": [
+          1,
+          6
+        ],
+        "unmatched_positions": [
+          1,
+          8
+        ],
+        "position_sum_returned": 0.728571,
+        "position_sum_survivors": 0.766667,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.0026584,
+        "shipped": 0.0603867,
+        "identity_gap_of_shortened": 0.00262428
+      },
+      {
+        "prefix_length": 30,
+        "draw": 17,
+        "deleted_positions": [
+          4,
+          6
+        ],
+        "unmatched_positions": [
+          4,
+          8
+        ],
+        "position_sum_returned": 0.657143,
+        "position_sum_survivors": 0.695238,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.00288237,
+        "shipped": 0.0586776,
+        "identity_gap_of_shortened": 0.00292598
+      },
+      {
+        "prefix_length": 40,
+        "draw": 9,
+        "deleted_positions": [
+          23,
+          32
+        ],
+        "unmatched_positions": [
+          21,
+          32
+        ],
+        "position_sum_returned": 0.443421,
+        "position_sum_survivors": 0.448684,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.00347498,
+        "shipped": 0.0378719,
+        "identity_gap_of_shortened": 0.0036586
+      },
+      {
+        "prefix_length": 40,
+        "draw": 14,
+        "deleted_positions": [
+          23,
+          25
+        ],
+        "unmatched_positions": [
+          21,
+          25
+        ],
+        "position_sum_returned": 0.471053,
+        "position_sum_survivors": 0.476316,
+        "position_sum_comparison": "returned < survivors",
+        "matched": 0.00353769,
+        "shipped": 0.0469584,
+        "identity_gap_of_shortened": 0.00376519
+      }
+    ],
+    "per_arm": {
+      "c060": {
+        "cases": 120,
+        "survivors_recovered": 88,
+        "text_equal": 88,
+        "at_or_below_shipped": 99,
+        "above_shipped": 21,
+        "above_gap_bar": 23,
+        "equal_to_floor_copy": 88,
+        "same_matching_as_no_tie_break": 120,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00321056,
+        "matched_max": 0.324574
+      },
+      "c0325": {
+        "cases": 120,
+        "survivors_recovered": 88,
+        "text_equal": 88,
+        "at_or_below_shipped": 99,
+        "above_shipped": 21,
+        "above_gap_bar": 23,
+        "equal_to_floor_copy": 88,
+        "same_matching_as_no_tie_break": 120,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00321056,
+        "matched_max": 0.324574
+      },
+      "c0325_e6": {
+        "cases": 120,
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "same_matching_as_no_tie_break": 85,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00288845,
+        "matched_max": 0.00487646
+      },
+      "c0325_e4": {
+        "cases": 120,
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "same_matching_as_no_tie_break": 85,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00288845,
+        "matched_max": 0.00487646
+      },
+      "c0325_e8": {
+        "cases": 120,
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "same_matching_as_no_tie_break": 85,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00288845,
+        "matched_max": 0.00487646
+      },
+      "c0325_e6_b1": {
+        "cases": 120,
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "same_matching_as_no_tie_break": 85,
+        "shipped_median": 0.036939,
+        "matched_median": 0.00288845,
+        "matched_max": 0.00487646
+      }
+    }
+  },
+  "clause_2_deletions_and_separation": {
+    "arm": "c = 0.325, eps = 1e-06 (registered)",
+    "met": true,
+    "deletion_share_bar": 0.95,
+    "gap_bar": 0.005,
+    "auc_bar": 0.95,
+    "n_deletion_cases": 280,
+    "n_negatives": 70,
+    "n_positives": 10010,
+    "shipped_auc": 0.95098,
+    "shipped_median_k2": 0.134041,
+    "deletion_readings_array_equal_to_e13_h70": true,
+    "deletion_readings_equal_to_e13_h70": 280,
+    "positive_readings_array_equal_to_e13_h70": true,
+    "positive_readings_equal_to_e13_h70": 10010,
+    "per_arm": {
+      "c060": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1847,
+        "fully_matched_exactly_equal": 1847,
+        "fully_matched_array_equal": true
+      },
+      "c0325": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1840,
+        "fully_matched_exactly_equal": 1840,
+        "fully_matched_array_equal": true
+      },
+      "c0325_e6": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1840,
+        "fully_matched_exactly_equal": 1840,
+        "fully_matched_array_equal": true
+      },
+      "c0325_e4": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1840,
+        "fully_matched_exactly_equal": 1840,
+        "fully_matched_array_equal": true
+      },
+      "c0325_e8": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1840,
+        "fully_matched_exactly_equal": 1840,
+        "fully_matched_array_equal": true
+      },
+      "c0325_e6_b1": {
+        "deletion_within_bar": 280,
+        "deletion_share": 1.0,
+        "deletion_recovered": 280,
+        "deletion_max": 0.000610062,
+        "deletion_median_k2": 9.67076e-05,
+        "auc": 0.999903,
+        "fully_matched_pairs": 1840,
+        "fully_matched_exactly_equal": 1840,
+        "fully_matched_array_equal": true
+      }
+    }
+  },
+  "clause_3_bit_identity": {
+    "arm": "c = 0.325, eps = 1e-06 (registered)",
+    "met": true,
+    "array_equal": true,
+    "fully_matched_pairs": 1840,
+    "exactly_equal": 1840,
+    "max_abs_diff": 0.0,
+    "count_e13_h70": 1847,
+    "count_fall": 7,
+    "fixture_matchings_unchanged_by_tie_break": "1913/1913",
+    "pairs_fully_matched_at_0.6_only": [
+      {
+        "family": "cross_summary/ibm",
+        "a": "adv1-a",
+        "b": "adv1-b",
+        "statements": 10,
+        "matched_at_c": 8
+      },
+      {
+        "family": "cross_summary/ibm",
+        "a": "gold",
+        "b": "sonnet",
+        "statements": 11,
+        "matched_at_c": 9
+      },
+      {
+        "family": "cross_summary/ibm",
+        "a": "gold-2",
+        "b": "opus",
+        "statements": 13,
+        "matched_at_c": 9
+      },
+      {
+        "family": "cross_summary/ibm",
+        "a": "v1",
+        "b": "v2",
+        "statements": 12,
+        "matched_at_c": 10
+      },
+      {
+        "family": "paraphrase/ab_regen",
+        "a": "adv1-a",
+        "b": "adv1-b",
+        "statements": 10,
+        "matched_at_c": 8
+      },
+      {
+        "family": "paraphrase/ab_regen",
+        "a": "v1",
+        "b": "v2",
+        "statements": 12,
+        "matched_at_c": 10
+      },
+      {
+        "family": "tier_contrast",
+        "a": "gold",
+        "b": "sonnet",
+        "statements": 11,
+        "matched_at_c": 9
+      }
+    ],
+    "by_family": {
+      "cross_summary/ibm": {
+        "pairs": 55,
+        "equal_length": 4,
+        "full_h70": 4,
+        "full_plain": 0,
+        "full_reg": 0,
+        "identical": 0
+      },
+      "cross_summary/wergeland": {
+        "pairs": 3,
+        "equal_length": 0,
+        "full_h70": 0,
+        "full_plain": 0,
+        "full_reg": 0,
+        "identical": 0
+      },
+      "paraphrase/ab_regen": {
+        "pairs": 4,
+        "equal_length": 2,
+        "full_h70": 2,
+        "full_plain": 0,
+        "full_reg": 0,
+        "identical": 0
+      },
+      "paraphrase/backtranslation": {
+        "pairs": 10,
+        "equal_length": 10,
+        "full_h70": 10,
+        "full_plain": 10,
+        "full_reg": 10,
+        "identical": 10
+      },
+      "reorder_pool": {
+        "pairs": 1820,
+        "equal_length": 1820,
+        "full_h70": 1820,
+        "full_plain": 1820,
+        "full_reg": 1820,
+        "identical": 1820
+      },
+      "section_summary_source": {
+        "pairs": 1,
+        "equal_length": 0,
+        "full_h70": 0,
+        "full_plain": 0,
+        "full_reg": 0,
+        "identical": 0
+      },
+      "section_swap (identity sequence)": {
+        "pairs": 10,
+        "equal_length": 10,
+        "full_h70": 10,
+        "full_plain": 10,
+        "full_reg": 10,
+        "identical": 10
+      },
+      "tier_contrast": {
+        "pairs": 10,
+        "equal_length": 1,
+        "full_h70": 1,
+        "full_plain": 0,
+        "full_reg": 0,
+        "identical": 0
+      }
+    }
+  },
+  "clause_4_statement_map": {
+    "arm": "c = 0.325, eps = 1e-06 (registered)",
+    "met": true,
+    "bar": 0.9,
+    "n_pairs": 900,
+    "n_statements": 21060,
+    "half_A_is_the_calibration_half_of_c": true,
+    "per_arm": {
+      "c060": {
+        "macro_f1": {
+          "half_A": 0.782754,
+          "half_B": 0.771262,
+          "all": 0.777058
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.970291,
+            "removed": 0.704104,
+            "added": 0.673866
+          },
+          "half_B": {
+            "kept": 0.96873,
+            "removed": 0.681319,
+            "added": 0.663736
+          },
+          "all": {
+            "kept": 0.969517,
+            "removed": 0.69281,
+            "added": 0.668845
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 293,
+        "statements_with_a_changed_label": 1030,
+        "pairs_with_a_changed_target": 293,
+        "no_edit_read_as_removed": 0
+      },
+      "c0325": {
+        "macro_f1": {
+          "half_A": 0.967352,
+          "half_B": 0.977163,
+          "all": 0.972273
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.994285,
+            "removed": 0.975235,
+            "added": 0.932536
+          },
+          "half_B": {
+            "kept": 0.995896,
+            "removed": 0.983051,
+            "added": 0.952542
+          },
+          "all": {
+            "kept": 0.995083,
+            "removed": 0.979158,
+            "added": 0.942578
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 0,
+        "statements_with_a_changed_label": 0,
+        "pairs_with_a_changed_target": 0,
+        "no_edit_read_as_removed": 0
+      },
+      "c0325_e6": {
+        "macro_f1": {
+          "half_A": 0.967352,
+          "half_B": 0.977163,
+          "all": 0.972273
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.994285,
+            "removed": 0.975235,
+            "added": 0.932536
+          },
+          "half_B": {
+            "kept": 0.995896,
+            "removed": 0.983051,
+            "added": 0.952542
+          },
+          "all": {
+            "kept": 0.995083,
+            "removed": 0.979158,
+            "added": 0.942578
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 0,
+        "statements_with_a_changed_label": 0,
+        "pairs_with_a_changed_target": 0,
+        "no_edit_read_as_removed": 0
+      },
+      "c0325_e4": {
+        "macro_f1": {
+          "half_A": 0.967352,
+          "half_B": 0.977163,
+          "all": 0.972273
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.994285,
+            "removed": 0.975235,
+            "added": 0.932536
+          },
+          "half_B": {
+            "kept": 0.995896,
+            "removed": 0.983051,
+            "added": 0.952542
+          },
+          "all": {
+            "kept": 0.995083,
+            "removed": 0.979158,
+            "added": 0.942578
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 0,
+        "statements_with_a_changed_label": 0,
+        "pairs_with_a_changed_target": 0,
+        "no_edit_read_as_removed": 0
+      },
+      "c0325_e8": {
+        "macro_f1": {
+          "half_A": 0.967352,
+          "half_B": 0.977163,
+          "all": 0.972273
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.994285,
+            "removed": 0.975235,
+            "added": 0.932536
+          },
+          "half_B": {
+            "kept": 0.995896,
+            "removed": 0.983051,
+            "added": 0.952542
+          },
+          "all": {
+            "kept": 0.995083,
+            "removed": 0.979158,
+            "added": 0.942578
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 0,
+        "statements_with_a_changed_label": 0,
+        "pairs_with_a_changed_target": 0,
+        "no_edit_read_as_removed": 0
+      },
+      "c0325_e6_b1": {
+        "macro_f1": {
+          "half_A": 0.967352,
+          "half_B": 0.977163,
+          "all": 0.972273
+        },
+        "f1": {
+          "half_A": {
+            "kept": 0.994285,
+            "removed": 0.975235,
+            "added": 0.932536
+          },
+          "half_B": {
+            "kept": 0.995896,
+            "removed": 0.983051,
+            "added": 0.952542
+          },
+          "all": {
+            "kept": 0.995083,
+            "removed": 0.979158,
+            "added": 0.942578
+          }
+        },
+        "n_pairs": {
+          "half_A": 450,
+          "half_B": 450,
+          "all": 900
+        },
+        "pairs_with_a_changed_label": 0,
+        "statements_with_a_changed_label": 0,
+        "pairs_with_a_changed_target": 0,
+        "no_edit_read_as_removed": 0
+      }
+    }
+  },
+  "without_bar": {
+    "matchings_changed_against_no_tie_break": {
+      "set_sizes": {
+        "third_pass_repeated_kept": 120,
+        "third_pass_repeated_removed": 120,
+        "deletion_cases": 280,
+        "reordered_and_deleted_cases": 10010,
+        "fixture_pairs": 1913,
+        "edited_pairs": 900
+      },
+      "per_arm": {
+        "c060": {
+          "third_pass_repeated_kept": 0,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 58,
+          "edited_pairs": 293
+        },
+        "c0325": {
+          "third_pass_repeated_kept": 0,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 0,
+          "edited_pairs": 0
+        },
+        "c0325_e6": {
+          "third_pass_repeated_kept": 35,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 0,
+          "edited_pairs": 0
+        },
+        "c0325_e4": {
+          "third_pass_repeated_kept": 35,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 0,
+          "edited_pairs": 0
+        },
+        "c0325_e8": {
+          "third_pass_repeated_kept": 35,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 0,
+          "edited_pairs": 0
+        },
+        "c0325_e6_b1": {
+          "third_pass_repeated_kept": 35,
+          "third_pass_repeated_removed": 0,
+          "deletion_cases": 0,
+          "reordered_and_deleted_cases": 0,
+          "fixture_pairs": 0,
+          "edited_pairs": 0
+        }
+      }
+    },
+    "document_without_repeated_statements": {
+      "statements": 53,
+      "cases": 120,
+      "identity_gap_same_object_max": 0.00703995,
+      "identity_gap_copy_max": 0.0070473,
+      "per_arm": {
+        "c060": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        },
+        "c0325": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        },
+        "c0325_e6": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        },
+        "c0325_e4": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        },
+        "c0325_e8": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        },
+        "c0325_e6_b1": {
+          "cases": 120,
+          "survivors_recovered": 120,
+          "text_equal": 120,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 63,
+          "equal_to_floor_copy": 120,
+          "same_matching_as_no_tie_break": 120,
+          "shipped_median": 0.0412867,
+          "matched_median": 0.00531817,
+          "matched_max": 0.0070473,
+          "equal_to_floor_same": 0,
+          "max_abs_diff_to_floor_same": 7.81318e-06,
+          "max_abs_diff_to_floor_copy": 0.0,
+          "median_diff_to_floor_same": 5.46317e-06
+        }
+      }
+    },
+    "unequal_length_pairs": {
+      "pairs": 66,
+      "per_arm": {
+        "c060": {
+          "pairs": 66,
+          "no_matched_pair": 0,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0199738,
+          "matched_below_shipped": 42,
+          "matched_above_shipped": 24,
+          "matched_within_bar": 22,
+          "matched_exactly_zero": 12,
+          "matched_max": 0.162117,
+          "shorter_fully_matched": 59,
+          "mean_matched_statements": 8.13636,
+          "pairs_with_at_most_one_matched_pair": 0,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 17,
+          "matchings_equal_to_no_tie_break": 15
+        },
+        "c0325": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 66,
+          "matchings_equal_to_no_tie_break": 66
+        },
+        "c0325_e6": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 66,
+          "matchings_equal_to_no_tie_break": 66
+        },
+        "c0325_e4": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 66,
+          "matchings_equal_to_no_tie_break": 66
+        },
+        "c0325_e8": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 66,
+          "matchings_equal_to_no_tie_break": 66
+        },
+        "c0325_e6_b1": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "shipped_median": 0.043782,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "mean_statements_of_the_shorter_document": 8.24242,
+          "readings_equal_to_no_tie_break": 66,
+          "matchings_equal_to_no_tie_break": 66
+        }
+      }
+    },
+    "no_edit_control": {
+      "statements": 117,
+      "per_arm": {
+        "c060": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        },
+        "c0325": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        },
+        "c0325_e6": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        },
+        "c0325_e4": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        },
+        "c0325_e8": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        },
+        "c0325_e6_b1": {
+          "read_as_removed": 0,
+          "per_base": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 0,
+            "v2": 0,
+            "opus": 0,
+            "sonnet": 0,
+            "haiku": 0,
+            "werg-a": 0,
+            "werg-b": 0,
+            "werg-c": 0
+          }
+        }
+      }
+    },
+    "executor_reading_shorter_document_encoded_in_its_own_call": {
+      "in_record": false,
+      "cases": 120,
+      "all_rows_bitwise_equal_to_row_copies": 96,
+      "repeated_rows_bitwise_equal_to_those_of_a": 120,
+      "cases_with_a_tie_group": 120,
+      "cases_with_one_bit_pattern": 120,
+      "tie_group_cost_spread_max": 0.0,
+      "cases_with_spread_above_eps": 0,
+      "shipped_median": 0.0366389,
+      "rows_differing_from_row_copies": 41,
+      "max_abs_difference_of_one_embedding_entry": 0.00409467,
+      "shortest_statement_with_a_differing_row_words": 26,
+      "shipped_gap_equal_to_row_copy_reading": 96,
+      "shipped_gap_max_abs_diff": 0.00128833,
+      "matched_gap_equal_to_row_copy_reading": 96,
+      "matched_gap_max_abs_diff": 6.67102e-05,
+      "matched_pairs_equal_to_row_copy_matching": 120,
+      "per_arm": {
+        "c060": {
+          "cases": 120,
+          "text_equal": 88,
+          "at_or_below_shipped": 99,
+          "above_gap_bar": 23,
+          "matched_max": 0.324574,
+          "matched_median": 0.00321056
+        },
+        "c0325": {
+          "cases": 120,
+          "text_equal": 88,
+          "at_or_below_shipped": 99,
+          "above_gap_bar": 23,
+          "matched_max": 0.324574,
+          "matched_median": 0.00321056
+        },
+        "c0325_e6": {
+          "cases": 120,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_gap_bar": 0,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e4": {
+          "cases": 120,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_gap_bar": 0,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e8": {
+          "cases": 120,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_gap_bar": 0,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e6_b1": {
+          "cases": 120,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_gap_bar": 0,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        }
+      }
+    }
+  },
+  "prediction": {
+    "claims": {
+      "third_pass_at_or_below_shipped_120": true,
+      "third_pass_text_equal_120": false,
+      "deletion_readings_unchanged": true,
+      "identities_unchanged": true,
+      "count_falls_by_fewer_than_20": true
+    },
+    "held_in_every_claim": false,
+    "direction": {
+      "fewer_cases_above_shipped_than_without_tie_break": true,
+      "more_textually_equal_than_without_tie_break": true,
+      "fully_matched_count_below_1847": true
+    },
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "at c = 0.325 with eps = 1e-6: (1) matched gap <= shipped gap in 120/120 third-pass cases and matched sub-sequence textually equal in >= 114/120; (2) >= 95% of the 280 deletion cases read <= 0.005 and AUC >= 0.95; (3) np.array_equal with shipped opw_gap on every fully matched equal-length fixture pair; (4) E13-H71 macro-F1 >= 0.90 in both halves",
+    "clause_1_met": false,
+    "clause_2_met": true,
+    "clause_3_met": true,
+    "clause_4_met": true,
+    "met": false,
+    "no_effect_on_third_pass": false,
+    "verdict": "Refuted"
+  },
+  "guardrails": {
+    "V": "0/24",
+    "panel_margin_pts": 4.7083,
+    "gold_smd_max": 0.290706,
+    "adversarial_smd_min": 0.357292,
+    "smd_array_equal_before_after": true,
+    "order_gap_array_equal_before_after": true,
+    "fingerprint_start": "905a308ecd1b29d14040dfc43a07a26fed42b70d7f18110c81a0e55f4fce8f8c",
+    "fingerprint_end": "905a308ecd1b29d14040dfc43a07a26fed42b70d7f18110c81a0e55f4fce8f8c",
+    "git_status_src_tests": "empty",
+    "src_untouched": true,
+    "default_path_array_equal": true,
+    "shipped_280_array_equal": true,
+    "instance_override_removed": true,
+    "all_hold": true,
+    "metric_property": "stated, not tested - shipped smd (a metric) and shipped opw_gap (a score) are not edited; the matched gap is a notebook prototype and a score, the map is an annotation; no triangle test was run"
+  },
+  "result": {
+    "id": "E15-H79",
+    "slug": "matching-tie-break",
+    "model": "opus",
+    "verdict": "Refuted",
+    "verdict_number": "third-pass set at c = 0.325, eps = 1e-06: matched sub-sequence textually equal to the shorter document in 111/120 cases against a bar of >= 114/120 (without the tie-break 88/120); matched gap at or below the shipped gap in 120/120 against a bar of 120/120 (without the tie-break 99/120); second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120; clauses 2, 3 and 4 met: 280/280 deletion cases <= 0.005, AUC 0.999903, 1840/1840 fully matched equal-length pairs equal to shipped opw_gap, macro-F1 0.9674 half A and 0.9772 half B",
+    "kill_gate": {
+      "ran": true,
+      "passed": true,
+      "reading": "harness check without the tie-break at c = 0.6: survivors recovered 88/120 (recorded 88/120), matched gap above shipped 21/120 (recorded 21/120); precondition: the ground cost inside the group of repeated statements shares one bit pattern in 120/120 cases, 32 of them cases in which the survivors were not recovered; shown case: prefix 30, deleted positions [4, 6], tie group 6 x 4, bit pattern 0x00000000 (float32 cost 0.0); tied cost value over the cases: 0.0 in 60, 0.0003452669770922512 in 60"
+    },
+    "sanity_check": {
+      "required": true,
+      "passed": true,
+      "reading": "deletion cases <= 0.005, c = 0.6: recorded 280/280, here 280/280; AUC deleted-only against reordered-and-deleted, c = 0.6: recorded 0.999903, here 0.999903; fully matched equal-length pairs equal to shipped opw_gap, c = 0.6: recorded 1847/1847, here 1847/1847; macro-F1 half A, c = 0.325: recorded 0.9674, here 0.9674; macro-F1 half B, c = 0.325: recorded 0.9772, here 0.9772; supporting rows reproduced 9/9; edit-fixture key 3e396129ed50 equals the E13-H71 key: True; 300 of 900 pair readings computed by this notebook, cost matrices equal to the E13-H71 checkpoint in 300/300; 600 pair readings read from the E13-H71 checkpoint"
+    },
+    "prediction_check": {
+      "predicted": "with the tie-break the 120 pure-deletion cases on the 62-statement source document read at or below the shipped gap in 120/120 and the matched sub-sequences are textually equal in 120/120; the 280 registered deletion readings and the 1847 fully matched identities are unchanged; at c = 0.325 the count of fully matched equal-length pairs falls below 1847 by fewer than 20",
+      "observed": "at or below the shipped gap in 120/120 (held; without the tie-break 99/120); textually equal in 111/120 (falsified; without the tie-break 88/120); the 280 deletion readings np.array_equal to the reproduced E13-H70 readings: True (held); fully matched identities: 1840/1840 equal to shipped opw_gap and the tie-break leaves the count at 1840 → 1840 (held); count at c = 0.325: 1840, a fall of 7 from 1847 (held). Direction: cases above the shipped gap 21 → 0, textually equal 88 → 111, fully matched count 1847 → 1840; all three move as predicted. The exact count of 120/120 textually equal sub-sequences was not reached",
+      "direction_matched": true
+    },
+    "acceptance": {
+      "bar": "at c = 0.325 with eps = 1e-6: (1) matched gap <= shipped gap in 120/120 third-pass cases and matched sub-sequence textually equal in >= 114/120; (2) >= 95% of the 280 deletion cases read <= 0.005 and AUC >= 0.95; (3) np.array_equal with shipped opw_gap on every fully matched equal-length fixture pair; (4) E13-H71 macro-F1 >= 0.90 in both halves",
+      "met": false,
+      "readings": {
+        "clause_1_repeated_statements": "NOT MET - matched gap at or below the shipped gap in 120/120 (bar 120/120, condition met); matched sub-sequence textually equal in 111/120 (bar >= 114/120, condition not met); the 9 misses all deleted a repeated statement; the position term ranks another matching below the survivor matching in 7 of them and ties exactly with it in 2; largest matched gap among the misses 0.003538, 0 above 0.005; second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120",
+        "clause_2_deletions_and_separation": "met - 280/280 = 1.0000 read <= 0.005 (bar >= 0.95); AUC 0.999903 (bar >= 0.95), 70 deleted-only against 10010 reordered-and-deleted; shipped baseline 0.950980; the readings are np.array_equal to the E13-H70 readings (280/280 and 10010/10010); the base documents hold no repeated statement, so the tie-break has nothing to act on there",
+        "clause_3_bit_identity": "met - np.array_equal True on 1840 fully matched equal-length pairs (1840 exactly equal, largest |difference| 0.0); met by construction: a fully matched equal-length pair is passed to opw_gap unmodified; count 1847 at c = 0.6 → 1840 at c = 0.325",
+        "clause_4_statement_map": "met - macro-F1 0.9674 on half A (the half c = 0.325 was chosen on) and 0.9772 on half B (held out), bar >= 0.9 in both; the tie-break changes 0/21060 statement labels"
+      }
+    },
+    "guardrails": {
+      "V": "0/24",
+      "src_untouched": true,
+      "metric_property": "stated, not tested - shipped smd (a metric) and shipped opw_gap (a score) are not edited; the matched gap is a notebook prototype and a score, the map is an annotation; no triangle test was run",
+      "notes": "Rows that can fail: V 0/24 on the ibm panel, boundary margin +4.71 pts (primer naive row +4.71); source-tree fingerprint start = end: True (905a308ecd1b29d1); git status for src and tests: empty. Rows that compare two calls inside one kernel: panel smd np.array_equal before/after True and order_gap True (10 anchor pairs each); default-path smd 0.22343884174015136 and order gap 0.1343654387715936 on ('gold', 'gold-2') np.array_equal True; the 280 shipped deletion readings recomputed np.array_equal True; instance overrides removed True. No edit under src/, docs/ or tests/"
+    },
+    "key_numbers": {
+      "build_constants": {
+        "c": 0.325,
+        "eps": 1e-06,
+        "position_index_from": 0,
+        "fully_matched_equal_length_pairs_at_c": 1840,
+        "fully_matched_equal_length_pairs_at_0.6": 1847
+      },
+      "kill_gate_survivors_recovered": 88,
+      "kill_gate_above_shipped": 21,
+      "kill_gate_cases": 120,
+      "kill_gate_exact_tie_cases": 120,
+      "kill_gate_tie_group_cases": 120,
+      "kill_gate_tied_cost_values": {
+        "0.0": 60,
+        "0.0003452669770922512": 60
+      },
+      "third_pass_per_arm": {
+        "c060": {
+          "survivors_recovered": 88,
+          "text_equal": 88,
+          "at_or_below_shipped": 99,
+          "above_shipped": 21,
+          "above_gap_bar": 23,
+          "equal_to_floor_copy": 88,
+          "matched_max": 0.324574,
+          "matched_median": 0.00321056
+        },
+        "c0325": {
+          "survivors_recovered": 88,
+          "text_equal": 88,
+          "at_or_below_shipped": 99,
+          "above_shipped": 21,
+          "above_gap_bar": 23,
+          "equal_to_floor_copy": 88,
+          "matched_max": 0.324574,
+          "matched_median": 0.00321056
+        },
+        "c0325_e6": {
+          "survivors_recovered": 110,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 0,
+          "equal_to_floor_copy": 111,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e4": {
+          "survivors_recovered": 110,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 0,
+          "equal_to_floor_copy": 111,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e8": {
+          "survivors_recovered": 110,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 0,
+          "equal_to_floor_copy": 111,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        },
+        "c0325_e6_b1": {
+          "survivors_recovered": 110,
+          "text_equal": 111,
+          "at_or_below_shipped": 120,
+          "above_shipped": 0,
+          "above_gap_bar": 0,
+          "equal_to_floor_copy": 111,
+          "matched_max": 0.00487646,
+          "matched_median": 0.00288845
+        }
+      },
+      "third_pass_shipped_median": 0.036939,
+      "third_pass_deletions_that_removed_a_repeated_statement": 43,
+      "third_pass_text_equal_among_those": 34,
+      "misses": 9,
+      "misses_position_sum_below_survivors": 7,
+      "misses_position_sum_exact_tie": 2,
+      "misses_above_shipped": 0,
+      "misses_above_gap_bar": 0,
+      "misses_matched_max": 0.00353769,
+      "exact_ties_float64_returned_below_survivors": 2,
+      "exact_ties_float64_sums_equal": 0,
+      "mechanism_registered_arm": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 111,
+        "matching_equal_to_registered_arm": 120
+      },
+      "mechanism_no_tie_break": {
+        "tie_group_in_document_order": 120,
+        "whole_matching_in_document_order": 88,
+        "matching_equal_to_registered_arm": 85
+      },
+      "matchings_changed_by_registered_tie_break": {
+        "third_pass_repeated_kept": 35,
+        "third_pass_repeated_removed": 0,
+        "deletion_cases": 0,
+        "reordered_and_deleted_cases": 0,
+        "fixture_pairs": 0,
+        "edited_pairs": 0
+      },
+      "set_sizes": {
+        "third_pass_repeated_kept": 120,
+        "third_pass_repeated_removed": 120,
+        "deletion_cases": 280,
+        "reordered_and_deleted_cases": 10010,
+        "fixture_pairs": 1913,
+        "edited_pairs": 900
+      },
+      "deletion_within_bar": 280,
+      "deletion_n": 280,
+      "deletion_max": 0.000610062,
+      "auc_registered": 0.999903,
+      "auc_shipped": 0.95098,
+      "n_negatives": 70,
+      "n_positives": 10010,
+      "fully_matched_pairs_registered": 1840,
+      "fully_matched_exactly_equal": 1840,
+      "fully_matched_count_fall": 7,
+      "pairs_fully_matched_at_0.6_only": 7,
+      "macro_f1_registered": {
+        "half_A": 0.9674,
+        "half_B": 0.9772,
+        "all": 0.9723
+      },
+      "macro_f1_no_tie_break": {
+        "half_A": 0.9674,
+        "half_B": 0.9772,
+        "all": 0.9723
+      },
+      "map_statements_with_a_changed_label": 0,
+      "map_statements": 21060,
+      "no_edit_control_read_as_removed": "0/117",
+      "document_without_repeated_statements": {
+        "statements": 53,
+        "cases": 120,
+        "survivors_recovered": 120,
+        "matched_equal_to_opw_gap_B_copy": 120,
+        "matched_equal_to_opw_gap_B_B": 0,
+        "max_abs_diff_to_opw_gap_B_B": 7.81318e-06,
+        "median_diff_to_opw_gap_B_B": 5.46317e-06,
+        "above_gap_bar": 63,
+        "above_shipped": 0
+      },
+      "unequal_length_pairs": {
+        "c060": {
+          "pairs": 66,
+          "no_matched_pair": 0,
+          "matched_median": 0.0199738,
+          "matched_below_shipped": 42,
+          "matched_above_shipped": 24,
+          "matched_within_bar": 22,
+          "matched_exactly_zero": 12,
+          "matched_max": 0.162117,
+          "shorter_fully_matched": 59,
+          "mean_matched_statements": 8.13636,
+          "pairs_with_at_most_one_matched_pair": 0,
+          "matchings_equal_to_no_tie_break": 15
+        },
+        "c0325": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "matchings_equal_to_no_tie_break": 66
+        },
+        "c0325_e6": {
+          "pairs": 66,
+          "no_matched_pair": 2,
+          "matched_median": 0.0,
+          "matched_below_shipped": 49,
+          "matched_above_shipped": 15,
+          "matched_within_bar": 38,
+          "matched_exactly_zero": 35,
+          "matched_max": 0.18269,
+          "shorter_fully_matched": 15,
+          "mean_matched_statements": 4.68182,
+          "pairs_with_at_most_one_matched_pair": 19,
+          "matchings_equal_to_no_tie_break": 66
+        }
+      },
+      "unequal_length_shipped_median": 0.043782,
+      "own_encoding_executor_reading": {
+        "cases": 120,
+        "all_rows_bitwise_equal_to_row_copies": 96,
+        "repeated_rows_bitwise_equal": 120,
+        "cases_with_one_bit_pattern": 120,
+        "tie_group_cost_spread_max": 0.0,
+        "text_equal_registered": 111,
+        "at_or_below_shipped_registered": 120,
+        "rows_differing_from_row_copies": 41,
+        "max_abs_difference_of_one_embedding_entry": 0.00409467,
+        "shortest_statement_with_a_differing_row_words": 26,
+        "shipped_gap_equal_to_row_copy_reading": 96,
+        "shipped_gap_max_abs_diff": 0.00128833,
+        "matched_gap_equal_to_row_copy_reading": 96,
+        "matched_gap_max_abs_diff": 6.67102e-05,
+        "matched_pairs_equal_to_row_copy_matching": 120,
+        "text_equal_no_tie_break": 88
+      },
+      "edited_pairs_computed_by_this_notebook": 300,
+      "edited_pairs_read_from_e13_h71_checkpoint": 600,
+      "panel_margin_pts": 4.7083
+    },
+    "result_summary": "The registered tie-break (assignment cost min(cost, c) + eps * |i/n - j/m|, c = 0.325, eps = 1e-06, positions counted from 0) misses clause 1 of the bar on one of its two conditions; the verdict is Refuted. Kill-gate passed: without the tie-break at c = 0.6 the E13-H70 third-pass readings reproduce (88/120 survivors recovered, 21/120 above shipped), and the ground cost inside the group of repeated statements is bitwise equal in 120/120 cases. The copied case builders reproduce the five recorded E13 readings (280/280, AUC 0.999903, 1847/1847, macro-F1 0.9674 and 0.9772). Clause 1, the 120 pure deletions on the 62-statement document with 9 repeated statements: the matched order gap is at or below the shipped gap in 120/120 cases (without the tie-break 99/120) and above 0.005 in 0 (without it 23); the largest matched reading falls from 0.3246 to 0.004876. The matched sub-sequence is textually equal to the shorter document in 111/120 cases (without the tie-break 88/120), below the bar of 114. Cause of the 9 misses: the tie group is matched in document order in 120/120 cases, but the position term also decides which repeated statement of the longer document stays unmatched, and it does not read which one was deleted. In 7 misses another matching has a strictly smaller position sum than the survivor matching; in 2 the two position sums are exactly equal. The misses read at most 0.003538. Clauses 2, 3 and 4 are met and every registered E13 reading is unchanged: 280/280 deletion cases <= 0.005 and AUC 0.999903, both np.array_equal to the E13-H70 readings; 1840/1840 fully matched equal-length pairs equal to shipped opw_gap (count 1847 → 1840, a fall of 7, caused by the cutoff); macro-F1 0.9674 / 0.9772 with 0/21060 labels changed. The tie-break changes the matching in 35/120 cases of the document with repeated statements and in 0 of the 13223 cases of the other five sets. eps = 0.0001, eps = 1e-08 and positions counted from 1 return the same counts (111, 111 and 111 of 120 textually equal). Outside the bar: on the 66 natural pairs of unequal length the tie-break changes 0 matchings, and the move of the cutoff from 0.6 to 0.325 lowers the mean number of matched statements from 8.14 to 4.68 and the median matched gap from 0.0200 to 0.0000. Executor reading outside the record: with the shorter document encoded in its own call the clause 1 counts are the same (111 and 120 of 120) and the matched pairs equal the row-copy matching in 120/120 cases, but 41 rows of statements of 26 words or more differ by up to 4.095e-03; exact ties under separate encoding are shown for this one-token repeated text only. Guardrails hold: V 0/24, src and tests unchanged.",
+    "artifacts": {
+      "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H79-kj-matching-tie-break.ipynb",
+      "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H79-matching-tie-break-metrics.json",
+      "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H79-matching-tie-break.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "1. Scope of clause 1: one document ('source', 62 statements), one repeated text ('-', a list marker, 9 occurrences), 120 cases, 2 interior deletions per case, seeds [7, prefix length, draw]. 43 of the 120 deletions removed a repeated statement; the tie-break returns a textually equal sub-sequence in 34 of those 43 and in all 77 others. 2. The bar is missed by 3 cases on the textual condition only. The order-gap condition of the same clause is met (120/120), and all 9 misses read at or below 0.005 and below the shipped gap. The bar was applied as registered; the verdict follows the conjunction. 3. Mechanism of the misses: the returned matching and the survivor matching have the same total capped ground cost in 120/120 cases, so the position term alone ranks them. |i/n - j/m| compares relative positions with two different denominators; after a deletion the survivor matching is not always the one with the smallest sum. In 2 misses the two sums are exactly equal in rational arithmetic; as float64, the form the solver receives, the returned sum is below the survivor sum in 2 of them and equal to it in 0. A rule that leaves the deleted member unmatched needs the order of the neighbouring statements; that is a different mechanism and was not added or measured. 4. Position index: the record does not say from which number positions count. The registered arm counts from 0; counting from 1 gives the same counts (111/120, 120/120) with the same matching as the registered arm in 120/120 cases. 5. Exact ties exist here because the 9 repeated statements share one bitwise equal embedding row and each registered case builds the shorter document from row copies of the longer one. The tied float32 cost is not always zero: 0.0 in 60 cases, 0.0003452669770922512 in 60 cases. Executor reading outside the record: with the shorter document encoded in its own call, the rows of the repeated statements are bitwise equal in 120/120 cases, the tie group has one bit pattern in 120/120, the matched pairs equal the row-copy matching in 120/120 and the clause 1 counts are 111/120 and 120/120. That reading does not show that ties stay exact under separate encoding in general: all rows are bitwise equal to the row copies in 96/120 cases only, and in the other 24 cases 41 rows differ by up to 4.095e-03 in one embedding entry (shortest statement with a differing row: 26 words; shipped gap moved by up to 1.288e-03, matched gap by up to 6.671e-05). The repeated text here is one token and is encoded in the batch of the shortest statements in every document. A repeated statement whose batch differs between the two documents was not measured; a cost difference of the measured size inside a tie group is above eps = 1e-06, and the position term would then not decide. Not measured either: near-identical statements, another encoder. 6. Clause 3 holds by construction: a fully matched equal-length pair is passed to opw_gap unmodified. 1820 of the 1840 pairs are reorder-pool entries. The 7 pairs that are fully matched at c = 0.6 and not at c = 0.325 are natural cross-summary, regeneration and tier-contrast pairs; their matched gap no longer equals the shipped gap. 7. Clause 4: c = 0.325 was chosen on half A in E13-H71, so the half A reading (0.9674) is the calibration reading and only the half B reading (0.9772) is held out. The 900 edited pairs hold no repeated statement inside a document, so the clause shows that the tie-break changes no label; it does not test the tie-break on the map. 8. Clauses 2 and 4 cannot fail through the tie-break on sets without repeated statements: the tie-break changed 0 matchings on the 280 deletion cases, the 10010 reordered-and-deleted cases, the 1913 fixture pairs, the 900 edited pairs and the 120 cases of the document without repeated statements. The clauses confirm that the readings do not move; the shipped baseline also clears the pooled AUC bar (0.950980). 9. The single cutoff: the registered E13-H70 readings are equal at c = 0.6 and c = 0.325. Outside the bar the cutoff is not inert: on the 66 natural pairs of unequal length the matched gap is computed on 4.68 statements on average at c = 0.325 against 8.14 at c = 0.6 (shorter document: 8.24 statements on average); it reads exactly 0 in 35/66 pairs (at c = 0.6: 12), 19 pairs keep at most one matched pair and 2 keep none. No ground truth exists for these pairs; this is a reading, not a test. The registered cutoff is the literal 0.325; the shipped constant DIFF_CHANGED_COST is 0.3252691193458119 and was not measured. 10. Identity floor, unchanged from E13-H70: on the document without repeated statements the matched gap equals opw_gap(B, copy of B) in 120/120 cases and differs from opw_gap(B, B) by at most 7.813e-06 (POT zeroes the diagonal of the ground cost only when both arguments are one object); it reads above 0.005 in 63/120 cases because the identity gap of shipped opw_gap grows with document length. The tie-break does not act on this. 11. Edited-pair readings: 300 of 900 shipped details readings were computed by this notebook (bases gold, gold-2, v1, v2) and are equal to the E13-H71 checkpoint in 300/300; the other 600 were read from the E13-H71 checkpoint, which has the same fixture key (sha1 over the library version and every pair text). The first execution of this notebook was stopped during that loop because another notebook held most cores of the machine; the restore order was added after that. 12. Executor rules, written in the configuration cell, which executes before every measurement cell: positions counted from 0; a tie group needs at least 2 rows and 1 column; textual equality is sequence equality of the matched statements of the longer document with the shorter document; Refuted (null) would be read only on exact equality of the third-pass readings with and without the tie-break. The notebook was executed more than once; the registered arms, cutoffs, bars and builders did not change between executions. Added after the first complete execution: the exact position sums, the document-order columns, the column of matchings equal to the registered arm and the zero-reading columns of the unequal-length table. Added after the second complete execution: the float64 difference of the position sums and, in the executor reading, the size of the row differences and the comparison with the row-copy reading of the same case. The second addition followed a check of that reading: its matched columns equalled the clause 1 columns at the printed digits although 24 cases had rows that differ, and the check measured that the matched gap does move there, by less than the printed digits. 13. Guardrail rows that can fail: V, the source-tree fingerprint, git status. The np.array_equal rows compare two calls of unmodified shipped functions inside one kernel and detect a change made during the run only. The metric-property row is a statement, not a test. 14. Other processes executed notebooks on this machine during the run; no timing is quoted as a measurement."
+  }
+}

@@ -225,3 +225,6 @@ references/papers/*.pdf
 
 # Graphify code-graph output and other transient analysis artefacts
 tmp/
+
+# E13 campaign: output of the check scripts
+reports/E13-campaign/checks/*/out/

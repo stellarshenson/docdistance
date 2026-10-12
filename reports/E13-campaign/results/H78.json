@@ -1,0 +1,689 @@
+{
+  "id": "E15-H78",
+  "slug": "raw-nearest-source-count",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met) | second readings - disjoint foreign halves: held-out 0.9559 / 0.9125, extract 0 / 0 flagged, second article 0.9868, bar met; short source statements removed: held-out 0.9412 / 0.9272, extract 1 / 1 flagged, second article 0.9868, bar not met; after the shipped pre-pass: held-out 0.8168 / 0.7277, extract 0 / 0 flagged, second article 0.9803, bar not met; second article with back-translated own statements: 0.9868",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, raw embeddings, short source statements kept: half A 0.9871, half B 0.9791 (bar >= 0.9 on both halves); with short source statements removed: half A 0.9871, half B 0.9791; split: half A = gold, v2, sonnet, haiku; half B = gold-2, v1, opus"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "the record names no sanity check; executor's harness check: 7 of 7 numbers of the record's Evidence line reproduced at the record's decimals - AUC, 98 own x 38 foreign statements, raw embeddings (E13-H73): 0.966971 against 0.9670; AUC, same pairs, after the pre-pass (E13-H73): 0.788937 against 0.7889; verbatim extract, closeness of the mean nearest-source cost, raw (E13-H73): 0.999917 against 0.9999; verbatim extract, shipped closeness_a (E13-H73): 0.322442 against 0.3224; shipped residual, pre-pass off, median per-document Spearman under insertions, 11 documents (E13-H73): -0.257143 against -0.2571; mean nearest-source cost, median |change| under deletions over one insertion, raw (E13-H73): 0.340866 against 0.341; one-word statements among the 70 ibm source statements (E14-H76): 22 against 22; all seven are read with source statements under 5 words kept"
+  },
+  "prediction_check": {
+    "predicted": "calibrated cutoff between 0.33 and 0.45; held-out balanced accuracy 0.90 to 0.96 in both directions; second-article balanced accuracy 0.85 to 0.95; the shipped balanced residual falls under the same insertions (E13-H73 read Spearman -0.2571)",
+    "observed": "calibrated cutoff between 0.33 and 0.45: 0.3375 (A→B) and 0.3550 (B→A) (magnitude held, direction not defined by the record); held-out balanced accuracy 0.90 to 0.96 in both directions: 0.9412 (A→B) and 0.9272 (B→A) (magnitude held, direction matched); second-article balanced accuracy 0.85 to 0.95: 0.9868 (magnitude not held, above the interval, direction matched); the shipped balanced residual falls under the same insertions: median per-document Spearman -0.0143 with the pre-pass off (4 of 7 gold-tier documents negative) and -0.7714 on the default call (7 of 7 negative) (magnitude no size registered, direction matched) | direction_matched is true only when the 3 effects that have a direction read matched and the cutoff lies in its registered interval",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS iff, with the cutoff chosen on the calibration half of the 7 gold-tier ibm summaries (split by document, both directions scored): (1) held-out balanced accuracy of the flag, own gold-tier statements against inserted wergeland statements of 5+ words, >= 0.90 in both directions; (2) the 10-statement verbatim extract source[0::7][:10] reads 0 flagged statements; (3) with the mean of the two cutoffs and no refit, on the wergeland source: statements of werg-a, werg-b, werg-c against ibm gold-tier statements, balanced accuracy >= 0.85",
+    "met": true,
+    "readings": {
+      "raw_kept, foreign set whole": {
+        "label": "raw, short kept (registered), foreign set whole (registered)",
+        "cutoffs": {
+          "A→B": 0.3375,
+          "B→A": 0.355
+        },
+        "mean_cutoff": 0.34625,
+        "held_ba": {
+          "A→B": 0.941176,
+          "B→A": 0.927173
+        },
+        "clause_1_met": true,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.986842,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.986842,
+        "met": true
+      },
+      "raw_kept, foreign set disjoint": {
+        "label": "raw, short kept (registered), foreign set in disjoint halves",
+        "cutoffs": {
+          "A→B": 0.3425,
+          "B→A": 0.3575
+        },
+        "mean_cutoff": 0.35,
+        "held_ba": {
+          "A→B": 0.955882,
+          "B→A": 0.912485
+        },
+        "clause_1_met": true,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.986842,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.986842,
+        "met": true
+      },
+      "raw_removed, foreign set whole": {
+        "label": "raw, short removed, foreign set whole (registered)",
+        "cutoffs": {
+          "A→B": 0.3375,
+          "B→A": 0.355
+        },
+        "mean_cutoff": 0.34625,
+        "held_ba": {
+          "A→B": 0.941176,
+          "B→A": 0.927173
+        },
+        "clause_1_met": true,
+        "extract_flagged": {
+          "A→B": 1,
+          "B→A": 1
+        },
+        "clause_2_met": false,
+        "second_ba": 0.986842,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.986842,
+        "met": false
+      },
+      "raw_removed, foreign set disjoint": {
+        "label": "raw, short removed, foreign set in disjoint halves",
+        "cutoffs": {
+          "A→B": 0.3425,
+          "B→A": 0.3575
+        },
+        "mean_cutoff": 0.35,
+        "held_ba": {
+          "A→B": 0.955882,
+          "B→A": 0.912485
+        },
+        "clause_1_met": true,
+        "extract_flagged": {
+          "A→B": 1,
+          "B→A": 1
+        },
+        "clause_2_met": false,
+        "second_ba": 0.986842,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.986842,
+        "met": false
+      },
+      "pre_kept, foreign set whole": {
+        "label": "pre-pass, short kept, foreign set whole (registered)",
+        "cutoffs": {
+          "A→B": 1.125,
+          "B→A": 1.105
+        },
+        "mean_cutoff": 1.115,
+        "held_ba": {
+          "A→B": 0.816821,
+          "B→A": 0.727739
+        },
+        "clause_1_met": false,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.980349,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.980349,
+        "met": false
+      },
+      "pre_kept, foreign set disjoint": {
+        "label": "pre-pass, short kept, foreign set in disjoint halves",
+        "cutoffs": {
+          "A→B": 1.135,
+          "B→A": 1.12
+        },
+        "mean_cutoff": 1.1275,
+        "held_ba": {
+          "A→B": 0.821207,
+          "B→A": 0.743421
+        },
+        "clause_1_met": false,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.967362,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.967362,
+        "met": false
+      },
+      "pre_removed, foreign set whole": {
+        "label": "pre-pass, short removed, foreign set whole (registered)",
+        "cutoffs": {
+          "A→B": 1.135,
+          "B→A": 1.145
+        },
+        "mean_cutoff": 1.14,
+        "held_ba": {
+          "A→B": 0.838622,
+          "B→A": 0.796741
+        },
+        "clause_1_met": false,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.954375,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.967532,
+        "met": false
+      },
+      "pre_removed, foreign set disjoint": {
+        "label": "pre-pass, short removed, foreign set in disjoint halves",
+        "cutoffs": {
+          "A→B": 1.13,
+          "B→A": 1.16
+        },
+        "mean_cutoff": 1.145,
+        "held_ba": {
+          "A→B": 0.842879,
+          "B→A": 0.768207
+        },
+        "clause_1_met": false,
+        "extract_flagged": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "clause_2_met": true,
+        "second_ba": 0.947881,
+        "clause_3_met": true,
+        "second_ba_back_translations_not_the_bar": 0.961039,
+        "met": false
+      }
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the count is a score with integer values, not a metric; the mean nearest-source cost is a lower bound of the shipped balanced residual (0 violations in 2508 comparisons)",
+    "notes": "BLAS limited to 1 thread for the arms, readings identical to the default thread count: shipped residual_a True, pre-pass statement costs True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+  },
+  "key_numbers": {
+    "verdict_arm": "raw_kept",
+    "verdict_foreign_reading": "whole",
+    "split": {
+      "A": [
+        "gold",
+        "v2",
+        "sonnet",
+        "haiku"
+      ],
+      "B": [
+        "gold-2",
+        "v1",
+        "opus"
+      ]
+    },
+    "gate_auc": {
+      "raw_kept": {
+        "A": 0.987148,
+        "B": 0.979102
+      },
+      "raw_removed": {
+        "A": 0.987148,
+        "B": 0.979102
+      }
+    },
+    "cutoffs": {
+      "raw_kept": {
+        "whole": {
+          "A→B": 0.3375,
+          "B→A": 0.355,
+          "mean": 0.34625
+        },
+        "disjoint": {
+          "A→B": 0.3425,
+          "B→A": 0.3575,
+          "mean": 0.35
+        }
+      },
+      "raw_removed": {
+        "whole": {
+          "A→B": 0.3375,
+          "B→A": 0.355,
+          "mean": 0.34625
+        },
+        "disjoint": {
+          "A→B": 0.3425,
+          "B→A": 0.3575,
+          "mean": 0.35
+        }
+      },
+      "pre_kept": {
+        "whole": {
+          "A→B": 1.125,
+          "B→A": 1.105,
+          "mean": 1.115
+        },
+        "disjoint": {
+          "A→B": 1.135,
+          "B→A": 1.12,
+          "mean": 1.1275
+        }
+      },
+      "pre_removed": {
+        "whole": {
+          "A→B": 1.135,
+          "B→A": 1.145,
+          "mean": 1.14
+        },
+        "disjoint": {
+          "A→B": 1.13,
+          "B→A": 1.16,
+          "mean": 1.145
+        }
+      }
+    },
+    "held_ba": {
+      "raw_kept": {
+        "whole": {
+          "A→B": 0.941176,
+          "B→A": 0.927173
+        },
+        "disjoint": {
+          "A→B": 0.955882,
+          "B→A": 0.912485
+        }
+      },
+      "raw_removed": {
+        "whole": {
+          "A→B": 0.941176,
+          "B→A": 0.927173
+        },
+        "disjoint": {
+          "A→B": 0.955882,
+          "B→A": 0.912485
+        }
+      },
+      "pre_kept": {
+        "whole": {
+          "A→B": 0.816821,
+          "B→A": 0.727739
+        },
+        "disjoint": {
+          "A→B": 0.821207,
+          "B→A": 0.743421
+        }
+      },
+      "pre_removed": {
+        "whole": {
+          "A→B": 0.838622,
+          "B→A": 0.796741
+        },
+        "disjoint": {
+          "A→B": 0.842879,
+          "B→A": 0.768207
+        }
+      }
+    },
+    "extract_flagged": {
+      "raw_kept": {
+        "whole": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "disjoint": {
+          "A→B": 0,
+          "B→A": 0
+        }
+      },
+      "raw_removed": {
+        "whole": {
+          "A→B": 1,
+          "B→A": 1
+        },
+        "disjoint": {
+          "A→B": 1,
+          "B→A": 1
+        }
+      },
+      "pre_kept": {
+        "whole": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "disjoint": {
+          "A→B": 0,
+          "B→A": 0
+        }
+      },
+      "pre_removed": {
+        "whole": {
+          "A→B": 0,
+          "B→A": 0
+        },
+        "disjoint": {
+          "A→B": 0,
+          "B→A": 0
+        }
+      }
+    },
+    "second_ba": {
+      "raw_kept": {
+        "whole": 0.986842,
+        "disjoint": 0.986842
+      },
+      "raw_removed": {
+        "whole": 0.986842,
+        "disjoint": 0.986842
+      },
+      "pre_kept": {
+        "whole": 0.980349,
+        "disjoint": 0.967362
+      },
+      "pre_removed": {
+        "whole": 0.954375,
+        "disjoint": 0.947881
+      }
+    },
+    "second_ba_back_translations": {
+      "raw_kept": {
+        "whole": 0.986842,
+        "disjoint": 0.986842
+      },
+      "raw_removed": {
+        "whole": 0.986842,
+        "disjoint": 0.986842
+      },
+      "pre_kept": {
+        "whole": 0.980349,
+        "disjoint": 0.967362
+      },
+      "pre_removed": {
+        "whole": 0.967532,
+        "disjoint": 0.961039
+      }
+    },
+    "exact_k_share": {
+      "raw_kept": {
+        "whole": [
+          0.94898,
+          0.928571,
+          0.897959,
+          0.867347
+        ],
+        "disjoint": [
+          0.908163,
+          0.867347,
+          0.846939,
+          0.806122
+        ]
+      },
+      "raw_removed": {
+        "whole": [
+          0.94898,
+          0.928571,
+          0.897959,
+          0.867347
+        ],
+        "disjoint": [
+          0.908163,
+          0.867347,
+          0.846939,
+          0.806122
+        ]
+      },
+      "pre_kept": {
+        "whole": [
+          0.683673,
+          0.581633,
+          0.408163,
+          0.326531
+        ],
+        "disjoint": [
+          0.734694,
+          0.612245,
+          0.489796,
+          0.489796
+        ]
+      },
+      "pre_removed": {
+        "whole": [
+          0.734694,
+          0.612245,
+          0.44898,
+          0.387755
+        ],
+        "disjoint": [
+          0.806122,
+          0.469388,
+          0.306122,
+          0.142857
+        ]
+      }
+    },
+    "registered_arm_raw_short_kept_foreign_set_whole": {
+      "held_ba_over_run_min_max": {
+        "A→B": [
+          0.941176,
+          0.955882
+        ],
+        "B→A": [
+          0.927173,
+          0.927173
+        ]
+      },
+      "size_of_one_statement": {
+        "A→B": {
+          "one_own_statement": 0.014706,
+          "one_foreign_statement": 0.013158,
+          "errors_below_bar": 3
+        },
+        "B→A": {
+          "one_own_statement": 0.011628,
+          "one_foreign_statement": 0.013158,
+          "errors_below_bar": 3
+        }
+      },
+      "second_article": {
+        "auc": 0.97676,
+        "own_max_cost": 0.508262,
+        "own_median_cost": 0.0,
+        "foreign_min_cost": 0.398348,
+        "n_own": 38,
+        "n_foreign": 77,
+        "whole": {
+          "cutoff": 0.34625,
+          "ba": 0.986842,
+          "tpr": 1.0,
+          "tnr": 0.973684,
+          "own_flagged": 1,
+          "foreign_flagged": 77
+        },
+        "disjoint": {
+          "cutoff": 0.35,
+          "ba": 0.986842,
+          "tpr": 1.0,
+          "tnr": 0.973684,
+          "own_flagged": 1,
+          "foreign_flagged": 77
+        }
+      },
+      "second_article_back_translations": {
+        "auc": 0.976077,
+        "own_max_cost": 0.539243,
+        "own_median_cost": 0.148577,
+        "foreign_min_cost": 0.398348,
+        "n_own": 38,
+        "n_foreign": 77,
+        "whole": {
+          "cutoff": 0.34625,
+          "ba": 0.986842,
+          "tpr": 1.0,
+          "tnr": 0.973684,
+          "own_flagged": 1,
+          "foreign_flagged": 77
+        },
+        "disjoint": {
+          "cutoff": 0.35,
+          "ba": 0.986842,
+          "tpr": 1.0,
+          "tnr": 0.973684,
+          "own_flagged": 1,
+          "foreign_flagged": 77
+        }
+      },
+      "deletions": {
+        "supported_cases": 392,
+        "supported_zero_share": 1.0,
+        "any_zero_share": 0.755102,
+        "any_mean_change": -0.270408,
+        "mean_cost_deletion_ratio": 0.455567
+      },
+      "count_at_k0_held_out_documents": {
+        "gold": 0,
+        "gold-2": 1,
+        "v1": 1,
+        "v2": 1,
+        "opus": 2,
+        "sonnet": 0,
+        "haiku": 3
+      }
+    },
+    "tier_mean_cost": {
+      "raw_kept": {
+        "gold": 0.282889,
+        "adv1": 0.356138,
+        "adv2": 0.318515
+      },
+      "raw_removed": {
+        "gold": 0.282889,
+        "adv1": 0.356138,
+        "adv2": 0.318515
+      },
+      "pre_kept": {
+        "gold": 0.979488,
+        "adv1": 1.21614,
+        "adv2": 1.185292
+      },
+      "pre_removed": {
+        "gold": 1.05488,
+        "adv1": 1.204013,
+        "adv2": 1.169227
+      }
+    },
+    "tier_count": {
+      "raw_kept": {
+        "gold": 8,
+        "adv1": 9,
+        "adv2": 0
+      },
+      "raw_removed": {
+        "gold": 8,
+        "adv1": 9,
+        "adv2": 0
+      },
+      "pre_kept": {
+        "gold": 20,
+        "adv1": 16,
+        "adv2": 3
+      },
+      "pre_removed": {
+        "gold": 25,
+        "adv1": 14,
+        "adv2": 4
+      }
+    },
+    "adversarial_vs_entailment": {
+      "raw_kept": {
+        "n": 21,
+        "n_not_entailed": 10,
+        "auc_binary": 0.654545,
+        "concordance": 0.607656,
+        "spearman": 0.307342,
+        "flagged": 9,
+        "flagged_and_not_entailed": 5,
+        "not_flagged_and_not_entailed": 5
+      },
+      "raw_removed": {
+        "n": 21,
+        "n_not_entailed": 10,
+        "auc_binary": 0.654545,
+        "concordance": 0.607656,
+        "spearman": 0.307342,
+        "flagged": 9,
+        "flagged_and_not_entailed": 5,
+        "not_flagged_and_not_entailed": 5
+      },
+      "pre_kept": {
+        "n": 21,
+        "n_not_entailed": 10,
+        "auc_binary": 0.690909,
+        "concordance": 0.61244,
+        "spearman": 0.289055,
+        "flagged": 19,
+        "flagged_and_not_entailed": 9,
+        "not_flagged_and_not_entailed": 1
+      },
+      "pre_removed": {
+        "n": 21,
+        "n_not_entailed": 10,
+        "auc_binary": 0.572727,
+        "concordance": 0.550239,
+        "spearman": 0.155245,
+        "flagged": 18,
+        "flagged_and_not_entailed": 10,
+        "not_flagged_and_not_entailed": 0
+      }
+    },
+    "shipped_residual_spearman_gold_tier": {
+      "short kept": {
+        "bal_pre": -0.771429,
+        "bal_raw": -0.014286,
+        "os_pre": 0.992857,
+        "os_raw": 1.0
+      },
+      "short removed": {
+        "bal_pre": -0.314286,
+        "bal_raw": 0.592857,
+        "os_pre": 0.985714,
+        "os_raw": 1.0
+      }
+    },
+    "prediction_by_effect": {
+      "calibrated cutoff between 0.33 and 0.45": {
+        "magnitude": "held",
+        "magnitude_held": true,
+        "direction_matched": null
+      },
+      "held-out balanced accuracy 0.90 to 0.96 in both directions": {
+        "magnitude": "held",
+        "magnitude_held": true,
+        "direction_matched": true
+      },
+      "second-article balanced accuracy 0.85 to 0.95": {
+        "magnitude": "not held, above the interval",
+        "magnitude_held": false,
+        "direction_matched": true
+      },
+      "the shipped balanced residual falls under the same insertions": {
+        "magnitude": "no size registered",
+        "magnitude_held": null,
+        "direction_matched": true
+      }
+    },
+    "second_readings": {
+      "disjoint foreign halves, same arm": "held-out balanced accuracy 0.9559 (A→B, cutoff 0.3425) and 0.9125 (B→A, cutoff 0.3575) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.35000 (bar >= 0.85, met)",
+      "short source statements removed, foreign set whole": "held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 1 and 1 of 10 flagged under the two cutoffs (bar 0, not met); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met)",
+      "after the shipped pre-pass, short kept, foreign set whole": "held-out balanced accuracy 0.8168 (A→B, cutoff 1.1250) and 0.7277 (B→A, cutoff 1.1050) (bar >= 0.9 in both, not met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9803 at the mean cutoff 1.11500 (bar >= 0.85, met)",
+      "second article with back-translated own statements, registered arm": "balanced accuracy 0.9868 at the same cutoff"
+    }
+  },
+  "result_summary": "Promoted: on the registered reading (raw embeddings, source statements under 5 words kept, foreign set whole) the bar is met. Kill-gate: AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, 0.9871 on half A and 0.9791 on half B (bar 0.9). Harness check, the executor's because the record names none: 7 of 7 numbers of the record's Evidence line reproduced. Clause (1), met: cutoffs 0.3375 and 0.3550, held-out balanced accuracy 0.9412 (A→B) and 0.9272 (B→A) against 0.9; with the foreign set in disjoint halves 0.9559 and 0.9125; one statement moves a held-out reading by 0.0116 to 0.0147 and 3 further wrong flags bring it below the bar. Clause (2), met by construction, every extract statement is a source statement: 0 and 0 of 10 extract statements flagged under the two cutoffs; with source statements under 5 words removed the extract reads 1 and 1 flagged (extract statements under 5 words: ###), so that reported reading has clause (2) not met. Clause (3), met: balanced accuracy 0.9868 at the mean cutoff 0.34625 with no refit, 77 of 77 ibm statements flagged and 37 of 38 wergeland section statements not flagged; 36 of those section statements are copies of source statements, and with back-translated own statements the reading is 0.9868. Reported without a bar: the count rises by exactly k in 0.9107 of the 392 insertion trials (0.9490, 0.9286, 0.8980, 0.8673 at k = 1 to 4); deleting supported statements leaves the count unchanged in 392 of 392 cases, which holds by construction on raw embeddings, while the mean of the same costs moves by 45.6% of one insertion; the 7 gold-tier documents read 0 to 3 flagged statements at k = 0; tier mean cost gold 0.2829, adv1 0.3561, adv2 0.3185 with 8 of 77, 9 of 17 and 0 of 4 statements flagged at the mean cutoff; the 21 statements of the 4 adversarial summaries against 1 - entailment read AUC 0.6545 (10 labelled not entailed at the executor's label of 0.5); the same flag after the shipped pre-pass reads 0.8168 and 0.7277 on clause (1), not met. Baseline on the same insertions: shipped residual_a median per-document Spearman -0.7714 on the default call and -0.0143 with the pre-pass off over the 7 gold-tier documents. Prediction: calibrated cutoff between 0.33 and 0.45 - held; held-out balanced accuracy 0.90 to 0.96 in both directions - held; second-article balanced accuracy 0.85 to 0.95 - not held, above the interval; the shipped balanced residual falls under the same insertions - no size registered. Guardrails hold: V 0/24, default-path smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline, files changed under src/ 0 and under tests/ 0.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H78-kj-raw-nearest-source-count.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H78-raw-nearest-source-count-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H78-raw-nearest-source-count.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "1. Clause (2) holds by construction on the registered arm. Every statement of the extract source[0::7][:10] is a statement of the source, so its nearest-source cost is zero up to float32 rounding (highest of the 10: 0.000691) and no cutoff of the grid above 0 flags it. Of the three clauses, the readings that could fail are the two held-out readings of clause (1) and the foreign side of clause (3). 2. Source statements under 5 words. The registered reading keeps them (the shipped default reader: 70 ibm source statements, 28 under 5 words, 22 with one word). With them removed (42 statements) the readings of clauses (1) and (3) are identical, because 0 of the 98 summary statements, 0 of the 38 foreign statements and 0 of the scored second-article statements have such a statement as their nearest source statement; clause (2) then reads 1 of 10 flagged, the extract's markup statement ### at cost 1.161591. A build has to apply one statement filter to the document and to the source. 3. Clause (3). 36 of the 38 section statements of werg-a, werg-b, werg-c are copies of second-source statements, so the own side (37 of 38 not flagged) is close to 1 by construction. The side that could fail is the foreign side: 77 of 77 ibm statements flagged, lowest cost 0.3983 against the cutoff 0.34625. With back-translated own statements (1 of 38 a copy, median cost 0.1486) the reading is the same 0.9868. The second source is the article the foreign statements of clause (1) come from, so clause (3) exchanges the roles of two articles and adds no third article. 4. Executor's reading rules, each with its second reading in the notebook: the foreign set whole in calibration and in scoring (the wording of the kill-gate line; the scored foreign statements also took part in the choice of the cutoff; with disjoint halves the held-out readings are 0.9559 and 0.9125); the midpoint of a run with an even number of grid points (held-out reading over the A→B run 0.9412 to 0.9559); the entailment label at 0.5; the harness check; the direction rule. The notebook was executed more than once. No bar, cutoff rule, split or reading rule changed after the first execution and no measured number of the first execution's metrics JSON differs in the last one; the outputs alone do not prove that order. 5. Sample size. 43 and 34 own statements in 4 and 3 documents, 38 foreign statements, two articles on related topics, one encoder (the shipped OpenVINO INT8 model). One statement moves a held-out reading by 0.0116 to 0.0147; 3 further wrong flags bring either direction below 0.9. The cutoff 0.34625 belongs to this encoder. 6. The count of a faithful summary is not 0: the 7 gold-tier documents read 0 to 3 flagged statements under their held-out cutoff, 8 of 77 statements at the mean cutoff. 7. The flag reads distance to the source article and not support by the source: against 1 - entailment the 21 adversarial statements read AUC 0.6545 (Spearman +0.3073), and 0 of 4 statements of the information-noise summaries are flagged. It does not replace the model-graded grounding residual. 8. Pre-pass. Computed after the shipped pre-pass the same flag reads 0.8168 and 0.7277 on clause (1), and its count is unchanged in a share of 0.8189 of the deletions of supported statements, so the reading has to be taken on raw embeddings, before the pre-pass of the default call. The pre-pass arms meet clause (3) (0.9803) and fail clause (1); the cause was not measured. 9. Prediction. The second-article reading 0.9868 lies above the predicted interval 0.85 to 0.95. The shipped residual falls under the same insertions on the default call (median per-document Spearman -0.7714, 7 of 7 gold-tier documents negative); with the pre-pass off the median is -0.0143 with 4 of 7 documents negative, which the configured sign rule reads as a fall and which is close to zero. With source statements under 5 words removed the pre-pass-off residual rises (+0.5929). direction_matched is true under the configured rule: the three effects that have a direction matched and the cutoffs lie in their interval; the cutoff interval itself has no direction. 10. Files. This executor edited no file under src/, tests/ or docs/. logs/README.md has an index line for the E13 and E14 log families and none for E15; this executor did not edit it."
+}

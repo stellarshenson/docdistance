@@ -1,0 +1,177 @@
+{
+ "id": "E13-H72",
+ "slug": "capped-ground-cost",
+ "model": "opus",
+ "verdict": "Killed-at-gate",
+ "verdict_number": "kill-gate share 30.0% (172/574 cross-article insertions with a cheapest cost to the host above 0.6); the record requires >= 50%",
+ "kill_gate": {
+  "ran": true,
+  "passed": false,
+  "reading": "172/574 = 30.0% of cross-article insertions have a cheapest cost to the host document above 0.6; the record requires at least 50%. By direction: 70/364 = 19.2% (ibm host, wergeland statement), 102/210 = 48.6% (wergeland host, ibm statement). Readings without a bar: 22/420 = 5.2% on inserted statements of 5+ words, 150/154 = 97.4% on inserted statements under 5 words, 186/574 = 32.4% with the ibm hosts segmented on the shipped path, 48/122 = 39.3% of unique statements above 0.6 in at least one host. The reading uses the shipped cost_matrix and no transport solve, and it is the first measurement of the notebook."
+ },
+ "sanity_check": {
+  "required": true,
+  "passed": true,
+  "reading": "naive row on OpenVINO INT8: V 0/24 (exact), margin +4.708 against +4.71 (-0.04%), d' 4.684 against 4.68 (+0.09%), tolerance 5%; also measured R 1.670 and DR 0.0873; default-path smd and order_gap equal the saved 1.1.5 baseline on 55 pairs by np.array_equal"
+ },
+ "prediction_check": {
+  "predicted": "ibm panel: max |delta smd| about 0.003, V 0/24; cross-article insertions: coefficient of variation of the per-insertion increment falls by more than 50%",
+  "observed": "Measured after the kill-gate, so these readings do not decide the verdict. ibm panel at c=0.60: max |delta smd| 0.0025 over the 55 pairs (0.0006 on the 10 anchor pairs, 8/55 pairs changed), V 0/24. Insertions, registered pooled reading: CV 0.3957 → 0.1189, a fall of 0.6995 (70.0%). The fall is produced by inserted statements under 5 words (markup tokens, heading lines, pieces of a provenance comment): on the 420 insertions of statements with 5+ words the CV goes 0.1328 → 0.1121, a fall of 0.1557 (15.6%), and 0.2655 (26.6%) with the host-length factor removed. Direction matched on both parts; the magnitude above 50% holds on the registered pool and does not hold for inserted sentences.",
+  "direction_matched": true
+ },
+ "acceptance": {
+  "bar": "PASS iff V = 0/24 AND boundary margin >= +4.61 closeness pts AND triangle violations 0/495 AND the coefficient of variation of the smd increment per inserted cross-article statement falls >= 50% against shipped (registered arm c = 0.6). The kill-gate is decided before the bar: it was not passed, so the verdict is Killed-at-gate and the bar readings below are on record without deciding it.",
+  "met": true,
+  "readings": {
+   "status": "the four conditions were measured after the kill-gate was not passed; all four hold on the registered reading; they do not decide the verdict",
+   "V": "0/24 (required 0/24)",
+   "margin_pts": "+4.708 (required >= +4.61)",
+   "triangle_violations": "0/495 (required 0/495), smallest slack 0.177",
+   "cv_fall": "0.6995 (required >= 0.50): pooled CV 0.3957 shipped, 0.1189 at c=0.60, over 574 insertions",
+   "cv_fall_statements_of_5plus_words_no_bar": "0.1557: CV 0.1328 shipped, 0.1121 at c=0.60, over 420 insertions",
+   "cv_fall_unbarred_arms": "c=0.45: 0.7886, c=0.75: 0.5194"
+  }
+ },
+ "guardrails": {
+  "V": "0/24",
+  "src_untouched": true,
+  "metric_property": "shipped distance untouched: no edit under src/, default-path smd and order_gap on 55 pairs equal before and after by np.array_equal and equal to the saved 1.1.5 baseline. Capped distance, which exists only in the notebook wrapper: identity max d(A, A) 0.0e+00 over 11 documents, symmetry max |d(A, B) - d(B, A)| 2.2e-16 over 55 pairs, triangle violations 0/495",
+  "notes": "src/ byte hash equal before and after the run (a5932434475fda56); git status of src/ and tests/ empty; smd_capped at cap = inf equals shipped smd on 55 pairs by np.array_equal. V counted on the registered arm c=0.60 and on the shipped arm, both 0/24."
+ },
+ "key_numbers": {
+  "kill_gate_share_above_0.6": 0.2997,
+  "kill_gate_n_above": 172,
+  "n_insertions": 574,
+  "kill_gate_share_by_reading": {
+   "ibm host, wergeland statement": "70/364 = 19.2%",
+   "wergeland host, ibm statement": "102/210 = 48.6%",
+   "all insertions (the gate reading)": "172/574 = 30.0%",
+   "statements of 5+ words (no bar)": "22/420 = 5.2%",
+   "statements under 5 words (no bar)": "150/154 = 97.4%",
+   "ibm hosts segmented on the shipped path (no bar)": "186/574 = 32.4%",
+   "unique statements, above in at least one host (no bar)": "48/122 = 39.3%"
+  },
+  "kill_gate_median_cheapest_cost": 0.489,
+  "sanity_margin_pts": 4.708,
+  "sanity_dprime": 4.684,
+  "sanity_V": "0/24",
+  "capped_V": "0/24",
+  "capped_margin_pts": 4.708,
+  "capped_dprime": 4.695,
+  "capped_max_abs_delta_smd_55_pairs": 0.0025,
+  "capped_max_abs_delta_smd_anchor_pairs": 0.0006,
+  "capped_pairs_changed": "8/55",
+  "shipped_plan_max_arc": 0.5918,
+  "triangle_violations": "0/495",
+  "triangle_min_slack": 0.177,
+  "cv_shipped_pooled": 0.3957,
+  "cv_capped_pooled": 0.1189,
+  "cv_fall_pooled_registered": 0.6995,
+  "cv_of_host_length_term": 0.0847,
+  "cv_by_reading": {
+   "pooled, all insertions (registered)": {
+    "shipped": 0.3957,
+    "c=0.45": 0.0836,
+    "c=0.60": 0.1189,
+    "c=0.75": 0.1902
+   },
+   "ibm host, wergeland statement": {
+    "shipped": 0.324,
+    "c=0.45": 0.0759,
+    "c=0.60": 0.1052,
+    "c=0.75": 0.1711
+   },
+   "wergeland host, ibm statement": {
+    "shipped": 0.4363,
+    "c=0.45": 0.0933,
+    "c=0.60": 0.1396,
+    "c=0.75": 0.2156
+   },
+   "pooled, increment x (n + 1)": {
+    "shipped": 0.3899,
+    "c=0.45": 0.0093,
+    "c=0.60": 0.0871,
+    "c=0.75": 0.1733
+   },
+   "pooled, statements of 5+ words": {
+    "shipped": 0.1328,
+    "c=0.45": 0.0824,
+    "c=0.60": 0.1121,
+    "c=0.75": 0.1327
+   },
+   "statements of 5+ words, increment x (n + 1)": {
+    "shipped": 0.1062,
+    "c=0.45": 0.0105,
+    "c=0.60": 0.078,
+    "c=0.75": 0.106
+   },
+   "pooled, statements under 5 words": {
+    "shipped": 0.1974,
+    "c=0.45": 0.087,
+    "c=0.60": 0.0872,
+    "c=0.75": 0.088
+   },
+   "median of the 10 per-host CVs": {
+    "shipped": 0.3162,
+    "c=0.45": 0.0041,
+    "c=0.60": 0.0745,
+    "c=0.75": 0.1563
+   }
+  },
+  "cv_host_length_alone_by_reading": {
+   "pooled, all insertions (registered)": 0.0847,
+   "ibm host, wergeland statement": 0.0769,
+   "wergeland host, ibm statement": 0.095,
+   "pooled, increment x (n + 1)": 0.0,
+   "pooled, statements of 5+ words": 0.0834,
+   "statements of 5+ words, increment x (n + 1)": 0.0,
+   "pooled, statements under 5 words": 0.0879,
+   "median of the 10 per-host CVs": 0.0
+  },
+  "cv_fall_to_host_length_alone_by_reading": {
+   "pooled, all insertions (registered)": 0.786,
+   "ibm host, wergeland statement": 0.7625,
+   "wergeland host, ibm statement": 0.7823,
+   "pooled, increment x (n + 1)": 1.0,
+   "pooled, statements of 5+ words": 0.3721,
+   "statements of 5+ words, increment x (n + 1)": 1.0,
+   "pooled, statements under 5 words": 0.5545,
+   "median of the 10 per-host CVs": 1.0
+  },
+  "mean_cost_to_host_statements": {
+   "statements under 5 words": {
+    "shipped": 1.097,
+    "c=0.60": 0.603
+   },
+   "statements of 5+ words": {
+    "shipped": 0.544,
+    "c=0.60": 0.53
+   }
+  },
+  "cv_fall_by_reading_at_registered_arm": {
+   "pooled, all insertions (registered)": 0.6995,
+   "ibm host, wergeland statement": 0.6752,
+   "wergeland host, ibm statement": 0.6801,
+   "pooled, increment x (n + 1)": 0.7767,
+   "pooled, statements of 5+ words": 0.1557,
+   "statements of 5+ words, increment x (n + 1)": 0.2655,
+   "pooled, statements under 5 words": 0.5581,
+   "median of the 10 per-host CVs": 0.7644
+  },
+  "cv_fall_pooled_by_arm": {
+   "c=0.45": 0.7886,
+   "c=0.60": 0.6995,
+   "c=0.75": 0.5194
+  },
+  "std_fall_pooled_registered": 0.7613,
+  "insertions_changed_by_cap": "511/574"
+ },
+ "result_summary": "Killed-at-gate. 172 of 574 cross-article insertions (30.0%) have a cheapest cost to the host document above 0.6, and the record requires at least 50%. No convention measured brings the reading to 50% (19.2% and 48.6% by direction, 5.2% on statements of 5+ words, 32.4% with shipped-path ibm hosts, 39.3% per unique statement). The sanity check passed (V 0/24, margin +4.708, d' 4.684). The readings taken after the gate do not decide the verdict: at c=0.60 the ibm panel keeps V 0/24 and margin +4.708 with max |delta smd| 0.0025 and 0/495 triangle violations, and the pooled CV of the increment falls 0.3957 → 0.1189 (70.0%). That fall is produced by inserted statements under 5 words, which the shipped default segmentation returns for the markdown sources (10 of 52 wergeland statements, 28 of 70 ibm statements): their mean cost to the host statements is 1.097 and the cap sets it to 0.603, while statements of 5+ words have 0.544 and 0.53. On statements of 5+ words the CV falls 15.6% (26.6% with the host-length factor removed). The increment SMD(B, B + s) equals the mean cost from the inserted statement to all n host statements divided by n + 1 (closed form checked on all 574 insertions), so the cap changes 511/574 increments while the gate, which takes the cheapest arc, counts 172.",
+ "artifacts": {
+  "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H72-kj-capped-ground-cost.ipynb",
+  "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H72-capped-ground-cost-metrics.json",
+  "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H72-capped-ground-cost.log"
+ },
+ "notebook_errors": 0,
+ "caveats": "Conventions fixed in the configuration cell before scoring, where the record leaves a choice: hosts are the 10 base documents of the structure fixture (each of the 7 ibm bases is stored there with its markdown title line as statement 0); inserted statements are every statement the shipped default segmentation returns for the other article's source file (52 wergeland, 70 ibm), markup fragments included; the increment is SMD(B, B + s); the registered CV reading pools all 574 insertions; the 5-word split is a convention of this notebook, not a registered quantity. The kill-gate and the bar measure different arcs: the gate takes the cheapest arc, the increment averages all arcs to the host. acceptance.met is true because the four bar conditions hold as written on the registered reading; the verdict follows the kill-gate, which is decided first. The host-length factor 1/(n + 1) alone has a CV of 0.0847 that no cap changes; on statements of 5+ words a cap leaving only that factor would give a fall of 0.3721, below the bar. One pair of articles, both about artificial intelligence; hosts of 11 to 14 statements. No timing is reported. git status also lists modified E01 to E12 notebooks and reports; this executor did not write them. It wrote four campaign files (the notebook, the metrics JSON, the log, this result) and three git-ignored agent-memory notes under .claude/agent-memory/senior-backend-engineer/."
+}

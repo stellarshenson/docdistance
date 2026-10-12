@@ -1,0 +1,38 @@
+{
+  "allow": "moved,n_moved",
+  "packages": [
+    {
+      "key": "repairs",
+      "title": "two new defects and the confirmed verifier findings of packages 1 to 6",
+      "items": [
+        "DEF-DEPS-14",
+        "DEF-SEGM-15",
+        "ACC-TRANS-83"
+      ],
+      "files": [
+        "src/docdistance/encoders.py",
+        "src/docdistance/distance.py",
+        "src/docdistance/pipeline.py",
+        "src/docdistance/cli.py",
+        "src/docdistance/__init__.py",
+        "tests/test_distance.py",
+        "tests/test_structure.py",
+        "tests/test_segmentation.py",
+        "tests/test_pipeline.py",
+        "tests/test_e2e.py",
+        "docs/solution/wmd-docdistance-solution-sota.md",
+        "docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+        "docs/api-reference.md",
+        "docs/cli-reference.md",
+        "README.md",
+        ".claude/skills/docdistance/SKILL.md",
+        "CHANGELOG.md",
+        "logs/README.md",
+        "reports/E13-campaign/checks/"
+      ],
+      "grounded": true,
+      "brief": "Read reports/E13-campaign/repairs-brief.md in full. It lists two defects (D1, D2) and 18 repairs (R1 to R18); each was confirmed against the tree at version 1.1.12. Apply every entry. The six packages before this one are in the tree: read `git diff HEAD --stat -- src tests` first. In `notes` report one line per entry D1, D2 and R1 to R18: done or not done, and the test or the lines that changed. Add D1, D2 and R16 to the `## [Unreleased]` section of CHANGELOG.md, and correct a sentence in README.md, docs/cli-reference.md, docs/api-reference.md or .claude/skills/docdistance/SKILL.md only where D1, D2, R15 or R16 makes it false. The item ACC-TRANS-83 is met by R3 together with the existing test of the tie-break; ACC-TRANS-71 is rejected as overridden by it.",
+      "verify_note": "the brief of this package is reports/E13-campaign/repairs-brief.md. Check every entry D1, D2 and R1 to R18 against the tree: applied as written, or reported as not applied with a reason that holds. Run the reproduction of D1 yourself and the two checks D2 names. An entry applied beyond what it says is a finding."
+    }
+  ]
+}

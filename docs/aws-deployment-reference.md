@@ -1,6 +1,6 @@
 # AWS deployment reference
 
-docdistance runs CPU-only and pulls its INT8 models from S3 at `init` time, so a Lambda or container serves fully offline with no HuggingFace egress. `init` provisions a mode's models, writes `docdistance.json`, and the distance commands then run from the local mirror.
+docdistance runs CPU-only and pulls its INT8 models from S3 at `init` time. `init` provisions a mode's models, writes `docdistance.json`, and the distance commands then load the models from the local mirror and make no request to the HuggingFace Hub. `init` reads the HuggingFace cache or the Hub for one item when the source holds none that loads: the tokenizer of the SaT segmenter, named in the `sat-3l-sm` bullet below.
 
 ## Models and footprint
 
@@ -9,7 +9,7 @@ The OpenVINO INT8 IRs sit at the bucket root (or under a prefix); `init --source
 - **S3 layout** - one dir per model (`openvino_model.xml` + `.bin` + tokenizer; NLI also `config.json` for the entailment index); the dirs sit at the bucket root by default - `s3://your-bucket/<model>/`
 - **Recommended grouping** - on a shared bucket, group the IRs under a `models/` prefix (`s3://your-bucket/models/<model>/`) and keep deployment config under a sibling `settings/`; point `--source` at the `models/` prefix
 - **mmbert-openvino-int8** - 329 MB, the mmBERT statement encoder (both modes)
-- **sat-3l-sm** - 816 MB, the SaT segmenter (both modes; `config.json` + `model.safetensors`)
+- **sat-3l-sm** - 816 MB, the SaT segmenter (both modes; `config.json` + `model.safetensors`, and the tokenizer files in a complete folder). `init --source` copies every file of the source folder into `<home>/models/sat-3l-sm/`. When the copied folder holds a `tokenizer.json`, `init` loads the tokenizer from the folder and reads its three special token ids (`cls`, `sep`, `pad`). When the folder holds no `tokenizer.json`, the load fails or an id is missing, `init` saves the tokenizer `facebookAI/xlm-roberta-base` beside the weights, over the tokenizer files of the folder: from the HuggingFace cache of the host when it is there, otherwise from the Hub; when neither has it, `init` stops with an error that names the tokenizer. A source folder that carries the tokenizer files that `init` saved needs no Hub. To make a source folder complete, copy the tokenizer files that `init` saved in `<home>/models/sat-3l-sm/` (`tokenizer.json` and `tokenizer_config.json` with transformers 5.0.0) into the source folder `sat-3l-sm`. The files `tokenizer.json` and `tokenizer_config.json` as the Hub repository `facebookAI/xlm-roberta-base` publishes them load in that folder without the special token ids (transformers 5.0.0), and a `tokenizer.json` that an interrupted write left truncated does not load: `init` replaces both. The segmenter loads the weights and the tokenizer from `<home>/models/sat-3l-sm/`; 1.1.5 requested the tokenizer from the Hub at the first load
 - **reranker-openvino-int8** - 563 MB, bge-reranker-v2-m3 cross-encoder (wmd-wrt-source only)
 - **nli-openvino-int8** - 321 MB, mDeBERTa MNLI/XNLI head (wmd-wrt-source only)
 - **Mode totals** - `wmd` ≈ 1.15 GB (mmbert + sat); `wmd-wrt-source` ≈ 2.03 GB (+ reranker + nli)
@@ -28,7 +28,7 @@ The OpenVINO INT8 IRs sit at the bucket root (or under a prefix); `init --source
 - **Writable home** - the task root is read-only; set `DOCDISTANCE_HOME=/tmp/docdistance` so `init` writes the model mirror + `docdistance.json` to `/tmp`
 - **Ephemeral storage** - size `/tmp` above the mode total: ≥ ~1.5 GB for `wmd`, ≥ ~2.5 GB for `wmd-wrt-source`; Lambda `/tmp` defaults to 512 MB, configurable to 10 GB
 - **Memory and vCPU** - Lambda allocates ~1 vCPU per 1769 MB, up to 6 vCPU at 10240 MB; the OpenVINO INT8 path is CPU-bound, so more memory buys more cores and a faster reranker grid
-- **Offline** - the loaders set `HF_HUB_OFFLINE=1` after init, so inference makes no Hub calls
+- **Offline** - each model loader holds the HuggingFace Hub library in offline mode while its model loads (`offline=True`, the default) and puts the earlier mode back afterwards, so a load reads the init mirror or the HuggingFace cache and makes no Hub calls; the loaders do not set the `HF_HUB_OFFLINE` environment variable
 - **IAM** - the execution role needs `s3:GetObject` + `s3:ListBucket` on `arn:aws:s3:::your-bucket` and `arn:aws:s3:::your-bucket/*`
 
 ## Deployment shapes

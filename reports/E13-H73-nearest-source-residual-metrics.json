@@ -1,0 +1,753 @@
+{
+  "id": "E13-H73",
+  "slug": "nearest-source-residual",
+  "model": "opus",
+  "verdict": "Refuted",
+  "verdict_number": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading)",
+  "other_arm_number": "one-sided, pre-pass on (kill-gate AUC 0.7889): deletion ratio 310.4% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 0.9643 (bar >= 0.95, met under the per-trajectory reading; 0.8674 under the pooled-points reading)",
+  "verdict_arm": "os_raw",
+  "environment": {
+    "python": "3.14.8",
+    "docdistance": "1.1.5",
+    "pot": "0.9.6.post1",
+    "numpy": "2.4.6",
+    "uptime_at_start": "11:47:46 up 1 day, 13:08,  0 user,  load average: 43.52, 47.97, 44.20",
+    "blas_threads_for_arms": 1
+  },
+  "fixture": {
+    "n_source_statements": 70,
+    "n_own_statements": 98,
+    "statements_by_document": {
+      "gold": 10,
+      "gold-2": 12,
+      "v1": 11,
+      "v2": 11,
+      "opus": 11,
+      "sonnet": 9,
+      "haiku": 13,
+      "adv1-a": 8,
+      "adv1-b": 9,
+      "adv2-a": 1,
+      "adv2-b": 3
+    },
+    "n_wergeland_fragments": 44,
+    "n_foreign_statements": 38,
+    "min_foreign_words": 5,
+    "fingerprint_matches_e12_h69": true,
+    "n_seeds": 14,
+    "seed": 42,
+    "insert_ks": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "delete_ks": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "n_inserted_documents_scored": 616,
+    "n_deletion_cases": 532,
+    "n_scored_documents": 1166,
+    "pooled_points_spearman_ceiling": 0.98382
+  },
+  "kill_gate": {
+    "bar": 0.9,
+    "killed": false,
+    "n_pairs": 3724,
+    "arms": {
+      "os_pre": {
+        "label": "one-sided, pre-pass on",
+        "auc": 0.788937,
+        "auc_gold_tier_own": 0.822283,
+        "auc_all_fragments": 0.727041,
+        "own_mean": 1.026437,
+        "own_std": 0.202305,
+        "foreign_mean": 1.18435,
+        "foreign_std": 0.075386,
+        "gap_foreign_minus_own": 0.157914,
+        "passed": false
+      },
+      "os_raw": {
+        "label": "one-sided, pre-pass off",
+        "auc": 0.966971,
+        "auc_gold_tier_own": 0.983595,
+        "auc_all_fragments": 0.92602,
+        "own_mean": 0.297468,
+        "own_std": 0.053162,
+        "foreign_mean": 0.417217,
+        "foreign_std": 0.038384,
+        "gap_foreign_minus_own": 0.11975,
+        "passed": true
+      }
+    }
+  },
+  "sanity_check": {
+    "passed": true,
+    "target": {
+      "residual_a": 0.958,
+      "closeness_a": 0.322
+    },
+    "balanced_prepass_on": {
+      "residual_a": 0.958211,
+      "closeness_a": 0.322442
+    },
+    "balanced_prepass_off": {
+      "residual_a": 0.517224,
+      "closeness_a": 0.634268
+    },
+    "nearest_source_mean_cost": {
+      "prepass_on": 0.000152,
+      "prepass_off": 0.000118
+    },
+    "mass_kept_on_own_copy": {
+      "max": 0.142857,
+      "mean": 0.142857,
+      "bound_n_over_m": 0.142857
+    }
+  },
+  "arms": {
+    "os_pre": {
+      "label": "one-sided, pre-pass on",
+      "verbatim": {
+        "residual": 0.000152,
+        "closeness": 0.999892,
+        "min_closeness_7_offsets": 0.99982,
+        "max_closeness_7_offsets": 0.999931
+      },
+      "insertion": {
+        "one_insertion_effect": 0.007492,
+        "mean_residual_by_k": [
+          1.059934,
+          1.067427,
+          1.07644,
+          1.086519,
+          1.095835
+        ],
+        "median_per_document_spearman": 0.964286,
+        "min_per_document_spearman": -0.478571,
+        "per_document_spearman": {
+          "gold": 0.992857,
+          "gold-2": 1.0,
+          "v1": 0.992857,
+          "v2": 0.964286,
+          "opus": 0.921429,
+          "sonnet": 0.985714,
+          "haiku": 1.0,
+          "adv1-a": 0.871429,
+          "adv1-b": 0.771429,
+          "adv2-a": -0.478571,
+          "adv2-b": 0.871429
+        },
+        "monotone_trajectory_share": 0.655844,
+        "median_spearman_pooled_points": 0.867383,
+        "median_spearman_seed_mean_curve": 1.0
+      },
+      "deletion": {
+        "median_abs_delta": 0.023256,
+        "ratio_to_one_insertion": 3.103977,
+        "mean_signed_delta": -0.006297,
+        "mean_signed_delta_share": -0.840411,
+        "ratio_k1_only": 1.762462,
+        "ratio_matched_documents": 2.051242,
+        "n_documents_with_deletion_doses": 10,
+        "median_abs_delta_by_k": [
+          0.013205,
+          0.019082,
+          0.031189,
+          0.036805
+        ],
+        "p90_abs_delta": 0.063941
+      },
+      "bar": {
+        "verbatim_closeness_met": true,
+        "median_per_document_spearman_met": true,
+        "deletion_ratio_met": false,
+        "met": false
+      },
+      "no_bar": {
+        "residual_by_document": {
+          "gold": 0.994889,
+          "gold-2": 0.909716,
+          "v1": 0.936255,
+          "v2": 1.006166,
+          "opus": 1.025848,
+          "sonnet": 0.955999,
+          "haiku": 1.027542,
+          "adv1-a": 1.215653,
+          "adv1-b": 1.216627,
+          "adv2-a": 1.261208,
+          "adv2-b": 1.109375
+        },
+        "tier_mean": {
+          "gold": 0.979488,
+          "adv1": 1.21614,
+          "adv2": 1.185292
+        },
+        "gold_at_or_above_lowest_adv2": 0,
+        "spearman_vs_model_graded_documents": 0.363636,
+        "spearman_vs_ungrounded_mass_statements": 0.397155
+      }
+    },
+    "os_raw": {
+      "label": "one-sided, pre-pass off",
+      "verbatim": {
+        "residual": 0.000118,
+        "closeness": 0.999917,
+        "min_closeness_7_offsets": 0.999867,
+        "max_closeness_7_offsets": 0.999941
+      },
+      "insertion": {
+        "one_insertion_effect": 0.015286,
+        "mean_residual_by_k": [
+          0.302684,
+          0.317971,
+          0.327553,
+          0.335341,
+          0.341595
+        ],
+        "median_per_document_spearman": 1.0,
+        "min_per_document_spearman": 0.921429,
+        "per_document_spearman": {
+          "gold": 1.0,
+          "gold-2": 1.0,
+          "v1": 1.0,
+          "v2": 1.0,
+          "opus": 1.0,
+          "sonnet": 1.0,
+          "haiku": 1.0,
+          "adv1-a": 0.978571,
+          "adv1-b": 0.985714,
+          "adv2-a": 0.921429,
+          "adv2-b": 0.978571
+        },
+        "monotone_trajectory_share": 0.935065,
+        "median_spearman_pooled_points": 0.949202,
+        "median_spearman_seed_mean_curve": 1.0
+      },
+      "deletion": {
+        "median_abs_delta": 0.005211,
+        "ratio_to_one_insertion": 0.340866,
+        "mean_signed_delta": -0.000112,
+        "mean_signed_delta_share": -0.007299,
+        "ratio_k1_only": 0.231179,
+        "ratio_matched_documents": 0.439435,
+        "n_documents_with_deletion_doses": 10,
+        "median_abs_delta_by_k": [
+          0.003534,
+          0.005023,
+          0.007071,
+          0.008625
+        ],
+        "p90_abs_delta": 0.015233
+      },
+      "bar": {
+        "verbatim_closeness_met": true,
+        "median_per_document_spearman_met": true,
+        "deletion_ratio_met": false,
+        "met": false
+      },
+      "no_bar": {
+        "residual_by_document": {
+          "gold": 0.285798,
+          "gold-2": 0.257149,
+          "v1": 0.278864,
+          "v2": 0.285325,
+          "opus": 0.305918,
+          "sonnet": 0.266267,
+          "haiku": 0.300901,
+          "adv1-a": 0.360347,
+          "adv1-b": 0.351928,
+          "adv2-a": 0.316234,
+          "adv2-b": 0.320796
+        },
+        "tier_mean": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "gold_at_or_above_lowest_adv2": 0,
+        "spearman_vs_model_graded_documents": 0.418182,
+        "spearman_vs_ungrounded_mass_statements": 0.633962
+      }
+    },
+    "bal_pre": {
+      "label": "balanced (shipped default), pre-pass on",
+      "verbatim": {
+        "residual": 0.958211,
+        "closeness": 0.322442,
+        "min_closeness_7_offsets": 0.319219,
+        "max_closeness_7_offsets": 0.434458
+      },
+      "insertion": {
+        "one_insertion_effect": -0.013275,
+        "mean_residual_by_k": [
+          1.286533,
+          1.273258,
+          1.268106,
+          1.265278,
+          1.263959
+        ],
+        "median_per_document_spearman": -0.842857,
+        "min_per_document_spearman": -0.971429,
+        "per_document_spearman": {
+          "gold": -0.707143,
+          "gold-2": -0.907143,
+          "v1": -0.135714,
+          "v2": -0.771429,
+          "opus": -0.735714,
+          "sonnet": -0.842857,
+          "haiku": -0.878571,
+          "adv1-a": -0.971429,
+          "adv1-b": -0.964286,
+          "adv2-a": -0.742857,
+          "adv2-b": -0.885714
+        },
+        "monotone_trajectory_share": 0.0,
+        "median_spearman_pooled_points": -0.75896,
+        "median_spearman_seed_mean_curve": -1.0
+      },
+      "deletion": {
+        "median_abs_delta": 0.015477,
+        "ratio_to_one_insertion": null,
+        "mean_signed_delta": 0.017885,
+        "mean_signed_delta_share": null,
+        "ratio_k1_only": null,
+        "ratio_matched_documents": null,
+        "n_documents_with_deletion_doses": 10,
+        "median_abs_delta_by_k": [
+          0.006839,
+          0.014477,
+          0.020121,
+          0.030878
+        ],
+        "p90_abs_delta": 0.041843
+      },
+      "bar": {
+        "verbatim_closeness_met": false,
+        "median_per_document_spearman_met": false,
+        "deletion_ratio_met": false,
+        "met": false
+      },
+      "no_bar": {
+        "residual_by_document": {
+          "gold": 1.234926,
+          "gold-2": 1.209793,
+          "v1": 1.221075,
+          "v2": 1.233704,
+          "opus": 1.24368,
+          "sonnet": 1.248775,
+          "haiku": 1.23095,
+          "adv1-a": 1.378825,
+          "adv1-b": 1.376672,
+          "adv2-a": 1.41004,
+          "adv2-b": 1.363427
+        },
+        "tier_mean": {
+          "gold": 1.231843,
+          "adv1": 1.377749,
+          "adv2": 1.386734
+        },
+        "gold_at_or_above_lowest_adv2": 0,
+        "spearman_vs_model_graded_documents": 0.154545,
+        "spearman_vs_ungrounded_mass_statements": null
+      }
+    },
+    "bal_raw": {
+      "label": "balanced (shipped), pre-pass off",
+      "verbatim": {
+        "residual": 0.517224,
+        "closeness": 0.634268,
+        "min_closeness_7_offsets": 0.606019,
+        "max_closeness_7_offsets": 0.758223
+      },
+      "insertion": {
+        "one_insertion_effect": -0.00441,
+        "mean_residual_by_k": [
+          0.72517,
+          0.720759,
+          0.719275,
+          0.718261,
+          0.718057
+        ],
+        "median_per_document_spearman": -0.257143,
+        "min_per_document_spearman": -1.0,
+        "per_document_spearman": {
+          "gold": 0.007143,
+          "gold-2": -0.214286,
+          "v1": -0.014286,
+          "v2": 0.021429,
+          "opus": -0.342857,
+          "sonnet": -0.671429,
+          "haiku": 0.042857,
+          "adv1-a": -0.907143,
+          "adv1-b": -1.0,
+          "adv2-a": -0.257143,
+          "adv2-b": -0.814286
+        },
+        "monotone_trajectory_share": 0.032468,
+        "median_spearman_pooled_points": -0.325271,
+        "median_spearman_seed_mean_curve": -0.8
+      },
+      "deletion": {
+        "median_abs_delta": 0.005043,
+        "ratio_to_one_insertion": null,
+        "mean_signed_delta": 0.006223,
+        "mean_signed_delta_share": null,
+        "ratio_k1_only": null,
+        "ratio_matched_documents": null,
+        "n_documents_with_deletion_doses": 10,
+        "median_abs_delta_by_k": [
+          0.002171,
+          0.004818,
+          0.007022,
+          0.009621
+        ],
+        "p90_abs_delta": 0.014021
+      },
+      "bar": {
+        "verbatim_closeness_met": false,
+        "median_per_document_spearman_met": false,
+        "deletion_ratio_met": false,
+        "met": false
+      },
+      "no_bar": {
+        "residual_by_document": {
+          "gold": 0.703115,
+          "gold-2": 0.694631,
+          "v1": 0.705922,
+          "v2": 0.702919,
+          "opus": 0.705342,
+          "sonnet": 0.709216,
+          "haiku": 0.696954,
+          "adv1-a": 0.767467,
+          "adv1-b": 0.773974,
+          "adv2-a": 0.763225,
+          "adv2-b": 0.754103
+        },
+        "tier_mean": {
+          "gold": 0.702585,
+          "adv1": 0.770721,
+          "adv2": 0.758664
+        },
+        "gold_at_or_above_lowest_adv2": 0,
+        "spearman_vs_model_graded_documents": 0.318182,
+        "spearman_vs_ungrounded_mass_statements": null
+      }
+    }
+  },
+  "model_graded_residual": {
+    "gold": 0.001659,
+    "gold-2": 0.006295,
+    "v1": 0.097188,
+    "v2": 0.03715,
+    "opus": 0.045603,
+    "sonnet": 0.007152,
+    "haiku": 0.117694,
+    "adv1-a": 0.338953,
+    "adv1-b": 0.246398,
+    "adv2-a": 0.007439,
+    "adv2-b": 0.001609
+  },
+  "guardrails": {
+    "hold": true,
+    "readings": {
+      "V before the arms": {
+        "reading": "0/24",
+        "ok": true
+      },
+      "V after the arms": {
+        "reading": "0/24",
+        "ok": true
+      },
+      "smd, 10 anchor pairs, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "order_gap, 10 anchor pairs, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "source-conditioned, 3 saved pairs x 5 fields, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "smd == saved 1.1.5 baseline (np.array_equal)": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "order_gap == saved 1.1.5 baseline (np.array_equal)": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "source-conditioned == saved 1.1.5 baseline (np.array_equal)": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "pre-pass replica == shipped residual_a, exact, scored documents": {
+        "reading": "1166/1166",
+        "ok": true
+      },
+      "one-sided > balanced (lower-bound violations), scored documents": {
+        "reading": "0/1166",
+        "ok": true
+      },
+      "src/ files whose bytes changed during the run": {
+        "reading": "0/15",
+        "ok": true
+      },
+      "tests/ files whose bytes changed during the run": {
+        "reading": "0/9",
+        "ok": true
+      },
+      "git status --porcelain -- src tests is empty": {
+        "reading": "True",
+        "ok": true
+      }
+    },
+    "panel_before": {
+      "V": 0.0,
+      "margin_pts": 4.708317,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282
+    },
+    "panel_after": {
+      "V": 0.0,
+      "margin_pts": 4.708317,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282
+    },
+    "files_changed_during_run": {
+      "src": [],
+      "tests": [],
+      "docs": []
+    },
+    "blas_1_thread_equals_default": {
+      "bal_pre": true,
+      "os_pre": true
+    }
+  },
+  "prediction_check": {
+    "os_pre": {
+      "verbatim extract 0.322 → >= 0.99": {
+        "magnitude_held": true,
+        "direction_matched": true
+      },
+      "Spearman(insertion dose, residual) >= 0.95": {
+        "magnitude_held": true,
+        "direction_matched": true
+      },
+      "deletions move it by under 10% of one insertion": {
+        "magnitude_held": false,
+        "direction_matched": null
+      }
+    },
+    "os_raw": {
+      "verbatim extract 0.322 → >= 0.99": {
+        "magnitude_held": true,
+        "direction_matched": true
+      },
+      "Spearman(insertion dose, residual) >= 0.95": {
+        "magnitude_held": true,
+        "direction_matched": true
+      },
+      "deletions move it by under 10% of one insertion": {
+        "magnitude_held": false,
+        "direction_matched": null
+      }
+    }
+  },
+  "result": {
+    "id": "E13-H73",
+    "slug": "nearest-source-residual",
+    "model": "opus",
+    "verdict": "Refuted",
+    "verdict_number": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading)",
+    "kill_gate": {
+      "ran": true,
+      "passed": true,
+      "reading": "statement-level AUC of nearest-source cost, own vs foreign, one-sided, pre-pass on: 0.7889 (fail); one-sided, pre-pass off: 0.9670 (pass) (bar >= 0.9; 98 own x 38 foreign = 3724 pairs). The record names no pre-pass setting for the gate; the notebook's rule kills only when both settings read below the bar; settings that pass: one-sided, pre-pass off"
+    },
+    "sanity_check": {
+      "required": true,
+      "passed": true,
+      "reading": "DEF-TRANS-8 on source[0::7][:10], shipped compute_source_conditioned, pre-pass on: residual_a 0.958 (registered 0.958), closeness_a 0.322 (registered 0.322); pre-pass off: residual_a 0.517, closeness_a 0.634"
+    },
+    "prediction_check": {
+      "predicted": "verbatim extract 0.322 → >= 0.99; Spearman(insertion dose, residual) >= 0.95; deletions move it by under 10% of one insertion",
+      "observed": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading) | one-sided, pre-pass on (kill-gate AUC 0.7889): deletion ratio 310.4% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 0.9643 (bar >= 0.95, met under the per-trajectory reading; 0.8674 under the pooled-points reading) | direction on the verdict arm: (i) matched; (ii) matched; (iii) not defined by the record; one-sided, pre-pass off: median |delta| under deletions 0.005211 against 0.005043 for balanced (shipped), pre-pass off, not below the baseline | direction matched on all three predicted effects: False; the registered magnitude of all three held: False",
+      "direction_matched": false
+    },
+    "acceptance": {
+      "bar": "PASS iff verbatim-extract closeness >= 0.99 AND median per-document Spearman(k foreign insertions, residual) >= 0.95 over k in 0..4 AND median |delta residual| under k in 1..4 deletions <= 10% of the mean one-insertion effect",
+      "met": false,
+      "readings": {
+        "os_pre": {
+          "label": "one-sided, pre-pass on",
+          "verbatim_closeness": 0.999892,
+          "median_per_document_spearman": 0.964286,
+          "median_spearman_pooled_points_not_the_bar_rule": 0.867383,
+          "deletion_ratio": 3.103977,
+          "met": false
+        },
+        "os_raw": {
+          "label": "one-sided, pre-pass off",
+          "verbatim_closeness": 0.999917,
+          "median_per_document_spearman": 1.0,
+          "median_spearman_pooled_points_not_the_bar_rule": 0.949202,
+          "deletion_ratio": 0.340866,
+          "met": false
+        },
+        "bal_pre": {
+          "label": "balanced (shipped default), pre-pass on",
+          "verbatim_closeness": 0.322442,
+          "median_per_document_spearman": -0.842857,
+          "median_spearman_pooled_points_not_the_bar_rule": -0.75896,
+          "deletion_ratio": null,
+          "met": false
+        },
+        "bal_raw": {
+          "label": "balanced (shipped), pre-pass off",
+          "verbatim_closeness": 0.634268,
+          "median_per_document_spearman": -0.257143,
+          "median_spearman_pooled_points_not_the_bar_rule": -0.325271,
+          "deletion_ratio": null,
+          "met": false
+        }
+      }
+    },
+    "guardrails": {
+      "V": "0/24",
+      "src_untouched": true,
+      "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the one-sided residual is a score and a lower bound of the balanced residual (0 violations in 1166 scored documents), not a metric",
+      "notes": "pre-pass replica equals the shipped residual_a exactly on 1166/1166 scored documents; BLAS limited to 1 thread for the arms, readings identical to the default thread count: balanced True, one-sided True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+    },
+    "key_numbers": {
+      "verdict_arm": "os_raw",
+      "gate_auc": {
+        "os_pre": 0.788937,
+        "os_raw": 0.966971
+      },
+      "def_trans_8": {
+        "residual_a": 0.958211,
+        "closeness_a": 0.322442
+      },
+      "verbatim_closeness": {
+        "os_pre": 0.999892,
+        "os_raw": 0.999917,
+        "bal_pre": 0.322442,
+        "bal_raw": 0.634268
+      },
+      "median_per_document_spearman": {
+        "os_pre": 0.964286,
+        "os_raw": 1.0,
+        "bal_pre": -0.842857,
+        "bal_raw": -0.257143
+      },
+      "median_spearman_pooled_points": {
+        "os_pre": 0.867383,
+        "os_raw": 0.949202,
+        "bal_pre": -0.75896,
+        "bal_raw": -0.325271
+      },
+      "pooled_points_spearman_ceiling": 0.98382,
+      "deletion_ratio": {
+        "os_pre": 3.103977,
+        "os_raw": 0.340866,
+        "bal_pre": null,
+        "bal_raw": null
+      },
+      "deletion_ratio_k1_only": {
+        "os_pre": 1.762462,
+        "os_raw": 0.231179,
+        "bal_pre": null,
+        "bal_raw": null
+      },
+      "deletion_ratio_matched_documents": {
+        "os_pre": 2.051242,
+        "os_raw": 0.439435,
+        "bal_pre": null,
+        "bal_raw": null
+      },
+      "p90_abs_delta_deletion": {
+        "os_pre": 0.063941,
+        "os_raw": 0.015233,
+        "bal_pre": 0.041843,
+        "bal_raw": 0.014021
+      },
+      "direction_by_effect": {
+        "verbatim extract 0.322 → >= 0.99": true,
+        "Spearman(insertion dose, residual) >= 0.95": true,
+        "deletions move it by under 10% of one insertion": null
+      },
+      "one_insertion_effect": {
+        "os_pre": 0.007492,
+        "os_raw": 0.015286,
+        "bal_pre": -0.013275,
+        "bal_raw": -0.00441
+      },
+      "median_abs_delta_deletion": {
+        "os_pre": 0.023256,
+        "os_raw": 0.005211,
+        "bal_pre": 0.015477,
+        "bal_raw": 0.005043
+      },
+      "mean_signed_delta_deletion": {
+        "os_pre": -0.006297,
+        "os_raw": -0.000112,
+        "bal_pre": 0.017885,
+        "bal_raw": 0.006223
+      },
+      "mean_signed_delta_share": {
+        "os_pre": -0.840411,
+        "os_raw": -0.007299,
+        "bal_pre": null,
+        "bal_raw": null
+      },
+      "min_per_document_spearman": {
+        "os_pre": -0.478571,
+        "os_raw": 0.921429,
+        "bal_pre": -0.971429,
+        "bal_raw": -1.0
+      },
+      "tier_mean": {
+        "os_pre": {
+          "gold": 0.979488,
+          "adv1": 1.21614,
+          "adv2": 1.185292
+        },
+        "os_raw": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "bal_pre": {
+          "gold": 1.231843,
+          "adv1": 1.377749,
+          "adv2": 1.386734
+        },
+        "bal_raw": {
+          "gold": 0.702585,
+          "adv1": 0.770721,
+          "adv2": 0.758664
+        }
+      },
+      "spearman_vs_model_graded_documents": {
+        "os_pre": 0.363636,
+        "os_raw": 0.418182,
+        "bal_pre": 0.154545,
+        "bal_raw": 0.318182
+      }
+    },
+    "artifacts": {
+      "notebook": "notebooks/experiments/E13-H73-kj-nearest-source-residual.ipynb",
+      "metrics_json": "reports/E13-H73-nearest-source-residual-metrics.json",
+      "log": "logs/E13-H73-nearest-source-residual.log"
+    }
+  }
+}

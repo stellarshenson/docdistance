@@ -6,42 +6,42 @@
       "mono_rho": 1.0,
       "mono_inv": 0,
       "triangle_viol": 0.0,
-      "range_ratio": 2.5272821078007697,
+      "range_ratio": 2.526932326264801,
       "range_by_lambda": {
-        "0.0": -4.104608690898905e-06,
-        "0.1": 1.662674626403923,
-        "0.25": 2.5272821078007697,
-        "0.5": 3.142830657086335
+        "0.0": -1.812028081324579e-05,
+        "0.1": 1.6622807165637554,
+        "0.25": 2.526932326264801,
+        "0.5": 3.1424351682374714
       },
-      "range_footrule": 5.799313176517116,
-      "range_offdiag": 6.681964718678278,
+      "range_footrule": 5.79237487217464,
+      "range_offdiag": 6.678716270103275,
       "lam_clearing_both_e07": []
     },
     "E08-H45": {
       "alpha_sweep": 0.5,
       "alpha_curve": {
-        "0.0": 0.00017498482999430502,
-        "0.25": 0.011342097017108786,
-        "0.5": 0.022509209207842832,
-        "0.75": 0.029169181859039953,
+        "0.0": 0.00018396366228053406,
+        "0.25": 0.011348831141398084,
+        "0.5": 0.022513698623985952,
+        "0.75": 0.029167858732416327,
         "1.0": 3.122502256758253e-17
       },
       "alpha_star": 0.75,
       "mono_rho": 0.3714285714285715,
       "mono_inv": 2,
       "triangle_viol": 0.0,
-      "range_ratio": 0.16254292037655652,
+      "range_ratio": 0.16252684320318372,
       "pure_shift_fgw": 8.326672684688674e-18,
       "pure_shift_paug": 0.1454516820570331,
       "peak_bin": 3,
       "collapse_at_full_scramble": true,
       "fgw_per_bin_sweep_alpha": [
-        0.003577517073043685,
-        0.03105893774449634,
-        0.04583955461413351,
-        0.05507736314287991,
-        0.05498954786269776,
-        0.023810302326992883
+        0.0035827843842029003,
+        0.03106394575731686,
+        0.0458443681532,
+        0.05508198220819238,
+        0.05499403727884089,
+        0.023814791743136002
       ]
     },
     "E08-H46": {
@@ -49,49 +49,49 @@
       "mono_inv": 0,
       "triangle_viol_equal_len": 0.0,
       "range_ratio": 5.39288021101146,
-      "range_h1": 2.5272821078007697,
-      "range_h2": 0.16254292037655652,
+      "range_h1": 2.526932326264801,
+      "range_h2": 0.16252684320318372,
       "narrower_than_h1": false
     },
     "E08-H47": {
-      "entropy_median_raw": 0.12279516347753033,
+      "entropy_median_raw": 0.12164834154563078,
       "entropy_median_offline": 0.12040178366684565,
-      "entropy_median_perpair": 0.12370503680284797,
-      "smd_fidelity_pearson": 0.9772214927152599,
-      "naive_margin_raw": 0.09268472906403942,
-      "naive_margin_offline": 0.0725893345844085,
-      "dynrange_raw": 0.14292730679508522,
-      "dynrange_offline": 0.14721242777641017
+      "entropy_median_perpair": 0.123705036802848,
+      "smd_fidelity_pearson": 0.9772028787257595,
+      "naive_margin_raw": 0.09079638752052546,
+      "naive_margin_offline": 0.08181210415200564,
+      "dynrange_raw": 0.1430985100019366,
+      "dynrange_offline": 0.1494244959334034
     },
     "E08-H48": {
       "mono_rho_weighted": 1.0,
       "mono_inv_weighted": 0,
-      "triangle_viol": 0.06,
-      "range_ratio_weighted": 4.130051414484496,
-      "range_ratio_unweighted": 7.199629091568871,
-      "range_offdiag": 6.681964718678278
+      "triangle_viol": 0.06666666666666667,
+      "range_ratio_weighted": 4.13203268922938,
+      "range_ratio_unweighted": 7.200870942271785,
+      "range_offdiag": 6.678716270103275
     },
     "range_ratios": {
-      "E08-H44 posaug (lam=.25)": 2.5272821078007697,
-      "E08-H45 positional FGW": 0.16254292037655652,
+      "E08-H44 posaug (lam=.25)": 2.526932326264801,
+      "E08-H45 positional FGW": 0.16252684320318372,
       "E08-H46 opt-assign footrule": 5.39288021101146,
-      "E08-H48 anti-mass weighted": 4.130051414484496,
-      "E08-H48 anti-mass unweighted": 7.199629091568871,
-      "E07 tau footrule": 5.799313176517116,
-      "E07 off-diagonal mass": 6.681964718678278
+      "E08-H48 anti-mass weighted": 4.13203268922938,
+      "E08-H48 anti-mass unweighted": 7.200870942271785,
+      "E07 tau footrule": 5.79237487217464,
+      "E07 off-diagonal mass": 6.678716270103275
     },
     "floor_sd": {
-      "paug0.25": 0.078457300257492,
-      "fgw": 0.0670903906592568,
+      "paug0.25": 0.07845832693182782,
+      "fgw": 0.06709326661873617,
       "oaf": 0.15504135949936776,
-      "antiW": 0.035021260642404566,
-      "anti": 0.04724541606493742,
-      "footrule": 0.14417560391766848,
-      "offdiag": 0.12224764859954014
+      "antiW": 0.03500446824397374,
+      "anti": 0.047237268195933615,
+      "footrule": 0.14434830237742347,
+      "offdiag": 0.12230710840945472
     },
     "adjacent_k1": {
-      "paug0.25": 0.025511080522898195,
-      "fgw": 0.012905234299870703,
+      "paug0.25": 0.02552003272501813,
+      "fgw": 0.012910334919240754,
       "oaf": 0.09906381600259151,
       "antiW": 0.012904661502492244,
       "anti": 0.04340983444112458,
@@ -114,11 +114,11 @@
     },
     "E08-H47": {
       "verdict": "Kept",
-      "detail": "row-entropy raw 0.123 -> offline 0.120 (perpair 0.124); sharpened; SMD fidelity Pearson 0.98 (held); naive margin +0.093 -> +0.073"
+      "detail": "row-entropy raw 0.122 -> offline 0.120 (perpair 0.124); sharpened; SMD fidelity Pearson 0.98 (held); naive margin +0.091 -> +0.082"
     },
     "E08-H48": {
       "verdict": "Reported",
-      "detail": "weighted Spearman 1.00/0 inv; triangle 6.0% vs tau-footrule's 3.5%; range ratio weighted 4.1 / unweighted 7.2 vs off-diag 6.7, H1 2.5, H2 0.2"
+      "detail": "weighted Spearman 1.00/0 inv; triangle 6.7% vs tau-footrule's 3.5%; range ratio weighted 4.1 / unweighted 7.2 vs off-diag 6.7, H1 2.5, H2 0.2"
     }
   },
   "config": {
@@ -152,7 +152,7 @@
     "alpha_sweep": 0.5,
     "lam_head": 0.25,
     "chance_footrule": 0.6612037037037036,
-    "device": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "device": "NVIDIA RTX PRO 4000 Blackwell",
     "regime": "byte-identical reorder upper bound + cross-summary diffuse (paraphrase-floor proxy)"
   }
 }

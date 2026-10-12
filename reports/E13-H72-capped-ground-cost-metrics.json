@@ -1,0 +1,885 @@
+{
+ "id": "E13-H72",
+ "slug": "capped-ground-cost",
+ "date": "2026-10-09",
+ "versions": {
+  "docdistance": "1.1.5",
+  "POT": "0.9.6.post1",
+  "openvino": "2026.2.1",
+  "numpy": "2.4.6"
+ },
+ "config": {
+  "cap_registered": 0.6,
+  "caps_unbarred": [
+   0.45,
+   0.75
+  ],
+  "gate_cost": 0.6,
+  "gate_min_share": 0.5,
+  "sanity_row": {
+   "V": 0,
+   "margin_pts": 4.71,
+   "dprime": 4.68
+  },
+  "sanity_rel_tol": 0.05,
+  "bar": {
+   "V": 0,
+   "margin_pts": 4.61,
+   "triangle_violations": 0,
+   "cv_fall": 0.5
+  },
+  "float_tol": 1e-09,
+  "min_words_unbarred_reading": 5,
+  "insert_position": "n // 2",
+  "cv": "population std / mean"
+ },
+ "fixture": {
+  "panel_statements": {
+   "gold": 10,
+   "gold-2": 12,
+   "v1": 11,
+   "v2": 11,
+   "opus": 11,
+   "sonnet": 9,
+   "haiku": 13,
+   "adv1-a": 8,
+   "adv1-b": 9,
+   "adv2-a": 1,
+   "adv2-b": 3
+  },
+  "host_statements": {
+   "gold": 11,
+   "gold-2": 13,
+   "v1": 12,
+   "v2": 12,
+   "opus": 13,
+   "sonnet": 11,
+   "haiku": 14,
+   "werg-a": 11,
+   "werg-b": 13,
+   "werg-c": 14
+  },
+  "pool_statements": {
+   "wergeland": 52,
+   "ibm": 70
+  },
+  "pool_statements_min_words": {
+   "wergeland": 42,
+   "ibm": 42
+  },
+  "n_insertions": 574
+ },
+ "kill_gate": {
+  "readings": {
+   "ibm host, wergeland statement": {
+    "n": 364,
+    "n_above": 70,
+    "share": 0.19230769230769232,
+    "min": 0.3983481824398041,
+    "median": 0.4801982492208481,
+    "max": 1.173882007598877
+   },
+   "wergeland host, ibm statement": {
+    "n": 210,
+    "n_above": 102,
+    "share": 0.4857142857142857,
+    "min": 0.3449908196926117,
+    "median": 0.5865806043148041,
+    "max": 1.2177441120147705
+   },
+   "all insertions (the gate reading)": {
+    "n": 574,
+    "n_above": 172,
+    "share": 0.29965156794425085,
+    "min": 0.3449908196926117,
+    "median": 0.4894038140773773,
+    "max": 1.2177441120147705
+   },
+   "statements of 5+ words (no bar)": {
+    "n": 420,
+    "n_above": 22,
+    "share": 0.05238095238095238,
+    "min": 0.3449908196926117,
+    "median": 0.4608146995306015,
+    "max": 0.6943675875663757
+   },
+   "statements under 5 words (no bar)": {
+    "n": 154,
+    "n_above": 150,
+    "share": 0.974025974025974,
+    "min": 0.5847271680831909,
+    "median": 1.1250650882720947,
+    "max": 1.2177441120147705
+   },
+   "ibm hosts segmented on the shipped path (no bar)": {
+    "n": 574,
+    "n_above": 186,
+    "share": 0.3240418118466899,
+    "min": 0.3449908196926117,
+    "median": 0.49297773838043213,
+    "max": 1.257690191268921
+   },
+   "unique statements, above in at least one host (no bar)": {
+    "n": 122,
+    "n_above": 48,
+    "share": 0.39344262295081966,
+    "min": 0.38594579696655273,
+    "median": 0.5100443363189697,
+    "max": 1.2177441120147705
+   }
+  },
+  "share": 0.29965156794425085,
+  "passed": false,
+  "statements_under_min_words": {
+   "wergeland": [
+    "##",
+    "## Bias and data",
+    "## Future",
+    "-->",
+    "AI in Society",
+    "Faithful to the",
+    "Provenance: data/external/FINAL-Impact-of-AI-on-society_origin.md.",
+    "Teaching the topic",
+    "source text."
+   ],
+   "ibm": [
+    "##",
+    "## Key findings",
+    "## Methodology",
+    "###",
+    "-",
+    "About IBM",
+    "Overview",
+    "Source: IBM.",
+    "Trustworthy and governed AI",
+    "Workforce impact"
+   ]
+  }
+ },
+ "sanity_check": {
+  "measured": {
+   "V": 0,
+   "margin_pts": 4.708317407970153,
+   "dprime": 4.683998012459891,
+   "R": 1.669675503342983,
+   "DR": 0.08728241853520123
+  },
+  "registered": {
+   "V": 0,
+   "margin_pts": 4.71,
+   "dprime": 4.68
+  },
+  "relative_deviation": {
+   "margin_pts": -0.00035723822289747506,
+   "dprime": 0.00085427616664339
+  },
+  "passed": true
+ },
+ "panel": {
+  "shipped": {
+   "V": 0,
+   "margin_pts": 4.708317407970153,
+   "dprime": 4.683998012459891,
+   "R": 1.669675503342983,
+   "DR": 0.08728241853520123,
+   "max_abs_delta_anchor": 0.0,
+   "max_abs_delta_pairs": 0.0,
+   "pairs_changed": 0,
+   "plans_above_cap": 0,
+   "dist_to_anchor": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.25820024284449494,
+    "v2": 0.2081689582285684,
+    "opus": 0.2365863060409373,
+    "sonnet": 0.25371288773086337,
+    "haiku": 0.2907061354472087,
+    "adv1-a": 0.45690302252769466,
+    "adv1-b": 0.44583740731080373,
+    "adv2-a": 0.3805512189865113,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_anchor": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8174248573806443,
+    "v2": 0.8528023180040402,
+    "opus": 0.8327082186625774,
+    "sonnet": 0.8205978966110853,
+    "haiku": 0.7944397202927438,
+    "adv1-a": 0.6769207744260373,
+    "adv1-b": 0.6847453459839019,
+    "adv2-a": 0.7309096524658311,
+    "adv2-b": 0.7473565462130423
+   }
+  },
+  "c=0.45": {
+   "V": 0,
+   "margin_pts": 4.718174145538456,
+   "dprime": 5.5915434490982765,
+   "R": 1.6035228399636245,
+   "DR": 0.07709010220574025,
+   "max_abs_delta_anchor": 0.03469089493155475,
+   "max_abs_delta_pairs": 0.03498061983422801,
+   "pairs_changed": 39,
+   "plans_above_cap": 36,
+   "dist_to_anchor": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.2554578372023322,
+    "v2": 0.2081689582285684,
+    "opus": 0.2365863060409373,
+    "sonnet": 0.25301144901249145,
+    "haiku": 0.29056674012771017,
+    "adv1-a": 0.4222121275961399,
+    "adv1-b": 0.4157285541296005,
+    "adv2-a": 0.3765203952789307,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_anchor": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8193640310069819,
+    "v2": 0.8528023180040402,
+    "opus": 0.8327082186625774,
+    "sonnet": 0.8210938886854329,
+    "haiku": 0.7945382876684268,
+    "adv1-a": 0.7014509414775696,
+    "adv1-b": 0.7060355202420808,
+    "adv2-a": 0.7337598752432288,
+    "adv2-b": 0.7473565462130423
+   }
+  },
+  "c=0.60": {
+   "V": 0,
+   "margin_pts": 4.708317407970153,
+   "dprime": 4.69475926853126,
+   "R": 1.6689125109339338,
+   "DR": 0.08715890420957144,
+   "max_abs_delta_anchor": 0.0006472967565059329,
+   "max_abs_delta_pairs": 0.00253125246275554,
+   "pairs_changed": 8,
+   "plans_above_cap": 0,
+   "dist_to_anchor": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.25820024284449494,
+    "v2": 0.2081689582285684,
+    "opus": 0.2365863060409373,
+    "sonnet": 0.25371288773086337,
+    "haiku": 0.2907061354472087,
+    "adv1-a": 0.4562557257711887,
+    "adv1-b": 0.44573500586880577,
+    "adv2-a": 0.3805512189865113,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_anchor": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8174248573806443,
+    "v2": 0.8528023180040402,
+    "opus": 0.8327082186625774,
+    "sonnet": 0.8205978966110853,
+    "haiku": 0.7944397202927438,
+    "adv1-a": 0.6773784823520026,
+    "adv1-b": 0.6848177547379419,
+    "adv2-a": 0.7309096524658311,
+    "adv2-b": 0.7473565462130423
+   }
+  },
+  "c=0.75": {
+   "V": 0,
+   "margin_pts": 4.708317407970153,
+   "dprime": 4.683998012459891,
+   "R": 1.669675503342983,
+   "DR": 0.08728241853520123,
+   "max_abs_delta_anchor": 0.0,
+   "max_abs_delta_pairs": 0.0,
+   "pairs_changed": 0,
+   "plans_above_cap": 0,
+   "dist_to_anchor": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.25820024284449494,
+    "v2": 0.2081689582285684,
+    "opus": 0.2365863060409373,
+    "sonnet": 0.25371288773086337,
+    "haiku": 0.2907061354472087,
+    "adv1-a": 0.45690302252769466,
+    "adv1-b": 0.44583740731080373,
+    "adv2-a": 0.3805512189865113,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_anchor": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8174248573806443,
+    "v2": 0.8528023180040402,
+    "opus": 0.8327082186625774,
+    "sonnet": 0.8205978966110853,
+    "haiku": 0.7944397202927438,
+    "adv1-a": 0.6769207744260373,
+    "adv1-b": 0.6847453459839019,
+    "adv2-a": 0.7309096524658311,
+    "adv2-b": 0.7473565462130423
+   }
+  }
+ },
+ "shipped_plan_max_arc": 0.5917850732803345,
+ "triangle": {
+  "shipped": {
+   "n": 495,
+   "violations": 0,
+   "min_slack": 0.1771487054676779
+  },
+  "c=0.45": {
+   "n": 495,
+   "violations": 0,
+   "min_slack": 0.17467079768751076
+  },
+  "c=0.60": {
+   "n": 495,
+   "violations": 0,
+   "min_slack": 0.17696421325310158
+  },
+  "c=0.75": {
+   "n": 495,
+   "violations": 0,
+   "min_slack": 0.1771487054676779
+  }
+ },
+ "insertion": {
+  "cv": {
+   "pooled, all insertions (registered)": {
+    "shipped": 0.3957068141545723,
+    "c=0.45": 0.08363795024304067,
+    "c=0.60": 0.11890592130571107,
+    "c=0.75": 0.1901649432178505
+   },
+   "ibm host, wergeland statement": {
+    "shipped": 0.32399525229865755,
+    "c=0.45": 0.07592959577840391,
+    "c=0.60": 0.10522883491327542,
+    "c=0.75": 0.1710965562176183
+   },
+   "wergeland host, ibm statement": {
+    "shipped": 0.43631762299650817,
+    "c=0.45": 0.09327191480802749,
+    "c=0.60": 0.13959163564460966,
+    "c=0.75": 0.2156102897119892
+   },
+   "pooled, increment x (n + 1)": {
+    "shipped": 0.38988753763176165,
+    "c=0.45": 0.0092783937583479,
+    "c=0.60": 0.0870782626920938,
+    "c=0.75": 0.17331600772689795
+   },
+   "pooled, statements of 5+ words": {
+    "shipped": 0.13280066206582306,
+    "c=0.45": 0.08236648518619664,
+    "c=0.60": 0.11212551764206098,
+    "c=0.75": 0.1326640580211377
+   },
+   "statements of 5+ words, increment x (n + 1)": {
+    "shipped": 0.10617498006741104,
+    "c=0.45": 0.010547118495536308,
+    "c=0.60": 0.07798514518576759,
+    "c=0.75": 0.1059751311713408
+   },
+   "pooled, statements under 5 words": {
+    "shipped": 0.19740846962578865,
+    "c=0.45": 0.08701089601604826,
+    "c=0.60": 0.08723116269698133,
+    "c=0.75": 0.08804417713926939
+   },
+   "median of the 10 per-host CVs": {
+    "shipped": 0.31618852507265005,
+    "c=0.45": 0.004091024473305534,
+    "c=0.60": 0.0745091896275337,
+    "c=0.75": 0.1563266564081733
+   }
+  },
+  "cv_count": {
+   "pooled, all insertions (registered)": 574,
+   "ibm host, wergeland statement": 364,
+   "wergeland host, ibm statement": 210,
+   "pooled, increment x (n + 1)": 574,
+   "pooled, statements of 5+ words": 420,
+   "statements of 5+ words, increment x (n + 1)": 420,
+   "pooled, statements under 5 words": 154,
+   "median of the 10 per-host CVs": 10
+  },
+  "cv_fall": {
+   "pooled, all insertions (registered)": {
+    "shipped": 0.0,
+    "c=0.45": 0.7886365681578338,
+    "c=0.60": 0.6995100487219216,
+    "c=0.75": 0.5194296979086955
+   },
+   "ibm host, wergeland statement": {
+    "shipped": 0.0,
+    "c=0.45": 0.7656459616623879,
+    "c=0.60": 0.6752148861234674,
+    "c=0.75": 0.47191647098611755
+   },
+   "wergeland host, ibm statement": {
+    "shipped": 0.0,
+    "c=0.45": 0.7862293203573536,
+    "c=0.60": 0.6800687657630395,
+    "c=0.75": 0.5058409783422506
+   },
+   "pooled, increment x (n + 1)": {
+    "shipped": 0.0,
+    "c=0.45": 0.9762023843729237,
+    "c=0.60": 0.776657999327137,
+    "c=0.75": 0.5554717937904692
+   },
+   "pooled, statements of 5+ words": {
+    "shipped": 0.0,
+    "c=0.45": 0.379773534974009,
+    "c=0.60": 0.15568555233191816,
+    "c=0.75": 0.0010286397865820751
+   },
+   "statements of 5+ words, increment x (n + 1)": {
+    "shipped": 0.0,
+    "c=0.45": 0.9006628634275242,
+    "c=0.60": 0.26550355708798423,
+    "c=0.75": 0.001882259793628882
+   },
+   "pooled, statements under 5 words": {
+    "shipped": 0.0,
+    "c=0.45": 0.5592342305221867,
+    "c=0.60": 0.5581184390804588,
+    "c=0.75": 0.5540000015897613
+   },
+   "median of the 10 per-host CVs": {
+    "shipped": 0.0,
+    "c=0.45": 0.9870614391449989,
+    "c=0.60": 0.7643520124254546,
+    "c=0.75": 0.5055903550824483
+   }
+  },
+  "cv_host_length_alone": {
+   "pooled, all insertions (registered)": 0.08466921531481233,
+   "ibm host, wergeland statement": 0.07694510759057532,
+   "wergeland host, ibm statement": 0.09496517060567577,
+   "pooled, increment x (n + 1)": 0.0,
+   "pooled, statements of 5+ words": 0.08338819972600495,
+   "statements of 5+ words, increment x (n + 1)": 0.0,
+   "pooled, statements under 5 words": 0.0879452399889908,
+   "median of the 10 per-host CVs": 0.0
+  },
+  "cv_fall_to_host_length_alone": {
+   "pooled, all insertions (registered)": 0.7860304339319804,
+   "ibm host, wergeland statement": 0.7625116200170501,
+   "wergeland host, ibm statement": 0.7823485332692239,
+   "pooled, increment x (n + 1)": 1.0,
+   "pooled, statements of 5+ words": 0.37207993974703735,
+   "statements of 5+ words, increment x (n + 1)": 1.0,
+   "pooled, statements under 5 words": 0.5545011814553777,
+   "median of the 10 per-host CVs": 1.0
+  },
+  "mean_cost_to_host_statements": {
+   "statements under 5 words": {
+    "shipped": {
+     "mean": 1.0970333474231981,
+     "min": 0.6884022042954299,
+     "max": 1.2841138260749476
+    },
+    "c=0.60": {
+     "mean": 0.6026130034289183,
+     "min": 0.6004484187472948,
+     "max": 0.604041975457219
+    }
+   },
+   "statements of 5+ words": {
+    "shipped": {
+     "mean": 0.5440438252228718,
+     "min": 0.41884322458909895,
+     "max": 0.7269597928568076
+    },
+    "c=0.60": {
+     "mean": 0.529860418740741,
+     "min": 0.41884322458909895,
+     "max": 0.604041975457219
+    }
+   }
+  },
+  "pooled": {
+   "shipped": {
+    "mean": 0.05186686146862733,
+    "std": 0.020524070511947063,
+    "cv": 0.3957068141545723,
+    "cv_fall": 0.0,
+    "std_fall": 0.0,
+    "insertions_changed": 0
+   },
+   "c=0.45": {
+    "mean": 0.03383857249347459,
+    "std": 0.0028301888425047526,
+    "cv": 0.08363795024304067,
+    "cv_fall": 0.7886365681578338,
+    "std_fall": 0.8621039213026822,
+    "insertions_changed": 574
+   },
+   "c=0.60": {
+    "mean": 0.041200985608701564,
+    "std": 0.004899041152506002,
+    "cv": 0.11890592130571107,
+    "cv_fall": 0.6995100487219216,
+    "std_fall": 0.7613026543806566,
+    "insertions_changed": 511
+   },
+   "c=0.75": {
+    "mean": 0.044930092258719564,
+    "std": 0.00854412844315219,
+    "cv": 0.1901649432178505,
+    "cv_fall": 0.5194296979086955,
+    "std_fall": 0.5837020517845789,
+    "insertions_changed": 165
+   }
+  },
+  "per_host": {
+   "gold": {
+    "n": 11,
+    "insertions": 52,
+    "share_above_gate": 0.21153846153846154,
+    "mean": {
+     "shipped": 0.052732397461136886,
+     "c=0.45": 0.03755970929223135,
+     "c=0.60": 0.04555109786696021,
+     "c=0.75": 0.04885380886179516
+    },
+    "cv": {
+     "shipped": 0.3118384026043815,
+     "c=0.45": 0.0044824818288655656,
+     "c=0.60": 0.07062368564290619,
+     "c=0.75": 0.14978078804516945
+    }
+   },
+   "gold-2": {
+    "n": 13,
+    "insertions": 52,
+    "share_above_gate": 0.17307692307692307,
+    "mean": {
+     "shipped": 0.04500475328990621,
+     "c=0.45": 0.032272728702712944,
+     "c=0.60": 0.03892127235800587,
+     "c=0.75": 0.04168543949772348
+    },
+    "cv": {
+     "shipped": 0.31640030879598346,
+     "c=0.45": 0.003784342755674608,
+     "c=0.60": 0.07370128232756043,
+     "c=0.75": 0.15509577012335535
+    }
+   },
+   "v1": {
+    "n": 12,
+    "insertions": 52,
+    "share_above_gate": 0.21153846153846154,
+    "mean": {
+     "shipped": 0.04941252808874611,
+     "c=0.45": 0.03487865272192991,
+     "c=0.60": 0.04256450461547012,
+     "c=0.75": 0.045730814722566765
+    },
+    "cv": {
+     "shipped": 0.3069664160462803,
+     "c=0.45": 0.003403026480201217,
+     "c=0.60": 0.06507278275443158,
+     "c=0.75": 0.1448506109457704
+    }
+   },
+   "v2": {
+    "n": 12,
+    "insertions": 52,
+    "share_above_gate": 0.19230769230769232,
+    "mean": {
+     "shipped": 0.04865786263235166,
+     "c=0.45": 0.03472844489342185,
+     "c=0.60": 0.042031640709741476,
+     "c=0.75": 0.04509562839312138
+    },
+    "cv": {
+     "shipped": 0.3119165680194569,
+     "c=0.45": 0.0038536633661772264,
+     "c=0.60": 0.07216042905671537,
+     "c=0.75": 0.15045775388605243
+    }
+   },
+   "opus": {
+    "n": 13,
+    "insertions": 52,
+    "share_above_gate": 0.19230769230769232,
+    "mean": {
+     "shipped": 0.045365097356357624,
+     "c=0.45": 0.03224387871772288,
+     "c=0.60": 0.03927988822355487,
+     "c=0.75": 0.04205920076873186
+    },
+    "cv": {
+     "shipped": 0.3081315689404809,
+     "c=0.45": 0.003828738875875104,
+     "c=0.60": 0.06754308017490936,
+     "c=0.75": 0.147602986421888
+    }
+   },
+   "sonnet": {
+    "n": 11,
+    "insertions": 52,
+    "share_above_gate": 0.17307692307692307,
+    "mean": {
+     "shipped": 0.052217727878710596,
+     "c=0.45": 0.03753858952759169,
+     "c=0.60": 0.04515774952712314,
+     "c=0.75": 0.04832420710014018
+    },
+    "cv": {
+     "shipped": 0.32162334392461844,
+     "c=0.45": 0.004302499923174529,
+     "c=0.60": 0.07690159193878411,
+     "c=0.75": 0.1586915977484106
+    }
+   },
+   "haiku": {
+    "n": 14,
+    "insertions": 52,
+    "share_above_gate": 0.19230769230769232,
+    "mean": {
+     "shipped": 0.041621900117536484,
+     "c=0.45": 0.03015646515550574,
+     "c=0.60": 0.036199978201039415,
+     "c=0.75": 0.038661788763894575
+    },
+    "cv": {
+     "shipped": 0.3159767413493166,
+     "c=0.45": 0.00387954902343654,
+     "c=0.60": 0.07531709692750695,
+     "c=0.75": 0.15755754269299127
+    }
+   },
+   "werg-a": {
+    "n": 11,
+    "insertions": 70,
+    "share_above_gate": 0.4714285714285714,
+    "mean": {
+     "shipped": 0.06588820192774024,
+     "c=0.45": 0.037371794297466975,
+     "c=0.60": 0.04560184751162168,
+     "c=0.75": 0.051172401657882616
+    },
+    "cv": {
+     "shipped": 0.4395705179164257,
+     "c=0.45": 0.017968386707562383,
+     "c=0.60": 0.12111821546992246,
+     "c=0.75": 0.20911937401450906
+    }
+   },
+   "werg-b": {
+    "n": 13,
+    "insertions": 70,
+    "share_above_gate": 0.5,
+    "mean": {
+     "shipped": 0.057497718880873,
+     "c=0.45": 0.03219649686425627,
+     "c=0.60": 0.040075429382500416,
+     "c=0.75": 0.04517613263129843
+    },
+    "cv": {
+     "shipped": 0.4057925973561603,
+     "c=0.45": 0.008437723827905327,
+     "c=0.60": 0.09053956908112709,
+     "c=0.75": 0.1793100593570749
+    }
+   },
+   "werg-c": {
+    "n": 14,
+    "insertions": 70,
+    "share_above_gate": 0.4857142857142857,
+    "mean": {
+     "shipped": 0.05305608787860555,
+     "c=0.45": 0.03008399773365341,
+     "c=0.60": 0.036960535981537146,
+     "c=0.75": 0.041487276780681974
+    },
+    "cv": {
+     "shipped": 0.42456270680158853,
+     "c=0.45": 0.013016701398904583,
+     "c=0.60": 0.10724682392188824,
+     "c=0.75": 0.19653296460916628
+    }
+   }
+  },
+  "host_length_term_cv": 0.08466921531481233,
+  "closed_form_max_abs_diff": {
+   "shipped": 1.2498975798802547e-08,
+   "c=0.45": 8.480408444921927e-09,
+   "c=0.60": 7.716246315514486e-09,
+   "c=0.75": 8.538786649969765e-09
+  },
+  "self_cost_max": 0.0008457279182039201
+ },
+ "guardrails": {
+  "V_registered_arm": "0/24",
+  "src_hash_before": "a5932434475fda56087937d3a53454ec31e95ad30ece192acf8d58d348bd59b3",
+  "src_hash_after": "a5932434475fda56087937d3a53454ec31e95ad30ece192acf8d58d348bd59b3",
+  "src_hash_equal": true,
+  "git_status_src_tests_clean": true,
+  "default_smd_equal_before_after": true,
+  "default_order_gap_equal_before_after": true,
+  "default_smd_equal_saved_baseline": true,
+  "default_order_gap_equal_saved_baseline": true,
+  "wrapper_equals_shipped_at_cap_inf": true,
+  "capped_identity_max": 0.0,
+  "capped_symmetry_max_abs_diff": 2.220446049250313e-16,
+  "capped_triangle_violations": "0/495",
+  "src_untouched": true
+ },
+ "acceptance": {
+  "bar": {
+   "V": {
+    "reading": "0/24",
+    "required": "0/24",
+    "met": true
+   },
+   "margin_pts": {
+    "reading": 4.708,
+    "required": ">= +4.61",
+    "met": true
+   },
+   "triangle": {
+    "reading": "0/495",
+    "required": "0/495",
+    "met": true
+   },
+   "cv_fall": {
+    "reading": 0.6995,
+    "required": ">= 0.50",
+    "met": true
+   }
+  },
+  "met": true
+ },
+ "verdict": "Killed-at-gate",
+ "result_numbers": {
+  "kill_gate_share_above_0.6": 0.2997,
+  "kill_gate_n_above": 172,
+  "n_insertions": 574,
+  "kill_gate_share_by_reading": {
+   "ibm host, wergeland statement": "70/364 = 19.2%",
+   "wergeland host, ibm statement": "102/210 = 48.6%",
+   "all insertions (the gate reading)": "172/574 = 30.0%",
+   "statements of 5+ words (no bar)": "22/420 = 5.2%",
+   "statements under 5 words (no bar)": "150/154 = 97.4%",
+   "ibm hosts segmented on the shipped path (no bar)": "186/574 = 32.4%",
+   "unique statements, above in at least one host (no bar)": "48/122 = 39.3%"
+  },
+  "kill_gate_median_cheapest_cost": 0.489,
+  "sanity_margin_pts": 4.708,
+  "sanity_dprime": 4.684,
+  "sanity_V": "0/24",
+  "capped_V": "0/24",
+  "capped_margin_pts": 4.708,
+  "capped_dprime": 4.695,
+  "capped_max_abs_delta_smd_55_pairs": 0.0025,
+  "capped_max_abs_delta_smd_anchor_pairs": 0.0006,
+  "capped_pairs_changed": "8/55",
+  "shipped_plan_max_arc": 0.5918,
+  "triangle_violations": "0/495",
+  "triangle_min_slack": 0.177,
+  "cv_shipped_pooled": 0.3957,
+  "cv_capped_pooled": 0.1189,
+  "cv_fall_pooled_registered": 0.6995,
+  "cv_of_host_length_term": 0.0847,
+  "cv_by_reading": {
+   "pooled, all insertions (registered)": {
+    "shipped": 0.3957,
+    "c=0.45": 0.0836,
+    "c=0.60": 0.1189,
+    "c=0.75": 0.1902
+   },
+   "ibm host, wergeland statement": {
+    "shipped": 0.324,
+    "c=0.45": 0.0759,
+    "c=0.60": 0.1052,
+    "c=0.75": 0.1711
+   },
+   "wergeland host, ibm statement": {
+    "shipped": 0.4363,
+    "c=0.45": 0.0933,
+    "c=0.60": 0.1396,
+    "c=0.75": 0.2156
+   },
+   "pooled, increment x (n + 1)": {
+    "shipped": 0.3899,
+    "c=0.45": 0.0093,
+    "c=0.60": 0.0871,
+    "c=0.75": 0.1733
+   },
+   "pooled, statements of 5+ words": {
+    "shipped": 0.1328,
+    "c=0.45": 0.0824,
+    "c=0.60": 0.1121,
+    "c=0.75": 0.1327
+   },
+   "statements of 5+ words, increment x (n + 1)": {
+    "shipped": 0.1062,
+    "c=0.45": 0.0105,
+    "c=0.60": 0.078,
+    "c=0.75": 0.106
+   },
+   "pooled, statements under 5 words": {
+    "shipped": 0.1974,
+    "c=0.45": 0.087,
+    "c=0.60": 0.0872,
+    "c=0.75": 0.088
+   },
+   "median of the 10 per-host CVs": {
+    "shipped": 0.3162,
+    "c=0.45": 0.0041,
+    "c=0.60": 0.0745,
+    "c=0.75": 0.1563
+   }
+  },
+  "cv_host_length_alone_by_reading": {
+   "pooled, all insertions (registered)": 0.0847,
+   "ibm host, wergeland statement": 0.0769,
+   "wergeland host, ibm statement": 0.095,
+   "pooled, increment x (n + 1)": 0.0,
+   "pooled, statements of 5+ words": 0.0834,
+   "statements of 5+ words, increment x (n + 1)": 0.0,
+   "pooled, statements under 5 words": 0.0879,
+   "median of the 10 per-host CVs": 0.0
+  },
+  "cv_fall_to_host_length_alone_by_reading": {
+   "pooled, all insertions (registered)": 0.786,
+   "ibm host, wergeland statement": 0.7625,
+   "wergeland host, ibm statement": 0.7823,
+   "pooled, increment x (n + 1)": 1.0,
+   "pooled, statements of 5+ words": 0.3721,
+   "statements of 5+ words, increment x (n + 1)": 1.0,
+   "pooled, statements under 5 words": 0.5545,
+   "median of the 10 per-host CVs": 1.0
+  },
+  "mean_cost_to_host_statements": {
+   "statements under 5 words": {
+    "shipped": 1.097,
+    "c=0.60": 0.603
+   },
+   "statements of 5+ words": {
+    "shipped": 0.544,
+    "c=0.60": 0.53
+   }
+  },
+  "cv_fall_by_reading_at_registered_arm": {
+   "pooled, all insertions (registered)": 0.6995,
+   "ibm host, wergeland statement": 0.6752,
+   "wergeland host, ibm statement": 0.6801,
+   "pooled, increment x (n + 1)": 0.7767,
+   "pooled, statements of 5+ words": 0.1557,
+   "statements of 5+ words, increment x (n + 1)": 0.2655,
+   "pooled, statements under 5 words": 0.5581,
+   "median of the 10 per-host CVs": 0.7644
+  },
+  "cv_fall_pooled_by_arm": {
+   "c=0.45": 0.7886,
+   "c=0.60": 0.6995,
+   "c=0.75": 0.5194
+  },
+  "std_fall_pooled_registered": 0.7613,
+  "insertions_changed_by_cap": "511/574"
+ }
+}

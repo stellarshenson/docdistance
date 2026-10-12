@@ -46,7 +46,7 @@ Optional interpretable output exposing the exact optimal-transport coupling behi
   - log: 2026-06-22 verified (12 vs 11 on fixtures) (v1.0.16)
 - [x] **Edge: identical documents** - A == B gives the identity coupling: each statement maps to its twin at `weight` 1, `cost` 0
   - log: 2026-06-22 tested in `test_transport_map_identical_maps_each_to_itself` (v1.0.16)
-- [ ] **Edge: empty document** - a document that segments to zero statements raises `ValueError` via `embed_statements`, same as the plain distance path
+- [x] **Edge: empty document** - a document that segments to zero statements raises `ValueError` via `embed_statements`, same as the plain distance path - covered since 2026-10-10 by `ACC-MAP-65` in `../acc-crit-docdistance.md` (`tests/test_pipeline.py::test_empty_document_raises_on_the_detail_paths`)
   - log: 2026-06-22 inherited from `embed_statements`, not separately asserted
 
 ## API

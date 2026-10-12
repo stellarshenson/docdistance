@@ -186,8 +186,8 @@
       "article": "ibm",
       "a": "gold",
       "b": "gold-2",
-      "order_gap": 0.13077715308399535,
-      "closeness": 0.9075265882300356
+      "order_gap": 0.13077715308399532,
+      "closeness": 0.9075265882300357
     },
     {
       "kind": "diffuse",
@@ -204,7 +204,7 @@
       "article": "ibm",
       "a": "gold",
       "b": "v2",
-      "order_gap": 0.0654515948373518,
+      "order_gap": 0.06545159483735183,
       "closeness": 0.9537187334510341
     },
     {
@@ -249,8 +249,8 @@
       "article": "ibm",
       "a": "gold",
       "b": "adv1-b",
-      "order_gap": 0.022370909564360608,
-      "closeness": 0.9841813781457296
+      "order_gap": 0.022370909564360553,
+      "closeness": 0.9841813781457297
     },
     {
       "kind": "diffuse",
@@ -330,7 +330,7 @@
       "article": "ibm",
       "a": "gold-2",
       "b": "adv1-b",
-      "order_gap": 0.02708830679076718,
+      "order_gap": 0.027088306790767236,
       "closeness": 0.9808456745773869
     },
     {
@@ -339,7 +339,7 @@
       "article": "ibm",
       "a": "gold-2",
       "b": "adv2-a",
-      "order_gap": 0.04505069308850762,
+      "order_gap": 0.045050693088507676,
       "closeness": 0.9681443494199623
     },
     {
@@ -375,7 +375,7 @@
       "article": "ibm",
       "a": "v1",
       "b": "sonnet",
-      "order_gap": 0.08821486537269285,
+      "order_gap": 0.0882148653726928,
       "closeness": 0.9376226704935106
     },
     {
@@ -384,8 +384,8 @@
       "article": "ibm",
       "a": "v1",
       "b": "haiku",
-      "order_gap": 0.05779124950895387,
-      "closeness": 0.959135415578975
+      "order_gap": 0.05779124950895381,
+      "closeness": 0.9591354155789751
     },
     {
       "kind": "diffuse",
@@ -501,7 +501,7 @@
       "article": "ibm",
       "a": "opus",
       "b": "haiku",
-      "order_gap": 0.10117252009576228,
+      "order_gap": 0.10117252009576233,
       "closeness": 0.9284602249705542
     },
     {
@@ -510,7 +510,7 @@
       "article": "ibm",
       "a": "opus",
       "b": "adv1-a",
-      "order_gap": 0.03599419530211512,
+      "order_gap": 0.03599419530211517,
       "closeness": 0.9745482604185214
     },
     {
@@ -519,7 +519,7 @@
       "article": "ibm",
       "a": "opus",
       "b": "adv1-b",
-      "order_gap": 0.030593473165765106,
+      "order_gap": 0.030593473165765217,
       "closeness": 0.9783671476644388
     },
     {
@@ -528,7 +528,7 @@
       "article": "ibm",
       "a": "opus",
       "b": "adv2-a",
-      "order_gap": 0.054852845806325434,
+      "order_gap": 0.05485284580632538,
       "closeness": 0.9612131807629672
     },
     {
@@ -537,7 +537,7 @@
       "article": "ibm",
       "a": "opus",
       "b": "adv2-b",
-      "order_gap": 0.030115101371216257,
+      "order_gap": 0.030115101371216313,
       "closeness": 0.9787054076042927
     },
     {
@@ -564,7 +564,7 @@
       "article": "ibm",
       "a": "sonnet",
       "b": "adv1-b",
-      "order_gap": 0.019131248124877265,
+      "order_gap": 0.01913124812487721,
       "closeness": 0.9864721647183369
     },
     {
@@ -573,7 +573,7 @@
       "article": "ibm",
       "a": "sonnet",
       "b": "adv2-a",
-      "order_gap": 0.028992650197319447,
+      "order_gap": 0.028992650197319503,
       "closeness": 0.9794991004409059
     },
     {
@@ -663,8 +663,8 @@
       "article": "ibm",
       "a": "adv1-b",
       "b": "adv2-b",
-      "order_gap": 0.02315281257425411,
-      "closeness": 0.9836284892252037
+      "order_gap": 0.023152812574254222,
+      "closeness": 0.9836284892252036
     },
     {
       "kind": "diffuse",
@@ -798,8 +798,8 @@
       "article": "ibm",
       "a": "gold",
       "b": "gold-2",
-      "order_gap": 0.13077715308399535,
-      "closeness": 0.9075265882300356
+      "order_gap": 0.13077715308399532,
+      "closeness": 0.9075265882300357
     },
     {
       "kind": "paraphrase",

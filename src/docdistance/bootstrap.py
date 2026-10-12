@@ -1,12 +1,21 @@
 """One-call provisioning: pull a mode's models from local / S3 / HuggingFace.
 
 ``docdistance.init`` resolves every model a distance mode requires through one documented chain so
-the distance commands can run offline (e.g. an AWS Lambda with no HuggingFace egress):
+the distance commands can run offline:
 
     1. an ``s3://...`` source - mirror the model dir from the bucket (botocore, optional profile +
        endpoint for S3-compatible stores; in Lambda omit the profile for the execution-role chain)
     2. a local source dir - copy the model dir from it
     3. else the HuggingFace Hub - the always-available fallback
+
+A source hit (1 or 2) copies the model directory. For the SaT segmenter it also saves the tokenizer
+``facebookAI/xlm-roberta-base`` beside the weights when the copied folder holds no tokenizer that
+loads with its special token ids, because wtpsplit otherwise loads that tokenizer by its Hub name:
+from the HuggingFace cache when it is there, else from the Hub; when neither has it, ``init``
+raises ``ModelsNotInstalled``. A source folder that carries the tokenizer files ``init`` saved
+needs no Hub. The files as the Hub publishes them load beside the SaT ``config.json`` without
+those ids, and ``init`` replaces them like a truncated ``tokenizer.json``. The model loads after
+``init`` (``offline=True``, the default) make no Hub request.
 
 It records what it did in ``docdistance.json`` (via :mod:`docdistance.settings`) so a later process
 loads it and the readiness gate passes; the model loaders read the resolved paths back.
@@ -150,6 +159,67 @@ def _mirror_one(
     return "hf", _warm_hf(key, backend)
 
 
+def _save_tokenizer(name: str, dest: Path) -> None:
+    """Save the tokenizer ``name`` into ``dest``: from the HuggingFace cache, else from the Hub.
+
+    A cached tokenizer is loaded from its snapshot folder. A load by name sends a request while the
+    Hub library is online, also when every file is cached (transformers 5.0.0), and raises on a
+    host without Hub access.
+    """
+    from huggingface_hub import try_to_load_from_cache
+    from transformers import AutoTokenizer
+
+    cached = try_to_load_from_cache(name, "tokenizer.json")  # a path only when the file is cached
+    src = Path(cached).parent if isinstance(cached, str) else name
+    AutoTokenizer.from_pretrained(src).save_pretrained(dest)
+
+
+def _tokenizer_loads(folder: Path) -> bool:
+    """Whether ``folder`` holds a tokenizer that loads with the special token ids SaT reads.
+
+    The load is the one wtpsplit makes when :class:`docdistance.encoders.Segmenter` passes the
+    folder. ``tokenizer.json`` and ``tokenizer_config.json`` as the Hub repository publishes them
+    load beside the SaT ``config.json`` with ``cls_token_id``, ``sep_token_id`` and
+    ``pad_token_id`` None, and the first split then raises ``TypeError`` (DEF-DEPS-17-1). A
+    ``tokenizer.json`` that an interrupted write left truncated does not load at all.
+    """
+    if not (folder / "tokenizer.json").exists():
+        return False
+    from transformers import AutoTokenizer
+
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(folder)
+    except Exception:  # noqa: BLE001 - files that do not parse; the library has no one error type
+        return False
+    return None not in (tokenizer.cls_token_id, tokenizer.sep_token_id, tokenizer.pad_token_id)
+
+
+def _add_sat_tokenizer(dest: Path) -> None:
+    """Save the SaT tokenizer beside the weights in ``dest`` unless the source carried one that loads.
+
+    wtpsplit loads the tokenizer by its Hub name whatever the path of the weights is, so a source
+    folder with ``config.json`` and the weights only left the first offline load without a tokenizer
+    (DEF-DEPS-17). :class:`docdistance.encoders.Segmenter` reads it from ``dest``. Tokenizer files
+    in ``dest`` that do not load with their special token ids (:func:`_tokenizer_loads`) are
+    replaced by the saved ones.
+    """
+    if _tokenizer_loads(dest):
+        return
+    try:
+        _save_tokenizer(config.SAT_TOKENIZER, dest)
+    except Exception as exc:  # not cached, and no answer from the Hub
+        from docdistance.encoders import ModelsNotInstalled
+
+        name = config.MODEL_REGISTRY["sat"]["subdir"]
+        raise ModelsNotInstalled(
+            f"the tokenizer of the segmenter, {config.SAT_TOKENIZER}, is not in the source folder "
+            f"{name} in a form that loads with its special token ids, not in the HuggingFace "
+            "cache and the Hub did not return it - run docdistance init --source once on a host "
+            f"with Hub access and copy the tokenizer files it saves in <home>/models/{name} into "
+            f"the source folder {name}"
+        ) from exc
+
+
 # --- public entrypoint -----------------------------------------------------
 
 
@@ -196,20 +266,26 @@ def init(
             if not Path(local_base).is_dir():
                 raise FileNotFoundError(f"--source local dir not found: {local_base}")
 
-    from docdistance.encoders import _require_models_extra, _set_hf_token
+    from docdistance.encoders import _hub_flag, _require_models_extra, _set_hf_token
 
     _require_models_extra()
     _set_hf_token()
-    os.environ.pop("HF_HUB_OFFLINE", None)  # init is the online step
 
     model_paths: dict[str, str] = {}
     sources: dict[str, str] = {}
-    for key in config.MODE_MODELS[mode]:
-        used, path = _mirror_one(key, s3_base, local_base, force_hf, models_dir, client, backend)
-        sources[key] = used
-        if path:
-            model_paths[key] = path
-        logger.info("model '{}' provisioned from {}", key, used)
+    # init is the online step: the Hub library is held online while the models are fetched, also
+    # when HF_HUB_OFFLINE was set before the library was imported (DEF-DEPS-16)
+    with _hub_flag(False):
+        for key in config.MODE_MODELS[mode]:
+            used, path = _mirror_one(
+                key, s3_base, local_base, force_hf, models_dir, client, backend
+            )
+            if key == "sat" and used != "hf":  # from the Hub the SaT load caches the tokenizer
+                _add_sat_tokenizer(Path(path))
+            sources[key] = used
+            if path:
+                model_paths[key] = path
+            logger.info("model '{}' provisioned from {}", key, used)
 
     prior = settings.get()
     settings.configure(

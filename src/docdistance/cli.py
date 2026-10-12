@@ -22,7 +22,13 @@ from rich.table import Table
 import typer
 
 from docdistance.config import configure_logging
-from docdistance.distance import DEFAULT_THRESHOLD, STRUCTURE_THRESHOLD
+from docdistance.distance import (
+    ANISOTROPY_MIN_POOL,
+    DEFAULT_THRESHOLD,
+    MATCH_CUTOFF,
+    SOURCE_SUPPORT_CUTOFF,
+    STRUCTURE_THRESHOLD,
+)
 
 app = typer.Typer(
     rich_markup_mode="rich",
@@ -44,6 +50,13 @@ class Backend(str, Enum):
 class Mode(str, Enum):
     wmd = "wmd"
     wmd_wrt_source = "wmd-wrt-source"
+
+
+class InputFormat(str, Enum):
+    plain = "plain"
+    markdown = "markdown"
+    html = "html"
+    auto = "auto"
 
 
 def _version_cb(value: bool):
@@ -110,7 +123,17 @@ _MARKDOWN_OPTION = typer.Option(
     False,
     "--markdown",
     help="markdown-aware segmentation - one statement per heading / table row / list item / "
-    "fenced-code line (markup stripped from the embedded text), only prose goes through SaT",
+    "fenced-code line (markup stripped from the embedded text), only prose goes through SaT; "
+    "equals --input-format markdown",
+)
+_INPUT_FORMAT_OPTION = typer.Option(
+    None,
+    "--input-format",
+    help="reader of every document: auto (the default) chooses it per document from the file "
+    "extension - .md and .markdown the markdown reader, .html and .htm the html reader, every "
+    "other file and raw text the plain reader; plain gives the whole text to the prose segmenter, "
+    "as 1.1.5 read every document; markdown reads as --markdown does; html converts the document "
+    "to markdown lines and reads those",
 )
 _MIN_WORDS_OPTION = typer.Option(
     0,
@@ -125,6 +148,24 @@ _SKIP_TABLE_FRAGMENTS_OPTION = typer.Option(
     help="drop table-fragment statements (pipes or separator punctuation) after segmentation, "
     "before encoding - the transport marginals renormalise over the survivors",
 )
+
+
+def _input_format(markdown: bool, input_format: InputFormat | None) -> str:
+    """The ``input_format`` value the options ask for; ``--markdown`` equals ``--input-format markdown``.
+
+    ``input_format`` is ``None`` when the option was not given, which reads ``auto``.
+    ``--markdown`` beside another ``--input-format`` value, a given ``auto`` as well, names two
+    readers: a usage error, exit code 2.
+    """
+    if not markdown:
+        return input_format.value if input_format else InputFormat.auto.value
+    if input_format not in (None, InputFormat.markdown):
+        _err.print(
+            f"[bold red]error:[/bold red] --markdown and --input-format {input_format.value} "
+            "name two readers; pass one of them"
+        )
+        raise typer.Exit(2)
+    return InputFormat.markdown.value
 
 
 def _drop_extra(dd, min_words: int, skip_table_fragments: bool) -> dict:
@@ -184,15 +225,19 @@ def _read_pairs(pairs_file: str) -> list[tuple[str, str, str]]:
 def _details_path(details_json: str, pair: str) -> Path:
     """Resolve the per-pair details file: a ``{pair}`` template, else a directory of ``<pair>.json``."""
     if "{pair}" in details_json:
-        return Path(details_json.replace("{pair}", pair))
-    directory = Path(details_json)
-    directory.mkdir(parents=True, exist_ok=True)
-    return directory / f"{pair}.json"
+        path = Path(details_json.replace("{pair}", pair))
+    else:
+        path = Path(details_json) / f"{pair}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def _run_batch(rows, details_json: str | None, dist, dist_details, extra=None) -> None:
     """ACC-CLI-12 batch loop: the caller built one DocDistance; emit one JSON object per pair per
-    line (JSONL) to stdout, writing a per-pair details file when ``--details-json`` is given.
+    line (JSONL) to stdout, writing a per-pair details file when ``--details-json`` is given
+    (``--source-map-json`` on ``distance-wrt-source``, whose source is fixed for the batch).
+    The caller builds it with ``memo_size=MEMO_SIZE``, so a file that recurs across rows is
+    segmented and encoded once and each (document, source) grounding is computed once.
     ``extra`` is an optional callable evaluated after each pair - its dict (e.g. the per-pair
     n_dropped of an active fragment filter) is merged into that pair's JSON line."""
 
@@ -247,6 +292,11 @@ def _emit_structural(r, json_out: bool, result_only: bool, extra: dict | None = 
     grid.add_column()
     grid.add_row("structure closeness", f"{r.structure_closeness * 100:.1f}%")
     grid.add_row("order gap", f"{r.order_gap:.4f}")
+    grid.add_row(
+        "matched order gap",
+        "no statement matched" if r.matched_order_gap is None else f"{r.matched_order_gap:.4f}",
+    )
+    grid.add_row("matched statements", f"{r.n_matched}  (ground cost < {MATCH_CUTOFF})")
     grid.add_row("SMD (content)", f"{r.smd:.4f}")
     grid.add_row(
         "verdict", f"[{color}]{r.verdict}[/{color}]  (threshold {r.threshold:.2f} closeness)"
@@ -290,6 +340,11 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool, extra: dict | None = 
     grid.add_row(
         "statements", f"A {r.n_statements_a} / B {r.n_statements_b} / S {r.n_statements_source}"
     )
+    grid.add_row(
+        "unsupported statements",
+        f"A {r.n_unsupported_a} / B {r.n_unsupported_b}  "
+        f"(nearest source cost > {SOURCE_SUPPORT_CUTOFF})",
+    )
     _out.print(
         Panel(
             grid,
@@ -332,7 +387,9 @@ def distance_semantic(
     anisotropy: bool = typer.Option(
         False,
         "--anisotropy/--no-anisotropy",
-        help="all-but-the-top anisotropy removal - needs a corpus, off by default for a pair",
+        help="all-but-the-top anisotropy removal, estimated from the pooled statements of the "
+        f"two documents; the estimate needs about {ANISOTROPY_MIN_POOL} pooled statements, and a "
+        "smaller pool logs one warning and is scored all the same; off by default",
     ),
     threshold: float = typer.Option(
         DEFAULT_THRESHOLD,
@@ -340,6 +397,7 @@ def distance_semantic(
         help="closeness cutoff for the similar / not-similar verdict",
     ),
     markdown: bool = _MARKDOWN_OPTION,
+    input_format: InputFormat = _INPUT_FORMAT_OPTION,
     min_words: int = _MIN_WORDS_OPTION,
     skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     details_json: str = typer.Option(
@@ -371,20 +429,21 @@ def distance_semantic(
     configure_logging(verbose)
     _apply_home(home)
     _check_pair_args(pairs, a, b)
+    requested = _input_format(markdown, input_format)
 
     backend_value, device = _resolve_gpu(gpu, backend)
     seg = {
-        "markdown": markdown,
+        "input_format": requested,
         "min_words": min_words,
         "skip_table_fragments": skip_table_fragments,
     }
     filters_on = min_words > 0 or skip_table_fragments
     extra = None
     if pairs:
-        from docdistance.pipeline import DocDistance
+        from docdistance.pipeline import MEMO_SIZE, DocDistance
 
         rows = _run(lambda: _read_pairs(pairs), machine=True)
-        dd = DocDistance(backend=backend_value, device=device)
+        dd = DocDistance(backend=backend_value, device=device, memo_size=MEMO_SIZE)
         _run_batch(
             rows,
             details_json,
@@ -438,7 +497,7 @@ def distance_semantic(
                 anisotropy=anisotropy,
                 threshold=threshold,
                 device=device,
-                markdown=markdown,
+                input_format=requested,
             ),
             machine=json_out or result_only,
         )
@@ -466,7 +525,9 @@ def distance_structural(
     anisotropy: bool = typer.Option(
         False,
         "--anisotropy/--no-anisotropy",
-        help="all-but-the-top anisotropy removal - needs a corpus, off by default for a pair",
+        help="all-but-the-top anisotropy removal, estimated from the pooled statements of the "
+        f"two documents; the estimate needs about {ANISOTROPY_MIN_POOL} pooled statements, and a "
+        "smaller pool logs one warning and is scored all the same; off by default",
     ),
     threshold: float = typer.Option(
         STRUCTURE_THRESHOLD,
@@ -474,6 +535,7 @@ def distance_structural(
         help="structure_closeness cutoff for the similar / not-similar verdict",
     ),
     markdown: bool = _MARKDOWN_OPTION,
+    input_format: InputFormat = _INPUT_FORMAT_OPTION,
     min_words: int = _MIN_WORDS_OPTION,
     skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     details_json: str = typer.Option(
@@ -505,20 +567,21 @@ def distance_structural(
     configure_logging(verbose)
     _apply_home(home)
     _check_pair_args(pairs, a, b)
+    requested = _input_format(markdown, input_format)
 
     backend_value, device = _resolve_gpu(gpu, backend)
     seg = {
-        "markdown": markdown,
+        "input_format": requested,
         "min_words": min_words,
         "skip_table_fragments": skip_table_fragments,
     }
     filters_on = min_words > 0 or skip_table_fragments
     extra = None
     if pairs:
-        from docdistance.pipeline import DocDistance
+        from docdistance.pipeline import MEMO_SIZE, DocDistance
 
         rows = _run(lambda: _read_pairs(pairs), machine=True)
-        dd = DocDistance(backend=backend_value, device=device)
+        dd = DocDistance(backend=backend_value, device=device, memo_size=MEMO_SIZE)
         _run_batch(
             rows,
             details_json,
@@ -575,7 +638,7 @@ def distance_structural(
                 anisotropy=anisotropy,
                 threshold=threshold,
                 device=device,
-                markdown=markdown,
+                input_format=requested,
             ),
             machine=json_out or result_only,
         )
@@ -588,11 +651,12 @@ def distance_structural(
     "  docdistance distance-wrt-source summary_a.md summary_b.md --source article.md\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --json\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   [dim]# statement → source map[/dim]\n"
+    "  docdistance distance-wrt-source --pairs pairs.tsv -s s.md         [dim]# batch: one model load, one source, JSONL out[/dim]\n"
     "  docdistance distance-wrt-source a.md b.md -s s.md --result-only   [dim]# d_sel,grd_a,grd_b[/dim]",
 )
 def distance_wrt_source(
-    a: str = typer.Argument(..., help="first document - a file path or raw text"),
-    b: str = typer.Argument(..., help="second document - a file path or raw text"),
+    a: str = typer.Argument(None, help="first document - a file path or raw text"),
+    b: str = typer.Argument(None, help="second document - a file path or raw text"),
     source: str = typer.Option(..., "--source", "-s", help="the common source document"),
     backend: Backend = typer.Option(
         Backend.openvino, "--backend", help="statement encoder backend"
@@ -608,13 +672,22 @@ def distance_wrt_source(
         help="anisotropy removal on the conditioned selection axis - on by default (E04-H15), --no-anisotropy to opt out",
     ),
     markdown: bool = _MARKDOWN_OPTION,
+    input_format: InputFormat = _INPUT_FORMAT_OPTION,
     min_words: int = _MIN_WORDS_OPTION,
     skip_table_fragments: bool = _SKIP_TABLE_FRAGMENTS_OPTION,
     source_map_json: str = typer.Option(
         None,
         "--source-map-json",
-        help="also write a statement → source alignment map (which source statements each A/B statement covers) to this JSON file",
+        help="also write a statement → source alignment map (which source statements each A/B statement covers) to this JSON file; "
+        "with --pairs, a directory or a template containing {pair} - one map per pair",
         metavar="FILE",
+    ),
+    pairs: str = typer.Option(
+        None,
+        "--pairs",
+        metavar="FILE",
+        help="batch mode: TSV of a-path<TAB>b-path[<TAB>id], every pair against the one --source - "
+        "one model load, one JSON object per pair per line (JSONL) to stdout",
     ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
@@ -630,15 +703,34 @@ def distance_wrt_source(
     """Source-conditioned distance d(A, B | S) - selection divergence plus each document's distance to S."""
     configure_logging(verbose)
     _apply_home(home)
+    _check_pair_args(pairs, a, b)
+    requested = _input_format(markdown, input_format)
 
     backend_value, device = _resolve_gpu(gpu, backend)
     seg = {
-        "markdown": markdown,
+        "input_format": requested,
         "min_words": min_words,
         "skip_table_fragments": skip_table_fragments,
     }
     filters_on = min_words > 0 or skip_table_fragments
     extra = None
+    if pairs:
+        from docdistance.pipeline import MEMO_SIZE, DocDistance
+
+        rows = _run(lambda: _read_pairs(pairs), machine=True)
+        dd = DocDistance(backend=backend_value, device=device, memo_size=MEMO_SIZE)
+        _run_batch(
+            rows,
+            source_map_json,
+            lambda x, y: dd.distance_wrt_source(x, y, source, anisotropy=anisotropy, **seg),
+            lambda x, y: dd.distance_wrt_source_with_map(
+                x, y, source, anisotropy=anisotropy, **seg
+            ),
+            extra=(lambda: _drop_extra(dd, min_words, skip_table_fragments))
+            if filters_on
+            else None,
+        )
+        return
     if source_map_json:
         from docdistance.pipeline import DocDistance
 
@@ -677,7 +769,7 @@ def distance_wrt_source(
                 backend=backend_value,
                 anisotropy=anisotropy,
                 device=device,
-                markdown=markdown,
+                input_format=requested,
             ),
             machine=json_out or result_only,
         )

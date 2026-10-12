@@ -1,0 +1,175 @@
+{
+  "id": "E13-H70",
+  "slug": "matched-order-gap",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "280/280 order-preserving deletion cases read <= 0.005 under the matched order gap at c = 0.6 (median at k=2 0.134041 → 9.671e-05); deleted-only against reordered-and-deleted AUC 0.999903; 1847/1847 fully matched equal-length fixture pairs exactly equal to shipped opw_gap; the registered sets hold documents of 11 to 14 statements with 0 repeated statements",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "max opw_gap(B, B) over the 10 base documents 8.583e-04 (haiku), 17.17% of the ceiling 0.005; smallest 1.616e-04 (gold); with the second argument passed as a copy the max is 8.602e-04. The gate covers documents of 11 to 14 statements. Outside the gate (third pass, fixture document source with its 9 repeated statements removed) opw_gap(P, P) reads 2.562e-03 at 20 statements, 5.182e-03 at 30 and 6.786e-03 at 53"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "280 E12-H62 deletion cases rebuilt with the E12-H62 code and seed; shipped median at k=2 0.134041 against the saved 0.134041 (|dev| 1.3e-07, tolerance 0.0005, an executor value); largest |dev| over the 12 saved median / min / max values 4.9e-07; 280/280 shipped readings above 0.005"
+  },
+  "prediction_check": {
+    "predicted": "deletion cases fall from median 0.134 (k=2) to at or below 0.005; reordered-and-deleted cases stay near their reorder rung",
+    "observed": "median at k=2 0.134041 → 9.671e-05; matched medians after the k=2 deletion 0.20454 / 0.30459 / 0.37089 / 0.40532 / 0.42541 at rungs 2 to 6 against reorder-only medians 0.15524 / 0.25920 / 0.34850 / 0.40234 / 0.42441 (ratio 1.318 at rung 2 falling to 1.002 at rung 6); rungs retained: 5/5 under the executor rule (matched median strictly between the reorder-only medians of the adjacent rungs), 4/5 under the nearest-median rule; control: the executor rule applied to the shipped medians after the deletion retains 3/5. The deletion half has a direction the record defines and it matched; the rung half is a size claim for which the record defines no rule, so direction_matched rests on the deletion half",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "PASS iff >= 95% of the 280 order-preserving deletion cases read <= 0.005 AND deleted-only against reordered-and-deleted cases (swap level at or above the E11 rung-2 level, k=2 deletions) separate at AUC >= 0.95 AND the value is bit-identical (np.array_equal) to shipped opw_gap on every fully matched equal-length pair of the structure fixture",
+    "met": true,
+    "readings": {
+      "clause_1_deletions": "280/280 = 1.0000 read <= 0.005 (bar >= 0.95); largest matched reading 6.101e-04; the matching recovered exactly the surviving statements in 280/280 cases; the 10 base documents hold 0 repeated statements, so the zero-cost assignment is unique and this count has one possible value on the registered set; met by construction once the matching is exact, because the survivors are byte-identical",
+      "clause_2_separation": "AUC 0.999903 (bar >= 0.95), 70 deleted-only (k=2) against 10010 reordered-and-deleted (rung >= 2, k=2); shipped baseline 0.950980, which also clears the bar; rung 2 positives only: shipped 0.818067, matched 0.999490",
+      "clause_3_bit_identity": "np.array_equal True on 1847 eligible pairs (1913 fixture pairs, 1847 of equal length, all 1847 fully matched at c = 0.6); 1847/1847 exactly equal, largest |difference| 0.0; met by construction: the prototype passes a fully matched equal-length pair to opw_gap unmodified; the 66 pairs of unequal length are outside the clause"
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "stated, not tested - shipped opw_gap is a score (E11 triangle-violation rate 0.15) and is not edited; the matched gap is a notebook prototype and a score; no triangle test was run on it",
+    "notes": "Rows that can fail: V 0/24 on the ibm panel, boundary margin +4.71 pts, equal to the primer naive row; sha256 over src/**/*.py and tests/**/*.py unchanged between the first and the last cell (src be7e159f81c53284, tests 00ea6c7799307adb); git status src/ tests/ clean. Rows that compare two calls inside one kernel: default-path smd 0.22343884174015136 and order gap 0.1343654387715936 on (gold, gold-2) np.array_equal True; the 280 shipped deletion readings recomputed np.array_equal True. No edit under src/, docs/ or tests/"
+  },
+  "key_numbers": {
+    "kill_gate_max_identity_gap": 0.000858319,
+    "kill_gate_bar": 0.005,
+    "kill_gate_n_statements_min": 11,
+    "kill_gate_n_statements_max": 14,
+    "repeated_statements_in_base_documents": 0,
+    "shipped_median_k2": 0.134041,
+    "matched_median_k2": 9.67076e-05,
+    "deletion_within_bar": 280,
+    "deletion_n": 280,
+    "deletion_share": 1.0,
+    "matched_max_deletion": 0.000610062,
+    "matched_median_per_k": {
+      "1": 0.000205635,
+      "2": 9.67076e-05,
+      "3": 3.62672e-05,
+      "4": 9.2663e-06
+    },
+    "shipped_median_per_k": {
+      "1": 0.0716454,
+      "2": 0.134041,
+      "3": 0.121486,
+      "4": 0.155277
+    },
+    "matching_recovered_survivors": 280,
+    "auc_matched": 0.999903,
+    "auc_shipped": 0.95098,
+    "auc_matched_excluding_order_kept": 1.0,
+    "auc_rung2_matched": 0.99949,
+    "auc_rung2_shipped": 0.818067,
+    "n_negatives": 70,
+    "n_positives": 10010,
+    "unique_permutations": 1611,
+    "order_kept_positives": 1,
+    "largest_deleted_only_matched": 0.000363191,
+    "smallest_positive_not_order_kept_matched": 0.0507527,
+    "fixture_pairs": 1913,
+    "eligible_pairs": 1847,
+    "exactly_equal_pairs": 1847,
+    "exactly_equal_without_full_match_branch": 1837,
+    "max_abs_diff_without_full_match_branch": 2.10843e-06,
+    "rungs_tested": 5,
+    "rungs_retained_executor_rule": 5,
+    "rungs_retained_nearest_median_rule": 4,
+    "rungs_retained_shipped_medians_executor_rule": 3,
+    "matched_over_reorder_only_ratio_per_rung": {
+      "2": 1.31759,
+      "3": 1.17512,
+      "4": 1.06425,
+      "5": 1.00739,
+      "6": 1.00234
+    },
+    "spearman_matched_vs_reorder_only": 0.805787,
+    "sensitivity_inert_on_registered_sets": true,
+    "sensitivity_eligible_pairs_per_cutoff": {
+      "0.35": 1840,
+      "0.45": 1845,
+      "0.6": 1847
+    },
+    "sensitivity_auc_per_cutoff": {
+      "0.35": 0.999903,
+      "0.45": 0.999903,
+      "0.6": 0.999903
+    },
+    "second_pass_reworded_within_bar_per_cutoff": {
+      "0.35": 280,
+      "0.45": 280,
+      "0.6": 280
+    },
+    "second_pass_reworded_matched_median": 0.000218496,
+    "second_pass_reworded_matched_max": 0.00175157,
+    "second_pass_reworded_shipped_within_bar": 0,
+    "second_pass_reworded_shipped_median": 0.0763866,
+    "second_pass_true_pair_cost_max": 0.322901,
+    "second_pass_equal_length_paraphrase_gap_max": 0.00241448,
+    "third_pass_document_statements": 62,
+    "third_pass_repeated_statements": 9,
+    "third_pass_statements_after_removal": 53,
+    "third_pass_cases_per_arm": 120,
+    "third_pass_kept_survivors_recovered": 88,
+    "third_pass_kept_deletions_that_removed_a_repeated_statement": 43,
+    "third_pass_kept_not_recovered_among_those": 32,
+    "third_pass_kept_not_recovered_among_the_others": 0,
+    "third_pass_kept_matched_above_bar": 23,
+    "third_pass_kept_matched_above_bar_with_survivors_recovered": 0,
+    "third_pass_kept_matched_above_shipped": 21,
+    "third_pass_kept_matched_max": 0.324574,
+    "third_pass_kept_shipped_at_matched_max": 0.0586776,
+    "third_pass_removed_survivors_recovered": 120,
+    "third_pass_removed_matched_equal_to_identity_gap": 120,
+    "third_pass_removed_matched_above_bar": 63,
+    "third_pass_removed_matched_above_bar_per_length": {
+      "14": 0,
+      "20": 0,
+      "30": 3,
+      "40": 20,
+      "50": 20,
+      "53": 20
+    },
+    "third_pass_removed_matched_above_shipped": 0,
+    "third_pass_removed_matched_max": 0.0070473,
+    "third_pass_removed_shipped_median": 0.0412867,
+    "third_pass_removed_matched_median": 0.00531817,
+    "third_pass_identity_gap_per_length_kept": {
+      "14": 0.000135925,
+      "20": 0.00127942,
+      "30": 0.00235827,
+      "40": 0.00333976,
+      "50": 0.00438926,
+      "62": 0.00460675
+    },
+    "third_pass_identity_gap_per_length_removed": {
+      "14": 0.000666722,
+      "20": 0.00256189,
+      "30": 0.00518178,
+      "40": 0.00616366,
+      "50": 0.00663546,
+      "53": 0.00678594
+    },
+    "third_pass_removed_smallest_prefix_with_identity_gap_above_bar": 30,
+    "unequal_length_pairs": 66,
+    "unequal_length_matched_below_shipped": 42,
+    "unequal_length_matched_above_shipped": 24,
+    "unequal_length_shipped_median": 0.043782,
+    "unequal_length_matched_median": 0.0199738,
+    "unequal_length_matched_within_bar": 22,
+    "unequal_length_matched_max": 0.162117,
+    "unequal_length_shorter_fully_matched": 59,
+    "panel_margin_pts": 4.7083
+  },
+  "result_summary": "The matched order gap (shipped opw_gap over the one-to-one matched statement pairs, unit-capacity assignment on min(cost, c), c = 0.6) meets all three clauses of the registered bar: the verdict is Promoted. The verdict holds for the scope of the registered sets, documents of 11 to 14 statements with 0 repeated statements. Kill-gate passed: the identity order gap is at most 8.583e-04 on the 10 base documents. The harness reproduced the E12-H62 shipped median 0.134041 at k=2 on the rebuilt 280 cases. Clause 1: 280/280 order-preserving deletion cases read <= 0.005, largest reading 6.101e-04, median at k=2 0.134041 → 9.671e-05. Clause 2: 70 deleted-only against 10010 reordered-and-deleted cases separate at AUC 0.999903 (shipped baseline 0.950980). Clause 3: 1847/1847 fully matched equal-length fixture pairs equal shipped opw_gap exactly. Clauses 1 and 3 are met by construction on the registered sets and the shipped baseline also clears clause 2; clause 1 is the only clause on which lever and baseline differ (280/280 matched readings at or below 0.005, 280/280 shipped readings above it). Reorder rungs after a k=2 deletion: 5/5 retained under the executor rule, 4/5 under the nearest-median rule. Two limits were measured outside the bar, on the 62-statement fixture document source (k=2 interior deletions on prefixes, 120 cases per arm). Limit 1, repeated statements: the document holds 9 statements with the text '-', the matching is not unique, it recovers the survivors in 88/120 cases, and the matched gap reads above 0.005 in 23/120 cases and above the shipped gap in 21/120 (largest 0.3246 against shipped 0.0587). Limit 2, document length: with the 9 repeated statements removed the matching recovers the survivors in 120/120 cases and the matched gap is above the shipped gap in 0/120, but it reads above 0.005 in 63/120, because the identity floor opw_gap(P, P) of shipped opw_gap is 5.182e-03 at 30 statements and 6.786e-03 at 53. Guardrails hold: V 0/24, src and tests unchanged. A build needs a held-out measurement on documents with repeated statements and on documents above 14 statements; a tie-break rule for the matching and a length-dependent ceiling are new mechanisms and were not added.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H70-kj-matched-order-gap.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H70-matched-order-gap-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H70-matched-order-gap.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "1. Scope. The registered bar is read on the 10 base documents: 11 to 14 statements each, 0 repeated statements. The verdict Promoted follows from the literal bar on those sets and does not extend beyond them. 2. Repeated statements (verifier finding 1, reproduced in the third pass of the notebook, outside the bar). The fixture document source holds 62 statements, 9 of them the text '-'. Identical statements give the assignment cost ties, so the matching is not unique. 43 of 120 deletions removed a repeated statement; the matching did not recover the survivors in 32 of those 43 and in 0 of the other 77. The matched gap reads above 0.005 in 23/120 cases and above the shipped gap in 21/120; largest reading 0.3246 against shipped 0.0587 (prefix 30). The clause 1 control 'matching recovered the survivors in 280/280 cases' has one possible value on the registered sets. Deferred to the build: a held-out measurement of the deletion clause on documents with repeated statements, as an acceptance criterion. A tie-break rule inside the matching is a new mechanism; it was not added and is the adjudicator's decision. Statements that are near-identical but not byte-identical were not measured. 3. Document length (verifier finding 5, extended in the third pass). The kill-gate was read as registered and covers documents of 11 to 14 statements. The identity floor of shipped opw_gap grows with length. On source with the repeated statements kept, opw_gap(P, P) reads 1.279e-03 at 20 statements, 2.358e-03 at 30, 3.340e-03 at 40, 4.389e-03 at 50 and 4.607e-03 at 62. With the 9 repeated statements removed (53 statements) it reads 2.562e-03 at 20, 5.182e-03 at 30, 6.164e-03 at 40 and 6.786e-03 at 53: above the ceiling 0.005 from 30 statements. In that arm the matching recovers the survivors in 120/120 cases, the matched gap equals the identity gap of the shortened document in 120/120, it is above the shipped gap in 0/120 (shipped median 0.04129, matched median 5.318e-03), and it is above 0.005 in 63/120 (0, 0, 3, 20, 20, 20 of 20 at prefix lengths 14, 20, 30, 40, 50, 53). From 30 statements in that arm no reading built on opw_gap can meet the ceiling. This is one document. A length-dependent ceiling would be a new mechanism and was not added. Deferred to the build: a held-out measurement on documents above 14 statements. 4. The cutoff c is inert in this experiment: at 0.35, 0.45 and 0.6 the per-case readings are exactly equal on the 280 deletion cases, on the 10010 positives and on the 280 reworded cases of the second pass (all 124 true pairs cost at most 0.322901; in a pure deletion the removed statements stay unmatched because the shorter document has no free statement). The run gives no evidence for or against the value 0.6; a set with statements lacking a counterpart on both sides (substitution, two-sided insertion) would be needed. 5. Clause 1 holds by construction once the matching is correct: the registered survivors are byte-identical, so the matched gap is the identity order gap of the shortened document. 6. The shipped baseline also clears the pooled AUC bar of clause 2 (0.950980); the lever is separated from the baseline by clause 1 and by the per-rung AUC (rung 2: 0.818067 → 0.999490). 7. Clause 3 holds by construction of the prototype: a fully matched equal-length pair is passed to opw_gap unmodified. Without that branch 1837/1847 are equal; the 10 identity pairs differ by at most 2.108e-06 because POT zeroes the ground-cost diagonal only when both arguments are the same object. A build needs this branch. 1820 of the 1847 eligible pairs are reorder-pool entries. 8. The rule for 'near its reorder rung' is not in the record. The executor wrote two rules; the repository does not prove that either was chosen before the readings were seen, because the notebook was executed more than once. Executor rule (matched median strictly between the reorder-only medians of the adjacent rungs): 5/5 rungs. Nearest-median rule: 4/5 rungs (the rung-3 matched median 0.30459 is nearer to the rung-4 reorder-only median 0.34850 than to its own 0.25920). The executor rule is wide; applied to the shipped medians after the deletion it retains 3/5. The matched median after a deletion is above the reorder-only median by a factor of 1.318 at rung 2 (1.002 at rung 6). The prediction is not a clause of the bar. direction_matched is true on the deletion half, whose direction the record defines; the rung half is a size claim with no record-defined rule. 9. Other executor readings of the record: rung 2 or above = normalized footrule displacement >= 0.166667, the lower edge of the second of the 6 equal-width E11 bins; positive class = the 7 k=2 deletion plans applied to positions of the reordered document, over 1611 unique permutations of the 1820 pool entries; the section-swap family enters clause 3 as 10 identity pairs; the sanity tolerance 0.0005 is an executor value with the same standing as the rung rules. 10. 1 of 10010 positives has its survivors in original order after the deletion and reads 1.737e-05; the low reading is correct for that case. 11. The 66 fixture pairs of unequal length are outside the bar (verifier finding 4). The matched gap reads below the shipped gap in 42 pairs and above it in 24; the median moves from 0.0438 to 0.0200; 22 pairs read <= 0.005 against 0 under the shipped gap; largest matched reading 0.1621; every statement of the shorter document is matched in 59/66 pairs. No ground truth exists for these pairs: this is a reading, not a test, and it needs a ground truth before the matched gap is used for a structural verdict on such pairs. 12. The second pass (reworded survivors), the third pass (repeated statements and length) and the table of unequal-length pairs are executor additions outside the registered bar. None of them enters the verdict. 13. Not measured: insertions, substitutions, rewords that cost more than the cutoff, a triangle test of the matched gap. 14. Guardrail rows that can fail: V, the sha256 comparison of src and tests, git status. The two default-path rows compare two calls of the unmodified shipped functions inside one kernel and detect a change made during the run only. The metric-property row is a statement, not a test (verifier finding 6). 15. Other processes executed notebooks on this machine during the run; no timing is quoted. Against the pre-repair metrics JSON, every registered reading is unchanged: the only differences are the renamed rung keys, the metric-property text and the added blocks."
+}

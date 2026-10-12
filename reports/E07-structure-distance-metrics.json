@@ -5,7 +5,7 @@
     },
     "T_sparsity": {
       "sharp_mean_entropy": 4.525211628857012e-12,
-      "diffuse_median_entropy": 0.12279516347753033,
+      "diffuse_median_entropy": 0.12164834154563078,
       "gate_pass": true
     },
     "E07-H38": {
@@ -43,10 +43,10 @@
       }
     },
     "E07-H40": {
-      "reorder_gated": 0.3846311916712946,
-      "diffcontent_ungated": 0.2871212121189538,
-      "diffcontent_gated": 0.2824727489956802,
-      "diffcontent_smd": 0.41513845653019166
+      "reorder_gated": 0.38463451956106104,
+      "diffcontent_ungated": 0.2886363636340886,
+      "diffcontent_gated": 0.2840319417611773,
+      "diffcontent_smd": 0.415180973268368
     },
     "E07-H41": {
       "example_base": "gold",
@@ -54,7 +54,7 @@
       "top_mover_disp": 9.0
     },
     "E07-H43": {
-      "reorder_semantic": 0.9998749178609465,
+      "reorder_semantic": 0.999867468758068,
       "reorder_structure": 0.4293877551020408
     },
     "E07-H30": {
@@ -66,8 +66,8 @@
       "reordered_band": 0.4582833832833833
     },
     "E07-H34": {
-      "gw_reorder_mean": 3.308780248054144e-10,
-      "gw_cross_mean": 0.024926211999050964
+      "gw_reorder_mean": 9.146250787989141e-11,
+      "gw_cross_mean": 0.0248911245563503
     },
     "E07-H35": {
       "fgw_reorder_range": [
@@ -84,17 +84,17 @@
       }
     },
     "E07-H36": {
-      "rho": 0.6572293340410861,
+      "rho": 0.663264909215643,
       "ci": [
-        0.5402938741178606,
-        0.7574472082077568
+        0.5481639889391945,
+        0.7630360136285789
       ]
     },
     "E07-H37": {
-      "triangle_violation_rate": 0.075,
-      "ms_smd": 0.07947595993755385,
-      "ms_tau": 0.32077198004117236,
-      "ms_gw": 0.2997882998897694
+      "triangle_violation_rate": 0.08,
+      "ms_smd": 0.15890323964413255,
+      "ms_tau": 0.563782780081965,
+      "ms_gw": 0.5607903003692627
     }
   },
   "verdicts": {
@@ -160,11 +160,11 @@
     },
     "E07-H36": {
       "verdict": "Exploratory",
-      "detail": "Pearson rho=0.66 (95% CI [0.54,0.76]) - CI half-width exceeds the 0.3 margin, not confirmable on one article"
+      "detail": "Pearson rho=0.66 (95% CI [0.55,0.76]) - CI half-width exceeds the 0.3 margin, not confirmable on one article"
     },
     "E07-H37": {
       "verdict": "Reported",
-      "detail": "tau-structure triangle-inequality violation rate 8% (it is a derived disorder, not claimed a metric - only GW/FGW are); cost tau 0.32ms vs SMD 0.08ms vs GW 0.30ms per pair"
+      "detail": "tau-structure triangle-inequality violation rate 8% (it is a derived disorder, not claimed a metric - only GW/FGW are); cost tau 0.56ms vs SMD 0.16ms vs GW 0.56ms per pair"
     }
   },
   "config": {

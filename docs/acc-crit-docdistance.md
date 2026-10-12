@@ -24,6 +24,118 @@ How document bodies are read, stripped and split into statements before embeddin
   - test-tags: UNIT
   - log: 2026-08-31T12:30:33Z @kj added
   - log: 2026-08-31T13:42:59Z @kj closed
+- [x] `ACC-SEGM-85` **HTML reader converts to markdown lines** - HIGH; html_to_markdown writes h1 to h6, li, tr, pre and paragraphs as the lines split_markdown reads; title, script, style, template, noscript, svg and comments dropped; head is not a dropped element; character references decoded; standard library parser, no new dependency; malformed HTML does not raise
+  - evidence: tests/test_segmentation.py: 26 test functions test_html_* (one per tag of the conversion, nested and ordered lists, th table, pre, dropped elements, character references, byte order mark, malformed input) pass (1.1.21: 496 passed)
+  - test: unit test per element kind, plus nested list, th table, unclosed p, script and style block
+  - test-tags: UNIT
+  - log: 2026-10-10T02:51:43Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
+  - log: 2026-10-12T01:15:15Z @kj amended text "html_to_markdown writes h1 to h6, li, tr, pre and paragraphs as the lines split_markdown reads; script, style, head and comments dropped; character references decoded; standard library parser, no new dependency; malformed HTML does not raise" -> "html_to_markdown writes h1 to h6, li, tr, pre and paragraphs as the lines split_markdown reads; title, script, style, template, noscript, svg and comments dropped; head is not a dropped element; character references decoded; standard library parser, no new dependency; malformed HTML does not raise"
+- [x] `ACC-SEGM-86` **HTML and markdown twins read the same statements** - HIGH; one fixture document as markdown and as HTML: split_markdown(html_to_markdown(html)) and split_markdown(md) return equal embedded lists; embed_statements with input_format html returns the statements of markdown=True on the twin; section fields equal for both
+  - evidence: tests/test_segmentation.py::test_html_twin_splits_into_the_statements_of_the_markdown_twin, test_embed_statements_html_returns_the_statements_of_the_markdown_twin, test_details_of_the_html_twin_carry_the_sections_of_the_markdown_twin pass (1.1.21: 496 passed)
+  - test: twin fixture in tests with stub segmenter and encoder
+  - test-tags: UNIT
+  - log: 2026-10-10T02:51:43Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
+- [x] `ACC-SEGM-87` **Format detector reads content only** - HIGH; detect_format returns html, markdown or plain from the text, never from the file extension; markdown with inline tags is not html; prose without markup is plain; every .md under data/interim/exec-summaries and data/external reads markdown or plain
+  - overridden-by: ACC-SEGM-93
+  - evidence: tests/test_segmentation.py: 16 test functions test_detect_format_* pass, with the corpus check on data/interim/exec-summaries and data/external; detect_format takes the text only (1.1.21: 496 passed)
+  - test: boundary cases and the corpus check as parametrised tests
+  - test-tags: UNIT
+  - log: 2026-10-10T02:51:43Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
+- [x] `ACC-SEGM-89` **input_format on the Python calls** - HIGH; every pipeline method and one-shot function that takes markdown takes input_format, default plain; markdown=True equals input_format markdown; a conflict or an unknown value raises ValueError; auto resolves per document in embed_statements
+  - overridden-by: ACC-SEGM-94
+  - evidence: tests/test_pipeline.py::test_every_call_that_takes_markdown_takes_input_format_with_the_default_plain, test_input_format_reaches_the_reader_of_every_document; tests/test_segmentation.py::test_markdown_flag_beside_another_reader_raises, test_unknown_input_format_raises_and_lists_the_four_values pass (1.1.21: 496 passed)
+  - test: stub tests: html, auto on three kinds of document, conflict, unknown value
+  - test-tags: UNIT
+  - log: 2026-10-10T02:51:44Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
+- [x] `ACC-SEGM-90` **Default reader unchanged by input_format** - HIGH; a call without input_format and without markdown returns every number and detail-file key of the build before this package: baseline verify reads 0 differences on 55 pairs and 3 grounded results
+  - overridden-by: ACC-SEGM-95
+  - evidence: own run on 1.1.21, 2026-10-10: 'verify: 55 pairs, 3 grounded, 0 difference(s)'; the default call shape is pinned by tests/test_cli.py::test_input_format_values_and_the_markdown_flag[*-default]
+  - test: CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-10T02:51:44Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
+- [x] `ACC-SEGM-91` **Memo key and marker warning follow the reader** - MEDIUM; the memo key carries the requested input_format and is taken before the file is read; one file read under two values holds two entries; the marker warning is logged when the reader that ran is plain, also under auto, not for markdown or html
+  - evidence: tests/test_pipeline.py::test_memo_holds_one_entry_per_requested_input_format, test_memo_key_is_taken_before_an_html_file_is_read, test_marker_warning_on_a_memo_hit_follows_the_reader_that_ran; tests/test_segmentation.py::test_marker_warning_is_logged_under_auto_when_the_plain_reader_ran pass (1.1.21: 496 passed)
+  - test: stub tests on the memo and on the captured log
+  - test-tags: UNIT
+  - log: 2026-10-10T02:51:44Z @kj added
+  - log: 2026-10-10T06:01:29Z @kj closed
+- [x] `ACC-SEGM-92` **Input format documented** - MEDIUM; README, docs/cli-reference.md, docs/api-reference.md, the agent skill and CHANGELOG state the detector rule with its numbers, the conversion table, the default plain, and that auto on a markdown file returns other numbers than the default reader
+  - overridden-by: ACC-SEGM-97
+  - evidence: read on 1.1.21: README.md, docs/cli-reference.md, docs/api-reference.md, .claude/skills/docdistance/SKILL.md and CHANGELOG.md each state the tag-line share 0.5, the fence rule, the added block tags, numbered ordered-list items, the default plain and the option input-format
+  - test: read the five documents against the code
+  - test-tags: MANUAL
+  - log: 2026-10-10T02:51:44Z @kj added
+  - log: 2026-10-10T06:01:29Z @kj closed
+- [x] `ACC-SEGM-93` **Reader chosen by file extension** - HIGH; input_format auto reads the file extension: .md and .markdown choose the markdown reader, .html and .htm the HTML reader; every other extension, a file without extension and raw text choose the plain reader; the content is not read for the choice and detect_format is removed
+  - evidence: 1.1.26: test_auto_chooses_the_reader_of_a_file_from_its_extension (32 cases), test_auto_reads_raw_text_with_the_plain_reader pass; grep detect_format over src, tests, README, CHANGELOG, skill, docs/solution prints no match; verifier probed 23 file names; make test 566 passed, 1 skipped
+  - overrides: ACC-SEGM-87
+  - test: stub tests per extension, upper-case extension, raw text, Path and str arguments
+  - test-tags: UNIT
+  - mechanism: 2026-10-10T08:04:31Z @kj user's decision of 2026-10-10: extension for autodetection, otherwise the flag
+  - log: 2026-10-10T08:04:31Z @kj added
+  - log: 2026-10-11T23:53:21Z @kj closed
+- [x] `ACC-SEGM-94` **auto is the default input format** - HIGH; every pipeline call and the three distance commands default to input_format auto; an explicit plain, markdown or html, or --markdown, applies to every document; an unknown value, or --markdown beside another explicit value, is an error raised before a model loads
+  - evidence: 1.1.26: default auto asserted on the 11 calls and 3 commands; markdown=True equals input_format markdown on every call (mutation fails at 7 of 7 sites); reader errors before a model load (33 and 12 cases, 0 loads); --markdown beside another value exits 2
+  - overrides: ACC-SEGM-89
+  - overrides: ACC-CLI-88
+  - test: signature test over the 11 calls; CliRunner per command without the option reads a .md file with the markdown reader; error cases count 0 model loads
+  - test-tags: UNIT, E2E
+  - mechanism: 2026-10-10T08:04:31Z @kj user's decision of 2026-10-10 (default on); third registered exception to the bit-identical rule: numbers for .md, .markdown, .html and .htm files differ from 1.1.5
+  - log: 2026-10-10T08:04:31Z @kj added
+  - log: 2026-10-11T23:53:21Z @kj closed
+- [x] `ACC-SEGM-95` **Plain reader unchanged against 1.1.5** - HIGH; with input_format plain every number and detail-file key of 1.1.5 is unchanged except moved and n_moved (ACC-TRANS-77): baseline verify --allow moved,n_moved, which names the plain reader, reads 0 differences on 55 pairs and 3 grounded results; the default path on the 55 .md pairs equals the auto arm of E16-H81
+  - evidence: 1.1.26, baseline.py verify with input_format plain in every call: verify: 55 pairs, 3 grounded, 0 difference(s) (logs/extension-default-verify.log); checks/default-reader/diff.py: 55 of 55 default distances equal the auto arm of E16-H81
+  - overrides: ACC-SEGM-90
+  - test: CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded; the default-reader check under reports/E13-campaign/checks
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-10T08:04:31Z @kj added
+  - log: 2026-10-11T23:53:21Z @kj closed
+  - log: 2026-10-12T01:15:15Z @kj amended text "with input_format plain every number and detail-file key of 1.1.5 is unchanged: baseline verify, which pins the plain reader, reads 0 differences on 55 pairs and 3 grounded results; the default path on the 55 .md pairs equals the auto arm of E16-H81" -> "with input_format plain every number and detail-file key of 1.1.5 is unchanged except moved and n_moved (ACC-TRANS-77): baseline verify --allow moved,n_moved, which names the plain reader, reads 0 differences on 55 pairs and 3 grounded results; the default path on the 55 .md pairs equals the auto arm of E16-H81"
+- [x] `ACC-SEGM-96` **HTML reading does not depend on the source line wrap** - HIGH; html_to_markdown writes each paragraph on one line with its whitespace collapsed; br is the only line break inside a paragraph; an HTML document wrapped at 72 columns reads the statements of the same document with one line per paragraph
+  - evidence: 1.1.26: test_html_wrapped_at_72_columns_reads_the_statements_of_one_line_per_paragraph, test_html_br_is_the_only_line_break_inside_a_paragraph, test_html_pre_keeps_the_line_breaks_of_its_source_text pass; verifier: 1000 wrapped variants convert to the one-line text, real segmenter reads 7 and 7 statements
+  - test: wrapped and unwrapped HTML of one document with a stub segmenter that cuts at line breaks: equal statements
+  - test-tags: UNIT
+  - mechanism: 2026-10-10T08:04:31Z @kj the prose segmenter cuts at every line break; final review round 1 read 37 against 10 statements for a wrapped HTML file
+  - log: 2026-10-10T08:04:31Z @kj added
+  - log: 2026-10-11T23:53:21Z @kj closed
+- [x] `ACC-SEGM-97` **Extension rule and default documented** - MEDIUM; README, docs/cli-reference.md, docs/api-reference.md, the agent skill and CHANGELOG state the extension rule, the default auto, the explicit values, the conversion table, and that numbers for .md and .html files differ from 1.1.5 unless input_format plain is passed
+  - evidence: README, docs/cli-reference.md, docs/api-reference.md, the agent skill and CHANGELOG read against the 1.1.26 code by the implementer and two verifier rounds: extension rule, default auto, conversion table, input_format plain for the 1.1.5 numbers; CHANGELOG entry under Changed
+  - overrides: ACC-SEGM-92
+  - test: read the five documents against the code
+  - test-tags: MANUAL
+  - log: 2026-10-10T08:04:31Z @kj added
+  - log: 2026-10-11T23:53:21Z @kj closed
+- [x] `ACC-SEGM-98` **Experiment records name their build and reader** - MEDIUM; both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5, which read files with the plain reader or the stored statements of the structure fixture, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.26, 0 error outputs
+  - evidence: note 'Build of record' at the top of both ledgers, checked against the metrics files (E12 to E15 store docdistance 1.1.5 and an unchanged source tree); reexec-status.tsv: E16-H81 exit 0, 0 error outputs on 1.1.26; 1091 of 1104 readings equal the 1.1.21 record, 13 name the environment
+  - related: ACC-SEGM-94
+  - test: read the note 'Build of record' in both ledgers against the metrics files; reexec.sh status line of E16-H81: exit 0, 0 error outputs
+  - test-tags: MANUAL, FUNCTIONAL
+  - mechanism: 2026-10-11T22:43:07Z @kj default reader follows the file extension from 1.1.25 (ACC-SEGM-94); the records were measured with the plain reader
+  - log: 2026-10-11T22:43:07Z @kj added
+  - log: 2026-10-11T22:51:40Z @kj amended title "Experiment notebooks reproduce under the extension default" -> "Experiment records name their build and reader"; text "every pipeline call on a .md or .html file in notebooks/experiments names input_format plain; E16-H81 carries the removed detector; re-execution on 1.1.25: 0 error outputs, readings other than timings and the E16-H81 HTML arm equal the stored ones" -> "both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5 read with the plain reader, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.25 with 0 error outputs"
+  - log: 2026-10-11T22:51:40Z @kj edited test "reexec.sh status file: exit 0, 0 error outputs per notebook; drift.py --against the stored metric copies, --tol 0" -> "read the note 'Build of record' in both ledgers against the metrics files; reexec.sh status line of E16-H81: exit 0, 0 error outputs"; test-tags "FUNCTIONAL" -> "MANUAL, FUNCTIONAL"
+  - log: 2026-10-11T23:53:22Z @kj closed
+  - log: 2026-10-12T01:15:15Z @kj amended text "both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5 read with the plain reader, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.25 with 0 error outputs" -> "both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5 read with the plain reader, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.26 with 0 error outputs"
+  - log: 2026-10-12T01:28:37Z @kj amended text "both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5 read with the plain reader, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.26 with 0 error outputs" -> "both ledgers state that the E01 to E15 notebooks are records on docdistance 1.1.5, which read files with the plain reader or the stored statements of the structure fixture, and what a run on a later build changes; E16-H81 carries the removed detector and re-executes on 1.1.26, 0 error outputs"
+- [x] `ACC-SEGM-99` **Memo entry per reader of the file name** - MEDIUM; the memo key also holds the reader that the extension of the name as given chooses; a symbolic link notes.txt to a.md is a second entry, read by the plain reader with the memo on and off
+  - evidence: 1.1.27: test_memo_reads_two_names_of_one_file_with_the_reader_of_each_name passes and fails without the key element; verifier on real models: a.md and a link notes.txt read 7 and 8 statements with the memo on and off; make test 570 passed, 1 skipped
+  - related: ACC-SEGM-91
+  - test: tests/test_pipeline.py::test_memo_reads_two_names_of_one_file_with_the_reader_of_each_name
+  - test-tags: UNIT
+  - mechanism: 2026-10-12T00:03:37Z @kj the key held the resolved path and the word auto, so the second name of one file was served the reader of the first
+  - log: 2026-10-12T00:03:37Z @kj added
+  - log: 2026-10-12T00:03:46Z @kj closed
+- [x] `ACC-SEGM-100` **Mistyped-path warning covers the four reader extensions** - LOW; a document argument without a slash that names no file and ends in .md, .markdown, .html or .htm is read as raw text and logs the warning 'looks like a file path'
+  - evidence: 1.1.27: test_missing_file_with_a_reader_extension_logs_the_path_warning passes for 4 names and fails for missing.markdown and missing.htm on a copy with the earlier suffix list; make test 570 passed, 1 skipped
+  - test: tests/test_pipeline.py::test_missing_file_with_a_reader_extension_logs_the_path_warning (4 names)
+  - test-tags: UNIT
+  - log: 2026-10-12T00:03:37Z @kj added
+  - log: 2026-10-12T00:03:46Z @kj closed
 
 ## Detail-file exposure `MAP`
 
@@ -72,6 +184,73 @@ Fields, views and metadata the semantic and structural detail files carry for do
   - test-tags: UNIT
   - log: 2026-08-31T12:30:51Z @kj added
   - log: 2026-08-31T13:43:07Z @kj closed
+- [x] `ACC-MAP-55` **Semantic flows carry the match** - HIGH; each flow of the semantic detail file gains match_index (statement index in B, or null) and match_status kept or removed
+  - evidence: tests/test_pipeline.py::test_semantic_flows_carry_the_match pass (1.1.13: 269 passed)
+  - test: A = B plus one unrelated statement: assert that flow reads removed with match_index null and every other flow kept
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-56` **Targets carry added** - HIGH; each targets entry of the semantic detail file gains match_status kept or added and match_source_index (statement index in A, or null)
+  - evidence: tests/test_pipeline.py::test_semantic_targets_carry_added, tests/test_pipeline.py::test_semantic_target_match_is_the_paired_statement_not_the_cheapest_source pass (1.1.13: 269 passed)
+  - test: B = A plus one unrelated statement: assert that target reads added and every other target kept
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-57` **Summary counts kept, removed, added** - MEDIUM; summary gains n_kept, n_removed, n_added; n_kept + n_removed equals the statement count of A and n_kept + n_added that of B
+  - evidence: tests/test_pipeline.py::test_semantic_summary_counts_kept_removed_added pass (1.1.13: 269 passed)
+  - test: pair with 2 deletions and 1 insertion: assert both sums
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-58` **Match cutoff and definitions in the header** - MEDIUM; thresholds gains match_cutoff 0.325 and the definitions block states kept, removed and added in one line each
+  - evidence: tests/test_pipeline.py::test_semantic_details_header_self_describing, tests/test_structure.py::test_build_structural_details_header_self_describing_and_summary pass (1.1.13: 269 passed)
+  - test: assert thresholds match_cutoff == 0.325 and the three definitions present in both detail files
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-59` **Existing detail keys unchanged by the match fields** - CRITICAL; every key the 1.1.5 semantic and structural detail files carry keeps its value on the 55 ibm pairs, except moved and n_moved
+  - evidence: baseline.py verify --allow moved,n_moved --grounded: 55 pairs, 3 grounded, 0 difference(s) (1.1.13: 269 passed)
+  - test: baseline.py verify --allow moved,n_moved reads 0 differences
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-60` **Structural flows carry displacement over matched pairs** - MEDIUM; each structural flow gains matched_displacement: rank displacement inside the matched sub-sequences, null for a statement without a match; a pure deletion reads 0 on every kept statement
+  - evidence: tests/test_structure.py::test_matched_displacement_zero_on_kept_and_null_on_removed_statements, tests/test_structure.py::test_moved_reads_ranks_inside_the_matched_statements pass (1.1.13: 269 passed)
+  - test: B = A minus 2 rows: assert matched_displacement 0 on 10 flows and null on 2
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T10:27:01Z @kj ranks are taken inside the matched pairs only, so a statement count difference no longer makes the rank transform ill-defined
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-61` **Edge: identical documents all kept** - MEDIUM; a document against itself: every flow kept, n_removed 0, n_added 0
+  - evidence: tests/test_pipeline.py::test_semantic_details_identical_documents_all_kept pass (1.1.13: 269 passed)
+  - test: same file twice: assert the three counts
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:02Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-62` **Edge: unrelated documents nothing kept** - MEDIUM; two documents with no pair under the cutoff: n_kept 0, every flow removed, every target added
+  - evidence: tests/test_pipeline.py::test_semantic_details_unrelated_documents_nothing_kept pass (1.1.13: 269 passed)
+  - test: two documents from orthogonal subspaces: assert the counts and both status lists
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:02Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-63` **Matching fields documented** - MEDIUM; docs/api-reference.md, docs/cli-reference.md and docs/example-map-interpretations.md describe match_status, match_index, matched_order_gap and MATCH_CUTOFF with the E13-H70 and E13-H71 readings
+  - evidence: docs/api-reference.md, docs/cli-reference.md and docs/example-map-interpretations.md describe match_status, match_index, matched_order_gap and MATCH_CUTOFF with the E13-H70 and E13-H71 readings; grep finds each name in each file (1.1.13: 269 passed)
+  - test: grep the four names in the three documents; compare the quoted readings with the ledger
+  - test-tags: MANUAL
+  - log: 2026-10-09T10:27:02Z @kj added
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-MAP-65` **Edge: empty document raises on the detail paths** - LOW; a document that segments to zero statements raises ValueError 'document produced no statements' on semantic_distance_with_details, structural_distance_with_details and distance_wrt_source_with_map; carried over from docs/acceptance-criteria/acc-crit-transport-map.md, where the behaviour was inherited and never asserted
+  - evidence: tests/test_pipeline.py::test_empty_document_raises_on_the_detail_paths pass (1.1.13: 269 passed)
+  - test: unit test with a segmenter stub returning no statement: pytest.raises(ValueError, match='no statements') on the three calls
+  - test-tags: UNIT
+  - log: 2026-10-09T10:47:45Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-MAP-73` **Source map marks unsupported statements** - MEDIUM; each a and b record of the source map gains nearest_source_index, nearest_source_cost and unsupported, read on raw embeddings; the map header gains source_support_cutoff and n_unsupported with keys a and b; top_k matches and every existing key keep their values
+  - evidence: tests/test_pipeline.py::test_source_map_marks_the_statement_foreign_to_the_source, tests/test_pipeline.py::test_source_map_unsupported_reads_the_source_support_cutoff, tests/test_pipeline.py::test_source_map_support_fields_are_read_before_the_pre_pass pass (1.1.13: 269 passed)
+  - test: distance_wrt_source_with_map on a document with one statement foreign to the source: that record reads unsupported true, header n_unsupported.a == 1; existing keys equal to a run of the unchanged tree
+  - test-tags: UNIT
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:29Z @kj closed
 
 ## Transport and flag semantics `TRANS`
 
@@ -91,34 +270,199 @@ The OT plan, its marginals, and the changed/moved flags derived from it
   - test-tags: UNIT
   - log: 2026-08-31T12:31:07Z @kj added
   - log: 2026-08-31T13:43:16Z @kj closed
-- [ ] `ACC-TRANS-14` **moved is the conjunction of rank displacement and norm displacement** - HIGH; moved fires only when displacement != 0 AND abs(displacement_norm) > MOVED_TOLERANCE (E12-H61); one statement inserted at position 0 of the 6-statement worked example flags 0 of 6 untouched statements (shipped norm-only flag: 4 of 6)
+- [-] `ACC-TRANS-14` **moved is the conjunction of rank displacement and norm displacement** - HIGH; moved fires only when displacement != 0 AND abs(displacement_norm) > MOVED_TOLERANCE (E12-H61); one statement inserted at position 0 of the 6-statement worked example flags 0 of 6 untouched statements (shipped norm-only flag: 4 of 6)
+  - overridden-by: ACC-TRANS-77
   - test: insertion fixture from E12-H61 (doc-a plus B with one novel statement at position 0); assert n_moved == 0
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-15` **Edge: genuine swap still flagged** - HIGH; on the unmodified worked example (docs/example-map-interpretations.md doc-a / doc-b) both swapped statements read moved under the conjunction
+  - log: 2026-10-09T11:37:46Z @kj rejected: overridden by ACC-TRANS-77: E15-H80 Promoted reading moved on matched pairs, because the conjunction on the exact-plan alignment flags statements in 246 of 280 order-preserving deletions; the insertion test (0 of 6) moves to ACC-TRANS-77
+- [x] `ACC-TRANS-15` **Edge: genuine swap still flagged** - HIGH; on the unmodified worked example (docs/example-map-interpretations.md doc-a / doc-b) both swapped statements read moved under the conjunction
+  - evidence: tests/test_structure.py::test_moved_reads_only_the_exchanged_pair_of_the_worked_example pass (1.1.13: 269 passed)
   - test: run structural_distance_with_details on doc-a / doc-b; assert both swapped statements carry moved
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-16` **Edge: reversal control 12/12** - HIGH; a fully reversed 12-statement document flags all 12 statements moved under the conjunction
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-16` **Edge: reversal control 12/12** - HIGH; a fully reversed 12-statement document flags all 12 statements moved under the conjunction
+  - evidence: tests/test_structure.py::test_moved_flags_every_statement_of_a_reversal pass (1.1.13: 269 passed)
   - test: reverse a 12-statement document; assert n_moved == 12
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-17` **Edge: shrinkage stays quiet** - MEDIUM; a 12 to 8 shrinkage (four statements removed, order kept) flags 0 of the 8 kept statements moved
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-TRANS-17` **Edge: shrinkage stays quiet** - MEDIUM; a 12 to 8 shrinkage (four statements removed, order kept) flags 0 of the 8 kept statements moved
+  - evidence: tests/test_structure.py::test_moved_quiet_on_an_order_preserving_deletion pass (1.1.13: 269 passed)
   - test: build the 12->8 pair from E12-H61; assert no kept statement carries moved
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-18` **Edge: reorder pool retains every true relocation** - HIGH; across the structure-fixture reorder pool (data/processed/structure-fixture, 1680 permutations) no statement flagged moved by the shipped definition and relocated in ground truth loses its flag (E12-H61 read 0 of 13675)
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-TRANS-18` **Edge: reorder pool retains every true relocation** - HIGH; across the structure-fixture reorder pool (data/processed/structure-fixture, 1680 permutations) no statement flagged moved by the shipped definition and relocated in ground truth loses its flag (E12-H61 read 0 of 13675)
+  - evidence: tests/test_structure.py::test_moved_keeps_every_true_relocation_of_the_reorder_pool pass (1.1.13: 269 passed)
   - test: re-run the E12-H61 pool sweep against the shipped build; assert lost == 0
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-19` **Conjunction leaves the distance layer bit-identical** - CRITICAL; default-path smd, order_gap and every non-flag field of the details dict are byte-identical to the 1.1.5 output on the six E12-H61 fixtures and the ibm 11-summary panel (V stays 0/24)
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-TRANS-19` **Conjunction leaves the distance layer bit-identical** - CRITICAL; default-path smd, order_gap and every non-flag field of the details dict are byte-identical to the 1.1.5 output on the six E12-H61 fixtures and the ibm 11-summary panel (V stays 0/24)
+  - evidence: baseline.py verify --allow moved,n_moved --grounded: 55 pairs, 3 grounded, 0 difference(s); without the allowance the differences are moved flags, definitions.moved and n_moved only (1.1.13: 269 passed)
   - test: np.array_equal on smd / order_gap and a byte diff of the flag-stripped details dict before and after; count V on the ibm panel
   - test-tags: UNIT, FUNCTIONAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-TRANS-20` **Definitions follow the conjunction** - MEDIUM; the pipeline header definitions block, the thresholds/definitions field of the structural detail JSON and the moved table in docs/example-map-interpretations.md all state the conjunction definition
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-TRANS-20` **Definitions follow the conjunction** - MEDIUM; the pipeline header definitions block, the thresholds/definitions field of the structural detail JSON and the moved table in docs/example-map-interpretations.md all state the conjunction definition
+  - evidence: tests/test_structure.py::test_build_structural_details_header_self_describing_and_summary pass (1.1.13: 269 passed)
+  - mechanism: 2026-10-09T11:37:46Z @kj the definition to state is the one ACC-TRANS-77 ships: matched AND matched_displacement != 0 AND abs(matched_displacement / n_matched) > moved_tolerance AND NOT no_counterpart
   - test: read the definitions field of a structural --details-json output and the docs table; assert both name displacement AND norm
   - test-tags: UNIT, MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
+  - log: 2026-10-10T00:34:28Z @kj closed
+- [x] `ACC-TRANS-47` **Partial matching is one-to-one under a cutoff** - HIGH; partial_matching(X, Y) returns index pairs from a unit-capacity assignment on ground cost; each statement appears in at most one pair; no returned pair costs MATCH_CUTOFF or more
+  - evidence: tests/test_structure.py::test_partial_matching_is_one_to_one_under_the_cutoff, tests/test_structure.py::test_partial_matching_caps_the_assignment_cost pass (1.1.13: 269 passed)
+  - test: random unit vectors, 5 planted near-copies and 3 unrelated rows: assert 5 pairs, each index once, every pair cost below the cutoff
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T10:27:01Z @kj scipy.optimize.linear_sum_assignment on np.minimum(cost, cutoff); pairs at or above the cutoff are dropped (E13-H71)
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-48` **Matching cutoff 0.325 with provenance** - MEDIUM; MATCH_CUTOFF = 0.325 sits beside DEFAULT_THRESHOLD in distance.py; its comment cites E13-H71: chosen on half A, held-out macro-F1 0.9772, in-sample optimum on all bases, safe band 0.28 to 0.44
+  - evidence: MATCH_CUTOFF = 0.325 in distance.py; its comment cites E13-H71 (0.325 calibrated on half A, held-out macro-F1 0.9772, range 0.28 to 0.44) and says it is not the derived DIFF_CHANGED_COST; read against reports/E13-H71-partial-matching-map-metrics.json (1.1.13: 269 passed)
+  - test: grep MATCH_CUTOFF in src/docdistance/distance.py; read the comment against reports/E13-H71-partial-matching-map-metrics.json
+  - test-tags: MANUAL
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [-] `ACC-TRANS-49` **Matched order gap ignores a pure deletion** - HIGH; with k statements deleted and the order of the rest kept, matched_order_gap(A, B) equals opw_gap(B, B); shipped opw_gap(A, B) on the same pair is larger (E13-H70: 280/280 at or below 0.005)
+  - related: DEF-TRANS-10 - the deletion-read-as-reorder defect this answers
+  - overridden-by: ACC-TRANS-80
+  - test: 12 distinct random unit vectors, B = A minus rows 3 and 8: assert matched_order_gap(A, B) == opw_gap(B, B) and below opw_gap(A, B)
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T10:27:01Z @kj shipped opw_gap computed on the two matched sub-sequences, each kept in its own document order (E13-H70)
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-09T17:45:42Z @kj rejected: overridden by ACC-TRANS-80: equality with opw_gap(B, B) cannot hold bit for bit, the exact identity is against opw_gap(B.copy(), B)
+- [x] `ACC-TRANS-50` **Matched order gap equals order gap when fully matched** - CRITICAL; same statement count and every statement matched: matched_order_gap(X, Y) is exactly opw_gap(X, Y) by np.array_equal (E13-H70: 1847/1847)
+  - evidence: tests/test_structure.py::test_matched_order_gap_equals_order_gap_when_fully_matched, tests/test_structure.py::test_matched_order_gap_leaves_out_a_replaced_statement pass (1.1.13: 269 passed)
+  - mechanism: 2026-10-09T11:29:06Z @kj at the shipped cutoff 0.325 the fully matched equal-length set of the fixture is 1840 pairs, all equal to opw_gap (E15-H79); 1847 is the E13-H70 count at cutoff 0.6
+  - test: Y = permuted X plus 1e-3 noise: assert np.array_equal(matched_order_gap(X, Y), opw_gap(X, Y))
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-51` **Matched order gap still reads a reorder after a deletion** - HIGH; a reordered document with 2 statements deleted reads a matched order gap at least 10 times the deleted-only reading (E13-H70: AUC 0.999903, deleted-only against reordered-and-deleted)
+  - evidence: tests/test_structure.py::test_matched_order_gap_still_reads_a_reorder_after_a_deletion pass (1.1.13: 269 passed)
+  - related: DEF-TRANS-10 - the deletion-read-as-reorder defect this answers
+  - test: B1 = A minus 2 rows, B2 = B1 reversed: assert matched_order_gap(A, B2) > 10 * matched_order_gap(A, B1)
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-52` **Edge: no statement matched** - MEDIUM; two documents with every pair at or above the cutoff: partial_matching returns no pair, matched_order_gap is None, n_matched is 0
+  - evidence: tests/test_structure.py::test_partial_matching_no_statement_matched, tests/test_cli.py::test_distance_structural_panel_when_no_statement_is_matched pass (1.1.13: 269 passed)
+  - test: X and Y drawn from orthogonal subspaces: assert no pair, None and 0
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-53` **Edge: unequal sizes** - MEDIUM; a 1-statement document against 12 gives at most 1 pair; with one matched pair matched_order_gap equals opw_gap of the two one-statement sub-sequences
+  - evidence: tests/test_structure.py::test_partial_matching_one_statement_against_twelve pass (1.1.13: 269 passed)
+  - test: X = one row of Y: assert 1 pair and matched_order_gap(X, Y) == opw_gap(X, X)
+  - test-tags: UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-54` **Structural result carries the matched order gap** - CRITICAL; StructuralResult and its JSON gain matched_order_gap and n_matched; order_gap, structure_closeness and the verdict keep their 1.1.5 values
+  - evidence: tests/test_distance.py::test_compute_structural_result, tests/test_distance.py::test_compute_structural_reads_a_pure_deletion_on_the_matched_gap pass (1.1.13: 269 passed)
+  - related: DEF-TRANS-10 - the deletion-read-as-reorder defect this answers
+  - test: baseline.py verify --allow moved,n_moved reads 0 differences; assert both keys in the structural result dict
+  - test-tags: FUNCTIONAL, UNIT
+  - log: 2026-10-09T10:27:01Z @kj added
+  - log: 2026-10-10T00:34:26Z @kj closed
+- [x] `ACC-TRANS-66` **Source-support cutoff 0.34625 with provenance** - MEDIUM; SOURCE_SUPPORT_CUTOFF = 0.34625 sits beside MATCH_CUTOFF in distance.py; its comment cites E15-H78: mean of the cutoffs 0.3375 and 0.3550 chosen on the two calibration halves, held-out balanced accuracy 0.9412 / 0.9272, second article 0.9868, valid on raw embeddings only
+  - evidence: SOURCE_SUPPORT_CUTOFF = 0.34625 in distance.py; its comment cites E15-H78 (cutoffs 0.3375 and 0.355, held-out 0.9412 / 0.9272, second article 0.9868, raw embeddings only); read against reports/E15-H78-raw-nearest-source-count-metrics.json (1.1.13: 269 passed)
+  - test: read the constant and its comment; compare the four numbers with reports/E15-H78-raw-nearest-source-count-metrics.json
+  - test-tags: MANUAL
+  - log: 2026-10-09T11:28:59Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-67` **Unsupported-statement count on raw embeddings** - HIGH; SourceConditionedResult gains n_unsupported_a and n_unsupported_b: the count of statements whose cost to the nearest source statement exceeds SOURCE_SUPPORT_CUTOFF, computed on the embeddings as passed in, before the anisotropy pre-pass; the count is a score, not a metric
+  - evidence: tests/test_distance.py::test_unsupported_count_reads_statements_far_from_every_source_statement, tests/test_distance.py::test_unsupported_counts_are_read_before_the_anisotropy_pre_pass pass (1.1.13: 269 passed)
+  - test: synthetic unit vectors: 3 copies of source rows plus 2 rows orthogonal to the source read 2; anisotropy True and False return the same counts
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T11:28:59Z @kj one-sided: each statement is compared with its nearest source statement only, so no mass is forced onto unrelated source statements
+  - log: 2026-10-09T11:28:59Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-68` **Verbatim extract reads no unsupported statement** - HIGH; the DEF-TRANS-8 case: 10 statements copied from a 70-statement source read n_unsupported_a 0, while residual_a and closeness_a keep their 1.1.5 values (0.958 and 0.322 on the ibm source)
+  - evidence: tests/test_distance.py::test_verbatim_extract_reads_no_unsupported_statement pass (1.1.13: 269 passed)
+  - test: compute_source_conditioned(X, X, S) with X = S[0::7][:10] on 70 random unit vectors: n_unsupported_a == 0 and residual_a > 0.5
+  - test-tags: UNIT
+  - log: 2026-10-09T11:28:59Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-69` **Count ignores deleted supported statements** - MEDIUM; removing supported statements from a document leaves its unsupported count unchanged; inserting k statements whose nearest-source cost exceeds the cutoff raises it by exactly k (E15-H78: 392 of 392 deletion cases unchanged)
+  - evidence: tests/test_distance.py::test_unsupported_count_ignores_deleted_supported_statements pass (1.1.13: 269 passed)
+  - test: synthetic document of copies of source rows: drop 1 to 4 rows, count stays 0; append k = 1 to 4 orthogonal rows, count equals k
+  - test-tags: UNIT
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-70` **Existing source-conditioned fields unchanged** - CRITICAL; d_sel, residual_a, residual_b, closeness_a, closeness_b, coverage_a, coverage_b, grd_a, grd_b and d_grd keep their 1.1.5 values on the three grounded baseline triples
+  - evidence: baseline.py verify --allow moved,n_moved --grounded: 55 pairs, 3 grounded, 0 difference(s) (1.1.13: 269 passed)
+  - test: CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded: 0 difference(s)
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [-] `ACC-TRANS-71` **Matching is deterministic among equal-cost pairs** - MEDIUM; partial_matching adds eps * abs(i/n - j/m), eps = 1e-6, to the capped assignment cost, so statements with identical text match in document order; measured limit (E15-H79, document with 9 repeated statements): 120/120 pure deletions at or below the shipped gap, sub-sequence textually equal in 111/120
+  - overridden-by: ACC-TRANS-83
+  - test: document with 3 identical statements among 6, one other statement deleted: the pairs of the identical group are in document order; two calls return the same pairs
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T11:29:00Z @kj among identical statements every pairing costs the same; a position term six orders below the cutoff ranks the equal-cost matchings and cannot move a pairing between statements whose costs differ
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-09T23:17:52Z @kj rejected: overridden by ACC-TRANS-83: the clause that statements with identical text match in document order is false when the in-order and the crossed pairing have the same position sum
+- [x] `ACC-TRANS-72` **Residual docstrings state what they measure** - LOW; the docstrings of ungrounded_residual and SourceConditionedResult state that residual_a is the balanced transport cost from the document to the whole source and grows when a document covers only part of the source; they name n_unsupported_a as the reading of content the source does not support
+  - overridden-by: ACC-TRANS-84
+  - evidence: docstrings of ungrounded_residual and SourceConditionedResult read: balanced transport cost to the whole source, grows under partial coverage (0.958 for a verbatim extract), pointer to n_unsupported_a / n_unsupported_b (1.1.13: 269 passed)
+  - test: read both docstrings; assert the partial-coverage sentence and the pointer to n_unsupported are present
+  - test-tags: MANUAL
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-76` **Matching reads raw embeddings under anisotropy** - HIGH; partial matching runs on the embeddings as passed in, the geometry MATCH_CUTOFF was calibrated on; with anisotropy on, n_matched, the matched pairs and every match_status equal the anisotropy-off values, and matched_order_gap is opw_gap of the matched sub-sequences in the pre-pass geometry, like order_gap
+  - evidence: tests/test_distance.py::test_compute_structural_matches_on_raw_embeddings_under_anisotropy, tests/test_pipeline.py::test_semantic_match_fields_read_the_embeddings_as_passed_in, tests/test_structure.py::test_structural_match_fields_read_the_embeddings_as_passed_in pass (1.1.13: 269 passed)
+  - test: compute_structural and both detail builders on one pair with anisotropy False and True: n_matched and the match fields equal; fully matched pair with anisotropy True: matched_order_gap == order_gap
+  - test-tags: UNIT
+  - log: 2026-10-09T11:31:22Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-77` **moved is read on matched pairs** - HIGH; structural detail record: moved = matched AND matched_displacement != 0 AND abs(matched_displacement / n_matched) > MOVED_TOLERANCE AND NOT no_counterpart; a statement without a match reads moved false; one statement inserted at position 0 of the 6-statement worked example flags 0 of 6 (E15-H80)
+  - evidence: tests/test_structure.py::test_moved_quiet_when_one_statement_is_inserted_at_position_0, tests/test_structure.py::test_moved_reads_only_the_exchanged_pair_of_the_worked_example, tests/test_structure.py::test_moved_reads_ranks_inside_the_matched_statements, tests/test_structure.py::test_moved_false_on_a_matched_statement_without_counterpart pass (1.1.13: 269 passed)
+  - overrides: ACC-TRANS-14
+  - test: E12-H61 insertion fixture: n_moved == 0; crafted pair with one swap among matched statements and one unmatched statement: only the two swapped statements carry moved
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T11:37:39Z @kj ranks are taken inside the matched sub-sequences, so they do not move when unmatched statements are added or removed, and no tie of the exact plan is read
+  - log: 2026-10-09T11:37:39Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-78` **Edge: order-preserving deletion flags nothing** - HIGH; a 12 to 8 order-preserving deletion flags 0 of 12 statements moved, kept and removed alike, and n_moved is 0 (DEF-TRANS-13; E15-H80: 0 flags in 280/280 cases where the 1.1.5 conjunction flags in 246/280)
+  - evidence: tests/test_structure.py::test_moved_quiet_on_an_order_preserving_deletion pass (1.1.13: 269 passed)
+  - test: E12-H61 shrink_text fixture through structural_distance_with_details: no record carries moved; summary n_moved == 0
+  - test-tags: UNIT
+  - log: 2026-10-09T11:37:39Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-79` **Edge: flags equal the E12-H61 conjunction on fully matched pairs** - HIGH; on a fully matched equal-length pair moved equals displacement != 0 AND abs(displacement_norm) > MOVED_TOLERANCE statement for statement (E15-H80: 1680/1680 permutations of 11 to 14 statements); exception stated in the docs: a rank step of exactly 5% of the length reads not moved (183/190 and 765/780 pairs equal at 20 and 40 statements)
+  - evidence: tests/test_structure.py::test_moved_equals_the_conjunction_on_fully_matched_pairs, tests/test_structure.py::test_moved_tolerance_reads_the_rank_step_over_the_matched_count pass (1.1.13: 269 passed)
+  - test: permute a 12-statement synthetic document 50 times (seeded): moved array equals the conjunction computed from the record's displacement and displacement_norm
+  - test-tags: UNIT
+  - log: 2026-10-09T11:37:39Z @kj added; reason: names the definition and the measured readings the build must match
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-TRANS-80` **Matched order gap of a pure deletion reads the identity floor** - HIGH; with k statements deleted and the order of the rest kept, matched_order_gap(A, B) equals opw_gap(B.copy(), B) exactly and opw_gap(B, B) within 1e-5; shipped opw_gap(A, B) on the same pair is larger (E13-H70: 280/280 at or below 0.005; E15-H79: at most 7.813e-06 from the one-object call)
+  - evidence: tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion: exact equality with opw_gap(B.copy(), B), within 1e-5 of opw_gap(B, B), below opw_gap(A, B) (1.1.13: 269 passed)
+  - overrides: ACC-TRANS-49
+  - related: DEF-TRANS-10 - the deletion-read-as-reorder defect this answers
+  - test: 12 distinct random unit vectors, B = A minus rows 3 and 8: assert matched_order_gap(A, B) == opw_gap(B.copy(), B), abs(matched_order_gap(A, B) - opw_gap(B, B)) < 1e-5, and below opw_gap(A, B)
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T17:45:42Z @kj POT sets the cost diagonal to exactly 0 only when both arguments are one array object; the matched rows of A are a new array, so the one-object call opw_gap(B, B) differs in the last digits
+  - log: 2026-10-09T17:45:42Z @kj added; reason: states the exact identity, the tolerance and the two measured readings
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-TRANS-83` **Matching is deterministic and ranks tied copies by position** - MEDIUM; partial_matching adds eps * abs(i/n - j/m), eps = 1e-6, to the capped assignment cost: two calls return the same pairs and copies of one statement are ranked by position. Copies are not always paired in document order: when every tied copy shifts the same way by more than the spacing of the copies, the in-order and the crossed pairing cost the same and the solver decides (E15-H79: sub-sequence textually equal in 111/120 pure deletions)
+  - evidence: partial_matching docstring states the rule, the tie condition and the E15-H79 limit 111 of 120; tests/test_structure.py::test_partial_matching_is_deterministic_among_equal_cost_pairs passes; the crossed example (16 one-hot statements, copies at 8 and 9) reproduces with equal position sums (1.1.13: 269 passed)
+  - overrides: ACC-TRANS-71
+  - test: document with 3 identical statements among 6, one other statement deleted: the pairs of the identical group are in document order and two calls return the same pairs; the docstring states the tie condition
+  - test-tags: UNIT
+  - mechanism: 2026-10-09T23:17:52Z @kj abs is convex but not strictly convex, so two pairings of equal-cost copies can have the same position sum; a position term six orders below the cutoff cannot move a pairing between statements whose costs differ
+  - log: 2026-10-09T23:17:52Z @kj added; reason: states the rule, the condition under which it does not order copies, and the measured limit
+  - log: 2026-10-10T00:34:31Z @kj closed
+- [x] `ACC-TRANS-84` **Unsupported count docstrings state what it counts** - LOW; docstrings of ungrounded_residual and SourceConditionedResult and the n_unsupported row of docs/api-reference.md name n_unsupported_a / n_unsupported_b as the count of statements with no near source statement, not a reading of entailment; the partial-coverage sentence and the pointer stay
+  - evidence: read on 1.1.21: docstrings of ungrounded_residual and SourceConditionedResult (src/docdistance/distance.py) and the n_unsupported row of docs/api-reference.md name the count of statements with no near source statement and state 'not a reading of entailment'; the old phrase has 0 matches in src and docs
+  - overrides: ACC-TRANS-72
+  - test: read the three sites: the phrase 'reading of content the source does not support' is absent, the entailment limit is present
+  - test-tags: MANUAL
+  - mechanism: 2026-10-10T02:51:43Z @kj E15-H78 metrics, all_summaries: 17 of 98 statements flagged, 10 of the 43 not-entailed statements among them
+  - log: 2026-10-10T02:51:43Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
 
 ## CLI and config operation `CLI`
 
@@ -137,106 +481,215 @@ Command-line behaviour, config discovery, error output and batch execution
   - test-tags: FUNCTIONAL
   - log: 2026-08-31T12:31:07Z @kj added
   - log: 2026-08-31T13:43:16Z @kj closed
-- [ ] `ACC-CLI-29` **Embed memo on --pairs batches** - HIGH; DocDistance memoises segment-and-encode per (resolved path, mtime, size, segmentation kwargs including fragment filters) so the E12-H67 55-row all-pairs sweep performs 11 real encodes for 110 slots
+- [x] `ACC-CLI-29` **Embed memo on --pairs batches** - HIGH; DocDistance memoises segment-and-encode per (resolved path, mtime, size, segmentation kwargs including fragment filters) so the E12-H67 55-row all-pairs sweep performs 11 real encodes for 110 slots
+  - evidence: tests/test_pipeline.py::test_all_pairs_sweep_encodes_each_document_once, tests/test_e2e.py::test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off, tests/test_pipeline.py::test_memo_key_is_the_resolved_path, tests/test_pipeline.py::test_new_mtime_alone_and_new_size_alone_each_miss_the_memo pass (1.1.13: 269 passed)
   - test: run the E12-H67 all-pairs TSV with an encoder call counter; assert real encodes == 11
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-CLI-30` **Memo output byte-identical** - CRITICAL; distance-semantic --pairs JSONL, distance-structural --pairs JSONL and every per-pair --details-json file are byte-identical with the memo on and off across the nine E12-H67 arms
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-30` **Memo output byte-identical** - CRITICAL; distance-semantic --pairs JSONL, distance-structural --pairs JSONL and every per-pair --details-json file are byte-identical with the memo on and off across the nine E12-H67 arms
+  - evidence: tests/test_e2e.py::test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off, tests/test_pipeline.py::test_identity_pair_reads_the_same_with_and_without_the_memo pass (1.1.13: 269 passed)
   - test: sha256 each arm's JSONL and details files under both settings; assert equal
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-31` **Batch speed-up at least 3x** - HIGH; median wall time of the 55-row all-pairs sweep with the memo on is at most one third of the memo-off time on a quiet CPU (E12-H67 measured 9.94x)
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [-] `ACC-CLI-31` **Batch speed-up at least 3x** - HIGH; median wall time of the 55-row all-pairs sweep with the memo on is at most one third of the memo-off time on a quiet CPU (E12-H67 measured 9.94x)
+  - overridden-by: ACC-CLI-81
   - test: three interleaved off/on repeats at 1-minute load below 8; assert median ratio >= 3
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-32` **Edge: zero-hit batch within 2%** - MEDIUM; on a disjoint-pairs sweep of 110 unique files the memo-on wall time is within 2% of memo-off (E12-H67 control -0.63%)
+  - log: 2026-10-09T23:17:52Z @kj rejected: overridden by ACC-CLI-81: on 2026-10-09 hung file scans of another session held 28 threads in uninterruptible wait, the load read 31 to 55 at 97% idle CPU and never fell below 8; the quiet condition is now CPU pressure; reason: records the observation that made the load condition unusable
+- [x] `ACC-CLI-32` **Edge: zero-hit batch within 2%** - MEDIUM; on a disjoint-pairs sweep of 110 unique files the memo-on wall time is within 2% of memo-off (E12-H67 control -0.63%)
+  - evidence: disjoint-55 sweep, 110 unique files, 0 hits: medians of five interleaved repeats +1.40% (off first) and +0.03% (on first); memo bookkeeping alone 4.39 ms of about 17 s; logs/E13-batch-memos-measure.log, logs/E13-batch-memos-disjoint-reversed.log (1.1.13: 269 passed)
   - test: run the E12-H67 disjoint-55 TSV both ways; assert abs(delta) <= 2%
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-33` **Edge: rewritten file re-encodes** - HIGH; a file rewritten between two rows (new mtime or size) is segmented and encoded again, never served from the memo
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-33` **Edge: rewritten file re-encodes** - HIGH; a file rewritten between two rows (new mtime or size) is segmented and encoded again, never served from the memo
+  - evidence: tests/test_pipeline.py::test_rewritten_file_is_encoded_again, tests/test_pipeline.py::test_new_mtime_alone_and_new_size_alone_each_miss_the_memo pass (1.1.13: 269 passed)
   - test: score a pair, rewrite one file, score again; assert one new real encode and the new distance
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-34` **Edge: memo is bounded** - HIGH; the embed memo carries a size bound (entries or bytes) and evicts beyond it, so a long sweep cannot grow memory without limit
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-34` **Edge: memo is bounded** - HIGH; the embed memo carries a size bound (entries or bytes) and evicts beyond it, so a long sweep cannot grow memory without limit
+  - evidence: tests/test_pipeline.py::test_embed_memo_evicts_beyond_its_bound, tests/test_pipeline.py::test_embed_memo_evicts_the_least_recently_used_entry pass (1.1.13: 269 passed)
   - test: set the bound to 3 and encode 4 distinct documents; assert the first is re-encoded on its next use
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-35` **Edge: raw text bypasses the memo** - MEDIUM; inputs given as text rather than a path are never memoised and never served from the memo
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-35` **Edge: raw text bypasses the memo** - MEDIUM; inputs given as text rather than a path are never memoised and never served from the memo
+  - evidence: tests/test_pipeline.py::test_raw_text_is_never_memoised, tests/test_pipeline.py::test_directory_argument_is_read_as_raw_text_on_every_call, tests/test_pipeline.py::test_raw_text_that_is_no_valid_path_gets_no_memo_key, tests/test_pipeline.py::test_document_of_another_type_raises_the_reader_error pass (1.1.13: 269 passed)
   - test: score the same raw text twice with a call counter; assert two real encodes
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-36` **Edge: dropped-fragment count restored on a hit** - MEDIUM; the segmentation drop count reported for a document is identical whether the document was encoded or served from the memo
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-36` **Edge: dropped-fragment count restored on a hit** - MEDIUM; the segmentation drop count reported for a document is identical whether the document was encoded or served from the memo
+  - evidence: tests/test_pipeline.py::test_drop_count_is_restored_on_a_memo_hit, tests/test_e2e.py::test_cli_pairs_filtered_lines_carry_the_drop_counts_of_each_document, tests/test_pipeline.py::test_marker_warning_is_logged_on_a_memo_hit pass (1.1.13: 269 passed)
   - test: encode a document that drops fragments, read n_dropped, score it again from the memo; assert equal
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-37` **--pairs on distance-wrt-source** - HIGH; distance-wrt-source accepts --pairs <tsv> with a fixed --source and emits one JSON line per row in row order, the same shape as the one-shot --json output
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-37` **--pairs on distance-wrt-source** - HIGH; distance-wrt-source accepts --pairs <tsv> with a fixed --source and emits one JSON line per row in row order, the same shape as the one-shot --json output
+  - evidence: tests/test_e2e.py::test_cli_wrt_source_pairs_emits_one_line_per_row_in_row_order, tests/test_cli.py::test_wrt_source_pairs_and_positionals_mutually_exclusive, tests/test_e2e.py::test_cli_wrt_source_pairs_writes_one_source_map_per_pair, tests/test_cli.py::test_wrt_source_pairs_missing_file_emits_machine_error_object pass (1.1.13: 269 passed)
   - test: 55-row TSV against one source; assert 55 lines, ids in order, keys equal to the one-shot output
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-38` **Grounding-grid memo per (doc, source)** - HIGH; within one DocDistance instance the reranker relevance grid and the NLI entailment vector are computed once per (doc, source) and reused, so the E12-H68 55-pair sweep evaluates 11 grids for 110 slots
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-38` **Grounding-grid memo per (doc, source)** - HIGH; within one DocDistance instance the reranker relevance grid and the NLI entailment vector are computed once per (doc, source) and reused, so the E12-H68 55-pair sweep evaluates 11 grids for 110 slots
+  - evidence: tests/test_pipeline.py::test_wrt_source_sweep_computes_each_grounding_once, tests/test_pipeline.py::test_grounding_memo_key_holds_both_documents_and_the_segmentation pass (1.1.13: 269 passed)
   - test: run the sweep with a grid call counter; assert grids == 11
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-39` **Wrt-source batch lines byte-identical** - CRITICAL; each of the 55 batch lines is byte-identical to the one-shot distance-wrt-source --json output for that pair, with the memo on and off
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-CLI-39` **Wrt-source batch lines byte-identical** - CRITICAL; each of the 55 batch lines is byte-identical to the one-shot distance-wrt-source --json output for that pair, with the memo on and off
+  - evidence: tests/test_e2e.py::test_cli_wrt_source_batch_line_equals_the_one_shot_json pass (1.1.13: 269 passed)
   - test: sha256 each batch line against its one-shot run; assert 55/55 equal
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-40` **Wrt-source sweep speed-up at least 5x** - HIGH; wall time of the 55-pair sweep with the memo on is at most one fifth of the warm sequential loop (E12-H68 measured 10.03x)
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [-] `ACC-CLI-40` **Wrt-source sweep speed-up at least 5x** - HIGH; wall time of the 55-pair sweep with the memo on is at most one fifth of the warm sequential loop (E12-H68 measured 10.03x)
+  - overridden-by: ACC-CLI-82
   - test: one interleaved off/on pass at 1-minute load below 8; assert ratio >= 5
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-41` **Edge: memo hits return copies** - HIGH; a grid or entailment vector returned from the memo is a copy, so a caller mutating it does not change a later hit
+  - log: 2026-10-09T23:17:52Z @kj rejected: overridden by ACC-CLI-82: the load average never fell below 8 on 2026-10-09 while the CPU was 97% idle; the quiet condition is now CPU pressure
+- [x] `ACC-CLI-41` **Edge: memo hits return copies** - HIGH; a grid or entailment vector returned from the memo is a copy, so a caller mutating it does not change a later hit
+  - evidence: tests/test_pipeline.py::test_grounding_memo_serves_copies, tests/test_pipeline.py::test_embed_memo_serves_copies pass (1.1.13: 269 passed)
   - test: take a hit, mutate it in place, take a second hit; assert the second equals the original
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-42` **Edge: grid memo is bounded** - HIGH; the grounding memo carries a size bound and evicts beyond it
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CLI-42` **Edge: grid memo is bounded** - HIGH; the grounding memo carries a size bound and evicts beyond it
+  - evidence: tests/test_pipeline.py::test_grounding_memo_evicts_beyond_its_bound pass (1.1.13: 269 passed)
   - test: set the bound to 2 and score 3 distinct documents against one source; assert the first grid is recomputed on its next use
   - test-tags: UNIT
   - log: 2026-09-02T05:35:04Z @kj added
-- [ ] `ACC-CLI-43` **Edge: no-fanout sweep within 2%** - MEDIUM; a wrt-source sweep where every document appears once records 0 memo hits and a wall time within 2% of the memo-off loop (E12-H68 control +0.22%)
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CLI-43` **Edge: no-fanout sweep within 2%** - MEDIUM; a wrt-source sweep where every document appears once records 0 memo hits and a wall time within 2% of the memo-off loop (E12-H68 control +0.22%)
+  - evidence: no-fanout sweep (2 rows, 4 documents): 0 grounding-memo hits, 4 grids on and off; median delta -0.56% over three interleaved repeats; logs/E13-batch-memos-measure.log (1.1.13: 269 passed)
   - test: run the E12-H68 nofanout TSV both ways; assert hits == 0 and abs(delta) <= 2%
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:04Z @kj added
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CLI-74` **Structural output shows the matched order gap** - MEDIUM; distance-structural human output shows the matched order gap and the matched statement count; --json carries matched_order_gap and n_matched; --result-only still prints the bare structure_closeness
+  - evidence: tests/test_e2e.py::test_cli_structural_shows_the_matched_order_gap_after_a_deletion, tests/test_cli.py::test_distance_structural_output_shows_the_matched_order_gap pass (1.1.13: 269 passed)
+  - test: run distance-structural on a document against itself minus 2 statements: the panel names both values; --result-only prints one number
+  - test-tags: UNIT, E2E
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-CLI-75` **Wrt-source output shows the unsupported counts** - MEDIUM; distance-wrt-source human output shows the unsupported count of A and of B; --json carries n_unsupported_a and n_unsupported_b; --result-only still prints d_sel,residual_a,residual_b
+  - evidence: tests/test_e2e.py::test_cli_wrt_source_shows_the_unsupported_counts: panel and --json carry both counts; --result-only prints the unchanged three numbers (d_sel,grd_a,grd_b on the command) (1.1.13: 269 passed)
+  - mechanism: 2026-10-09T17:45:42Z @kj --result-only is unchanged from 1.1.5: it prints d_sel,grd_a,grd_b when grounding scores exist, which is the case on the CLI command, and d_sel,residual_a,residual_b otherwise
+  - test: run distance-wrt-source on the ibm fixture: the panel names both counts; --result-only prints three comma-separated numbers
+  - test-tags: E2E
+  - log: 2026-10-09T11:29:00Z @kj added
+  - log: 2026-10-10T00:34:27Z @kj closed
+- [x] `ACC-CLI-81` **Batch speed-up at least 3x on a quiet CPU** - HIGH; median wall time of the 55-row all-pairs sweep with the memo on is at most one third of the memo-off time; quiet means the some avg10 value of /proc/pressure/cpu is below 1 before every timed run - the load average is not the condition, because threads in uninterruptible wait raise it without using a CPU (E12-H67: 9.94x at load below 8, 10.12x at load 31.6 to 44.2)
+  - evidence: three interleaved off/on repeats on allpairs-55.tsv: off 11.15 / 10.93 / 10.86 s, on 1.18 / 1.09 / 1.09 s, median ratio 9.998x; some avg10 0.00 to 0.14 before the six runs; encodes 110 to 11; logs/E13-batch-memos-measure.log (1.1.13: 269 passed)
+  - overrides: ACC-CLI-31
+  - test: three interleaved off/on repeats, some avg10 of /proc/pressure/cpu below 1 before each; assert median ratio >= 3
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-09T23:17:51Z @kj added; reason: names the quiet condition, why the load average is not used and the two measured readings
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CLI-82` **Wrt-source sweep speed-up at least 5x on a quiet CPU** - HIGH; wall time of the 55-pair sweep with the memo on is at most one fifth of the warm sequential loop; quiet means the some avg10 value of /proc/pressure/cpu is below 1 before both runs - the load average is not the condition (E12-H68: 10.03x at load 4.25, 9.66x at load 19.07)
+  - evidence: one interleaved off/on pass of the 55-pair wrt-source sweep: 2691.37 s to 261.40 s, 10.296x; some avg10 0.04 and 0.03 before the two runs; grids 110 to 11, outputs byte-identical; logs/E13-batch-memos-measure.log (1.1.13: 269 passed)
+  - overrides: ACC-CLI-40
+  - test: one interleaved off/on pass, some avg10 of /proc/pressure/cpu below 1 before each run; assert ratio >= 5
+  - test-tags: FUNCTIONAL
+  - log: 2026-10-09T23:17:51Z @kj added; reason: names the quiet condition and the two measured readings
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CLI-88` **--input-format on the three distance commands** - HIGH; distance-semantic, distance-structural and distance-wrt-source take --input-format plain|markdown|html|auto, default plain, single pair and --pairs; --markdown equals --input-format markdown; --markdown with another explicit value, or an unknown value, exits with code 2
+  - overridden-by: ACC-SEGM-94
+  - evidence: tests/test_cli.py::test_input_format_auto_reaches_the_pipeline, test_input_format_values_and_the_markdown_flag, test_markdown_flag_beside_another_input_format_exits_2, test_unknown_input_format_exits_2; tests/test_e2e.py::test_cli_input_format_auto_reads_an_html_file_as_its_markdown_twin pass (1.1.21: 496 passed)
+  - test: CliRunner per command and mode; conflict and unknown value exit 2
+  - test-tags: UNIT, E2E
+  - log: 2026-10-10T02:51:44Z @kj added
+  - log: 2026-10-10T06:01:28Z @kj closed
 
 ## Embedding geometry pre-pass `GEOM`
 
 The anisotropy (common-mode rejection) pre-pass on the conditioned selection axis: what it computes and how much corpus it needs
 
-- [ ] `ACC-GEOM-21` **Anisotropy pre-pass is centering plus renormalisation** - MEDIUM; the conditioned-path anisotropy pre-pass centers the pooled statement matrix and re-L2-normalises without the SVD projection (E12-H64: centering carries 103.7% of the gain, the projection isolate -4.5%); ships only after a second fixture reproduces the attribution, and the ibm panel reads V 0/24 with margin within 1 pt of the E12-H64 arm a (+19.95 pts INT8)
+- [-] `ACC-GEOM-21` **Anisotropy pre-pass is centering plus renormalisation** - MEDIUM; the conditioned-path anisotropy pre-pass centers the pooled statement matrix and re-L2-normalises without the SVD projection (E12-H64: centering carries 103.7% of the gain, the projection isolate -4.5%); ships only after a second fixture reproduces the attribution, and the ibm panel reads V 0/24 with margin within 1 pt of the E12-H64 arm a (+19.95 pts INT8)
+  - related: ACC-GEOM-64 - carries the documentation of the E14-H76 reading
   - test: re-run the E01 metric panel on the shipped path after the change; assert V == 0 and margin within 1 pt of +19.95 (INT8)
   - test-tags: FUNCTIONAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-GEOM-22` **Minimum estimation pool stated in statements** - MEDIUM; the anisotropy docstring (src/docdistance/distance.py, anisotropy parameter) and the --anisotropy rows of docs/cli-reference.md state the minimum estimation pool as about 71 pooled statements (the E12-H65 reading: 8 of the ibm summaries, direction cosine >= 0.98 to the full-pool direction, 93% of the full-pool d'), with the statement count as the rule and the document count only as that fixture's example
+  - log: 2026-10-09T10:38:07Z @kj rejected: rejected: E14-H76 Confirmed not interchangeable - centering alone reads 0.5471x the shipped DR(D_sel) and 1/28 selection-axis violations on the 10 ibm triples; registered rule keeps all_but_the_top(k=1) on the conditioned path; docstring correction moves to ACC-GEOM-22
+- [x] `ACC-GEOM-22` **Minimum estimation pool stated in statements** - MEDIUM; the anisotropy docstring (src/docdistance/distance.py, anisotropy parameter) and the --anisotropy rows of docs/cli-reference.md state the minimum estimation pool as about 71 pooled statements (the E12-H65 reading: 8 of the ibm summaries, direction cosine >= 0.98 to the full-pool direction, 93% of the full-pool d'), with the statement count as the rule and the document count only as that fixture's example
+  - evidence: anisotropy docstrings in distance.py and the three --anisotropy rows of docs/cli-reference.md state the minimum of about 71 pooled statements, the statement count as the rule and the 8 ibm summaries as the example (E12-H65) (1.1.13: 269 passed)
   - test: grep the docstring and the CLI reference for the pooled-statement minimum; assert the rule is stated in statements
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-GEOM-23` **Edge: pool below the minimum warns** - LOW; a --pairs or corpus run whose pooled statement count is below the documented minimum logs one warning naming the count and the minimum and proceeds
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-GEOM-23` **Edge: pool below the minimum warns** - LOW; a --pairs or corpus run whose pooled statement count is below the documented minimum logs one warning naming the count and the minimum and proceeds
+  - evidence: tests/test_cli.py::test_pairs_with_anisotropy_warns_once_per_pool_below_the_minimum, tests/test_pipeline.py::test_symmetric_call_warns_once_on_a_pre_pass_pool_below_the_minimum, tests/test_pipeline.py::test_pool_warning_boundary_is_the_minimum, tests/test_pipeline.py::test_pool_warning_changes_no_number pass (1.1.13: 269 passed)
   - test: run distance-semantic --pairs on a 2-document TSV with anisotropy on; assert one warning line with both numbers
   - test-tags: UNIT
   - log: 2026-09-02T05:35:03Z @kj added
+  - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-GEOM-44` **Kernel pre-pass decided on fixed bandwidths** - HIGH; E14-H77 carries Result and Verdict; RBF gamma = m / median squared chordal distance of the pool, m in 0.25, 1, 4, 16, 64; no gamma fitted to a scored panel; all five bandwidth rows reported
+  - evidence: ledger E14-H77 carries Result and Verdict Refuted (0 of 5 bandwidths meet the bar); notebook config M_GRID = [0.25, 1, 4, 16, 64], gamma = m / median squared chordal distance; reports/E14-H77-kernel-pca-prepass-metrics.json five_bandwidths holds 5 rows
+  - related: ACC-GEOM-21 - the same pre-pass, linear side
+  - test: hypothesis-tools show the ledger E14-H77: Result and Verdict present; notebook config cell lists the five multiples; metrics JSON holds five bandwidth rows
+  - test-tags: MANUAL
+  - mechanism: 2026-10-09T09:39:18Z @kj pre-registered probe with a gate per bandwidth: a bandwidth whose statement costs rank like the linear pre-pass (Spearman >= 0.995) is a copy and is not scored
+  - log: 2026-10-09T09:39:18Z @kj added
+  - log: 2026-10-09T11:18:08Z @kj closed
+- [x] `ACC-GEOM-45` **Kernel pre-pass ships only on Confirmed** - HIGH; src/docdistance gains an RBF kernel PCA pre-pass only if E14-H77 reads Confirmed; on Killed-at-gate or Refuted no kernel pre-pass code ships and all_but_the_top stays the only pre-pass
+  - evidence: grep -rniE 'kernel.?pca|rbf' src/docdistance returns no line; E14-H77 reads Refuted and all_but_the_top is the only pre-pass (1.1.13: 269 passed)
+  - related: ACC-GEOM-21 - the same pre-pass, linear side
+  - test: read the E14-H77 verdict; grep -rniE 'rbf|kernel' src/docdistance: a pre-pass match exists only on Confirmed
+  - test-tags: MANUAL
+  - log: 2026-10-09T09:39:18Z @kj added
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-GEOM-46` **Kernel probe reading documented** - MEDIUM; docs/solution/wmd-docdistance-solution-sota.md states the E14-H77 reading per bandwidth: copy of the linear pre-pass or not, cost Spearman, component stability, and the verdict
+  - evidence: wmd-docdistance-solution-sota.md, paragraph 'A kernel pre-pass was measured and does not ship': one row per bandwidth with cost Spearman 0.9816, 0.9091, 0.5087, 0.0712, -0.0664, component stability, panel readings and the verdict Refuted (1.1.13: 269 passed)
+  - related: ACC-GEOM-21 - the same pre-pass, linear side
+  - test: grep the solution document for E14-H77 and the five bandwidth multiples; compare its numbers with reports/E14-H77-kernel-pca-prepass-metrics.json
+  - test-tags: MANUAL
+  - log: 2026-10-09T09:39:18Z @kj added
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-GEOM-64` **Pre-pass attribution documented per path** - MEDIUM; all_but_the_top docstring and the anisotropy section of docs/solution/wmd-docdistance-solution-sota.md state both readings: symmetric panels - centering carries the gain (E12-H64 103.7%, E14-H75 102.8%); conditioned path, ibm fixture - centering alone reads 0.5471x shipped DR(D_sel), difference traced to 22 one-word markup statements in the source
+  - evidence: all_but_the_top docstring and the anisotropy section of wmd-docdistance-solution-sota.md state 103.7% and 102.8% (centering, symmetric panels), -4.5% and -3.6% (projection alone), 0.5471x and 1/28 on the conditioned path, as one source and one reader setting (1.1.13: 269 passed)
+  - test: grep the docstring and the solution document for 103.7, 102.8 and 0.5471; assert neither says the projection removes source content
+  - test-tags: MANUAL
+  - log: 2026-10-09T10:38:29Z @kj added
+  - log: 2026-10-10T00:34:29Z @kj closed
 
 ## Verdict calibration guidance `CALIB`
 
 How the shipped verdict thresholds were placed, how fragile they are, and how a user recalibrates them on their own corpus
 
-- [ ] `ACC-CALIB-24` **Structural threshold comment names its corpus** - MEDIUM; the STRUCTURE_THRESHOLD comment in src/docdistance/distance.py states 0.90 is placed on the ibm ladder with 0.006144 headroom, quotes the ibm band (0.892817, 0.906144] and the wergeland band (0.908048, 0.973676], and says no cross-article band exists (E12-H59)
+- [x] `ACC-CALIB-24` **Structural threshold comment names its corpus** - MEDIUM; the STRUCTURE_THRESHOLD comment in src/docdistance/distance.py states 0.90 is placed on the ibm ladder with 0.006144 headroom, quotes the ibm band (0.892817, 0.906144] and the wergeland band (0.908048, 0.973676], and says no cross-article band exists (E12-H59)
+  - evidence: STRUCTURE_THRESHOLD comment in distance.py: 0.90 placed on the ibm ladder, ibm band (0.892817, 0.906144] with 0.006144 headroom, wergeland band (0.908048, 0.973676], no cross-article band (E12-H59) (1.1.13: 269 passed)
   - test: read the comment; assert the two bands and the empty-band sentence are present
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-CALIB-25` **Per-corpus structural calibration procedure** - HIGH; docs/solution/wmd-structure-distance-sota.md carries a per-corpus procedure for STRUCTURE_THRESHOLD: build the corpus's own k-swap ladder and un-reordered pairs, sweep 0.85-0.99, take the band that keeps every rung on its side, with the E12-H59 two-article sweep as the worked example and the empty cross-article band stated
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CALIB-25` **Per-corpus structural calibration procedure** - HIGH; docs/solution/wmd-structure-distance-sota.md carries a per-corpus procedure for STRUCTURE_THRESHOLD: build the corpus's own k-swap ladder and un-reordered pairs, sweep 0.85-0.99, take the band that keeps every rung on its side, with the E12-H59 two-article sweep as the worked example and the empty cross-article band stated
+  - evidence: wmd-structure-distance-sota.md, section 'Calibration of the structural verdict': four-step per-corpus procedure with the E12-H59 two-article sweep as the worked example (1.1.13: 269 passed)
   - test: read the section; assert the four steps, the worked example and the empty-band statement are present
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-CALIB-26` **Semantic threshold fragility card published** - HIGH; docs/solution/wmd-docdistance-solution-sota.md carries the E12-H63 card for DEFAULT_THRESHOLD 0.77: shipped-path band [0.7474, 0.7944] on INT8 and [0.7566, 0.8027] on fp, safe on both over 0.760-0.790, leave-one-out edge moves (haiku +2.30 pts, adv2-b -1.64 pts) and INT8-to-fp drift up to 40.6% of a margin
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CALIB-26` **Semantic threshold fragility card published** - HIGH; docs/solution/wmd-docdistance-solution-sota.md carries the E12-H63 card for DEFAULT_THRESHOLD 0.77: shipped-path band [0.7474, 0.7944] on INT8 and [0.7566, 0.8027] on fp, safe on both over 0.760-0.790, leave-one-out edge moves (haiku +2.30 pts, adv2-b -1.64 pts) and INT8-to-fp drift up to 40.6% of a margin
+  - evidence: wmd-docdistance-solution-sota.md, section 'Calibration of the semantic verdict': E12-H63 card for 0.77 with the INT8 and fp bands, the range 0.760 to 0.790, leave-one-out +2.30 / -1.64 points and INT8 drift 40.6% of a margin (1.1.13: 269 passed)
   - test: read the card; assert both bands, the safe range and the two edge documents are present
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-CALIB-27` **Provenance comment quotes the shipped-path band** - MEDIUM; the DEFAULT_THRESHOLD comment in src/docdistance/distance.py quotes the shipped semantic_distance band (79.44 / 74.74 on INT8) and names notebook 09 cell 10's dd.embed path as the origin of the former 79.7 / 75.0
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CALIB-27` **Provenance comment quotes the shipped-path band** - MEDIUM; the DEFAULT_THRESHOLD comment in src/docdistance/distance.py quotes the shipped semantic_distance band (79.44 / 74.74 on INT8) and names notebook 09 cell 10's dd.embed path as the origin of the former 79.7 / 75.0
+  - evidence: DEFAULT_THRESHOLD comment in distance.py quotes the shipped semantic_distance band 79.44 / 74.74 on INT8 and names notebook 09 cell 10 (dd.embed path) as the origin of the former 79.7 / 75.0 (1.1.13: 269 passed)
   - test: read the comment; assert the shipped-path numbers and the origin sentence are present
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
-- [ ] `ACC-CALIB-28` **Structural verdict caveat under deletions** - MEDIUM; the structural verdict documentation states that order-preserving deletions lower structure_closeness below 0.90 (E12-H62: 0.8902 pooled at k=4, 0.8219 for tail deletions at k=3), so a content drop can read as a rearrangement until a length correction ships
+  - log: 2026-10-10T00:34:30Z @kj closed
+- [x] `ACC-CALIB-28` **Structural verdict caveat under deletions** - MEDIUM; the structural verdict documentation states that order-preserving deletions lower structure_closeness below 0.90 (E12-H62: 0.8902 pooled at k=4, 0.8219 for tail deletions at k=3), so a content drop can read as a rearrangement until a length correction ships
+  - evidence: wmd-structure-distance-sota.md, paragraph 'Verdict under deletions': structure_closeness 0.8902 pooled at 4 deletions and 0.8219 for 3 tail deletions (E12-H62); the caveat stays for order_gap and names matched_order_gap as the reading over shared statements (1.1.13: 269 passed)
+  - mechanism: 2026-10-09T23:17:52Z @kj no length correction of order_gap ships; the remedy that shipped is the separate field matched_order_gap, which reads an order-preserving deletion at the identity floor, so the caveat on order_gap stays in the documents
   - test: read docs/solution/wmd-structure-distance-sota.md; assert the deletion caveat with both numbers is present
   - test-tags: MANUAL
   - log: 2026-09-02T05:35:03Z @kj added
+  - log: 2026-10-10T00:34:30Z @kj closed
 

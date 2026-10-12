@@ -1,0 +1,2381 @@
+{
+  "id": "E13-H71",
+  "slug": "partial-matching-map",
+  "generated": "2026-10-09T09:48:08+00:00",
+  "docdistance_version": "1.1.5",
+  "config": {
+    "seed": 0,
+    "reps": 5,
+    "edit_kinds": [
+      "deletion",
+      "insertion",
+      "replacement"
+    ],
+    "edit_ks": [
+      1,
+      2,
+      3
+    ],
+    "paraphrase_arms": [
+      false,
+      true
+    ],
+    "half_A": [
+      "gold",
+      "v1",
+      "opus",
+      "haiku",
+      "werg-b"
+    ],
+    "half_B": [
+      "gold-2",
+      "v2",
+      "sonnet",
+      "werg-a",
+      "werg-c"
+    ],
+    "excluded_bases": [],
+    "donor_rule": "statements of the other base documents of the same half, exact duplicates of a base statement left out",
+    "title_rule": "a leading H1 title line is dropped from the base and from its back-translation",
+    "bar_reading": "both directions must meet both conditions",
+    "backend": "OpenVINO INT8, CPU",
+    "shipped_cut": 0.6
+  },
+  "sanity_check": {
+    "passed": true,
+    "reading": "10 of 10 base documents align one-to-one with their back-translation (equal length, identity optimal under the shipped ground cost and under a lexical cost, exact re-segmentation); excluded: none; the first list element is an H1 title line on 7 of 10 files and was dropped there",
+    "per_base": {
+      "gold": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 10,
+        "n_body": 10
+      },
+      "gold-2": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 12,
+        "n_body": 12
+      },
+      "v1": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 11,
+        "n_body": 11
+      },
+      "v2": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 11,
+        "n_body": 11
+      },
+      "opus": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 12,
+        "n_body": 12
+      },
+      "sonnet": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 10,
+        "n_body": 10
+      },
+      "haiku": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": true,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 13,
+        "n_body": 13
+      },
+      "werg-a": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": false,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 11,
+        "n_body": 11
+      },
+      "werg-b": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": false,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 13,
+        "n_body": 13
+      },
+      "werg-c": {
+        "equal_length": true,
+        "title_consistent": true,
+        "roundtrip": true,
+        "ground_cost_identity": true,
+        "lexical_identity": true,
+        "aligned": true,
+        "first_element_is_h1": false,
+        "file_equals_fixture_copy": true,
+        "nearest_is_counterpart": 14,
+        "n_body": 14
+      }
+    }
+  },
+  "kill_gate": {
+    "rule": "best balanced accuracy of `cost < c is a counterpart` >= 0.9 on each calibration split",
+    "passed": true,
+    "reading": "calibration half A: best balanced accuracy 0.9915 for any cutoff in (0.2978, 0.2990], n = 59 statements; calibration half B: best balanced accuracy 0.9914 for any cutoff in (0.2621, 0.2672], n = 58 statements; gate threshold 0.9",
+    "per_split": {
+      "A": {
+        "bases": [
+          "gold",
+          "v1",
+          "opus",
+          "haiku",
+          "werg-b"
+        ],
+        "n": 59,
+        "best_balanced_accuracy": 0.9915,
+        "cutoff_low": 0.2978,
+        "cutoff_high": 0.299,
+        "pairs_at_or_above_neighbour_min": 1,
+        "neighbours_at_or_below_pair_max": 11
+      },
+      "B": {
+        "bases": [
+          "gold-2",
+          "v2",
+          "sonnet",
+          "werg-a",
+          "werg-c"
+        ],
+        "n": 58,
+        "best_balanced_accuracy": 0.9914,
+        "cutoff_low": 0.2621,
+        "cutoff_high": 0.2672,
+        "pairs_at_or_above_neighbour_min": 1,
+        "neighbours_at_or_below_pair_max": 10
+      },
+      "all": {
+        "bases": [
+          "gold",
+          "gold-2",
+          "v1",
+          "v2",
+          "opus",
+          "sonnet",
+          "haiku",
+          "werg-a",
+          "werg-b",
+          "werg-c"
+        ],
+        "n": 117,
+        "best_balanced_accuracy": 0.9829,
+        "cutoff_low": 0.2886,
+        "cutoff_high": 0.2897,
+        "pairs_at_or_above_neighbour_min": 6,
+        "neighbours_at_or_below_pair_max": 32
+      }
+    }
+  },
+  "cost_populations": {
+    "definition": {
+      "true_paraphrase_pairs": "ground cost between base statement i and its own back-translation",
+      "nearest_non_counterpart": "per base statement i, the smallest ground cost to a back-translated statement j != i of the same document",
+      "scale": "shipped ground cost sqrt(2 - 2cos) on [0, sqrt(2)], OpenVINO INT8 embeddings, title lines dropped"
+    },
+    "true_paraphrase_pairs": {
+      "values": {
+        "A": [
+          0.129061,
+          0.134487,
+          0.157709,
+          0.288564,
+          0.191955,
+          0.086759,
+          0.138678,
+          0.101362,
+          0.187459,
+          0.129716,
+          0.14443,
+          0.210404,
+          0.155525,
+          0.183716,
+          0.213628,
+          0.129122,
+          0.199813,
+          0.11523,
+          0.126879,
+          0.129917,
+          0.195657,
+          0.131891,
+          0.297756,
+          0.231098,
+          0.157142,
+          0.163717,
+          0.168906,
+          0.242357,
+          0.268675,
+          0.217102,
+          0.176988,
+          0.177221,
+          0.265061,
+          0.169453,
+          0.096767,
+          0.118146,
+          0.165126,
+          0.266528,
+          0.090415,
+          0.151231,
+          0.139982,
+          0.092766,
+          0.218302,
+          0.322901,
+          0.277361,
+          0.16742,
+          0.114783,
+          0.170224,
+          0.246881,
+          0.115597,
+          0.219682,
+          0.164236,
+          0.07136,
+          0.151521,
+          0.256245,
+          0.189917,
+          0.161943,
+          0.188612,
+          0.189865
+        ],
+        "B": [
+          0.17364,
+          0.112977,
+          0.252583,
+          0.206072,
+          0.121173,
+          0.200531,
+          0.155351,
+          0.10722,
+          0.140919,
+          0.097697,
+          0.130161,
+          0.262141,
+          0.15122,
+          0.205023,
+          0.117785,
+          0.306936,
+          0.22445,
+          0.086759,
+          0.119138,
+          0.137545,
+          0.103521,
+          0.09535,
+          0.249974,
+          0.120207,
+          0.121995,
+          0.23519,
+          0.127844,
+          0.155779,
+          0.151523,
+          0.224327,
+          0.188035,
+          0.196018,
+          0.169197,
+          0.14828,
+          0.0778,
+          0.084283,
+          0.144706,
+          0.161916,
+          0.171052,
+          0.157256,
+          0.124255,
+          0.094336,
+          0.137787,
+          0.222005,
+          0.147302,
+          0.12368,
+          0.0,
+          0.177469,
+          0.218599,
+          0.100856,
+          0.13521,
+          0.105156,
+          0.189668,
+          0.104625,
+          0.098912,
+          0.148054,
+          0.148873,
+          0.141152
+        ]
+      },
+      "percentiles": {
+        "half_A": {
+          "p0": 0.0714,
+          "p1": 0.0803,
+          "p5": 0.0925,
+          "p10": 0.1121,
+          "p25": 0.1309,
+          "p50": 0.1674,
+          "p75": 0.212,
+          "p90": 0.2654,
+          "p95": 0.2785,
+          "p99": 0.3083,
+          "p100": 0.3229
+        },
+        "half_B": {
+          "p0": 0.0,
+          "p1": 0.0443,
+          "p5": 0.0864,
+          "p10": 0.097,
+          "p25": 0.1181,
+          "p50": 0.146,
+          "p75": 0.1854,
+          "p90": 0.2244,
+          "p95": 0.2504,
+          "p99": 0.2814,
+          "p100": 0.3069
+        },
+        "all": {
+          "p0": 0.0,
+          "p1": 0.0724,
+          "p5": 0.0897,
+          "p10": 0.0984,
+          "p25": 0.1237,
+          "p50": 0.1555,
+          "p75": 0.196,
+          "p90": 0.2481,
+          "p95": 0.267,
+          "p99": 0.3055,
+          "p100": 0.3229
+        }
+      }
+    },
+    "nearest_non_counterpart": {
+      "values": {
+        "A": [
+          0.326451,
+          0.30042,
+          0.378567,
+          0.41456,
+          0.360323,
+          0.333442,
+          0.316238,
+          0.383337,
+          0.371541,
+          0.323712,
+          0.325703,
+          0.322602,
+          0.300738,
+          0.304331,
+          0.373117,
+          0.320351,
+          0.37308,
+          0.304521,
+          0.333161,
+          0.329942,
+          0.356224,
+          0.344639,
+          0.382359,
+          0.374023,
+          0.318131,
+          0.379734,
+          0.339915,
+          0.461989,
+          0.444099,
+          0.344879,
+          0.328633,
+          0.298978,
+          0.312621,
+          0.324253,
+          0.323289,
+          0.335077,
+          0.331949,
+          0.409678,
+          0.373081,
+          0.326621,
+          0.335139,
+          0.349124,
+          0.33534,
+          0.344194,
+          0.32347,
+          0.319761,
+          0.397386,
+          0.397519,
+          0.535639,
+          0.433083,
+          0.392617,
+          0.400399,
+          0.423074,
+          0.4,
+          0.398887,
+          0.426437,
+          0.366131,
+          0.371716,
+          0.345062
+        ],
+        "B": [
+          0.295854,
+          0.306033,
+          0.395652,
+          0.402072,
+          0.289713,
+          0.354061,
+          0.370215,
+          0.312182,
+          0.298263,
+          0.325225,
+          0.32426,
+          0.292898,
+          0.338245,
+          0.267236,
+          0.297988,
+          0.404506,
+          0.386368,
+          0.318943,
+          0.325876,
+          0.311509,
+          0.304247,
+          0.314544,
+          0.295237,
+          0.311255,
+          0.383833,
+          0.380381,
+          0.331856,
+          0.31247,
+          0.314666,
+          0.310891,
+          0.328808,
+          0.3486,
+          0.30178,
+          0.37749,
+          0.370108,
+          0.34742,
+          0.333809,
+          0.36315,
+          0.383276,
+          0.345684,
+          0.410175,
+          0.359814,
+          0.358779,
+          0.31058,
+          0.334849,
+          0.312056,
+          0.34512,
+          0.435423,
+          0.403045,
+          0.324334,
+          0.381292,
+          0.370507,
+          0.388211,
+          0.399036,
+          0.331231,
+          0.376737,
+          0.35877,
+          0.310807
+        ]
+      },
+      "percentiles": {
+        "half_A": {
+          "p0": 0.299,
+          "p1": 0.2998,
+          "p5": 0.304,
+          "p10": 0.3155,
+          "p25": 0.325,
+          "p50": 0.3449,
+          "p75": 0.3828,
+          "p90": 0.4163,
+          "p95": 0.4342,
+          "p99": 0.4929,
+          "p100": 0.5356
+        },
+        "half_B": {
+          "p0": 0.2672,
+          "p1": 0.28,
+          "p5": 0.2949,
+          "p10": 0.2982,
+          "p25": 0.3116,
+          "p50": 0.3343,
+          "p75": 0.3752,
+          "p90": 0.3967,
+          "p95": 0.4033,
+          "p99": 0.421,
+          "p100": 0.4354
+        },
+        "all": {
+          "p0": 0.2672,
+          "p1": 0.2902,
+          "p5": 0.2982,
+          "p10": 0.3043,
+          "p25": 0.3198,
+          "p50": 0.3442,
+          "p75": 0.3797,
+          "p90": 0.4025,
+          "p95": 0.4237,
+          "p99": 0.4591,
+          "p100": 0.5356
+        }
+      }
+    }
+  },
+  "cutoff": {
+    "rule": "midpoint of the longest run of grid points at the maximum calibration macro-F1",
+    "grid": {
+      "low": 0.05,
+      "high": 1.0,
+      "step": 0.005
+    },
+    "shipped_no_counterpart_cost": 0.6,
+    "population_interval": {
+      "A": {
+        "low": 0.2978,
+        "high": 0.299,
+        "mid": 0.2984,
+        "balanced_accuracy": 0.9915
+      },
+      "B": {
+        "low": 0.2621,
+        "high": 0.2672,
+        "mid": 0.2647,
+        "balanced_accuracy": 0.9914
+      },
+      "all": {
+        "low": 0.2886,
+        "high": 0.2897,
+        "mid": 0.2891,
+        "balanced_accuracy": 0.9829
+      }
+    },
+    "calibrated_on_half_A": 0.325,
+    "calibrated_on_half_B": 0.31,
+    "calibrated_on_all_bases_in_sample": 0.325,
+    "range_with_macro_f1_at_or_above_bar": {
+      "half_A": [
+        0.28,
+        0.44
+      ],
+      "half_B": [
+        0.24,
+        0.455
+      ],
+      "both_halves": [
+        0.28,
+        0.44
+      ]
+    },
+    "macro_f1_at_fixed_cutoffs": {
+      "0.280": {
+        "half_A": 0.9087,
+        "half_B": 0.9593,
+        "all": 0.9333
+      },
+      "0.300": {
+        "half_A": 0.947,
+        "half_B": 0.9593,
+        "all": 0.9531
+      },
+      "0.310": {
+        "half_A": 0.9457,
+        "half_B": 0.979,
+        "all": 0.9621
+      },
+      "0.325": {
+        "half_A": 0.9674,
+        "half_B": 0.9772,
+        "all": 0.9723
+      },
+      "0.350": {
+        "half_A": 0.9538,
+        "half_B": 0.9665,
+        "all": 0.9602
+      },
+      "0.400": {
+        "half_A": 0.9287,
+        "half_B": 0.9441,
+        "all": 0.9364
+      },
+      "0.440": {
+        "half_A": 0.9027,
+        "half_B": 0.9167,
+        "all": 0.9098
+      },
+      "0.500": {
+        "half_A": 0.8691,
+        "half_B": 0.8492,
+        "all": 0.8593
+      },
+      "0.600": {
+        "half_A": 0.7828,
+        "half_B": 0.7713,
+        "all": 0.7771
+      }
+    }
+  },
+  "fixture": {
+    "n_pairs_built": 900,
+    "n_pairs_scored": 900,
+    "n_segmentation_pinned": 37,
+    "n_computed_this_execution": 900,
+    "n_restored_from_checkpoint": 0
+  },
+  "held_out": {
+    "A → B": {
+      "cutoff": 0.325,
+      "calibration_macro_f1": 0.9674,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.28,
+        0.44
+      ],
+      "n_pairs": 450,
+      "n_statements": 10440,
+      "gain": 0.6642,
+      "partial_matching": {
+        "macro_f1": 0.9772,
+        "f1": {
+          "kept": 0.9959,
+          "removed": 0.9831,
+          "added": 0.9525
+        },
+        "precision": {
+          "kept": 0.9938,
+          "removed": 1.0,
+          "added": 0.969
+        },
+        "recall": {
+          "kept": 0.9981,
+          "removed": 0.9667,
+          "added": 0.9367
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.313,
+        "f1": {
+          "kept": 0.939,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "precision": {
+          "kept": 0.8851,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0
+        }
+      }
+    },
+    "B → A": {
+      "cutoff": 0.31,
+      "calibration_macro_f1": 0.979,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.24,
+        0.455
+      ],
+      "n_pairs": 450,
+      "n_statements": 10620,
+      "gain": 0.6191,
+      "partial_matching": {
+        "macro_f1": 0.9457,
+        "f1": {
+          "kept": 0.9901,
+          "removed": 0.9441,
+          "added": 0.903
+        },
+        "precision": {
+          "kept": 0.9918,
+          "removed": 0.9318,
+          "added": 0.8912
+        },
+        "recall": {
+          "kept": 0.9884,
+          "removed": 0.9567,
+          "added": 0.915
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3266,
+        "f1": {
+          "kept": 0.9407,
+          "removed": 0.0,
+          "added": 0.0392
+        },
+        "precision": {
+          "kept": 0.888,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.02
+        }
+      }
+    }
+  },
+  "secondary": {
+    "population cutoff, half A → half B": {
+      "cutoff": 0.2984,
+      "calibration_macro_f1": 0.9674,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.28,
+        0.44
+      ],
+      "n_pairs": 450,
+      "n_statements": 10440,
+      "gain": 0.6463,
+      "partial_matching": {
+        "macro_f1": 0.9593,
+        "f1": {
+          "kept": 0.9924,
+          "removed": 0.9583,
+          "added": 0.9272
+        },
+        "precision": {
+          "kept": 0.9949,
+          "removed": 0.9406,
+          "added": 0.9101
+        },
+        "recall": {
+          "kept": 0.9899,
+          "removed": 0.9767,
+          "added": 0.945
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.313,
+        "f1": {
+          "kept": 0.939,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "precision": {
+          "kept": 0.8851,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0
+        }
+      }
+    },
+    "population cutoff, half B → half A": {
+      "cutoff": 0.2647,
+      "calibration_macro_f1": 0.979,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.24,
+        0.455
+      ],
+      "n_pairs": 450,
+      "n_statements": 10620,
+      "gain": 0.5195,
+      "partial_matching": {
+        "macro_f1": 0.8461,
+        "f1": {
+          "kept": 0.9661,
+          "removed": 0.8033,
+          "added": 0.7689
+        },
+        "precision": {
+          "kept": 0.9936,
+          "removed": 0.6838,
+          "added": 0.6546
+        },
+        "recall": {
+          "kept": 0.94,
+          "removed": 0.9733,
+          "added": 0.9317
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3266,
+        "f1": {
+          "kept": 0.9407,
+          "removed": 0.0,
+          "added": 0.0392
+        },
+        "precision": {
+          "kept": 0.888,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.02
+        }
+      }
+    },
+    "shipped segmentation only, half A → half B": {
+      "cutoff": 0.325,
+      "calibration_macro_f1": 0.9694,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.28,
+        0.44
+      ],
+      "n_pairs": 444,
+      "n_statements": 10301,
+      "gain": 0.6641,
+      "partial_matching": {
+        "macro_f1": 0.9773,
+        "f1": {
+          "kept": 0.996,
+          "removed": 0.9835,
+          "added": 0.9525
+        },
+        "precision": {
+          "kept": 0.9939,
+          "removed": 1.0,
+          "added": 0.9684
+        },
+        "recall": {
+          "kept": 0.998,
+          "removed": 0.9676,
+          "added": 0.9371
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3132,
+        "f1": {
+          "kept": 0.9395,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "precision": {
+          "kept": 0.8859,
+          "removed": 0.0,
+          "added": 0.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0
+        }
+      }
+    },
+    "shipped segmentation only, half B → half A": {
+      "cutoff": 0.31,
+      "calibration_macro_f1": 0.9792,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.24,
+        0.455
+      ],
+      "n_pairs": 419,
+      "n_statements": 9931,
+      "gain": 0.6189,
+      "partial_matching": {
+        "macro_f1": 0.9467,
+        "f1": {
+          "kept": 0.9903,
+          "removed": 0.9431,
+          "added": 0.9067
+        },
+        "precision": {
+          "kept": 0.9923,
+          "removed": 0.9293,
+          "added": 0.8932
+        },
+        "recall": {
+          "kept": 0.9884,
+          "removed": 0.9574,
+          "added": 0.9206
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3278,
+        "f1": {
+          "kept": 0.941,
+          "removed": 0.0,
+          "added": 0.0424
+        },
+        "precision": {
+          "kept": 0.8886,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0217
+        }
+      }
+    },
+    "article split, ibm → wergeland": {
+      "cutoff": 0.325,
+      "calibration_macro_f1": 0.96,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.28,
+        0.42
+      ],
+      "n_pairs": 270,
+      "n_statements": 6840,
+      "gain": 0.6705,
+      "partial_matching": {
+        "macro_f1": 1.0,
+        "f1": {
+          "kept": 1.0,
+          "removed": 1.0,
+          "added": 1.0
+        },
+        "precision": {
+          "kept": 1.0,
+          "removed": 1.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 1.0,
+          "added": 1.0
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3295,
+        "f1": {
+          "kept": 0.945,
+          "removed": 0.0,
+          "added": 0.0435
+        },
+        "precision": {
+          "kept": 0.8958,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0222
+        }
+      }
+    },
+    "article split, wergeland → ibm": {
+      "cutoff": 0.295,
+      "calibration_macro_f1": 1.0,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.22,
+        0.49
+      ],
+      "n_pairs": 630,
+      "n_statements": 14220,
+      "gain": 0.6029,
+      "partial_matching": {
+        "macro_f1": 0.9185,
+        "f1": {
+          "kept": 0.9839,
+          "removed": 0.9108,
+          "added": 0.8609
+        },
+        "precision": {
+          "kept": 0.9903,
+          "removed": 0.8708,
+          "added": 0.823
+        },
+        "recall": {
+          "kept": 0.9775,
+          "removed": 0.9548,
+          "added": 0.9024
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3156,
+        "f1": {
+          "kept": 0.9374,
+          "removed": 0.0,
+          "added": 0.0095
+        },
+        "precision": {
+          "kept": 0.8821,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.0048
+        }
+      }
+    },
+    "in-sample, all bases → all bases": {
+      "cutoff": 0.325,
+      "calibration_macro_f1": 0.9723,
+      "calibration_cutoff_range_at_or_above_bar": [
+        0.27,
+        0.45
+      ],
+      "n_pairs": 900,
+      "n_statements": 21060,
+      "gain": 0.6524,
+      "partial_matching": {
+        "macro_f1": 0.9723,
+        "f1": {
+          "kept": 0.9951,
+          "removed": 0.9792,
+          "added": 0.9426
+        },
+        "precision": {
+          "kept": 0.9925,
+          "removed": 1.0,
+          "added": 0.9626
+        },
+        "recall": {
+          "kept": 0.9977,
+          "removed": 0.9592,
+          "added": 0.9233
+        }
+      },
+      "shipped_flags": {
+        "macro_f1": 0.3199,
+        "f1": {
+          "kept": 0.9399,
+          "removed": 0.0,
+          "added": 0.0198
+        },
+        "precision": {
+          "kept": 0.8865,
+          "removed": 0.0,
+          "added": 1.0
+        },
+        "recall": {
+          "kept": 1.0,
+          "removed": 0.0,
+          "added": 0.01
+        }
+      }
+    }
+  },
+  "macro_f1_curve": {
+    "cutoff": [
+      0.05,
+      0.055,
+      0.06,
+      0.065,
+      0.07,
+      0.075,
+      0.08,
+      0.085,
+      0.09,
+      0.095,
+      0.1,
+      0.105,
+      0.11,
+      0.115,
+      0.12,
+      0.125,
+      0.13,
+      0.135,
+      0.14,
+      0.145,
+      0.15,
+      0.155,
+      0.16,
+      0.165,
+      0.17,
+      0.175,
+      0.18,
+      0.185,
+      0.19,
+      0.195,
+      0.2,
+      0.205,
+      0.21,
+      0.215,
+      0.22,
+      0.225,
+      0.23,
+      0.235,
+      0.24,
+      0.245,
+      0.25,
+      0.255,
+      0.26,
+      0.265,
+      0.27,
+      0.275,
+      0.28,
+      0.285,
+      0.29,
+      0.295,
+      0.3,
+      0.305,
+      0.31,
+      0.315,
+      0.32,
+      0.325,
+      0.33,
+      0.335,
+      0.34,
+      0.345,
+      0.35,
+      0.355,
+      0.36,
+      0.365,
+      0.37,
+      0.375,
+      0.38,
+      0.385,
+      0.39,
+      0.395,
+      0.4,
+      0.405,
+      0.41,
+      0.415,
+      0.42,
+      0.425,
+      0.43,
+      0.435,
+      0.44,
+      0.445,
+      0.45,
+      0.455,
+      0.46,
+      0.465,
+      0.47,
+      0.475,
+      0.48,
+      0.485,
+      0.49,
+      0.495,
+      0.5,
+      0.505,
+      0.51,
+      0.515,
+      0.52,
+      0.525,
+      0.53,
+      0.535,
+      0.54,
+      0.545,
+      0.55,
+      0.555,
+      0.56,
+      0.565,
+      0.57,
+      0.575,
+      0.58,
+      0.585,
+      0.59,
+      0.595,
+      0.6,
+      0.605,
+      0.61,
+      0.615,
+      0.62,
+      0.625,
+      0.63,
+      0.635,
+      0.64,
+      0.645,
+      0.65,
+      0.655,
+      0.66,
+      0.665,
+      0.67,
+      0.675,
+      0.68,
+      0.685,
+      0.69,
+      0.695,
+      0.7,
+      0.705,
+      0.71,
+      0.715,
+      0.72,
+      0.725,
+      0.73,
+      0.735,
+      0.74,
+      0.745,
+      0.75,
+      0.755,
+      0.76,
+      0.765,
+      0.77,
+      0.775,
+      0.78,
+      0.785,
+      0.79,
+      0.795,
+      0.8,
+      0.805,
+      0.81,
+      0.815,
+      0.82,
+      0.825,
+      0.83,
+      0.835,
+      0.84,
+      0.845,
+      0.85,
+      0.855,
+      0.86,
+      0.865,
+      0.87,
+      0.875,
+      0.88,
+      0.885,
+      0.89,
+      0.895,
+      0.9,
+      0.905,
+      0.91,
+      0.915,
+      0.92,
+      0.925,
+      0.93,
+      0.935,
+      0.94,
+      0.945,
+      0.95,
+      0.955,
+      0.96,
+      0.965,
+      0.97,
+      0.975,
+      0.98,
+      0.985,
+      0.99,
+      0.995,
+      1.0
+    ],
+    "half_A": [
+      0.4473,
+      0.4473,
+      0.4468,
+      0.4468,
+      0.4468,
+      0.4519,
+      0.4517,
+      0.4517,
+      0.4568,
+      0.4677,
+      0.4726,
+      0.4776,
+      0.4776,
+      0.4829,
+      0.4982,
+      0.4982,
+      0.5254,
+      0.5363,
+      0.5485,
+      0.5543,
+      0.5542,
+      0.5667,
+      0.5853,
+      0.6073,
+      0.6368,
+      0.6454,
+      0.6625,
+      0.6701,
+      0.7062,
+      0.7122,
+      0.7335,
+      0.7335,
+      0.7335,
+      0.7568,
+      0.7941,
+      0.793,
+      0.793,
+      0.8063,
+      0.8063,
+      0.8189,
+      0.8323,
+      0.8322,
+      0.8461,
+      0.8461,
+      0.8894,
+      0.8894,
+      0.9087,
+      0.9087,
+      0.9272,
+      0.9259,
+      0.947,
+      0.9457,
+      0.9457,
+      0.9445,
+      0.9438,
+      0.9674,
+      0.9603,
+      0.9577,
+      0.9577,
+      0.9551,
+      0.9538,
+      0.9518,
+      0.9465,
+      0.9465,
+      0.9425,
+      0.9384,
+      0.937,
+      0.9349,
+      0.9322,
+      0.9301,
+      0.9287,
+      0.9252,
+      0.923,
+      0.9216,
+      0.9159,
+      0.9151,
+      0.9093,
+      0.9071,
+      0.9027,
+      0.8973,
+      0.8973,
+      0.8943,
+      0.8943,
+      0.8943,
+      0.892,
+      0.8851,
+      0.8835,
+      0.8804,
+      0.8772,
+      0.8717,
+      0.8691,
+      0.8691,
+      0.8561,
+      0.8485,
+      0.8434,
+      0.8365,
+      0.8233,
+      0.8223,
+      0.8168,
+      0.8123,
+      0.8086,
+      0.8021,
+      0.8002,
+      0.7943,
+      0.7943,
+      0.7924,
+      0.7915,
+      0.7876,
+      0.7866,
+      0.7847,
+      0.7828,
+      0.7786,
+      0.7786,
+      0.7746,
+      0.7746,
+      0.7746,
+      0.7746,
+      0.7726,
+      0.7726,
+      0.7726,
+      0.7706,
+      0.7686,
+      0.7666,
+      0.7646,
+      0.7646,
+      0.7625,
+      0.7623,
+      0.7623,
+      0.7623,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7602,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582,
+      0.7582
+    ],
+    "half_B": [
+      0.4556,
+      0.4556,
+      0.4556,
+      0.4556,
+      0.4556,
+      0.4556,
+      0.4605,
+      0.4659,
+      0.4715,
+      0.4769,
+      0.4931,
+      0.51,
+      0.5213,
+      0.5272,
+      0.5382,
+      0.5685,
+      0.5746,
+      0.5808,
+      0.6024,
+      0.6243,
+      0.6577,
+      0.6748,
+      0.702,
+      0.7106,
+      0.7206,
+      0.7407,
+      0.7512,
+      0.7501,
+      0.7729,
+      0.7729,
+      0.7849,
+      0.7985,
+      0.8263,
+      0.8263,
+      0.8402,
+      0.8879,
+      0.8879,
+      0.8879,
+      0.907,
+      0.907,
+      0.9239,
+      0.9407,
+      0.9407,
+      0.9605,
+      0.9605,
+      0.9593,
+      0.9593,
+      0.9593,
+      0.9593,
+      0.9593,
+      0.9593,
+      0.9581,
+      0.979,
+      0.9778,
+      0.9778,
+      0.9772,
+      0.9772,
+      0.9734,
+      0.9709,
+      0.9678,
+      0.9665,
+      0.9639,
+      0.9607,
+      0.9588,
+      0.9581,
+      0.9562,
+      0.9535,
+      0.9521,
+      0.9508,
+      0.9468,
+      0.9441,
+      0.9434,
+      0.9393,
+      0.9365,
+      0.9365,
+      0.9289,
+      0.9282,
+      0.9239,
+      0.9167,
+      0.9131,
+      0.9057,
+      0.9028,
+      0.8914,
+      0.8899,
+      0.8805,
+      0.8789,
+      0.8708,
+      0.8668,
+      0.8602,
+      0.8501,
+      0.8492,
+      0.8458,
+      0.8424,
+      0.8318,
+      0.8237,
+      0.8183,
+      0.8165,
+      0.8147,
+      0.809,
+      0.8062,
+      0.8043,
+      0.7948,
+      0.791,
+      0.789,
+      0.7832,
+      0.7792,
+      0.7763,
+      0.7753,
+      0.7713,
+      0.7713,
+      0.7713,
+      0.7692,
+      0.7672,
+      0.7652,
+      0.7652,
+      0.7652,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7631,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611,
+      0.7611
+    ]
+  },
+  "conditions": [
+    {
+      "kind": "deletion",
+      "paraphrase": false,
+      "n_pairs": 150,
+      "n_statements": 3210,
+      "n_removed": 300,
+      "n_added": 0,
+      "pm": {
+        "errors": 0,
+        "error_rate": 0.0,
+        "removed_found": 300,
+        "added_found": 0,
+        "kept read as removed": 0,
+        "removed read as kept": 0,
+        "kept read as added": 0,
+        "added read as kept": 0
+      },
+      "sh": {
+        "errors": 300,
+        "error_rate": 0.09345794392523364,
+        "removed_found": 0,
+        "added_found": 0,
+        "kept read as removed": 0,
+        "removed read as kept": 300,
+        "kept read as added": 0,
+        "added read as kept": 0
+      }
+    },
+    {
+      "kind": "deletion",
+      "paraphrase": true,
+      "n_pairs": 150,
+      "n_statements": 3210,
+      "n_removed": 300,
+      "n_added": 0,
+      "pm": {
+        "errors": 28,
+        "error_rate": 0.008722741433021807,
+        "removed_found": 300,
+        "added_found": 0,
+        "kept read as removed": 14,
+        "removed read as kept": 0,
+        "kept read as added": 14,
+        "added read as kept": 0
+      },
+      "sh": {
+        "errors": 300,
+        "error_rate": 0.09345794392523364,
+        "removed_found": 0,
+        "added_found": 0,
+        "kept read as removed": 0,
+        "removed read as kept": 300,
+        "kept read as added": 0,
+        "added read as kept": 0
+      }
+    },
+    {
+      "kind": "insertion",
+      "paraphrase": false,
+      "n_pairs": 150,
+      "n_statements": 3810,
+      "n_removed": 0,
+      "n_added": 300,
+      "pm": {
+        "errors": 0,
+        "error_rate": 0.0,
+        "removed_found": 0,
+        "added_found": 300,
+        "kept read as removed": 0,
+        "removed read as kept": 0,
+        "kept read as added": 0,
+        "added read as kept": 0
+      },
+      "sh": {
+        "errors": 297,
+        "error_rate": 0.07795275590551182,
+        "removed_found": 0,
+        "added_found": 3,
+        "kept read as removed": 0,
+        "removed read as kept": 0,
+        "kept read as added": 0,
+        "added read as kept": 297
+      }
+    },
+    {
+      "kind": "insertion",
+      "paraphrase": true,
+      "n_pairs": 150,
+      "n_statements": 3810,
+      "n_removed": 0,
+      "n_added": 300,
+      "pm": {
+        "errors": 70,
+        "error_rate": 0.01837270341207349,
+        "removed_found": 0,
+        "added_found": 280,
+        "kept read as removed": 15,
+        "removed read as kept": 0,
+        "kept read as added": 35,
+        "added read as kept": 20
+      },
+      "sh": {
+        "errors": 297,
+        "error_rate": 0.07795275590551182,
+        "removed_found": 0,
+        "added_found": 3,
+        "kept read as removed": 0,
+        "removed read as kept": 0,
+        "kept read as added": 0,
+        "added read as kept": 297
+      }
+    },
+    {
+      "kind": "replacement",
+      "paraphrase": false,
+      "n_pairs": 150,
+      "n_statements": 3510,
+      "n_removed": 300,
+      "n_added": 300,
+      "pm": {
+        "errors": 48,
+        "error_rate": 0.013675213675213675,
+        "removed_found": 276,
+        "added_found": 276,
+        "kept read as removed": 0,
+        "removed read as kept": 24,
+        "kept read as added": 0,
+        "added read as kept": 24
+      },
+      "sh": {
+        "errors": 597,
+        "error_rate": 0.1700854700854701,
+        "removed_found": 0,
+        "added_found": 3,
+        "kept read as removed": 0,
+        "removed read as kept": 300,
+        "kept read as added": 0,
+        "added read as kept": 297
+      }
+    },
+    {
+      "kind": "replacement",
+      "paraphrase": true,
+      "n_pairs": 150,
+      "n_statements": 3510,
+      "n_removed": 300,
+      "n_added": 300,
+      "pm": {
+        "errors": 116,
+        "error_rate": 0.03304843304843305,
+        "removed_found": 278,
+        "added_found": 255,
+        "kept read as removed": 13,
+        "removed read as kept": 22,
+        "kept read as added": 36,
+        "added read as kept": 45
+      },
+      "sh": {
+        "errors": 597,
+        "error_rate": 0.1700854700854701,
+        "removed_found": 0,
+        "added_found": 3,
+        "kept read as removed": 0,
+        "removed read as kept": 300,
+        "kept read as added": 0,
+        "added read as kept": 297
+      }
+    }
+  ],
+  "per_base": {
+    "gold": {
+      "cutoff": 0.31,
+      "proposed": 0.9378,
+      "shipped": 0.3095,
+      "kept_read_as_removed_or_added": 10,
+      "removed_or_added_read_as_kept": 30,
+      "largest_pair_cost": 0.2886
+    },
+    "gold-2": {
+      "cutoff": 0.325,
+      "proposed": 0.9421,
+      "shipped": 0.3137,
+      "kept_read_as_removed_or_added": 11,
+      "removed_or_added_read_as_kept": 27,
+      "largest_pair_cost": 0.2621
+    },
+    "v1": {
+      "cutoff": 0.31,
+      "proposed": 0.9729,
+      "shipped": 0.3118,
+      "kept_read_as_removed_or_added": 5,
+      "removed_or_added_read_as_kept": 13,
+      "largest_pair_cost": 0.2136
+    },
+    "v2": {
+      "cutoff": 0.325,
+      "proposed": 0.9635,
+      "shipped": 0.3118,
+      "kept_read_as_removed_or_added": 6,
+      "removed_or_added_read_as_kept": 18,
+      "largest_pair_cost": 0.3069
+    },
+    "opus": {
+      "cutoff": 0.31,
+      "proposed": 0.9607,
+      "shipped": 0.3355,
+      "kept_read_as_removed_or_added": 7,
+      "removed_or_added_read_as_kept": 19,
+      "largest_pair_cost": 0.2978
+    },
+    "sonnet": {
+      "cutoff": 0.325,
+      "proposed": 0.9786,
+      "shipped": 0.3095,
+      "kept_read_as_removed_or_added": 1,
+      "removed_or_added_read_as_kept": 13,
+      "largest_pair_cost": 0.2352
+    },
+    "haiku": {
+      "cutoff": 0.31,
+      "proposed": 0.8686,
+      "shipped": 0.3153,
+      "kept_read_as_removed_or_added": 87,
+      "removed_or_added_read_as_kept": 15,
+      "largest_pair_cost": 0.3229
+    },
+    "werg-a": {
+      "cutoff": 0.325,
+      "proposed": 1.0,
+      "shipped": 0.3118,
+      "kept_read_as_removed_or_added": 0,
+      "removed_or_added_read_as_kept": 0,
+      "largest_pair_cost": 0.222
+    },
+    "werg-b": {
+      "cutoff": 0.31,
+      "proposed": 1.0,
+      "shipped": 0.3576,
+      "kept_read_as_removed_or_added": 0,
+      "removed_or_added_read_as_kept": 0,
+      "largest_pair_cost": 0.2562
+    },
+    "werg-c": {
+      "cutoff": 0.325,
+      "proposed": 1.0,
+      "shipped": 0.3167,
+      "kept_read_as_removed_or_added": 0,
+      "removed_or_added_read_as_kept": 0,
+      "largest_pair_cost": 0.2186
+    }
+  },
+  "mechanism": {
+    "targets_per_statement": {
+      "deletion": 1.7179,
+      "insertion": 2.0598,
+      "replacement": 1.0
+    },
+    "kept_counterpart": {
+      "n_kept": 9330,
+      "partial_matching_correct": 9244,
+      "partial_matching_other_target": 44,
+      "partial_matching_unmatched": 42,
+      "shipped_heaviest_correct": 9286
+    },
+    "cheapest_cost": {
+      "removed_statement_to_B": {
+        "n": 1200,
+        "above_shipped_cut": 0,
+        "percentiles": {
+          "p0": 0.1738,
+          "p1": 0.2191,
+          "p5": 0.2829,
+          "p10": 0.2966,
+          "p25": 0.314,
+          "p50": 0.3405,
+          "p75": 0.382,
+          "p90": 0.4097,
+          "p95": 0.4339,
+          "p99": 0.5356,
+          "p100": 0.5455
+        }
+      },
+      "added_statement_to_A": {
+        "n": 1200,
+        "above_shipped_cut": 12,
+        "percentiles": {
+          "p0": 0.0575,
+          "p1": 0.0799,
+          "p5": 0.1247,
+          "p10": 0.1914,
+          "p25": 0.2649,
+          "p50": 0.4063,
+          "p75": 0.4646,
+          "p90": 0.498,
+          "p95": 0.524,
+          "p99": 0.598,
+          "p100": 0.6118
+        }
+      },
+      "kept_back_translated_pair": {
+        "n": 4665,
+        "above_shipped_cut": 0,
+        "percentiles": {
+          "p0": 0.0,
+          "p1": 0.0714,
+          "p5": 0.0868,
+          "p10": 0.0977,
+          "p25": 0.122,
+          "p50": 0.1555,
+          "p75": 0.196,
+          "p90": 0.25,
+          "p95": 0.2687,
+          "p99": 0.3069,
+          "p100": 0.3229
+        }
+      }
+    },
+    "added_by_donor_relation": {
+      "sibling summary": {
+        "n": 506,
+        "partial_matching_found": 417,
+        "shipped_found": 0
+      },
+      "other section": {
+        "n": 72,
+        "partial_matching_found": 72,
+        "shipped_found": 0
+      },
+      "other article": {
+        "n": 622,
+        "partial_matching_found": 622,
+        "shipped_found": 12
+      }
+    },
+    "removed_read_as_kept": {
+      "n": 46,
+      "matched_to_an_added_statement": 45,
+      "matched_to_a_kept_statement": 1
+    },
+    "replacement_pair_cost": {
+      "sibling summary": {
+        "n": 248,
+        "below_applied_cutoff": 16,
+        "percentiles": {
+          "p0": 0.1914,
+          "p1": 0.1948,
+          "p5": 0.29,
+          "p10": 0.333,
+          "p25": 0.3735,
+          "p50": 0.4112,
+          "p75": 0.4641,
+          "p90": 0.5108,
+          "p95": 0.5164,
+          "p99": 0.5886,
+          "p100": 0.602
+        }
+      },
+      "other article or section": {
+        "n": 352,
+        "below_applied_cutoff": 0,
+        "percentiles": {
+          "p0": 0.3304,
+          "p1": 0.3517,
+          "p5": 0.4313,
+          "p10": 0.4433,
+          "p25": 0.4716,
+          "p50": 0.5114,
+          "p75": 0.5474,
+          "p90": 0.5998,
+          "p95": 0.6319,
+          "p99": 0.6885,
+          "p100": 0.7396
+        }
+      }
+    },
+    "no_edit_control": {
+      "n_statements": 117,
+      "read_as_removed": 1,
+      "per_base": {
+        "gold": 0,
+        "gold-2": 0,
+        "v1": 0,
+        "v2": 0,
+        "opus": 0,
+        "sonnet": 0,
+        "haiku": 1,
+        "werg-a": 0,
+        "werg-b": 0,
+        "werg-c": 0
+      }
+    }
+  },
+  "prediction": {
+    "partial_matching_removed_f1_min": 0.9441,
+    "partial_matching_added_f1_min": 0.903,
+    "shipped_removed_f1_max": 0.0,
+    "shipped_added_f1_max": 0.0392,
+    "cutoffs": [
+      0.325,
+      0.31
+    ],
+    "class_f1_held": true,
+    "shipped_f1_held": true,
+    "cutoff_band_held": false
+  },
+  "acceptance": {
+    "bar": "held-out macro-F1 over {kept, removed, added} >= 0.9 AND >= +0.3 above the shipped-flag baseline on the same labels, c chosen on the calibration split only, both directions",
+    "met": true,
+    "readings": {
+      "A → B": {
+        "cutoff": 0.325,
+        "macro_f1_partial_matching": 0.9772,
+        "macro_f1_shipped_flags": 0.313,
+        "gain": 0.6642,
+        "met": true
+      },
+      "B → A": {
+        "cutoff": 0.31,
+        "macro_f1_partial_matching": 0.9457,
+        "macro_f1_shipped_flags": 0.3266,
+        "gain": 0.6191,
+        "met": true
+      }
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "gold_smd_max": 0.290706,
+    "adversarial_smd_min": 0.357292,
+    "smd_array_equal_before_after": true,
+    "order_gap_array_equal_before_after": true,
+    "fingerprint_start": "905a308ecd1b29d14040dfc43a07a26fed42b70d7f18110c81a0e55f4fce8f8c",
+    "fingerprint_end": "905a308ecd1b29d14040dfc43a07a26fed42b70d7f18110c81a0e55f4fce8f8c",
+    "git_status_src_tests": "",
+    "src_untouched": true,
+    "instance_override_removed": true,
+    "all_hold": true
+  },
+  "result": {
+    "id": "E13-H71",
+    "slug": "partial-matching-map",
+    "model": "opus",
+    "verdict": "Promoted",
+    "verdict_number": "A → B: held-out macro-F1 0.9772 against 0.3130 for the shipped flags (gain +0.6642) at c = 0.3250; B → A: held-out macro-F1 0.9457 against 0.3266 for the shipped flags (gain +0.6191) at c = 0.3100",
+    "kill_gate": {
+      "ran": true,
+      "passed": true,
+      "reading": "calibration half A: best balanced accuracy 0.9915 for any cutoff in (0.2978, 0.2990], n = 59 statements; calibration half B: best balanced accuracy 0.9914 for any cutoff in (0.2621, 0.2672], n = 58 statements; gate threshold 0.9"
+    },
+    "sanity_check": {
+      "required": true,
+      "passed": true,
+      "reading": "10 of 10 base documents align one-to-one with their back-translation (equal length, identity optimal under the shipped ground cost and under a lexical cost, exact re-segmentation); excluded: none; the first list element is an H1 title line on 7 of 10 files and was dropped there"
+    },
+    "prediction_check": {
+      "predicted": "removed / added F1 >= 0.9 against <= 0.3 for the shipped flags; the cutoff lands between 0.348 and 0.6",
+      "observed": "partial matching removed / added F1 minimum over the two directions 0.9441 / 0.9030 (held); shipped flags removed / added F1 maximum 0.0000 / 0.0392 (held); calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6) (falsified)",
+      "direction_matched": true
+    },
+    "acceptance": {
+      "bar": "held-out macro-F1 over {kept, removed, added} >= 0.9 AND >= +0.3 above the shipped-flag baseline on the same labels, c chosen on the calibration split only, both directions",
+      "met": true,
+      "readings": {
+        "A → B": {
+          "cutoff": 0.325,
+          "macro_f1_partial_matching": 0.9772,
+          "macro_f1_shipped_flags": 0.313,
+          "gain": 0.6642,
+          "met": true
+        },
+        "B → A": {
+          "cutoff": 0.31,
+          "macro_f1_partial_matching": 0.9457,
+          "macro_f1_shipped_flags": 0.3266,
+          "gain": 0.6191,
+          "met": true
+        }
+      }
+    },
+    "guardrails": {
+      "V": "0/24",
+      "src_untouched": true,
+      "metric_property": "untouched - the map is an annotation read from the shipped cost matrix, not a distance; smd np.array_equal before/after: True, order_gap np.array_equal before/after: True (10 anchor pairs each)",
+      "notes": "source-tree fingerprint start = end: True; git status for src and tests: empty; instance overrides (embed_statements wrapper, pinned segmenter) removed after the loop: True"
+    },
+    "key_numbers": {
+      "n_pairs_scored": 900,
+      "n_pairs_built": 900,
+      "n_pairs_segmentation_pinned": 37,
+      "cutoff_half_A": 0.325,
+      "cutoff_half_B": 0.31,
+      "cutoff_all_bases_in_sample": 0.325,
+      "gate_balanced_accuracy_half_A": 0.9915,
+      "gate_balanced_accuracy_half_B": 0.9914,
+      "true_pair_cost_max": 0.3229,
+      "nearest_non_counterpart_cost_min": 0.2672,
+      "held_out": {
+        "A → B": {
+          "cutoff": 0.325,
+          "calibration_macro_f1": 0.9674,
+          "calibration_cutoff_range_at_or_above_bar": [
+            0.28,
+            0.44
+          ],
+          "n_pairs": 450,
+          "n_statements": 10440,
+          "gain": 0.6642,
+          "partial_matching": {
+            "macro_f1": 0.9772,
+            "f1": {
+              "kept": 0.9959,
+              "removed": 0.9831,
+              "added": 0.9525
+            },
+            "precision": {
+              "kept": 0.9938,
+              "removed": 1.0,
+              "added": 0.969
+            },
+            "recall": {
+              "kept": 0.9981,
+              "removed": 0.9667,
+              "added": 0.9367
+            }
+          },
+          "shipped_flags": {
+            "macro_f1": 0.313,
+            "f1": {
+              "kept": 0.939,
+              "removed": 0.0,
+              "added": 0.0
+            },
+            "precision": {
+              "kept": 0.8851,
+              "removed": 0.0,
+              "added": 0.0
+            },
+            "recall": {
+              "kept": 1.0,
+              "removed": 0.0,
+              "added": 0.0
+            }
+          }
+        },
+        "B → A": {
+          "cutoff": 0.31,
+          "calibration_macro_f1": 0.979,
+          "calibration_cutoff_range_at_or_above_bar": [
+            0.24,
+            0.455
+          ],
+          "n_pairs": 450,
+          "n_statements": 10620,
+          "gain": 0.6191,
+          "partial_matching": {
+            "macro_f1": 0.9457,
+            "f1": {
+              "kept": 0.9901,
+              "removed": 0.9441,
+              "added": 0.903
+            },
+            "precision": {
+              "kept": 0.9918,
+              "removed": 0.9318,
+              "added": 0.8912
+            },
+            "recall": {
+              "kept": 0.9884,
+              "removed": 0.9567,
+              "added": 0.915
+            }
+          },
+          "shipped_flags": {
+            "macro_f1": 0.3266,
+            "f1": {
+              "kept": 0.9407,
+              "removed": 0.0,
+              "added": 0.0392
+            },
+            "precision": {
+              "kept": 0.888,
+              "removed": 0.0,
+              "added": 1.0
+            },
+            "recall": {
+              "kept": 1.0,
+              "removed": 0.0,
+              "added": 0.02
+            }
+          }
+        }
+      },
+      "cutoff_range_both_halves_at_or_above_bar": [
+        0.28,
+        0.44
+      ],
+      "macro_f1_at_fixed_cutoffs": {
+        "0.280": {
+          "half_A": 0.9087,
+          "half_B": 0.9593,
+          "all": 0.9333
+        },
+        "0.300": {
+          "half_A": 0.947,
+          "half_B": 0.9593,
+          "all": 0.9531
+        },
+        "0.310": {
+          "half_A": 0.9457,
+          "half_B": 0.979,
+          "all": 0.9621
+        },
+        "0.325": {
+          "half_A": 0.9674,
+          "half_B": 0.9772,
+          "all": 0.9723
+        },
+        "0.350": {
+          "half_A": 0.9538,
+          "half_B": 0.9665,
+          "all": 0.9602
+        },
+        "0.400": {
+          "half_A": 0.9287,
+          "half_B": 0.9441,
+          "all": 0.9364
+        },
+        "0.440": {
+          "half_A": 0.9027,
+          "half_B": 0.9167,
+          "all": 0.9098
+        },
+        "0.500": {
+          "half_A": 0.8691,
+          "half_B": 0.8492,
+          "all": 0.8593
+        },
+        "0.600": {
+          "half_A": 0.7828,
+          "half_B": 0.7713,
+          "all": 0.7771
+        }
+      },
+      "per_base_macro_f1_partial_matching_min": 0.8686,
+      "per_base_macro_f1_partial_matching_max": 1.0,
+      "kept_counterpart_partial_matching": "9244/9330 = 0.9908",
+      "kept_counterpart_shipped_heaviest_target": "9286/9330 = 0.9953",
+      "removed_statements_above_shipped_cut": "0/1200 = 0.0000",
+      "added_statements_above_shipped_cut": "12/1200 = 0.0100",
+      "shipped_targets_per_statement": {
+        "deletion": 1.7179,
+        "insertion": 2.0598,
+        "replacement": 1.0
+      },
+      "no_edit_control_read_as_removed": "1/117 = 0.0085",
+      "replacement_pair_below_applied_cutoff": {
+        "sibling summary": "16/248 = 0.0645",
+        "other article or section": "0/352 = 0.0000"
+      },
+      "secondary_macro_f1": {
+        "population cutoff, half A → half B": {
+          "cutoff": 0.2984,
+          "partial_matching": 0.9593,
+          "shipped_flags": 0.313
+        },
+        "population cutoff, half B → half A": {
+          "cutoff": 0.2647,
+          "partial_matching": 0.8461,
+          "shipped_flags": 0.3266
+        },
+        "shipped segmentation only, half A → half B": {
+          "cutoff": 0.325,
+          "partial_matching": 0.9773,
+          "shipped_flags": 0.3132
+        },
+        "shipped segmentation only, half B → half A": {
+          "cutoff": 0.31,
+          "partial_matching": 0.9467,
+          "shipped_flags": 0.3278
+        },
+        "article split, ibm → wergeland": {
+          "cutoff": 0.325,
+          "partial_matching": 1.0,
+          "shipped_flags": 0.3295
+        },
+        "article split, wergeland → ibm": {
+          "cutoff": 0.295,
+          "partial_matching": 0.9185,
+          "shipped_flags": 0.3156
+        },
+        "in-sample, all bases → all bases": {
+          "cutoff": 0.325,
+          "partial_matching": 0.9723,
+          "shipped_flags": 0.3199
+        }
+      }
+    },
+    "result_summary": "Promoted. Held-out macro-F1 of the unit-capacity partial matching is 0.9772 (c = 0.3250 chosen on half A, scored on half B) and 0.9457 (c = 0.3100 chosen on half B, scored on half A), against 0.3130 and 0.3266 for the shipped flags on the same labels (gain +0.6642 and +0.6191). Bar met: True. Minimum removed / added F1 over the two directions: 0.9441 / 0.9030 for the partial matching, maximum 0.0000 / 0.0392 for the shipped flags. Kept statements pointed at their true counterpart: 9244/9330 = 0.9908 against 9286/9330 = 0.9953 for the shipped heaviest target. Calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6): outside. No-edit control (unedited base against its back-translation): 1/117 = 0.0085 statements read as removed. Per scored base document the macro-F1 runs from 0.8686 (haiku) to 1.0000. Every cutoff in [0.280, 0.440] keeps both halves at or above 0.9. Fixture: 900 edited pairs over 10 base documents.",
+    "artifacts": {
+      "notebook": "notebooks/experiments/E13-H71-kj-partial-matching-map.ipynb",
+      "metrics_json": "reports/E13-H71-partial-matching-map-metrics.json",
+      "log": "logs/E13-H71-partial-matching-map.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "Synthetic edits on 10 base documents, 7 of which summarise the same ibm article, so each half holds parallel summaries of the other half's content: the split is held out by document, not by article (the article-split rows are a secondary reading); each direction scores 5 documents, so the pooled reading depends on the document mix. Paraphrases are opus-mt back-translations, a mild rewording, and the calibrated cutoff sits at the top of that pair-cost population: a stronger rewording, another encoder or the anisotropy pre-pass moves it (the E12-H60 matched maximum 0.348 already lies above both calibrated cutoffs). One encoder (mmBERT OpenVINO INT8, raw embeddings). A replacement whose donor is a sibling summary can restate the removed statement, so the construction label (removed plus added) is debatable there. The H1 title line is dropped from the 7 ibm documents; donors come from the same half; 37 of 900 pairs needed the statement units pinned because SaT split a statement differently inside the edited text (a reduced trial of 180 pairs showed this before the registered run, and pinning was chosen over excluding those pairs; the split, the donor rule, the calibration rule, the grid and the class definitions did not change after the trial; the rows on the unmodified segmentation alone are a secondary reading). The record does not fix the number of draws, the donor rule or the calibration rule; they were fixed in the configuration cell before the registered run."
+  }
+}

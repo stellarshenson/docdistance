@@ -64,7 +64,7 @@
       "dprime": 4.683998,
       "R": 1.669676,
       "DR": 0.087282,
-      "ms_per_pair": 0.096227,
+      "ms_per_pair": 0.110887,
       "distances": {
         "gold-2": 0.2264898,
         "v1": 0.25820024,
@@ -96,7 +96,7 @@
       "dprime": 4.673086,
       "R": 1.667867,
       "DR": 0.087203,
-      "ms_per_pair": 0.084394,
+      "ms_per_pair": 0.106007,
       "distances": {
         "gold-2": 0.2269578,
         "v1": 0.25967902,
@@ -128,7 +128,7 @@
     "dprime": -0.010912,
     "R": -0.001809,
     "DR": -7.9e-05,
-    "latency_ratio": 0.877034
+    "latency_ratio": 0.955996
   },
   "mass_vs_uniform": {
     "total_variation": {
@@ -171,7 +171,7 @@
   },
   "prediction": {
     "predicted": "d' +0.2 to +0.8 over the 4.60 naive baseline, margin unchanged to +1 pt, DR flat, latency unchanged",
-    "observed": "d' -0.011 vs harness baseline, margin +0.012 pts, DR -0.00008, latency 0.877x",
+    "observed": "d' -0.011 vs harness baseline, margin +0.012 pts, DR -0.00008, latency 0.956x",
     "direction_matched": false
   },
   "guardrails": {
@@ -210,7 +210,7 @@
     "segmenter": "sat-3l-sm (shipped), CPU",
     "device": "cpu",
     "docdistance_version": "1.1.5",
-    "pot_version": "0.9.7.post1",
+    "pot_version": "0.9.6.post1",
     "bench_reps": 10,
     "seed": 42,
     "triangle_tol": 1e-09

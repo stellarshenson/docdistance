@@ -1,0 +1,264 @@
+{
+  "id": "E15-H79",
+  "slug": "matching-tie-break",
+  "model": "opus",
+  "verdict": "Refuted",
+  "verdict_number": "third-pass set at c = 0.325, eps = 1e-06: matched sub-sequence textually equal to the shorter document in 111/120 cases against a bar of >= 114/120 (without the tie-break 88/120); matched gap at or below the shipped gap in 120/120 against a bar of 120/120 (without the tie-break 99/120); second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120; clauses 2, 3 and 4 met: 280/280 deletion cases <= 0.005, AUC 0.999903, 1840/1840 fully matched equal-length pairs equal to shipped opw_gap, macro-F1 0.9674 half A and 0.9772 half B",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "harness check without the tie-break at c = 0.6: survivors recovered 88/120 (recorded 88/120), matched gap above shipped 21/120 (recorded 21/120); precondition: the ground cost inside the group of repeated statements shares one bit pattern in 120/120 cases, 32 of them cases in which the survivors were not recovered; shown case: prefix 30, deleted positions [4, 6], tie group 6 x 4, bit pattern 0x00000000 (float32 cost 0.0); tied cost value over the cases: 0.0 in 60, 0.0003452669770922512 in 60"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "deletion cases <= 0.005, c = 0.6: recorded 280/280, here 280/280; AUC deleted-only against reordered-and-deleted, c = 0.6: recorded 0.999903, here 0.999903; fully matched equal-length pairs equal to shipped opw_gap, c = 0.6: recorded 1847/1847, here 1847/1847; macro-F1 half A, c = 0.325: recorded 0.9674, here 0.9674; macro-F1 half B, c = 0.325: recorded 0.9772, here 0.9772; supporting rows reproduced 9/9; edit-fixture key 3e396129ed50 equals the E13-H71 key: True; 300 of 900 pair readings computed by this notebook, cost matrices equal to the E13-H71 checkpoint in 300/300; 600 pair readings read from the E13-H71 checkpoint"
+  },
+  "prediction_check": {
+    "predicted": "with the tie-break the 120 pure-deletion cases on the 62-statement source document read at or below the shipped gap in 120/120 and the matched sub-sequences are textually equal in 120/120; the 280 registered deletion readings and the 1847 fully matched identities are unchanged; at c = 0.325 the count of fully matched equal-length pairs falls below 1847 by fewer than 20",
+    "observed": "at or below the shipped gap in 120/120 (held; without the tie-break 99/120); textually equal in 111/120 (falsified; without the tie-break 88/120); the 280 deletion readings np.array_equal to the reproduced E13-H70 readings: True (held); fully matched identities: 1840/1840 equal to shipped opw_gap and the tie-break leaves the count at 1840 → 1840 (held); count at c = 0.325: 1840, a fall of 7 from 1847 (held). Direction: cases above the shipped gap 21 → 0, textually equal 88 → 111, fully matched count 1847 → 1840; all three move as predicted. The exact count of 120/120 textually equal sub-sequences was not reached",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "at c = 0.325 with eps = 1e-6: (1) matched gap <= shipped gap in 120/120 third-pass cases and matched sub-sequence textually equal in >= 114/120; (2) >= 95% of the 280 deletion cases read <= 0.005 and AUC >= 0.95; (3) np.array_equal with shipped opw_gap on every fully matched equal-length fixture pair; (4) E13-H71 macro-F1 >= 0.90 in both halves",
+    "met": false,
+    "readings": {
+      "clause_1_repeated_statements": "NOT MET - matched gap at or below the shipped gap in 120/120 (bar 120/120, condition met); matched sub-sequence textually equal in 111/120 (bar >= 114/120, condition not met); the 9 misses all deleted a repeated statement; the position term ranks another matching below the survivor matching in 7 of them and ties exactly with it in 2; largest matched gap among the misses 0.003538, 0 above 0.005; second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120",
+      "clause_2_deletions_and_separation": "met - 280/280 = 1.0000 read <= 0.005 (bar >= 0.95); AUC 0.999903 (bar >= 0.95), 70 deleted-only against 10010 reordered-and-deleted; shipped baseline 0.950980; the readings are np.array_equal to the E13-H70 readings (280/280 and 10010/10010); the base documents hold no repeated statement, so the tie-break has nothing to act on there",
+      "clause_3_bit_identity": "met - np.array_equal True on 1840 fully matched equal-length pairs (1840 exactly equal, largest |difference| 0.0); met by construction: a fully matched equal-length pair is passed to opw_gap unmodified; count 1847 at c = 0.6 → 1840 at c = 0.325",
+      "clause_4_statement_map": "met - macro-F1 0.9674 on half A (the half c = 0.325 was chosen on) and 0.9772 on half B (held out), bar >= 0.9 in both; the tie-break changes 0/21060 statement labels"
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "stated, not tested - shipped smd (a metric) and shipped opw_gap (a score) are not edited; the matched gap is a notebook prototype and a score, the map is an annotation; no triangle test was run",
+    "notes": "Rows that can fail: V 0/24 on the ibm panel, boundary margin +4.71 pts (primer naive row +4.71); source-tree fingerprint start = end: True (905a308ecd1b29d1); git status for src and tests: empty. Rows that compare two calls inside one kernel: panel smd np.array_equal before/after True and order_gap True (10 anchor pairs each); default-path smd 0.22343884174015136 and order gap 0.1343654387715936 on ('gold', 'gold-2') np.array_equal True; the 280 shipped deletion readings recomputed np.array_equal True; instance overrides removed True. No edit under src/, docs/ or tests/"
+  },
+  "key_numbers": {
+    "build_constants": {
+      "c": 0.325,
+      "eps": 1e-06,
+      "position_index_from": 0,
+      "fully_matched_equal_length_pairs_at_c": 1840,
+      "fully_matched_equal_length_pairs_at_0.6": 1847
+    },
+    "kill_gate_survivors_recovered": 88,
+    "kill_gate_above_shipped": 21,
+    "kill_gate_cases": 120,
+    "kill_gate_exact_tie_cases": 120,
+    "kill_gate_tie_group_cases": 120,
+    "kill_gate_tied_cost_values": {
+      "0.0": 60,
+      "0.0003452669770922512": 60
+    },
+    "third_pass_per_arm": {
+      "c060": {
+        "survivors_recovered": 88,
+        "text_equal": 88,
+        "at_or_below_shipped": 99,
+        "above_shipped": 21,
+        "above_gap_bar": 23,
+        "equal_to_floor_copy": 88,
+        "matched_max": 0.324574,
+        "matched_median": 0.00321056
+      },
+      "c0325": {
+        "survivors_recovered": 88,
+        "text_equal": 88,
+        "at_or_below_shipped": 99,
+        "above_shipped": 21,
+        "above_gap_bar": 23,
+        "equal_to_floor_copy": 88,
+        "matched_max": 0.324574,
+        "matched_median": 0.00321056
+      },
+      "c0325_e6": {
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "matched_max": 0.00487646,
+        "matched_median": 0.00288845
+      },
+      "c0325_e4": {
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "matched_max": 0.00487646,
+        "matched_median": 0.00288845
+      },
+      "c0325_e8": {
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "matched_max": 0.00487646,
+        "matched_median": 0.00288845
+      },
+      "c0325_e6_b1": {
+        "survivors_recovered": 110,
+        "text_equal": 111,
+        "at_or_below_shipped": 120,
+        "above_shipped": 0,
+        "above_gap_bar": 0,
+        "equal_to_floor_copy": 111,
+        "matched_max": 0.00487646,
+        "matched_median": 0.00288845
+      }
+    },
+    "third_pass_shipped_median": 0.036939,
+    "third_pass_deletions_that_removed_a_repeated_statement": 43,
+    "third_pass_text_equal_among_those": 34,
+    "misses": 9,
+    "misses_position_sum_below_survivors": 7,
+    "misses_position_sum_exact_tie": 2,
+    "misses_above_shipped": 0,
+    "misses_above_gap_bar": 0,
+    "misses_matched_max": 0.00353769,
+    "exact_ties_float64_returned_below_survivors": 2,
+    "exact_ties_float64_sums_equal": 0,
+    "mechanism_registered_arm": {
+      "tie_group_in_document_order": 120,
+      "whole_matching_in_document_order": 111,
+      "matching_equal_to_registered_arm": 120
+    },
+    "mechanism_no_tie_break": {
+      "tie_group_in_document_order": 120,
+      "whole_matching_in_document_order": 88,
+      "matching_equal_to_registered_arm": 85
+    },
+    "matchings_changed_by_registered_tie_break": {
+      "third_pass_repeated_kept": 35,
+      "third_pass_repeated_removed": 0,
+      "deletion_cases": 0,
+      "reordered_and_deleted_cases": 0,
+      "fixture_pairs": 0,
+      "edited_pairs": 0
+    },
+    "set_sizes": {
+      "third_pass_repeated_kept": 120,
+      "third_pass_repeated_removed": 120,
+      "deletion_cases": 280,
+      "reordered_and_deleted_cases": 10010,
+      "fixture_pairs": 1913,
+      "edited_pairs": 900
+    },
+    "deletion_within_bar": 280,
+    "deletion_n": 280,
+    "deletion_max": 0.000610062,
+    "auc_registered": 0.999903,
+    "auc_shipped": 0.95098,
+    "n_negatives": 70,
+    "n_positives": 10010,
+    "fully_matched_pairs_registered": 1840,
+    "fully_matched_exactly_equal": 1840,
+    "fully_matched_count_fall": 7,
+    "pairs_fully_matched_at_0.6_only": 7,
+    "macro_f1_registered": {
+      "half_A": 0.9674,
+      "half_B": 0.9772,
+      "all": 0.9723
+    },
+    "macro_f1_no_tie_break": {
+      "half_A": 0.9674,
+      "half_B": 0.9772,
+      "all": 0.9723
+    },
+    "map_statements_with_a_changed_label": 0,
+    "map_statements": 21060,
+    "no_edit_control_read_as_removed": "0/117",
+    "document_without_repeated_statements": {
+      "statements": 53,
+      "cases": 120,
+      "survivors_recovered": 120,
+      "matched_equal_to_opw_gap_B_copy": 120,
+      "matched_equal_to_opw_gap_B_B": 0,
+      "max_abs_diff_to_opw_gap_B_B": 7.81318e-06,
+      "median_diff_to_opw_gap_B_B": 5.46317e-06,
+      "above_gap_bar": 63,
+      "above_shipped": 0
+    },
+    "unequal_length_pairs": {
+      "c060": {
+        "pairs": 66,
+        "no_matched_pair": 0,
+        "matched_median": 0.0199738,
+        "matched_below_shipped": 42,
+        "matched_above_shipped": 24,
+        "matched_within_bar": 22,
+        "matched_exactly_zero": 12,
+        "matched_max": 0.162117,
+        "shorter_fully_matched": 59,
+        "mean_matched_statements": 8.13636,
+        "pairs_with_at_most_one_matched_pair": 0,
+        "matchings_equal_to_no_tie_break": 15
+      },
+      "c0325": {
+        "pairs": 66,
+        "no_matched_pair": 2,
+        "matched_median": 0.0,
+        "matched_below_shipped": 49,
+        "matched_above_shipped": 15,
+        "matched_within_bar": 38,
+        "matched_exactly_zero": 35,
+        "matched_max": 0.18269,
+        "shorter_fully_matched": 15,
+        "mean_matched_statements": 4.68182,
+        "pairs_with_at_most_one_matched_pair": 19,
+        "matchings_equal_to_no_tie_break": 66
+      },
+      "c0325_e6": {
+        "pairs": 66,
+        "no_matched_pair": 2,
+        "matched_median": 0.0,
+        "matched_below_shipped": 49,
+        "matched_above_shipped": 15,
+        "matched_within_bar": 38,
+        "matched_exactly_zero": 35,
+        "matched_max": 0.18269,
+        "shorter_fully_matched": 15,
+        "mean_matched_statements": 4.68182,
+        "pairs_with_at_most_one_matched_pair": 19,
+        "matchings_equal_to_no_tie_break": 66
+      }
+    },
+    "unequal_length_shipped_median": 0.043782,
+    "own_encoding_executor_reading": {
+      "cases": 120,
+      "all_rows_bitwise_equal_to_row_copies": 96,
+      "repeated_rows_bitwise_equal": 120,
+      "cases_with_one_bit_pattern": 120,
+      "tie_group_cost_spread_max": 0.0,
+      "text_equal_registered": 111,
+      "at_or_below_shipped_registered": 120,
+      "rows_differing_from_row_copies": 41,
+      "max_abs_difference_of_one_embedding_entry": 0.00409467,
+      "shortest_statement_with_a_differing_row_words": 26,
+      "shipped_gap_equal_to_row_copy_reading": 96,
+      "shipped_gap_max_abs_diff": 0.00128833,
+      "matched_gap_equal_to_row_copy_reading": 96,
+      "matched_gap_max_abs_diff": 6.67102e-05,
+      "matched_pairs_equal_to_row_copy_matching": 120,
+      "text_equal_no_tie_break": 88
+    },
+    "edited_pairs_computed_by_this_notebook": 300,
+    "edited_pairs_read_from_e13_h71_checkpoint": 600,
+    "panel_margin_pts": 4.7083
+  },
+  "result_summary": "The registered tie-break (assignment cost min(cost, c) + eps * |i/n - j/m|, c = 0.325, eps = 1e-06, positions counted from 0) misses clause 1 of the bar on one of its two conditions; the verdict is Refuted. Kill-gate passed: without the tie-break at c = 0.6 the E13-H70 third-pass readings reproduce (88/120 survivors recovered, 21/120 above shipped), and the ground cost inside the group of repeated statements is bitwise equal in 120/120 cases. The copied case builders reproduce the five recorded E13 readings (280/280, AUC 0.999903, 1847/1847, macro-F1 0.9674 and 0.9772). Clause 1, the 120 pure deletions on the 62-statement document with 9 repeated statements: the matched order gap is at or below the shipped gap in 120/120 cases (without the tie-break 99/120) and above 0.005 in 0 (without it 23); the largest matched reading falls from 0.3246 to 0.004876. The matched sub-sequence is textually equal to the shorter document in 111/120 cases (without the tie-break 88/120), below the bar of 114. Cause of the 9 misses: the tie group is matched in document order in 120/120 cases, but the position term also decides which repeated statement of the longer document stays unmatched, and it does not read which one was deleted. In 7 misses another matching has a strictly smaller position sum than the survivor matching; in 2 the two position sums are exactly equal. The misses read at most 0.003538. Clauses 2, 3 and 4 are met and every registered E13 reading is unchanged: 280/280 deletion cases <= 0.005 and AUC 0.999903, both np.array_equal to the E13-H70 readings; 1840/1840 fully matched equal-length pairs equal to shipped opw_gap (count 1847 → 1840, a fall of 7, caused by the cutoff); macro-F1 0.9674 / 0.9772 with 0/21060 labels changed. The tie-break changes the matching in 35/120 cases of the document with repeated statements and in 0 of the 13223 cases of the other five sets. eps = 0.0001, eps = 1e-08 and positions counted from 1 return the same counts (111, 111 and 111 of 120 textually equal). Outside the bar: on the 66 natural pairs of unequal length the tie-break changes 0 matchings, and the move of the cutoff from 0.6 to 0.325 lowers the mean number of matched statements from 8.14 to 4.68 and the median matched gap from 0.0200 to 0.0000. Executor reading outside the record: with the shorter document encoded in its own call the clause 1 counts are the same (111 and 120 of 120) and the matched pairs equal the row-copy matching in 120/120 cases, but 41 rows of statements of 26 words or more differ by up to 4.095e-03; exact ties under separate encoding are shown for this one-token repeated text only. Guardrails hold: V 0/24, src and tests unchanged.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H79-kj-matching-tie-break.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H79-matching-tie-break-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H79-matching-tie-break.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "1. Scope of clause 1: one document ('source', 62 statements), one repeated text ('-', a list marker, 9 occurrences), 120 cases, 2 interior deletions per case, seeds [7, prefix length, draw]. 43 of the 120 deletions removed a repeated statement; the tie-break returns a textually equal sub-sequence in 34 of those 43 and in all 77 others. 2. The bar is missed by 3 cases on the textual condition only. The order-gap condition of the same clause is met (120/120), and all 9 misses read at or below 0.005 and below the shipped gap. The bar was applied as registered; the verdict follows the conjunction. 3. Mechanism of the misses: the returned matching and the survivor matching have the same total capped ground cost in 120/120 cases, so the position term alone ranks them. |i/n - j/m| compares relative positions with two different denominators; after a deletion the survivor matching is not always the one with the smallest sum. In 2 misses the two sums are exactly equal in rational arithmetic; as float64, the form the solver receives, the returned sum is below the survivor sum in 2 of them and equal to it in 0. A rule that leaves the deleted member unmatched needs the order of the neighbouring statements; that is a different mechanism and was not added or measured. 4. Position index: the record does not say from which number positions count. The registered arm counts from 0; counting from 1 gives the same counts (111/120, 120/120) with the same matching as the registered arm in 120/120 cases. 5. Exact ties exist here because the 9 repeated statements share one bitwise equal embedding row and each registered case builds the shorter document from row copies of the longer one. The tied float32 cost is not always zero: 0.0 in 60 cases, 0.0003452669770922512 in 60 cases. Executor reading outside the record: with the shorter document encoded in its own call, the rows of the repeated statements are bitwise equal in 120/120 cases, the tie group has one bit pattern in 120/120, the matched pairs equal the row-copy matching in 120/120 and the clause 1 counts are 111/120 and 120/120. That reading does not show that ties stay exact under separate encoding in general: all rows are bitwise equal to the row copies in 96/120 cases only, and in the other 24 cases 41 rows differ by up to 4.095e-03 in one embedding entry (shortest statement with a differing row: 26 words; shipped gap moved by up to 1.288e-03, matched gap by up to 6.671e-05). The repeated text here is one token and is encoded in the batch of the shortest statements in every document. A repeated statement whose batch differs between the two documents was not measured; a cost difference of the measured size inside a tie group is above eps = 1e-06, and the position term would then not decide. Not measured either: near-identical statements, another encoder. 6. Clause 3 holds by construction: a fully matched equal-length pair is passed to opw_gap unmodified. 1820 of the 1840 pairs are reorder-pool entries. The 7 pairs that are fully matched at c = 0.6 and not at c = 0.325 are natural cross-summary, regeneration and tier-contrast pairs; their matched gap no longer equals the shipped gap. 7. Clause 4: c = 0.325 was chosen on half A in E13-H71, so the half A reading (0.9674) is the calibration reading and only the half B reading (0.9772) is held out. The 900 edited pairs hold no repeated statement inside a document, so the clause shows that the tie-break changes no label; it does not test the tie-break on the map. 8. Clauses 2 and 4 cannot fail through the tie-break on sets without repeated statements: the tie-break changed 0 matchings on the 280 deletion cases, the 10010 reordered-and-deleted cases, the 1913 fixture pairs, the 900 edited pairs and the 120 cases of the document without repeated statements. The clauses confirm that the readings do not move; the shipped baseline also clears the pooled AUC bar (0.950980). 9. The single cutoff: the registered E13-H70 readings are equal at c = 0.6 and c = 0.325. Outside the bar the cutoff is not inert: on the 66 natural pairs of unequal length the matched gap is computed on 4.68 statements on average at c = 0.325 against 8.14 at c = 0.6 (shorter document: 8.24 statements on average); it reads exactly 0 in 35/66 pairs (at c = 0.6: 12), 19 pairs keep at most one matched pair and 2 keep none. No ground truth exists for these pairs; this is a reading, not a test. The registered cutoff is the literal 0.325; the shipped constant DIFF_CHANGED_COST is 0.3252691193458119 and was not measured. 10. Identity floor, unchanged from E13-H70: on the document without repeated statements the matched gap equals opw_gap(B, copy of B) in 120/120 cases and differs from opw_gap(B, B) by at most 7.813e-06 (POT zeroes the diagonal of the ground cost only when both arguments are one object); it reads above 0.005 in 63/120 cases because the identity gap of shipped opw_gap grows with document length. The tie-break does not act on this. 11. Edited-pair readings: 300 of 900 shipped details readings were computed by this notebook (bases gold, gold-2, v1, v2) and are equal to the E13-H71 checkpoint in 300/300; the other 600 were read from the E13-H71 checkpoint, which has the same fixture key (sha1 over the library version and every pair text). The first execution of this notebook was stopped during that loop because another notebook held most cores of the machine; the restore order was added after that. 12. Executor rules, written in the configuration cell, which executes before every measurement cell: positions counted from 0; a tie group needs at least 2 rows and 1 column; textual equality is sequence equality of the matched statements of the longer document with the shorter document; Refuted (null) would be read only on exact equality of the third-pass readings with and without the tie-break. The notebook was executed more than once; the registered arms, cutoffs, bars and builders did not change between executions. Added after the first complete execution: the exact position sums, the document-order columns, the column of matchings equal to the registered arm and the zero-reading columns of the unequal-length table. Added after the second complete execution: the float64 difference of the position sums and, in the executor reading, the size of the row differences and the comparison with the row-copy reading of the same case. The second addition followed a check of that reading: its matched columns equalled the clause 1 columns at the printed digits although 24 cases had rows that differ, and the check measured that the matched gap does move there, by less than the printed digits. 13. Guardrail rows that can fail: V, the source-tree fingerprint, git status. The np.array_equal rows compare two calls of unmodified shipped functions inside one kernel and detect a change made during the run only. The metric-property row is a statement, not a test. 14. Other processes executed notebooks on this machine during the run; no timing is quoted as a measurement."
+}

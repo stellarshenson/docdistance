@@ -1,0 +1,143 @@
+{
+  "id": "E13-H74",
+  "slug": "order-kernel-reach",
+  "model": "opus",
+  "verdict": "Refuted",
+  "verdict_number": "median order gap grows +190.5% between displacement 60 and 200 (0.14324 → 0.41615, shuffled arm, N = 300, 5 seeds); the bar allows a change <= 5% and registers Refuted at growth >= 20%",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "K rebuilt with a line-for-line replica of the kernel lines of _opw_plan for N = M = 300 and the shipped constants (lambda1 50.0, lambda2 0.1, sigma 1.0): entries at |i - j| = 60 non-zero 0 of 480 at zero ground cost and 0 of 38400 over the 80 ground-cost matrices of the experiment. Shifted log K at offset 60 reads -919.23 at zero ground cost and at most -899.23 for every ground cost <= 2.0; np.exp(-745.14) = 0.0. Widest offset holding a non-zero entry: 54 at zero ground cost, 53 with the measured ground costs. The premise holds, the gate did not fire"
+  },
+  "sanity_check": {
+    "required": false,
+    "passed": true,
+    "reading": "the record and the notes name no sanity check. Harness checks run in its place: replica plan == shipped opw_plan on all 80 ground-cost matrices (np.array_equal True); the row-group split adds up to the shipped opw_gap exactly on every one of the 80 solves; every block move verified as a permutation that shifts the block by d and the d passed-over statements by -10; the naive panel row is reproduced (margin +4.71 pts, d' 4.68, R 1.670, DR 0.0873)"
+  },
+  "prediction_check": {
+    "predicted": "growth >= 20% from 5 to 50 positions, within 5% from 60 to 200",
+    "observed": "shuffled arm: +286.6% from 5 to 50 (0.03228 → 0.12482) and +190.5% from 60 to 200 (0.14324 → 0.41615); document-order arm: +315.1% and +188.7% (0.14584 → 0.42098); 10 of 10 sequences grow >= 20% from 60 to 200. The growth clause held, the saturation clause is falsified",
+    "direction_matched": false
+  },
+  "acceptance": {
+    "bar": "Confirmed iff, on sequences of >= 300 statements, the median order gap grows >= 20% between displacement 5 and 50 AND changes <= 5% between 60 and 200 (one block of 10 statements moved); Refuted if it still grows >= 20% between 60 and 200",
+    "met": false,
+    "readings": {
+      "primary_arm": "shuffled",
+      "sequence_length": 300,
+      "seeds_per_arm": 5,
+      "shuffled_median_gap_by_displacement": {
+        "0": 0.00655,
+        "5": 0.03228,
+        "10": 0.04706,
+        "20": 0.06501,
+        "50": 0.12482,
+        "60": 0.14324,
+        "100": 0.2211,
+        "200": 0.41615
+      },
+      "document_order_median_gap_by_displacement": {
+        "0": 0.00995,
+        "5": 0.03064,
+        "10": 0.04447,
+        "20": 0.06727,
+        "50": 0.12718,
+        "60": 0.14584,
+        "100": 0.22064,
+        "200": 0.42098
+      },
+      "shuffled_growth_5_to_50_pct": 286.6,
+      "shuffled_change_60_to_200_pct": 190.5,
+      "shuffled_change_60_to_200_pct_per_seed": [
+        193.1,
+        190.7,
+        183.0,
+        178.8,
+        192.8
+      ],
+      "document_order_growth_5_to_50_pct": 315.1,
+      "document_order_change_60_to_200_pct": 188.7,
+      "document_order_change_60_to_200_pct_per_seed": [
+        185.5,
+        186.8,
+        166.0,
+        188.7,
+        177.6
+      ],
+      "near_growth_clause_met": true,
+      "far_flat_clause_met": false,
+      "refutation_clause_met": true,
+      "control_agrees": true,
+      "sequences_growing_60_to_200": "10/10"
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "unchanged - no code changed; smd exact metric, opw_gap a score (not a metric)",
+    "notes": "V counted on the ibm panel through the shipped DocDistance.embed and smd: 0/24, panel row margin +4.71 pts, d' 4.68, R 1.670, DR 0.0873, equal to the primer's naive row. Default-path smd 0.22648980232576527 and order_gap 0.14508837947471193 on (gold, gold-2) and the 10 panel distances are equal before and after by np.array_equal and by byte compare. The sha256 of the src/, tests/ and docs/ trees is unchanged (src f0e13add3de29ff3, tests 00ea6c7799307adb, docs 46241ace1c95a621) and git status src tests is clean. The kernel replica and the block moves live inside the notebook; no shipped file was edited"
+  },
+  "key_numbers": {
+    "pool_unique_statements": 372,
+    "length_600_feasible": false,
+    "kernel_nonzero_entries_at_offset_60": 0,
+    "kernel_widest_nonzero_offset_zero_cost": 54,
+    "kernel_widest_nonzero_offset_measured": 53,
+    "shuffled_gap_median_d5": 0.03228,
+    "shuffled_gap_median_d50": 0.12482,
+    "shuffled_gap_median_d60": 0.14324,
+    "shuffled_gap_median_d200": 0.41615,
+    "shuffled_growth_5_to_50_pct": 286.6,
+    "shuffled_change_60_to_200_pct": 190.5,
+    "document_order_growth_5_to_50_pct": 315.1,
+    "document_order_change_60_to_200_pct": 188.7,
+    "linear_fit_shuffled": {
+      "slope": 0.5833,
+      "intercept": 0.0063,
+      "r2": 0.999
+    },
+    "linear_fit_document_order": {
+      "slope": 0.5717,
+      "intercept": 0.0081,
+      "r2": 0.9912
+    },
+    "block_rows_cost_d10_shuffled": 0.02023,
+    "block_rows_cost_d200_shuffled": 0.02027,
+    "block_rows_change_pct_shuffled": {
+      "change_5_to_50": 31.12,
+      "change_10_to_200": 0.19,
+      "change_60_to_200": 0.01
+    },
+    "passed_over_rows_cost_d60_shuffled": 0.11992,
+    "passed_over_rows_cost_d200_shuffled": 0.39295,
+    "passed_over_share_of_growth_60_to_200_pct": {
+      "shuffled": 100.0,
+      "document-order": 101.3
+    },
+    "own_statement_mass_block_rows_d5_shuffled": 0.1227,
+    "own_statement_mass_block_rows_max_d_ge_10": 0.000258,
+    "position_penalty_by_offset": {
+      "5": 0.6389,
+      "7": 1.2522,
+      "8": 1.6355,
+      "10": 2.5555,
+      "54": 74.4692
+    },
+    "largest_pooled_ground_cost": 1.3356,
+    "cost_reach_positions": 7,
+    "float64_support_edge_positions": 54,
+    "structure_closeness_shuffled_median_d50": 0.9117,
+    "structure_closeness_shuffled_median_d60": 0.8987,
+    "structure_closeness_shuffled_median_d200": 0.7057,
+    "unmoved_pair_gap_median_shuffled": 0.00655,
+    "unmoved_pair_gap_median_document_order": 0.00995
+  },
+  "result_summary": "Refuted. The kernel premise holds: every entry of K at |i - j| = 60 is exactly 0.0 for N = M = 300 and the widest non-zero offset is 54. The predicted saturation of the order gap does not occur: on 300-statement sequences with one block of 10 moved, the median shipped opw_gap grows +286.6% from displacement 5 to 50 and +190.5% from 60 to 200 in the shuffled arm, +315.1% and +188.7% in the document-order control, and 10 of 10 sequences grow >= 20% from 60 to 200. The row-group split of the shipped coupling shows why: a block moved by d positions shifts the d statements it passes over by 10 positions each, and the gap is linear in the d + 10 displaced statements (slope 0.5833 per displaced fraction, intercept 0.0063, R^2 0.999 in the shuffled arm). The 10 block rows cost 0.02023 at d = 10 and 0.02027 at d = 200 (+0.19%), so the block's own cost is constant from 10 positions on, well below the 54-position float64 support; the growth from 60 to 200 comes from the passed-over rows (0.11992 → 0.39295). The coupling stops matching a displaced statement to itself below 10 positions (own-statement mass 0.1227 at d = 5, at most 0.000258 from d = 10) because the kernel's position cost pen(8) = 1.6355 already exceeds the largest pooled ground cost 1.3356. The float64 underflow exists and is not the limit that shapes the reading",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H74-kj-order-kernel-reach.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H74-order-kernel-reach-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H74-order-kernel-reach.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "The registered 600-statement length was not run: the registered pool holds 372 unique statements. A single moved block cannot be displaced without shifting the d statements it passes over, so the registered design varies the count of displaced statements together with the distance; the bar is on the order gap and was applied literally. The numeric pattern of the prediction does appear on the block rows alone (+31.12% from 5 to 50, +0.01% from 60 to 200), with the constant part starting at 10 positions and not at 54, so that component does not support the float64 mechanism either. One block start per sequence, drawn from positions 0 to 90, forward moves only. Sequences are concatenations of pooled statements and short documents, not one long authored document, and A_moved holds the same statements as A (smd at most 0.000302), so a pair that also differs in content is not measured. The displacement at which the position cost exceeds the ground cost depends on the encoder's ground-cost scale (largest pooled ground cost 1.3356). The unmoved pair opw_gap(A, A) reads a median 0.00655 (shuffled) and 0.00995 (document order), not 0. Readings outside the registered grid (the d = 0 row, the row-group split, the structure_closeness column, the linear fit and the position-cost table) enter no bar. Two observations for the orchestrator, outside this hypothesis: structure_closeness of the shuffled median reads 0.9117 at d = 50 and 0.8987 at d = 60, below STRUCTURE_THRESHOLD 0.9; other notebooks under notebooks/experiments were re-executed by another process during this run and show as modified in git status, none by this executor. No timing is quoted"
+}

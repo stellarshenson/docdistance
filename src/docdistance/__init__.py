@@ -4,6 +4,7 @@ from docdistance import config  # noqa: F401  (sets up logging + paths on import
 from docdistance.bootstrap import init
 from docdistance.distance import (
     DistanceResult,
+    SolverNotOptimal,
     SourceConditionedResult,
     StructuralResult,
     closeness,
@@ -12,14 +13,17 @@ from docdistance.distance import (
     compute_structural,
     grounding_blend,
     grounding_residual,
+    matched_order_gap,
     opw_cost,
     opw_gap,
     opw_plan,
     order_alignment,
+    partial_matching,
     rwmd,
     smd,
     structure_displacement,
     transport_plan,
+    unsupported_count,
     wcd,
 )
 from docdistance.pipeline import (
@@ -39,6 +43,7 @@ __all__ = [
     "DistanceResult",
     "DocDistance",
     "NotInitializedError",
+    "SolverNotOptimal",
     "SourceConditionedResult",
     "StructuralResult",
     "__version__",
@@ -49,10 +54,12 @@ __all__ = [
     "grounding_blend",
     "grounding_residual",
     "init",
+    "matched_order_gap",
     "opw_cost",
     "opw_gap",
     "opw_plan",
     "order_alignment",
+    "partial_matching",
     "rwmd",
     "semantic_distance",
     "smd",
@@ -60,5 +67,6 @@ __all__ = [
     "structural_distance",
     "structure_displacement",
     "transport_plan",
+    "unsupported_count",
     "wcd",
 ]

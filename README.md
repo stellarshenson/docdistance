@@ -21,8 +21,8 @@ docdistance measures how far apart two documents are - in meaning and in order -
 - **Points to what changed** - a per-statement diff that tells a reworded sentence apart from one that only moved, not just a single score
 - **Source-aware option** - compare two documents against a shared source to see which one drifted, and whether it dropped or invented content
 - **No model internals needed** - works from the text alone, so it runs on frontier-model output where token probabilities are unavailable
-- **Batch scoring** - `--pairs` scores a whole TSV of document pairs with one model load, one JSON line per pair
-- **Markdown-aware** - optional `--markdown` segmentation treats table rows, headings and list items as statements, with `--min-words` / `--skip-table-fragments` fragment filters
+- **Batch scoring** - `--pairs` scores a whole TSV of document pairs with one model load, one JSON line per pair, on all three distance commands; a document file that recurs across rows is encoded once
+- **Markdown- and HTML-aware** - the reader of each document follows its file extension: a `.md` or `.markdown` file is read as markdown (table rows, headings and list items become statements), a `.html` or `.htm` file is converted to those lines first, every other file and raw text go whole to the prose segmenter; `--input-format plain|markdown|html` names one reader for every document, and `plain` restores the 1.1.5 reading; `--min-words` / `--skip-table-fragments` filter fragments
 - **Runs anywhere** - CPU-only by default (OpenVINO INT8), sub-millisecond for the meaning score, no GPU required
 - **CLI or Python** - `docdistance distance-semantic a.md b.md`, or `from docdistance import semantic_distance`
 - **Interpretable by design** - every score comes with the statement-to-statement alignment behind it
@@ -69,7 +69,7 @@ Three reads over the same two documents; they differ in what the answer tells yo
 
 ## Usage
 
-The quickest way to a result is the CLI - init once, then run it.
+The quickest way to a result is the CLI - init once, then run it. Python 3.12 to 3.14 is supported; releases up to 1.1.5 install on Python 3.13 only.
 
 ```bash
 pip install docdistance                        # from PyPI ('docdistance[s3]' to pull models from S3)
@@ -85,12 +85,16 @@ docdistance distance-semantic a.md b.md --details-json details.json   # + statem
 docdistance distance-structural a.md b.md                 # order-gap verdict (add --json for machine-readable)
 docdistance distance-structural a.md b.md --details-json details.json   # + per-statement order projection
 
-# batch - many pairs, one model load (distance-semantic and distance-structural)
+# batch - many pairs, one model load (all three distance commands)
 docdistance distance-semantic --pairs pairs.tsv          # TSV a<TAB>b[<TAB>id] → one JSONL line per pair
 docdistance distance-semantic --pairs pairs.tsv --details-json 'details/{pair}.json'   # + one detail file per pair
+docdistance distance-wrt-source --pairs pairs.tsv -s s.md   # every pair against one source
 
-# markdown-aware segmentation - table rows, headings and list items become statements
-docdistance distance-semantic a.md b.md --markdown --min-words 3 --skip-table-fragments
+# the reader follows the file extension: .md / .markdown markdown, .html / .htm HTML, every other file and raw text plain
+docdistance distance-semantic page.html page.md           # an HTML document against its markdown conversion
+docdistance distance-semantic a.md b.md --min-words 3 --skip-table-fragments   # + fragment filters
+docdistance distance-semantic a.txt b.txt --markdown      # one reader for every document: here markdown
+docdistance distance-semantic a.md b.md --input-format plain   # the reader and the numbers of 1.1.5
 
 # method 2 - source-conditioned d(A,B|S) (slower, runs the reranker × NLI grounding)
 docdistance distance-wrt-source a.md b.md --source s.md                       # two-axis verdict
@@ -98,6 +102,20 @@ docdistance distance-wrt-source a.md b.md -s s.md --source-map-json map.json   #
 ```
 
 `init` provisions a mode's models from HuggingFace by default, or from S3 (`--source s3://your-bucket --aws-profile NAME`) or a local mirror (`--source /path/to/models`), and records readiness in a `docdistance.json` written to `$DOCDISTANCE_HOME` or the current folder. A distance run whose mode was never init'd exits with a clear "run `docdistance init <mode>`" error.
+
+`--input-format` takes `auto`, `plain`, `markdown` or `html` on the three distance commands; the Python calls take `input_format=`. The default is `auto`: the reader of each document is chosen from its file extension, in any letter case. The content is not read for the choice.
+
+| Document | Reader under `auto` |
+| --- | --- |
+| a `.md` or `.markdown` file | `markdown` |
+| a `.html` or `.htm` file | `html` |
+| a file with another extension, a file without extension, raw text | `plain` |
+
+An explicit `plain`, `markdown` or `html` is the reader of every document of the call, and `--markdown` / `markdown=True` equals `markdown`. Releases up to 1.1.5 read every document with the plain reader, so the numbers for `.md`, `.markdown`, `.html` and `.htm` files can differ from 1.1.5 unless `--input-format plain` / `input_format="plain"` is passed, which restores the 1.1.5 reading.
+
+- **`plain`** - the whole text goes to the prose segmenter
+- **`markdown`** - one statement per heading, table row, list item and fenced-code line; only prose paragraphs go through the prose segmenter
+- **`html`** - the document is converted to markdown lines, which the markdown reader then segments: `h1` to `h6` become `#` lines, `li` a `- ` line in a `ul` and a numbered line in an `ol` (`1. `, `2. `, counted from 1 in each `ol`; a nested item indented by two spaces per level), `tr` one `| cell | cell |` row of its `td` and `th` texts, `pre` a fenced block, `p` / `div` / `blockquote` / `section` / `article` / `dt` / `dd` / `figcaption` / `caption` / `header` / `footer` / `main` / `nav` / `aside` / `address` / `form` / `figure` / `details` / `summary` and text outside any block a paragraph on one line with its whitespace collapsed to single spaces; `br` is the only line break inside a paragraph and `hr` ends a paragraph; `script`, `style`, `template`, `noscript`, `svg`, `title`, comments and a byte order mark are dropped; every other tag, `head` among them, leaves its text only. The `h1` of an HTML file is removed like the `# ` title line of a markdown file. The statements of an HTML document do not depend on how its source text is wrapped
 
 Or from Python:
 
@@ -115,6 +133,9 @@ print(sr.structure_closeness, sr.order_gap, sr.verdict)   # 0..1 structure reado
 from docdistance import DocDistance
 result, details = DocDistance().structural_distance_with_details("report_v1.md", "report_v2.md")   # StructuralResult + order details
 print(details["smd"], details["order_gap"], details["structure_closeness"])   # semantic distance, structural order-gap, 0..1 structure readout
+print(result.matched_order_gap, result.n_matched)   # order gap over the statements both documents hold, and their count
+
+dd = DocDistance(memo_size=64)              # for sweeps: a document file that recurs across calls is encoded once
 
 docdistance.init("wmd-wrt-source")                              # + reranker + NLI grounding models
 s = source_conditioned_distance("sum_a.md", "sum_b.md", source="article.md")  # method 2
@@ -124,11 +145,12 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 ### Reading the result
 
 - **Method 1 - closeness 0..1** - `1.0` identical, `0.0` unrelated. Good (same meaning): closeness near 1, verdict `similar` (default cutoff `0.77`, set with `--threshold`). Bad (meaning changed): closeness falls toward 0, verdict flips to `not similar`
-- **Method 2 - two axes, lower is closer** - `d_sel` near 0 means A and B drew on the same source content, high means they picked different parts; `grd_a` / `grd_b` are each document's reranker x NLI grounding residual (E03-H11 relevance-gated ungrounded mass) - low means it stays grounded in `S`, high flags drift (dropped or unsupported content). Good: both grounding residuals and `d_sel` low. Bad: a grounding residual spikes for the document that drifted
+- **Method 2 - two axes, lower is closer** - `d_sel` near 0 means A and B drew on the same source content, high means they picked different parts; `grd_a` / `grd_b` are each document's reranker x NLI grounding residual (E03-H11 relevance-gated ungrounded mass) - low means it stays grounded in `S`, high flags drift (dropped or unsupported content). Good: both grounding residuals and `d_sel` low. Bad: a grounding residual spikes for the document that drifted. `n_unsupported_a` / `n_unsupported_b` count the statements whose nearest source statement costs more than 0.34625 (embedding distance, not entailment). `residual_a` / `residual_b` are the transport cost to the whole source and grow when a document covers only part of it; they are not the unsupported share of a document
+- **Structural read - two order gaps** - `order_gap` rises when statements are deleted and the order is kept, and the verdict can then read `not similar`; `matched_order_gap` is the order gap over the `n_matched` statements both documents hold and reads such a deletion at the identity floor of the shorter document ([readings](docs/solution/wmd-structure-distance-sota.md#calibration-of-the-structural-verdict)). The verdict is read from `order_gap` only
 
 - **Transport map** - add `--details-json details.json` to `distance-semantic` to also write the optimal-transport map: for every statement of A, which statements of B its mass flows to, with the `weight` (fraction of that statement's mass) and the match `cost` - the interpretable statement-to-statement alignment behind the distance, readable by a human or a machine (the same map is returned in Python by `DocDistance.semantic_distance_with_details`)
-- **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on
-- **Offline after init** - distance calls run fully offline once `docdistance init <mode>` has provisioned the mode (from HuggingFace, S3, or a local mirror) and written `docdistance.json`
+- **Source map** - add `--source-map-json map.json` to `distance-wrt-source` to also write, for every statement of A and B, the top-3 source statements it covers with their weights - a per-statement alignment showing *which part of the source* each statement draws on; each record also names its nearest source statement (`nearest_source_index`, `nearest_source_cost`) and carries `unsupported`
+- **Offline after init** - distance calls run fully offline once `docdistance init <mode>` has provisioned the mode (from HuggingFace, S3, or a local mirror) and written `docdistance.json`. `init --source` also saves the tokenizer of the SaT segmenter beside the SaT weights when the source folder `sat-3l-sm` holds none that loads with its special token ids, from the HuggingFace cache or else the Hub; a source folder that carries the tokenizer files that `init` saved needs no Hub; the tokenizer files as the Hub publishes them, and a truncated `tokenizer.json`, do not load that way and `init` replaces them (the `sat-3l-sm` bullet of the [AWS deployment reference](docs/aws-deployment-reference.md#models-and-footprint))
 - **Backend** - `--backend openvino|torch`, default `openvino` (CPU INT8)
 - **Machine-readable errors** - in `--json` / `--result-only` mode every failure writes a one-line `{"error": code, "message": ...}` object to stdout and exits 1 (codes `not_initialized`, `models_not_installed`, `io_error`, `empty_document`), so an agent parses stdout on both success and failure
 - **Full reference** - the [CLI reference](docs/cli-reference.md), the [API reference](docs/api-reference.md) and the [AWS deployment reference](docs/aws-deployment-reference.md)
@@ -175,6 +197,7 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 - **changed** - `true` once the statement's cheapest match over the whole cost row clears the change cutoff `(1 − threshold)·√2`; the content drifted rather than staying within tolerance
 - **no_counterpart / identical** - `no_counterpart` flags removed content (cheapest match above `no_counterpart_cost`), `identical` flags a normalised-text-equal counterpart
 - **targets** - the B-side view, one entry per statement of B: its cheapest incoming source and total incoming weight, so ADDED content (a target no source feeds cheaply) reads directly
+- **match_index / match_status** - written by builds after 1.1.5, which the sample above predates: a one-to-one matching of the statements labels each flow `kept` (with `match_index`, its B statement) or `removed`, and each `targets` entry `kept` (with `match_source_index`) or `added`; a pair needs a ground cost below `match_cutoff` 0.325, stated under `thresholds`, and `summary` counts `n_kept` / `n_removed` / `n_added`. An annotation: the plan and `smd` do not change. A current record is in the [worked example](docs/example-map-interpretations.md)
 - **smd** - the distance the map realizes; `weight × cost` summed over all flows equals it
 - **Reading it** - a statement mapped to its counterpart at `weight 1.0` and low `cost` is preserved; high cost or scattered weights flag a statement with no clean equivalent in B
 
@@ -214,7 +237,9 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 ```
 
 - **statements** - one entry per statement of A; `index` / `text` / `section` name it, `target_index` / `target_text` / `target_section` are its aligned counterpart in B (crisp exact-EMD alignment, not the soft OPW plan)
-- **displacement / displacement_norm** - rank shift of the statement from its aligned position; `displacement` is the raw shift (`0` = in place), `displacement_norm` is the length-normalised form `target_index/n_b − index/n_a` that `moved` thresholds against `moved_tolerance`, so a one-slot slip in a long document no longer reads as a move
+- **displacement / displacement_norm** - rank shift of the statement from its aligned position; `displacement` is the raw shift (`0` = in place), `displacement_norm` is the length-normalised form `target_index/n_b − index/n_a`
+- **matched_displacement / moved** - written by builds after 1.1.5, which the sample above predates: `matched_displacement` is the rank shift of the statement among the statements both documents hold (one-to-one pairs with a ground cost below `match_cutoff` 0.325), `null` without a match. `moved` is true when the statement is matched, `matched_displacement` is not 0, `abs(matched_displacement / n_matched)` is above `moved_tolerance` and the record is not `no_counterpart`; 1.1.5 read `abs(displacement_norm) > moved_tolerance`. A statement inserted or removed without a match flags nothing. On a document that repeats a statement this does not always hold: `moved` flagged a kept statement in 4 of 120 pure deletions of a 62-statement document with 9 repeated statements (E15-H80; bullet "Limit: repeated statements" of the [API reference](docs/api-reference.md#matching-and-the-matched-order-gap))
+- **matched_order_gap / n_matched** - in the `--json` result after 1.1.5, not in the details file: the order gap over the `n_matched` matched statements, `null` when none is matched
 - **cost** - ground distance of the aligned pair; above `no_counterpart_cost` the alignment names no real counterpart, `displacement_norm` goes null and `no_counterpart` flags it
 - **semantic_target_index / targets_differ** - the heaviest semantic target of the content-optimal plan beside the order alignment; `targets_differ: true` names a statement that MOVED AND was reworded
 - **Self-describing header** - `generator` / `version`, the closeness definition, every threshold in force, `summary` aggregates (`n_moved`, `n_no_counterpart`, median displacement) and a per-`sections` table, matching the semantic detail file
@@ -228,7 +253,7 @@ print(s.d_sel, s.grd_a, s.grd_b)            # selection divergence + each doc's 
 SMD is position-invariant by design - reorder a document's statements and it barely moves. A second, structure-sensitive number tells *content drift* from *rearrangement*, and it ships as its own command (`structural_distance`, `distance-structural --details-json`), reported beside SMD. The shipped mechanism is the OPW order-gap (E11-H55); the earlier position-augmented Wasserstein metric was stress-tested against it and dropped.
 
 - **OPW order-gap (H55, shipped)** - `order_gap = OPW − SMD`, the order-preserving Wasserstein cost minus the order-free SMD. Subtracting SMD cancels the content component, so only the extra cost the order constraint forces remains - a faithful reword with order kept reads ~0, a reorder with content kept reads large. Reported as `structure_closeness = 1 − order_gap/√2` on the library's 0..1 closeness scale, the same readout as semantic closeness (`1` = same order)
-- **Content-invariant, translation-invariant** - the reword reads 0.5% of a full-scramble distance (the dropped metric leaked 73.5%), it is monotone in displacement (Spearman 1.00), and it reads fractional statement rank `i/N`, not absolute position, so a uniform shift (a header inserted, everything offset, relative order intact) is invisible. A translation-invariant score, `order_gap >= 0`, not a metric - the entropic OPW carries ~15% triangle violations (measured, `reports/E11-structure-sota-decision.json`), never invoked for a pairwise arrangement read
+- **Content-invariant, translation-invariant** - the reword reads 0.4% of a full-scramble distance (stored 0.0038) and the dropped metric 61.5% (stored 0.615), it is monotone in displacement (Spearman 1.00), and it reads fractional statement rank `i/N`, not absolute position, so a uniform shift (a header inserted, everything offset, relative order intact) is invisible. A translation-invariant score, `order_gap >= 0`, not a metric - the entropic OPW carries ~15% triangle violations (measured, `reports/E11-structure-sota-decision.json`), never invoked for a pairwise arrangement read
 - **Two axes side by side** - read the structural order-gap beside the semantic distance (SMD, order-invariant); when meaning is preserved (SMD ≈ 0) but `structure_closeness` falls, the arrangement changed and nothing else. `distance-structural`'s per-statement `displacement` names what MOVED in order, and `distance-semantic`'s per-flow `changed` names what changed in MEANING - the structural analogue of the transport map
 - **The metric that was dropped** - position-augmented Wasserstein (E08-H44) is a true metric, but fuses semantic and positional cost into one distance `√((1−λ)·d_sem² + λ·d_pos²)`, so a faithful reword reads as far as a real reorder (E11) - a metric on the wrong quantity. E11 chose the order-gap and dropped it
 - **Design and evidence** - the [structure-distance SOTA](docs/solution/wmd-structure-distance-sota.md), the [experiments log](docs/experiments/wmd-structure-distance-experiments.md) (E07 the barycentric read, E08 the metric formulation, E10-H55 the order-gap mechanism, E11 the decision), and the end-to-end notebook `notebooks/12-kj-structure-distance-e2e.ipynb`

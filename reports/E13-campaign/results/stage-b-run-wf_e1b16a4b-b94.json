@@ -1,0 +1,907 @@
+{
+ "packages": [
+  {
+   "key": "runtime-guards",
+   "result": {
+    "package": "runtime-guards",
+    "status": "done",
+    "items": [
+     {
+      "id": "DEF-DEPS-11",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_loading_the_openvino_encoder_starts_no_child_process runs a script without a main guard in a subprocess with CI removed; the script prints MARKER, prints CHILD on every multiprocessing.Process.start, then calls encoders.load_encoder(). Unchanged tree (Python 3.14.8): failed, stdout was 'MARKER\\nCHILD\\nMARKER\\nCHILD\\n'. Changed tree: passed, one MARKER and no CHILD. Mechanism verified: one module-level line in encoders.py, sys.modules.setdefault('openvino_telemetry', None). A second manual run of DocDistance().embed(text) without a main guard and with CI unset printed the marker once, started no process, returned shape (2, 768), and showed openvino.tools.ovc.telemetry_utils.tm bound to openvino.tools.ovc.telemetry_stub, openvino_telemetry.backend.backend_ga4 not loaded, ov.convert_model still present. That manual run had HF_HUB_OFFLINE=1 preset, see notes."
+     },
+     {
+      "id": "DEF-TRANS-9",
+      "met": true,
+      "evidence": "All 5 ot.emd / ot.emd2 call sites in distance.py now go through _exact_ot(a, b, C), which calls ot.emd(..., numItermax=max(100000, n*m), log=True) and raises SolverNotOptimal when log['warning'] is not None. tests/test_distance.py::test_exact_solver_raises_when_it_stops_at_the_iteration_cap (cap forced to 1 on a 12 x 9 problem; 5 parameters: smd, transport_plan, opw_gap, order_alignment, selection_divergence) failed on the unchanged tree and passes now. test_exact_solver_cap_scales_with_the_problem_size (3000 x 3000 non-negative random unit vectors, dim 768, warnings as errors) failed on the unchanged tree with 'UserWarning: numItermax reached before optimality' and passes now in 1.5 s. On that fixture the default cap returned 0.661948351442813 with the warning; the changed tree returns 0.6617769153316813, equal bit for bit to ot.emd2 with numItermax=20000000; excess of the old value 0.0259%; the fixture needs about 137728 iterations. Bit-identity below the default cap: 21600 exact comparisons of the 5 call sites against the 1.1.5 expressions over 2400 random problems, 0 differences; test_exact_solver_matches_the_bare_pot_call pins it."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-offline-flag-set-after-hub-import.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md"
+    ],
+    "tests_added": [
+     "tests/test_distance.py::test_exact_solver_matches_the_bare_pot_call",
+     "tests/test_distance.py::test_exact_solver_raises_when_it_stops_at_the_iteration_cap (5 parameters)",
+     "tests/test_distance.py::test_exact_solver_cap_scales_with_the_problem_size",
+     "tests/test_e2e.py::test_loading_the_openvino_encoder_starts_no_child_process"
+    ],
+    "make_test": "151 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s) - last line 'verify: 55 pairs, 0 grounded, 0 difference(s)'; with --grounded added: 'verify: 55 pairs, 3 grounded, 0 difference(s)'",
+    "out_of_scope_needs": [
+     "Unregistered defect in src/docdistance/encoders.py, outside this package's two items, not changed: the offline=True constructors set HF_HUB_OFFLINE after _require_models_extra() has imported transformers and huggingface_hub, so huggingface_hub.constants.HF_HUB_OFFLINE stays False. Observed with requests routed to a closed local port: DocDistance().embed(text) raised ModelsNotInstalled from Segmenter.__init__ (transformers is_base_mistral → huggingface_hub.model_info → httpx.ConnectError); with HF_HUB_OFFLINE=1 preset the same call loaded. With an empty HF_HOME, load_encoder() reached snapshot_download online (cause chain LocalEntryNotFoundError ← httpx.ConnectError), so on a machine without models an offline load attempts a download. Needs a defect entry and a fix that sets the flag before the first transformers import.",
+     "docs/defects-docdistance.md, DEF-TRANS-9 repro line: the recorded reading (0.882362 with the warning) did not reproduce with isotropic standard-normal float32 unit vectors. On 1.1.5, seeds 0 and 1, d.smd read 1.3243248969316481 with no warning (that problem needs about 98304 iterations). The warning reproduced with non-negative uniform entries (0.661948 against 0.661777 optimal), with shared-direction vectors and with float64 normal vectors. The repro line should name its generator.",
+     "reports/E13-campaign/PRIMER.md lines 9-10 and the docstring of reports/E13-campaign/baseline.py state that CI=true switches the telemetry off and that a standalone script needs a main guard because of DEF-DEPS-11. From 1.1.6 neither is needed for that reason.",
+     "Decision for the orchestrator: SolverNotOptimal lives in docdistance.distance only. Exporting it from src/docdistance/__init__.py is an edit outside this package's files."
+    ],
+    "notes": "Version after make install: 1.1.6 (POT 0.9.6.post1, OpenVINO 2026.2.1 unchanged). make install ran once; uv.lock was not rewritten and still records docdistance 1.1.5. pyproject.toml changed only through that version increment. Final gates (make format, make lint, make test, guardrail) were rerun after the last source edit. The --grounded guardrail started before three docstring-only edits in distance.py; no executable line changed after it started.\n\nDEF-TRANS-9 design. New names in distance.py: SolverNotOptimal(RuntimeError), EMD_MIN_ITER = 100000, _emd_iter_cap(n, m) = max(EMD_MIN_ITER, n*m), _exact_ot(a, b, C) → (plan, cost). The floor of 100000 keeps every problem the default cap solved on the same iterations. Measured iteration need per arc (bisection, 0.5% resolution, 5 generators plus degenerate cases): 0.011 to 0.015 at 3000 x 3000, 0.011 at 6000 x 6000, 0.047 at 250 x 250, 0.55 at 60000 x 2, the largest reading, so n*m leaves a factor of 1.8 at the worst shape measured and 65 or more at 3000 x 3000. SolverNotOptimal is raised on any POT solver warning, which also covers the infeasible and unbounded result codes, wider than the brief's wording; no warning occurred in the 21600 comparisons or in either guardrail run. POT still emits its own UserWarning before the raise. The 5-parameter raise test fails on the unchanged tree with AttributeError on the missing _emd_iter_cap, before its assertion is reached.\n\nDEF-DEPS-11 design and limits. The None entry is process-wide: after docdistance.encoders is imported, import openvino_telemetry raises ImportError in that process. setdefault leaves a telemetry module the host process imported earlier in place, and an openvino imported before docdistance has already sent its event. No other installed package imports openvino_telemetry. The test sets http_proxy and https_proxy to a closed local port, so a run on a tree without the block sends no event, and suppresses ModelsNotInstalled so it runs on a machine without models (checked with an empty HF_HOME: exit code 0, one MARKER). Every run I made without the block also used the closed port; no telemetry event was sent. The test adds about 11 s to make test on this machine. Python 3.12 and 3.13 were not executed, only 3.14.8; ruff check --target-version py312 passes on the four files. The CHILD line is what lets the test fail under the fork start method of 3.12 and 3.13, where the marker alone prints once.\n\nOther. graphify is not on PATH, so callers were established by grep: the 5 call sites are reached from distance.py and pipeline.py lines 376 and 517-521, signatures unchanged. I deleted two logs I had created (logs/runtime-guards-make-test.log, logs/runtime-guards-baseline-verify.log) because logs/README.md is outside the package; logs/env-install.log holds the install output. I added one agent memory file and its index line about the offline flag finding. Load average was 33 to 52 during the work, so the timings are not measurements."
+   },
+   "verify": {
+    "package": "runtime-guards",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The docstring of `_exact_ot` and the docstring of the raise test state a bound that is false: the coupling POT returns at the iteration cap is not always feasible, and its cost is not always an upper bound of the distance.",
+      "evidence": "MATERIALITY: no user of the product is harmed, because `_exact_ot` discards the value and raises; the harm is to a maintainer who reads 'upper bound' and later relaxes the raise. FACT, measured with POT 0.9.6.post1 on the working tree. (1) The test's own fixture, 12 x 9 with numItermax=1: plan mass 0.583333, row-marginal error 8.3e-02, column-marginal error 1.1e-01, cost 0.801550 against the optimum 1.383737 - the cost is below the distance. (2) 150000 x 1 (the feasible plan is unique, cost 1.388237) at the default cap 100000: plan mass 0.666667, cost 0.832759 - 40% below the distance. (3) The 3000 x 3000 fixture at the default cap is feasible (marginal error 0.0) and above the optimum (0.661948 against 0.661777), which is the only case the sentence describes. Statements: src/docdistance/distance.py:79-80 'At the iteration cap that result is a feasible coupling whose cost is an upper bound of the distance'; tests/test_distance.py:71 'The coupling POT returns at the cap is feasible but not optimal'. REMEDY (EDIT): replace both sentences with 'the result is a coupling that is not optimal and can be infeasible, so its cost is not the distance and is not a bound of it'.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 79
+     },
+     {
+      "severity": "minor",
+      "claim": "The `_emd_iter_cap` docstring understates the worst iteration need and misstates one range: `n x 1` needs exactly `n * m` iterations, so the cap has no slack on that shape, and '96000 to 138000, more than POT's fixed default allows' includes values below the default 100000.",
+      "evidence": "MATERIALITY: out of bar - the zero-slack shape needs more than 100000 statements on one side against 1 statement, and the 100000 floor covers every smaller problem; nobody inside the input universe is harmed. FACT: 150000 x 1 with numItermax 149850 → not optimal; with 150000 → optimal. So the need per arc is 1.0 at m = 1, above the docstring's 'largest reading' 0.55 (src/docdistance/distance.py:70) and above the implementer's 'factor of 1.8 at the worst shape measured'. The working tree solves 100001 x 1, 150000 x 1, 50001 x 2, 60000 x 2, 34000 x 3 and 25001 x 4 without a raise, so the cap holds today; a change of one iteration in POT's counting would turn `n x 1` above 100000 rows into SolverNotOptimal. Line 68: 96000 is below the default cap, and the implementer's own note records a 3000 x 3000 standard-normal problem that needs about 98304 iterations and gives no warning. REMEDY (EDIT): state the m = 1 reading (1.0 per arc, no slack) and write 'up to 138000' in place of the range. DEFER any change of the formula.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 68
+     },
+     {
+      "severity": "minor",
+      "claim": "The DEF-DEPS-11 regression test loads the real encoder although `import openvino` alone triggers the defect; the model load is 8 of the test's 10 seconds and the test is 72% of the suite's wall time.",
+      "evidence": "MATERIALITY: cost only, no wrong result; JUDGEMENT on the remedy. FACT: `pytest --durations` on the working tree: test_loading_the_openvino_encoder_starts_no_child_process 10.15 s of a 14.13 s suite (151 passed, 1 skipped); the next slowest test is 1.59 s. I ran the test's script with `encoders.load_encoder()` (tests/test_e2e.py:284-285) replaced by `import openvino`: 2.4 s and 2.6 s against 10.5 s and 10.3 s for the full script (load average 33). On a copy of the package with the `sys.modules.setdefault` line removed, the import-only script still printed 'MARKER CHILD MARKER CHILD', so it fails on the same mutation. Belief lost by the change: that `ov.Core().read_model` and `compile_model` still work with the telemetry module blocked; that belief is exercised only on a machine that has the models, and not in GitHub Actions. On a machine without `docdistance.json`, without `models/` and with an empty HF cache the full script exits 0 with one MARKER after 5.2 s, of which the part after the import is a HuggingFace download attempt against the closed proxy. The module docstring of tests/test_e2e.py (lines 3-9) says the model layer is faked and the suite stays offline; this test is the one exception and the docstring does not say so. `subprocess.run` at line 301 has no `timeout`, so a hung child process hangs `make test`. REMEDY (EDIT): replace lines 284-285 with `import openvino`, and pass `timeout=` to `subprocess.run`.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+      "line": 285
+     },
+     {
+      "severity": "minor",
+      "claim": "No test pins the 100000 floor in `_emd_iter_cap`: with `return max(EMD_MIN_ITER, n * m)` changed to `return n * m` the suite stays green.",
+      "evidence": "MATERIALITY: none measured - I found no input on which the floor changes a result, so this is a note on an unpinned guard, not a defect. FACT: on a scratch copy with that one-line mutation, tests/test_distance.py, test_pipeline.py, test_structure.py, test_cli.py and test_sections.py gave 108 passed. FACT: 6912 problems from 1 x 1 to 12 x 12 (two generators, dim 2 and 768, with and without the `_aligned_plan` tie-break term) all reached optimality with numItermax = n * m. The floor therefore rests on the argument in the comment at src/docdistance/distance.py:60-61 (same iteration budget as 1.1.5 for every problem 1.1.5 solved), not on a test. JUDGEMENT: a test that asserts `_emd_iter_cap(12, 9) == 100000` would test a constant; I do not ask for it. REMEDY: DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 72
+     }
+    ],
+    "gates": {
+     "make_test": "151 passed, 1 skipped in 18.16s (EXIT=0); the skip is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in, not part of this package",
+     "make_lint": "All checks passed! (EXIT=0) - `ruff@0.16.2 format --check` and `check`; `uvx ruff@0.16.2 check --target-version py312` on the four package files: All checks passed!",
+     "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s) (EXIT=0); I also ran it with --grounded on the final tree: verify: 55 pairs, 3 grounded, 0 difference(s) (EXIT=0)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP - both items hold in the code, each has a test that fails on a mutated tree, all three gates are green, and the 4 findings are minor.\n\nBar: the prompt carried no separate bar block. I rated materiality against the PRIMER stage B contract, the two defect records and the severity rules in checks (1) and (2).\n\nMutation results (scratch copies of src/docdistance selected through PYTHONPATH; no repository file edited):\n- cap without size scaling (`return EMD_MIN_ITER`) → test_exact_solver_cap_scales_with_the_problem_size fails with the POT warning\n- raise removed (`if False:`) → all 5 parameters of test_exact_solver_raises_when_it_stops_at_the_iteration_cap fail with DID NOT RAISE\n- opw_gap reverted to the bare `ot.emd2` call → the opw_gap parameter fails\n- HEAD distance.py → 6 of 7 new tests fail (5 with AttributeError on `_emd_iter_cap`, as the implementer reported; the two mutations above show the assertion itself fails too)\n- telemetry line removed from encoders.py → test_loading_the_openvino_encoder_starts_no_child_process fails, stdout 'MARKER\\nCHILD\\nMARKER\\nCHILD\\n', matching the implementer's reading\n\nOther checks:\n- (3) additive policy: 665 comparisons of the working tree against HEAD distance.py (smd, transport_plan, opw_gap, order_alignment, structure_displacement, selection_divergence; shapes 1 x 1 to 120 x 90, identical and duplicated rows, 200 sparse float32 coverage profiles with exact zeros) gave 0 differences, 0 SolverNotOptimal and 0 warnings. Return types are unchanged (Python float; plan float64). The 3000 x 3000 fixture reproduces the implementer's numbers: 0.661948 at the default cap, 0.661777 on the working tree\n- (4) files: the `requires-python` and classifier hunks in pyproject.toml against HEAD predate this package (uv.lock, last written 2026-10-07, already records `>=3.12, <3.15`); this package's part is the version line 1.1.5 → 1.1.6. The two agent-memory files are git-ignored and were reported by the implementer\n- (7) `ot.emd2` has no remaining use in src; `import ot` is still used; nothing orphaned. `import docdistance` imports `docdistance.encoders` through pipeline.py:35, so the telemetry block is in place before any `import openvino` in the package; all 4 OpenVINO modules that import `openvino_telemetry` do so inside `try`\n- (8) HEAD is still bd0002e, no tag on it, no stash. .claude/JOURNAL.md was last written 18:11:41 (the orchestrator's launch entry), before the package's first source edit; the acceptance and defect files were last written 13:37\n\nNot verified:\n- Python 3.12 and 3.13 were not executed by me or by the implementer; only the static ruff check ran. The fork start method on those versions is covered by the CHILD line by argument only\n- The `quant` extra (nncf, optimum-intel) is not installed in this venv, so 'no other installed package imports openvino_telemetry' holds for this venv only\n- A machine with an OpenVINO telemetry opt-out file would start no process on an unfixed tree, so the regression test could not fail there; I did not test this\n\nFacts for the orchestrator, outside this package:\n- .github/workflows/ci.yml carries the comment 'exact WMD/SMD path through ot.emd2', which no longer matches distance.py\n- on thin shapes the 1.1.5 value was far from the distance, not 0.03% off: 150000 x 1 returned 0.832759 against 1.388237. The working tree returns 1.388237\n- `git diff HEAD | sha256sum` gives a different hash on two consecutive runs in this repository, so it cannot be used to detect a tree change. During my review `find -newer` showed one changed file, `.coverage`, written by `make test`\n\nScratch files are under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/qa-rg. I did not run `make install`."
+   },
+   "repaired": false
+  },
+  {
+   "key": "transport-core",
+   "result": {
+    "package": "transport-core",
+    "status": "partial",
+    "items": [
+     {
+      "id": "DEF-TRANS-10",
+      "met": true,
+      "evidence": "Answered by the new fields and corrected docstrings, as the brief defines; the shipped order_gap, structure_closeness and verdict keep their values. Tests: tests/test_distance.py::test_compute_structural_reads_a_pure_deletion_on_the_matched_gap and tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion. Repro re-run on docdistance 1.1.8, real ibm gold summary (10 statements) minus statements 8 and 9: order_gap 0.227081, structure_closeness 0.839430, verdict 'not similar' (the defect's numbers, unchanged); matched_order_gap 4.959e-06, n_matched 8. All 45 two-statement deletions of that summary: matched_order_gap at most 5.528e-06, n_matched 8 in 45 of 45, order_gap 0.0455 to 0.2271, verdict 'not similar' in 12 of 45. The docstrings of opw_gap and StructuralResult state the surplus-statement cost, the identity gap (5.182e-03 at 30 statements, 6.786e-03 at 53) and name matched_order_gap. Repair round: the three sentences that said the identity gap is never zero now read 'in general not zero'; opw_gap states that it is 0.0 for one statement."
+     },
+     {
+      "id": "ACC-TRANS-47",
+      "met": true,
+      "evidence": "Two tests. tests/test_structure.py::test_partial_matching_is_one_to_one_under_the_cutoff: 8 random unit rows against 5 planted near-copies plus 3 unrelated rows → 5 pairs, each index once, every pair cost below MATCH_CUTOFF. New in the repair round, tests/test_structure.py::test_partial_matching_caps_the_assignment_cost: unit rows in the plane at 0 and 100 degrees against 15 and -40 degrees, ground costs [[0.2611, 0.6840], [1.3512, 1.8794]]; partial_matching returns [[0, 0]]; scipy on the uncapped cost returns (0,1),(1,0), both above the cutoff. Mutation checks on scratch copies of the package: cap removed (`cost + MATCH_POSITION_EPS * position`) → 1 failed, 128 passed, the failing test is the new one (`assert [] == [[0, 0]]`); cutoff filter removed → fails the first test (previous round)."
+     },
+     {
+      "id": "ACC-TRANS-48",
+      "met": true,
+      "evidence": "MATCH_CUTOFF = 0.325 follows STRUCTURE_THRESHOLD in src/docdistance/distance.py. Its comment cites E13-H71 and was read against reports/E13-H71-partial-matching-map-metrics.json: cutoff.calibrated_on_half_A 0.325, held_out A→B macro_f1 0.9772, cutoff.calibrated_on_all_bases_in_sample 0.325, range_with_macro_f1_at_or_above_bar.both_halves [0.28, 0.44]. The comment states that the value is measured and is not the derived DIFF_CHANGED_COST of pipeline.py (0.3253). Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-49",
+      "met": false,
+      "evidence": "Not met as written: `matched_order_gap(A, B) == opw_gap(B, B)` does not hold bit for bit. The tracker now marks this item rejected and overridden by ACC-TRANS-80 (log line 2026-10-09T17:45:42Z in docs/acc-crit-docdistance.md). tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion asserts the ACC-TRANS-80 form: 12 random unit rows, B = A minus rows 3 and 8, matched_order_gap(A, B) == opw_gap(B.copy(), B) exactly, within 1e-5 of opw_gap(B, B), and below opw_gap(A, B) (1.5635541e-08, 1.5623564e-08, 0.046604). Real ibm gold summary minus statements 8 and 9 on 1.1.8: 4.958767e-06 against opw_gap(B, B) 4.950005e-06."
+     },
+     {
+      "id": "ACC-TRANS-50",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_matched_order_gap_equals_order_gap_when_fully_matched: Y = permuted X plus 1e-3 noise, 10 of 10 statements matched, np.array_equal(matched_order_gap(X, Y), opw_gap(X, Y)); the identity pair (X, X) is asserted too. New in the repair round, the other side of the branch condition, tests/test_structure.py::test_matched_order_gap_leaves_out_a_replaced_statement: 10 rows each, row 4 of Y replaced by an unrelated row → pairs [[i, i]] for the 9 other rows, matched_order_gap == opw_gap of the 9 kept rows (1.8145e-08), below 1e-6, while opw_gap(X, Y) reads 1.8416e-04. Mutation checks: full-match branch removed fails the first test (previous round); branch condition weakened to `if len(X) == len(Y):` → 1 failed, 128 passed, the failing test is the new one."
+     },
+     {
+      "id": "ACC-TRANS-51",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_matched_order_gap_still_reads_a_reorder_after_a_deletion: A = 12 rows, B1 = A minus rows 3 and 8, B2 = B1 reversed: matched_order_gap(A, B2) = 1.067851 against matched_order_gap(A, B1) = 1.56e-08, above 10 times; it also equals opw_gap(B1, B2) within 1e-3. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-52",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_partial_matching_no_statement_matched: X (5 rows) and Y (7 rows) in orthogonal subspaces: partial_matching returns shape (0, 2), matched_order_gap is None, compute_structural gives n_matched 0 and matched_order_gap None. tests/test_cli.py::test_distance_structural_panel_when_no_statement_is_matched: the panel prints 'no statement matched', --json carries null. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-53",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_partial_matching_one_statement_against_twelve: X = row 7 of a 12-row Y → pairs [[0, 7]], matched_order_gap(X, Y) == opw_gap(X, X) (both 0.0); an unrelated single statement against the 12 gives 0 pairs. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-54",
+      "met": true,
+      "evidence": "StructuralResult carries matched_order_gap (float or None) and n_matched (int), appended after n_statements_b. tests/test_distance.py::test_compute_structural_result asserts the exact key set of to_dict; test_compute_structural_reads_a_pure_deletion_on_the_matched_gap asserts order_gap == opw_gap(A, B), structure_closeness == closeness(order_gap) and the verdict rule. Guardrail on the final 1.1.8 tree: 'verify: 55 pairs, 3 grounded, 0 difference(s)'."
+     },
+     {
+      "id": "ACC-TRANS-71",
+      "met": true,
+      "evidence": "partial_matching adds MATCH_POSITION_EPS * abs(i/n - j/m), MATCH_POSITION_EPS = 1e-6, positions from 0, to np.minimum(cost, MATCH_CUTOFF): the form of build_constants in reports/E15-H79-matching-tie-break-metrics.json, float32 ground cost included. tests/test_structure.py::test_partial_matching_is_deterministic_among_equal_cost_pairs: 6 statements with 3 identical, another statement deleted → pairs [[0,0],[1,1],[3,2],[4,3],[5,4]], two calls np.array_equal; a copy of the repeated statement deleted → [[0,0],[2,1],[3,2],[4,3],[5,4]]. Mutation check: weight 0 fails the test. The docstring states the term as the rule among matchings of exactly equal ground cost, with the measured limit 111 of 120 against a bar of 114 (E15-H79 Refuted), and does not claim that repeated statements are solved. Not pinned by a test, as the verifier's deferred findings say: the position origin (0 against 1) and the size of the weight (1e-6 against 1e-2)."
+     },
+     {
+      "id": "ACC-TRANS-76",
+      "met": false,
+      "evidence": "Not met as written: the clause on the two detail builders and on match_status is not built. src/docdistance/pipeline.py is outside this package and holds no call to partial_matching; the detail-map package owns that clause and its test. The compute_structural clause is built and tested: tests/test_distance.py::test_compute_structural_matches_on_raw_embeddings_under_anisotropy on a fixture with one shared direction reads n_matched 8 with anisotropy off and on; a fully matched pair with anisotropy on reads matched_order_gap == order_gap; with 2 statements of B removed n_matched is 6 both ways and matched_order_gap == opw_gap of the 6 raw pairs' sub-sequences in the pre-pass geometry. Mutation checks (previous round): matching after the pre-pass fails the test; matched gap read in the raw geometry fails the test."
+     },
+     {
+      "id": "DEF-TRANS-8",
+      "met": true,
+      "evidence": "Answered by the unsupported-statement count and corrected docstrings, as the brief defines; residual_a keeps its value. Repro re-run on docdistance 1.1.8, real ibm source, X = source[0::7][:10], compute_source_conditioned(X, X, source): residual_a 0.958211, closeness_a 0.322442 (unchanged), n_unsupported_a 0 and n_unsupported_b 0 with anisotropy on and off, nearest-source mean cost 0.000118. Unit test: tests/test_distance.py::test_verbatim_extract_reads_no_unsupported_statement."
+     },
+     {
+      "id": "ACC-TRANS-66",
+      "met": true,
+      "evidence": "SOURCE_SUPPORT_CUTOFF = 0.34625 follows MATCH_CUTOFF in src/docdistance/distance.py. Its comment cites E15-H78 and was read against reports/E15-H78-raw-nearest-source-count-metrics.json: cutoffs 0.3375 and 0.355, mean_cutoff 0.34625, held_ba 0.941176 / 0.927173, second_ba 0.986842; pre-pass arm held_ba 0.816821 / 0.727739. The comment states that the cutoff is valid on raw embeddings only. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-67",
+      "met": true,
+      "evidence": "unsupported_count(X, S) = count of cost_matrix(X, S).min(1) > SOURCE_SUPPORT_CUTOFF; compute_source_conditioned calls it before all_but_the_top; SourceConditionedResult carries n_unsupported_a and n_unsupported_b; the docstrings say 'A SCORE, NOT a metric'. tests/test_distance.py::test_unsupported_count_reads_statements_far_from_every_source_statement: 3 copies of source rows plus 2 rows orthogonal to the source read 2. test_unsupported_counts_are_read_before_the_anisotropy_pre_pass: counts (2, 0) with anisotropy on and off on a fixture where a count taken after the pre-pass reads 5. Mutation check (previous round): the count taken after the pre-pass fails the test."
+     },
+     {
+      "id": "ACC-TRANS-68",
+      "met": true,
+      "evidence": "tests/test_distance.py::test_verbatim_extract_reads_no_unsupported_statement: compute_source_conditioned(X, X, S), X = S[0::7][:10] on 70 random unit vectors → n_unsupported_a 0, n_unsupported_b 0, residual_a 1.0699 (above 0.5). Real ibm source on 1.1.8: n_unsupported_a 0 while residual_a 0.958211 and closeness_a 0.322442 keep the 1.1.5 values."
+     },
+     {
+      "id": "ACC-TRANS-69",
+      "met": true,
+      "evidence": "tests/test_distance.py::test_unsupported_count_ignores_deleted_supported_statements, k = 1, 2, 3, 4: a document of 7 copies of source rows with k rows dropped reads 0; with k orthogonal rows appended it reads k. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-TRANS-70",
+      "met": true,
+      "evidence": "CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded on the final 1.1.8 tree: 'verify: 55 pairs, 3 grounded, 0 difference(s)', exit 0. The two new keys are additive; d_sel, residual_a, residual_b, closeness_a, closeness_b, coverage_a, coverage_b, grd_a, grd_b and d_grd of the three grounded triples equal the saved 1.1.5 values."
+     },
+     {
+      "id": "ACC-TRANS-72",
+      "met": true,
+      "evidence": "Manual read of both docstrings in src/docdistance/distance.py. ungrounded_residual: 'Balanced transport cost from document X to the whole source S', 'grows when a document covers only part of the source', 0.958 for 10 statements copied verbatim from a 70-statement source, 'not the share of the document the source does not support', pointer to unsupported_count and n_unsupported_a / n_unsupported_b. SourceConditionedResult: the same partial-coverage sentence and n_unsupported_a / n_unsupported_b named as 'the reading of content the source does not support', 'A score, not a metric'. Unchanged in the repair round."
+     },
+     {
+      "id": "ACC-CLI-74",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_cli_structural_shows_the_matched_order_gap_after_a_deletion and tests/test_cli.py::test_distance_structural_output_shows_the_matched_order_gap: the panel shows the rows 'matched order gap' and 'matched statements'; --json carries matched_order_gap and n_matched; --result-only prints str(structure_closeness) only. Repair round: the test_cli.py fixture now has 8 statements against 7 with 6 matched (docB = docA minus statements 3 and 6 plus one unrelated statement), so the 'matched statements 6' row equals neither statement count. Mutation check: the row fed from r.n_statements_b → 1 failed, 128 passed, the failing test is that one. Real run on 1.1.8, ibm gold summary against itself minus its last 2 statements: 'order gap 0.2271', 'matched order gap 0.0000', 'matched statements 8  (ground cost < 0.325)', verdict not similar; --json matched_order_gap 4.958767249904183e-06, n_matched 8; --result-only 0.8394297804959803."
+     },
+     {
+      "id": "ACC-CLI-75",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_cli_wrt_source_shows_the_unsupported_counts (fake segmenter, encoder, reranker and NLI): panel row 'unsupported statements  A 1 / B 0', --json n_unsupported_a 1 and n_unsupported_b 0, --result-only three comma-separated numbers. Real run on 1.1.8, ibm fixture, gold against adv1-a: 'unsupported statements  A 1 / B 4  (nearest source cost > 0.34625)', --json n_unsupported_a 1, n_unsupported_b 4, --result-only '0.8056172756723156,0.0016592004960502393,0.33895326822921956'. The --result-only branch is identical to HEAD: d_sel,grd_a,grd_b when the grounding models scored, d_sel,residual_a,residual_b otherwise. The criterion body names the second form only; on this command the grounding models always score."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/__init__.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-identical-rows-cost-ties-depend-on-position.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-pot-same-object-cost-diagonal.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-stage-b-verifier-mutates-each-mechanism-clause.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md"
+    ],
+    "tests_added": [
+     "tests/test_structure.py::test_partial_matching_caps_the_assignment_cost (repair round)",
+     "tests/test_structure.py::test_matched_order_gap_leaves_out_a_replaced_statement (repair round)",
+     "tests/test_cli.py::test_distance_structural_output_shows_the_matched_order_gap (repair round: fixture changed to 8 against 7 statements with 6 matched)",
+     "tests/test_structure.py::test_partial_matching_is_one_to_one_under_the_cutoff",
+     "tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion",
+     "tests/test_structure.py::test_matched_order_gap_equals_order_gap_when_fully_matched",
+     "tests/test_structure.py::test_matched_order_gap_still_reads_a_reorder_after_a_deletion",
+     "tests/test_structure.py::test_partial_matching_no_statement_matched",
+     "tests/test_structure.py::test_partial_matching_one_statement_against_twelve",
+     "tests/test_structure.py::test_partial_matching_is_deterministic_among_equal_cost_pairs",
+     "tests/test_structure.py::test_structure_functions_reexported_from_package_root (extended with partial_matching and matched_order_gap)",
+     "tests/test_distance.py::test_compute_structural_reads_a_pure_deletion_on_the_matched_gap",
+     "tests/test_distance.py::test_compute_structural_matches_on_raw_embeddings_under_anisotropy",
+     "tests/test_distance.py::test_unsupported_count_reads_statements_far_from_every_source_statement",
+     "tests/test_distance.py::test_unsupported_counts_are_read_before_the_anisotropy_pre_pass",
+     "tests/test_distance.py::test_verbatim_extract_reads_no_unsupported_statement",
+     "tests/test_distance.py::test_unsupported_count_ignores_deleted_supported_statements[1..4]",
+     "tests/test_distance.py::test_compute_structural_result (key set extended)",
+     "tests/test_distance.py::test_compute_source_conditioned_result (counts asserted)",
+     "tests/test_cli.py::test_distance_structural_panel_when_no_statement_is_matched",
+     "tests/test_e2e.py::test_cli_structural_shows_the_matched_order_gap_after_a_deletion",
+     "tests/test_e2e.py::test_cli_wrt_source_shows_the_unsupported_counts"
+    ],
+    "make_test": "173 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s) (verify: 55 pairs, 3 grounded, 0 difference(s); run with --allow moved,n_moved --grounded on the final 1.1.8 tree)",
+    "out_of_scope_needs": [
+     "src/docdistance/pipeline.py and its tests (detail-map package): the ACC-TRANS-76 clause on the two detail builders and match_status. ACC-TRANS-76 stays open until that package adds the builder test. Call `partial_matching(ea, eb)` before `all_but_the_top`; it returns an int array of shape [n_pairs, 2], rows (i, j) ascending in i",
+     "docs/acc-crit-docdistance.md, ACC-TRANS-80 (not in this package's item list): it overrides ACC-TRANS-49 and its test line is what tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion asserts. The orchestrator can close it against that test",
+     "docs/acc-crit-docdistance.md, ACC-CLI-75: the body names `d_sel,residual_a,residual_b` for --result-only; the shipped and unchanged output of distance-wrt-source is `d_sel,grd_a,grd_b`, because the grounding models always score on that command. The tracker text needs the amendment, the code does not",
+     "docs/api-reference.md and docs/cli-reference.md (calibration-notes package): the new names are MATCH_CUTOFF, SOURCE_SUPPORT_CUTOFF, MATCH_POSITION_EPS, partial_matching, matched_order_gap, unsupported_count, StructuralResult.matched_order_gap / n_matched, SourceConditionedResult.n_unsupported_a / n_unsupported_b, and the panel rows 'matched order gap', 'matched statements', 'unsupported statements'. A reading the notes may want: on equal-count pairs with an unmatched statement the matched order gap can exceed the order gap (verifier: 0.1213 against 0.0298 for exec-summary-1 against exec-summary-2)"
+    ],
+    "notes": "Status is partial: 18 of 20 items are met. ACC-TRANS-49 cannot hold bit for bit as written and the tracker has overridden it with ACC-TRANS-80, whose form the test asserts. ACC-TRANS-76 is met for compute_structural only; its detail-builder clause belongs to the detail-map package. In the previous result I reported ACC-TRANS-76 as met; that was wrong for the item as written.\n\nVersion after the install: 1.1.8. `make install` ran once in this round, after the edits. It rewrote uv.lock and logs/env-install.log. No commit, tag or hand edit of the version; HEAD is bd0002e and nothing is staged.\n\nRepair round, by verifier finding:\n- Major, cap of the assignment cost without a failing test: fixed with tests/test_structure.py::test_partial_matching_caps_the_assignment_cost (the planar fixture the verifier named). No source change\n- Minor, branch condition of `_order_gap_over` tested on one side: fixed with tests/test_structure.py::test_matched_order_gap_leaves_out_a_replaced_statement (equal counts, one statement replaced)\n- Minor, ACC-TRANS-76 closed early: now reported not met\n- Minor, docstrings said the identity gap is never zero: three sentences in src/docdistance/distance.py now read 'in general not zero' (opw_gap, matched_order_gap, StructuralResult). The verifier named two; the matched_order_gap docstring held the same statement. opw_gap adds that the gap is 0.0 for one statement\n- Minor, panel row source: the fixture of tests/test_cli.py::test_distance_structural_output_shows_the_matched_order_gap now reads 8 against 7 statements with 6 matched\n- Deferred, as the verifier ruled, no change: position origin, size of the position weight, both cutoffs moved upward, and the ValueError from scipy on an embedding array with a NaN row (1.1.5 returned order_gap 0.0 for that input)\n\nMutation checks of this round, on scratch copies of src/docdistance through PYTHONPATH (repository source not edited), over tests/test_distance.py, test_structure.py, test_cli.py, test_e2e.py, test_pipeline.py: control 129 passed; cap removed → 1 failed; branch on counts only → 1 failed; panel row fed from n_statements_b → 1 failed. Each failure is the test added or changed for that finding. The mutation run preceded `make install`; the source and test files were not modified afterwards (`make format` left 18 files unchanged).\n\nThe only source edit of this round is docstring text in distance.py; cli.py, __init__.py, tests/test_distance.py and tests/test_e2e.py are unchanged since the previous round. The real-model repros of both defects and the two CLI commands were re-run on 1.1.8 and read the same numbers as on 1.1.7.\n\nNot done: `graphify update` (the graphify command is not on PATH and installing it is forbidden here). The guardrail log and the CLI output of this round are in the session scratchpad under transport-core/, not under logs/, so logs/README.md needs no new line. One agent-memory file was added (gitignored): the verifier mutates each clause of a registered mechanism, and fixtures with widely separated costs hide such a clause.\n\nHost load during the gates: 1-minute load average 35 to 37; no timing is quoted."
+   },
+   "verify": {
+    "package": "transport-core",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "ACC-TRANS-71 and the partial_matching docstring state that copies of a repeated statement pair in document order and not in an order left to the solver. That does not hold when every tied copy shifts in the same direction by more than the spacing of the copies: the position term abs(i/n - j/m) then gives the in-order and the crossed matching the same sum, and the solver decides. The test for the item samples two fixtures outside that regime.",
+      "evidence": "MATERIALITY: matched_order_gap and n_matched do not change (identical rows; matched_order_gap == opw_gap(B.copy(), B) held in the example), so no number this package ships is affected. The harm is to a reader of the returned pairs, which the detail-map package will use for match fields and moved. Real data: wergeland source article, default segmentation, 52 statements, one repeated text at positions 9 and 22: 0 of 43 tail truncations, 0 of 43 head truncations, 0 of 500 random deletions crossed. Synthetic one-hot rows (the fixture type of the item's own test): 16 statements, one statement at positions 8 and 9, statements 11, 13, 14 deleted, order kept → d.partial_matching returns [8, 9], [9, 8]; position sums in order 0.24519230769230771, crossed 0.24519230769230771. Sweep of 4000 pure deletions that never delete a copy: 72 crossed. Tail truncation B = A[:n-k] with an adjacent repeated statement, n 8 to 40: 2690 of 5555 crossed, 487 of them with fewer than 20 matched statements (a rank step of 1 there exceeds MOVED_TOLERANCE 0.05 under the ACC-TRANS-77 rule). A replica with the squared position term crossed 0 of 5555. REMEDY: EDIT the sentence at distance.py:343-345 to state the 120 of 120 measurement and the tie condition instead of the general rule. DEFER any change of the position term: the abs form is the registered E15-H79 constant and a different form needs its own measurement. Scripts: scratchpad ties.py, ties2.py, ties3.py.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 344
+     },
+     {
+      "severity": "minor",
+      "claim": "Two comparison operators of the new code have no test that fails when they are changed: the pair filter `<` at MATCH_CUTOFF and the count `>` at SOURCE_SUPPORT_CUTOFF.",
+      "evidence": "MATERIALITY: none - a float32 sqrt cost exactly equal to a cutoff is not an input the fixtures or real embeddings produce; out of bar. Mutation run on scratch copies through PYTHONPATH (control 127 passed, 2 deselected: the 3000 x 3000 solve and the subprocess encoder test): `kept = cost[rows, cols] <= MATCH_CUTOFF` → 127 passed; `.min(1) >= SOURCE_SUPPORT_CUTOFF` → 127 passed. Three other survivors were already ruled deferred by the previous verifier and are listed only for the record: MATCH_POSITION_EPS = 1e-2, position origin 1, MATCH_CUTOFF = 0.6. All 24 other mutations failed at least one test, including the four the implementer reported (cap removed, counts-only branch, weight 0, panel row from n_statements_b). REMEDY: DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 358
+     },
+     {
+      "severity": "minor",
+      "claim": "(taste) The within-1e-5 assertion of test_matched_order_gap_ignores_a_pure_deletion compares two values of 1.56e-08, so the tolerance is about 640 times the value and the assertion would pass for a matched gap of 0.0 or 9e-06.",
+      "evidence": "MATERIALITY: none - the exact assertion one line above (`gap == d.opw_gap(B.copy(), B)`) fails under the branch and sub-sequence mutations (branch_lenY_only: 0.0466 == 1.56e-08 failed). The tolerance line is the literal test line of ACC-TRANS-80. Real ibm reading for scale: 4.959e-06 against opw_gap(B, B) 4.950e-06. REMEDY: DEFER; no change needed for this package.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+      "line": 205
+     }
+    ],
+    "gates": {
+     "make_test": "173 passed, 1 skipped in 16.72s (exit 0)",
+     "make_lint": "18 files already formatted; All checks passed! (exit 0)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0)"
+    },
+    "items_not_met": [
+     "ACC-TRANS-49 - not met as written, as the implementer reports; the tracker marks it rejected and overridden by ACC-TRANS-80, whose form tests/test_structure.py::test_matched_order_gap_ignores_a_pure_deletion asserts",
+     "ACC-TRANS-76 - the compute_structural clause is built and tested; the clause on the two detail builders and match_status is not built (src/docdistance/pipeline.py has no diff and no call to partial_matching), as the implementer reports"
+    ],
+    "notes": "VERDICT: SHIP - no blocking or major finding; 3 minor. The implementer's status of partial is accurate: 18 of 20 items met, the two open items are the ones it reports.\n\nChecks:\n1. Items: every claimed-met item has a test that references a symbol absent at HEAD, so each fails on the unchanged tree. 29 source mutations run on scratch copies; 24 failed a test, 5 survived (2 boundary operators, 3 already deferred). I re-ran both defect repros and both CLI commands on the real model at 1.1.8 and read the implementer's numbers: order_gap 0.227081, structure_closeness 0.839430, not similar, matched_order_gap 4.959e-06, n_matched 8; 45 two-statement deletions: matched max 5.528e-06, n_matched 8 in 45, not similar in 12; DEF-TRANS-8: residual_a 0.958211, closeness_a 0.322442, n_unsupported 0 and 0 with anisotropy on and off, nearest-source mean cost 0.000118; panel rows 'matched statements 8 (ground cost < 0.325)' and 'unsupported statements A 1 / B 4 (nearest source cost > 0.34625)'; --result-only 0.8056172756723156,0.0016592004960502393,0.33895326822921956.\n2. Gates: all three green, run by me.\n3. Additive policy: guardrail 0 differences over semantic, structural and detail files of 55 pairs plus 3 grounded results. StructuralResult fields appended; SourceConditionedResult fields inserted before coverage_a, every constructor in src uses keywords.\n4. Files: pipeline.py and test_pipeline.py have no diff. encoders.py, SolverNotOptimal, _exact_ot and the DEF-TRANS-9 / DEF-DEPS-11 tests belong to the runtime-guards package, which shares distance.py, test_distance.py and test_e2e.py. The implementer also wrote four gitignored agent-memory files and the make install by-products (uv.lock, logs/env-install.log).\n5. Docstrings: partial_matching, matched_order_gap and unsupported_count each state score or not a metric. Every cited number was read against the metrics JSON files and matches: 0.9772, 0.28 to 0.44, 0.3375 / 0.355 / 0.34625, 0.9412 / 0.9272, 0.9868, 0.8168 / 0.7277, 5.182e-03 at 30 and 6.786e-03 at 53, 280 of 280 at cutoff 0.325 with the position term, 111 of 120 against 114, 13223, 7.813e-06, 4.095e-03. '8 of the 77 statements' re-measured at the shipped cutoff: 8 of 77. The one statement that does not hold is finding 1.\n6. Python 3.12: `uvx ruff@0.16.2 check --target-version py312` on the 7 package files: All checks passed.\n7. No dead code or speculative parameter found in the package's part of the diff.\n8. HEAD is bd0002e, nothing staged, no tag on HEAD, version 1.1.8 from make install. docs/acc-crit-docdistance.md carries three pm-tools log lines stamped 2026-10-09T17:45:42Z @kj (ACC-TRANS-49 rejection, ACC-TRANS-80, ACC-CLI-75 mechanism); the file state does not show who ran them, so I raise no finding.\n\nFor the detail-map package: finding 1 reaches it. If moved is read on matched pairs (ACC-TRANS-77), a crossed pair of identical statements reads a rank step of 1, which exceeds MOVED_TOLERANCE on fewer than 20 matched statements, on a pure deletion (ACC-TRANS-78 was measured on documents without repeated statements).\n\nCut list: nothing to cut. The test_cli and test_e2e structural tests overlap, but the tracker tags ACC-CLI-74 UNIT and E2E, test_cli is the only one that tells n_matched from n_statements_b, and test_e2e is the only one that carries the new fields through the pipeline path.\n\nScratch files are under the session scratchpad (mut.py, repro.py, ties.py, ties2.py, ties3.py, gold77.py, gate logs). No repository file was edited, staged or reverted. Host load during the gates: 1-minute average 35 to 40; no timing is quoted as a measurement."
+   },
+   "repaired": true
+  },
+  {
+   "key": "detail-map",
+   "result": {
+    "package": "detail-map",
+    "status": "done",
+    "items": [
+     {
+      "id": "DEF-TRANS-13",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_moved_quiet_on_an_order_preserving_deletion (12 to 8 through structural_distance_with_details, rows that share one direction): the exact-plan row of each of the 4 removed statements holds two equal entries, no record reads no_counterpart, the build reads 0 of 12 moved and n_moved 0; the 1.1.5 rule put back as a mutation fails this test. Real model, E12-H61 shrink_text fixture: the bd0002e source reads the removed statements moved [False, True, True, False] (2 of 4, POT 0.9.6.post1), the build reads 0 of 12."
+     },
+     {
+      "id": "ACC-TRANS-77",
+      "met": true,
+      "evidence": "test_moved_quiet_when_one_statement_is_inserted_at_position_0 (0 of 6; abs(displacement_norm) > 0.05 on 4 of the 6 records), test_moved_reads_only_the_exchanged_pair_of_the_worked_example (moved [2, 3], matched_displacement [0, null, 1, -1, null, 0]; the unchanged tree read [1, 2, 3, 4]), test_moved_reads_ranks_inside_the_matched_statements, test_moved_false_on_a_matched_statement_without_counterpart, test_moved_needs_a_rank_displacement_at_any_tolerance. Real model: insertion fixture n_moved 4 on the bd0002e source, 0 on the build."
+     },
+     {
+      "id": "ACC-TRANS-78",
+      "met": true,
+      "evidence": "test_moved_quiet_on_an_order_preserving_deletion: no record carries moved, kept and removed alike, summary n_moved == 0. Real model: the shrink_text fixture through structural_distance_with_details reads 12 statements, 8 targets, n_moved 0."
+     },
+     {
+      "id": "ACC-TRANS-79",
+      "met": true,
+      "evidence": "test_moved_equals_the_conjunction_on_fully_matched_pairs (50 seeded permutations of 12 statements, moved equals displacement != 0 and abs(displacement_norm) > MOVED_TOLERANCE from the same record). test_moved_tolerance_reads_the_rank_step_over_the_matched_count: 19 neighbour exchanges at 20 statements flag nothing, where the form target_index/n_b - index/n_a exceeds 0.05 at 7 positions. Real model, reorder pool: flags equal to the conjunction on 1680/1680 permutations. The exception is stated in the comment above MOVED_TOLERANCE and in docs/example-map-interpretations.md."
+     },
+     {
+      "id": "ACC-TRANS-15",
+      "met": true,
+      "evidence": "test_moved_reads_only_the_exchanged_pair_of_the_worked_example through structural_distance_with_details: statements 2 and 3 carry moved. Real model, CLI of the build on doc-a.md / doc-b.md: moved [2, 3], n_moved 2."
+     },
+     {
+      "id": "ACC-TRANS-16",
+      "met": true,
+      "evidence": "test_moved_flags_every_statement_of_a_reversal: n_moved == 12, matched_displacement 11 - 2i. Real model: reversal_orth 12/12, reversal_text 12/12, entry point 12 of 12."
+     },
+     {
+      "id": "ACC-TRANS-17",
+      "met": true,
+      "evidence": "test_moved_quiet_on_an_order_preserving_deletion: matched_displacement 0 and moved false on the 8 kept statements. Real model shrink_text: kept moved 0 of 8."
+     },
+     {
+      "id": "ACC-TRANS-18",
+      "met": true,
+      "evidence": "test_moved_keeps_every_true_relocation_of_the_reorder_pool (pool permutations on synthetic unit vectors): 1680 permutations, 13675 relocated, lost 0, false fires 0; the test fails when the tolerance clause reads 0.5 or moved is never set. Real model sweep of E12-H61 against the build (flags of the bd0002e source as reference): relocated 13675, flagged by 1.1.5 and relocated 13675, lost 0, false fires 0."
+     },
+     {
+      "id": "ACC-TRANS-19",
+      "met": true,
+      "evidence": "Guardrail with moved,n_moved allowed: 0 difference(s) on 55 ibm pairs and 3 grounded results. With no key allowed the 383 differences are 276 statements[].moved, 55 definitions.moved, 52 summary.n_moved and nothing else. Six E12-H61 fixtures, build against the bd0002e source on the same real-model embeddings: smd equal, order_gap equal, flag-stripped details bytes equal on 6/6. V 0/24 on the ibm panel, the 10 smd values equal to the 1.1.5 values."
+     },
+     {
+      "id": "ACC-TRANS-20",
+      "met": true,
+      "evidence": "test_build_structural_details_header_self_describing_and_summary asserts definitions.moved starts with 'matched AND matched_displacement != 0 AND abs(matched_displacement / n_matched) > moved_tolerance AND NOT no_counterpart'. The comment above MOVED_TOLERANCE, the docstring of _build_structural_details and the moved table of docs/example-map-interpretations.md (columns displacement, matched_displacement, norm, moved; definition line below it) state the same definition."
+     },
+     {
+      "id": "ACC-MAP-55",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_semantic_flows_carry_the_match: A is B in another order plus one unrelated statement; that flow reads (null, removed), the other 5 read their B index and kept; flow key set asserted exactly."
+     },
+     {
+      "id": "ACC-MAP-56",
+      "met": true,
+      "evidence": "test_semantic_targets_carry_added: the unrelated target reads (null, added), the other 5 read their A index and kept; target key set asserted exactly. test_semantic_target_match_is_the_paired_statement_not_the_cheapest_source separates match_source_index from best_source_index."
+     },
+     {
+      "id": "ACC-MAP-57",
+      "met": true,
+      "evidence": "test_semantic_summary_counts_kept_removed_added: 2 deletions and 1 insertion read (n_kept, n_removed, n_added) == (6, 2, 1), both sums equal 8 and 7, removed flows [2, 5], added target [4]. On the 55 ibm pairs both sums hold on every pair (kept 214, removed 258, added 294)."
+     },
+     {
+      "id": "ACC-MAP-58",
+      "met": true,
+      "evidence": "test_semantic_details_header_self_describing and test_build_structural_details_header_self_describing_and_summary: thresholds.match_cutoff == 0.325 and the definitions kept, removed, added present, one line each, in both detail files (exact key sets)."
+     },
+     {
+      "id": "ACC-MAP-59",
+      "met": true,
+      "evidence": "CI=true .venv/bin/python reports/E13-campaign/baseline.py verify --allow moved,n_moved --grounded: 'verify: 55 pairs, 3 grounded, 0 difference(s)'."
+     },
+     {
+      "id": "ACC-MAP-60",
+      "met": true,
+      "evidence": "tests/test_structure.py::test_matched_displacement_zero_on_kept_and_null_on_removed_statements: B = A minus 2 rows reads 0 on 10 records and null on 2. test_moved_reads_ranks_inside_the_matched_statements: 2 rows removed and 2 exchanged reads [0, 0, 0, null, 4, 0, 0, 0, null, -4, 0, 0]."
+     },
+     {
+      "id": "ACC-MAP-61",
+      "met": true,
+      "evidence": "test_semantic_details_identical_documents_all_kept: every flow and target kept with its own index, counts (7, 0, 0)."
+     },
+     {
+      "id": "ACC-MAP-62",
+      "met": true,
+      "evidence": "test_semantic_details_unrelated_documents_nothing_kept: orthogonal subspaces, counts (0, 5, 7), every flow (null, removed), every target (null, added)."
+     },
+     {
+      "id": "ACC-MAP-65",
+      "met": true,
+      "evidence": "test_empty_document_raises_on_the_detail_paths: a segmenter stub that returns no statement raises ValueError matching 'no statements' on semantic_distance_with_details, structural_distance_with_details and distance_wrt_source_with_map. With the raise removed on a scratch copy of the package the test fails."
+     },
+     {
+      "id": "ACC-MAP-73",
+      "met": true,
+      "evidence": "test_source_map_marks_the_statement_foreign_to_the_source (through distance_wrt_source_with_map): the foreign record reads unsupported true at cost 1.4142, n_unsupported == {a: 1, b: 0} == result counts, header and record key sets exact. test_source_map_unsupported_reads_the_source_support_cutoff (0.335 supported, 0.36 unsupported) and test_source_map_support_fields_are_read_before_the_pre_pass. Real model, ibm triple gold / adv1-a / source: n_unsupported {a: 1, b: 4} equals the result of the same call; the map without the added keys is byte-identical to the map of the bd0002e source."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+     "/home/lab/workspace/learning/projects/docdistance/docs/example-map-interpretations.md",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-stage-b-verifier-mutates-each-mechanism-clause.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-reorder-pool-scramble-family.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md"
+    ],
+    "tests_added": [
+     "tests/test_structure.py::test_moved_reads_only_the_exchanged_pair_of_the_worked_example",
+     "tests/test_structure.py::test_moved_quiet_when_one_statement_is_inserted_at_position_0",
+     "tests/test_structure.py::test_moved_flags_every_statement_of_a_reversal",
+     "tests/test_structure.py::test_moved_quiet_on_an_order_preserving_deletion",
+     "tests/test_structure.py::test_matched_displacement_zero_on_kept_and_null_on_removed_statements",
+     "tests/test_structure.py::test_moved_reads_ranks_inside_the_matched_statements",
+     "tests/test_structure.py::test_moved_tolerance_reads_the_rank_step_over_the_matched_count",
+     "tests/test_structure.py::test_moved_false_on_a_matched_statement_without_counterpart",
+     "tests/test_structure.py::test_moved_needs_a_rank_displacement_at_any_tolerance",
+     "tests/test_structure.py::test_moved_equals_the_conjunction_on_fully_matched_pairs",
+     "tests/test_structure.py::test_moved_keeps_every_true_relocation_of_the_reorder_pool",
+     "tests/test_structure.py::test_structural_match_fields_read_the_embeddings_as_passed_in",
+     "tests/test_pipeline.py::test_semantic_flows_carry_the_match",
+     "tests/test_pipeline.py::test_semantic_targets_carry_added",
+     "tests/test_pipeline.py::test_semantic_summary_counts_kept_removed_added",
+     "tests/test_pipeline.py::test_semantic_match_is_one_to_one",
+     "tests/test_pipeline.py::test_semantic_target_match_is_the_paired_statement_not_the_cheapest_source",
+     "tests/test_pipeline.py::test_semantic_details_identical_documents_all_kept",
+     "tests/test_pipeline.py::test_semantic_details_unrelated_documents_nothing_kept",
+     "tests/test_pipeline.py::test_semantic_match_fields_read_the_embeddings_as_passed_in",
+     "tests/test_pipeline.py::test_source_map_unsupported_reads_the_source_support_cutoff",
+     "tests/test_pipeline.py::test_source_map_support_fields_are_read_before_the_pre_pass",
+     "tests/test_pipeline.py::test_source_map_marks_the_statement_foreign_to_the_source",
+     "tests/test_pipeline.py::test_empty_document_raises_on_the_detail_paths"
+    ],
+    "make_test": "197 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s)",
+    "out_of_scope_needs": [
+     "README.md lines 193-194, 208-209 and 217: the sample structural JSON and the displacement bullet state that moved compares displacement_norm with moved_tolerance; the sample has no match_cutoff and no matched_displacement",
+     "docs/solution/wmd-structure-distance-sota.md line 153: states 'moved reads |displacement_norm| > 0.05'",
+     ".claude/skills/docdistance/SKILL.md line 58: states 'moved (|displacement_norm| above moved_tolerance)'",
+     "docs/api-reference.md line 183 and docs/cli-reference.md line 69: describe moved and the details JSON without matched_displacement, match_index, match_status, match_source_index, n_kept / n_removed / n_added, nearest_source_index, nearest_source_cost, unsupported, source_support_cutoff, n_unsupported (ACC-MAP-63 belongs to another package)",
+     "docs/example-map-interpretations.md, semantic section: still the 1.1.2 run, without match_index and match_status (ACC-MAP-63). I changed the structural section, the caveat and the version sentence only"
+    ],
+    "notes": "Version after `make install`: 1.1.9 (run once; it also rewrote uv.lock and logs/env-install.log). tests/test_sections.py is owned and needed no change.\n\nDecisions that need a reading by the orchestrator:\n- ACC-MAP-58: the brief lists the kept / removed / added definitions under the semantic file only; the test line of the criterion says 'in both detail files'. I put the three lines in both files (one shared constant `_MATCH_DEFINITIONS`). The structural file uses them to define `matched` and `n_matched` of the moved definition.\n- The clause `matched_displacement != 0` of the registered moved definition is implied by `abs(matched_displacement / n_matched) > MOVED_TOLERANCE` at any tolerance of 0 or more. The code carries it as registered. Its test sets `pipeline.MOVED_TOLERANCE` to -1.0 through monkeypatch; no test can fail on it at the shipped tolerance.\n- Under `anisotropy=True`, `matched_displacement` equals the anisotropy-off value, but `moved` can differ: the shipped `no_counterpart` is read in the pre-pass geometry and a `no_counterpart` record reads moved false (the anisotropy test fixture has such a statement).\n- `unsupported` on the source map is computed on the unrounded cost, the same computation as `unsupported_count`, so the header counts equal the result counts; `nearest_source_cost` is rounded to 4 decimals.\n- `_align_statements` (private, 2 call sites in `_build_source_map`) gained a required `support` parameter.\n\nReading on the 55 ibm pairs that the allowance covers: moved is set on 339 of 472 statements in the saved 1.1.5 files and on 107 in the build; 254 statements changed from true to false and 22 from false to true; 53 of 55 pairs hold a changed flag. The ibm pairs are separate summaries of one article, not edited copies: 214 statements are kept, 258 removed, 294 added.\n\nChecks outside the suite (scripts in the session scratchpad, not in the repository): 34 mutations of pipeline.py on a scratch copy of the package, each fails at least one test of the three owned test files. Before the change 24 of the new or extended tests failed on the unchanged source; `test_semantic_target_match_is_the_paired_statement_not_the_cheapest_source` was added after the change and fails only through its mutation. Two new tests pass on the unchanged source by design: the ACC-MAP-65 test (the behaviour existed) and the reorder-pool sweep (a retention check). The 1.1.5 reference for the byte comparisons is `git archive HEAD src/docdistance` (commit bd0002e, pyproject version 1.1.5) on PYTHONPATH, run on the same saved real-model embeddings.\n\ndocs/example-map-interpretations.md: the structural section now shows a real run of the 1.1.9 CLI (entry of statement 2 verbatim, table with displacement, matched_displacement, norm, moved, the definition, the 5% exception with the E15-H80 readings 183 of 190 and 765 of 780). Statements 1 and 4 of the worked example read moved false in the build (no match below 0.325), where the document showed moved yes.\n\nFixture fact found during the work: reorder_pool.json holds a k = -1 family (full scramble); the registered 1680 permutations are every entry with k != 0. A filter k > 0 returns 1540. Recorded in agent memory.\n\nGuardrail run: 3 min 20 s at load average 36 (the load average of this host is not a measure of CPU contention today, per the campaign README)."
+   },
+   "verify": {
+    "package": "detail-map",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "VERDICT: SHIP (0 blocking, 0 major, 3 minor). Finding 1 - summary.n_moved is asserted only on pairs where it equals the count of nonzero matched_displacement, so a summary that counts the wrong field stays green.",
+      "evidence": "FACT. Mutation at src/docdistance/pipeline.py:717, `\"n_moved\": sum(r[\"matched_displacement\"] not in (None, 0) for r in statements)`, on a scratch copy: tests/test_structure.py, tests/test_pipeline.py and tests/test_sections.py read 94 passed. The two fixtures where the two counts differ assert the record flags and not the summary: the 20-statement loop of test_moved_tolerance_reads_the_rank_step_over_the_matched_count (tests/test_structure.py:814, matched_displacement [1, -1], moved []) and test_moved_false_on_a_matched_statement_without_counterpart (tests/test_structure.py:847). MATERIALITY: nobody is harmed by the build as it stands - line 717 is unchanged 1.1.5 code and reads the moved flags; the gap matters only for a later edit of that line. REMEDY (EDIT): add `diff[\"summary\"][\"n_moved\"] == 0` to the assertion inside the 20-statement loop.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+      "line": 814
+     },
+     {
+      "severity": "minor",
+      "claim": "Finding 2 - the real-model evidence quoted for DEF-TRANS-13, ACC-TRANS-18, ACC-TRANS-19 (six E12-H61 fixtures) and ACC-MAP-73 comes from scripts in a session scratchpad, not from the repository; the in-suite ACC-TRANS-18 test runs on synthetic unit vectors and licenses the same belief as the ACC-TRANS-79 test.",
+      "evidence": "FACT. The implementer notes state the scripts are 'in the session scratchpad, not in the repository'. tests/test_structure.py:909 builds each pool document from `_emb(n)` (distinct random unit vectors, every pair of distinct statements at cost about 1.41), where `lost == 0 and false_fires == 0` reduces to `moved == (statement changed position)` - the assertion test_moved_equals_the_conjunction_on_fully_matched_pairs (line 878) already makes on 50 permutations; it passes on the unchanged tree by design. I re-ran every quoted real-model reading with my own script and each one reproduced: pool sweep on the build 1680 permutations, 13675 relocated, lost 0, false fires 0, flags equal to the conjunction on 1680/1680; shrink_text removed statements moved [5, 8] on the bd0002e source (2 of 4, POT 0.9.6.post1) and 0 of 12 on the build; insertion 4 → 0; worked example [1, 2, 3, 4] → [2, 3]; reversal 12/12; six fixtures plus four public-call variants: smd equal, order_gap equal, flag-stripped bytes equal on identical inputs; ibm triple gold / adv1-a / source n_unsupported {a: 1, b: 4} equal to the result of the same call, source map and semantic details byte-equal to the bd0002e source without the added keys. MATERIALITY: nobody is harmed now; a later reader cannot re-run these readings from the repository, and the ibm-panel guardrail (baseline.py) does not cover the reorder pool or the six fixtures. REMEDY: DEFER - JUDGEMENT for the orchestrator whether the pool sweep and the fixture comparison belong in baseline.py or a notebook (NEW MECHANISM if added).",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+      "line": 909
+     },
+     {
+      "severity": "minor",
+      "claim": "Finding 3 (cut, taste) - `assert rounding == 7` checks IEEE float arithmetic of an expression written inside the test, not an output of the build.",
+      "evidence": "FACT. tests/test_structure.py:832-833: `rounding += abs((first + 1) / 20 - first / 20) > pipeline.MOVED_TOLERANCE` then `assert rounding == 7`. No value of `_build_structural_details` enters the expression; no mutation of pipeline.py other than the constant MOVED_TOLERANCE can turn it red. Belief lost by deleting it: none about the code - the count 7 is already recorded in reports/E15-H80-moved-on-matched-pairs-metrics.json (n 20: 183 of 190 equal, differing rank step 1: 7). MATERIALITY: none (cost is two lines per run). REMEDY (EDIT): delete the two lines, keep the number in the docstring. The fixture preconditions in test_moved_quiet_on_an_order_preserving_deletion are a different case and should stay: they prove the fixture holds the DEF-TRANS-13 tie.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+      "line": 833
+     }
+    ],
+    "gates": {
+     "make_test": "197 passed, 1 skipped in 16.22s (EXIT=0)",
+     "make_lint": "uvx ruff@0.16.2 format --check and check: All checks passed! (EXIT=0); `uvx ruff@0.16.2 check --target-version py312`: All checks passed! (EXIT=0)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (EXIT=0)"
+    },
+    "items_not_met": [],
+    "notes": "All 20 items hold; no blocking or major finding. The prompt carried no separate bar block, so I rated materiality against the PRIMER stage B contract and the registered criteria.\n\nCheck 1 (tests can fail). With pipeline.py of commit bd0002e put under the current tests on a scratch copy, 25 tests of the owned files fail. The two new tests that pass there are the ones the implementer names: the ACC-MAP-65 test and the reorder-pool retention test. I ran 24 mutations of my own on pipeline.py: 21 killed. Killed: matching moved after the pre-pass (structural, semantic, source support), index difference in place of rank, single argsort, norm over n_a or n_b, `>=` at the tolerance, the no_counterpart rule removed, the `!= 0` clause removed, target status read from the A keys, n_added from len(sa), support cutoff replaced by MATCH_CUTOFF in record and header, a/b support swapped, n_unsupported swapped, support record index fixed at 0, argmax in place of argmin, match_cutoff header value, match definitions removed from the structural file. Survivors: the n_moved aggregate (finding 1), `>=` at SOURCE_SUPPORT_CUTOFF (exact float boundary, not a finding), the explanatory tail of definitions.moved after the asserted prefix (not a finding).\n\nCheck 3 (additive policy). Guardrail 0 differences on 55 pairs and 3 grounded results. On identical inputs the build and the bd0002e source give byte-equal structural, semantic and source-map output once the added keys, moved, n_moved and version are removed. The only changed existing value is definitions.moved, which ACC-TRANS-20 registers.\n\nCheck 4. pipeline.py, tests/test_pipeline.py, tests/test_structure.py and docs/example-map-interpretations.md carry the package change; tests/test_sections.py is unchanged. pyproject.toml, uv.lock and logs/env-install.log are the `make install` effects. The agent-memory files are under .claude/agent-memory/, which .gitignore line 221 excludes. Other modified files under src/ and tests/ (distance.py, cli.py, __init__.py, encoders.py, test_cli.py, test_distance.py, test_e2e.py) have earlier modification times (18:27 to 19:48) than this package's files (20:39) and belong to other packages; I cannot attribute them further.\n\nCheck 5. `_source_support` states 'a score and not a metric'; the match fields and moved are stated as 'an annotation that depends on that cutoff, not a distance'; nothing approximate is called exact.\n\nCheck 7. No dead code or speculative parameter found. The clause `shift != 0` is implied by the norm clause at the shipped tolerance; it is carried because ACC-TRANS-77 registers it, and its test (monkeypatch of MOVED_TOLERANCE to -1.0) kills its removal. The implementer raised this for the orchestrator; so is the choice to put the kept / removed / added definitions in both files (ACC-MAP-58 test line).\n\nCheck 8. HEAD is still bd0002e, no stash, newest tag is CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5, the journal and the trackers were last written at 18:11 to 19:45, before this package's files. I did not run `make install`.\n\nDocumentation. The statement 2 entry and the table in docs/example-map-interpretations.md equal a real run of the 1.1.9 build (displacements 0, 3, 1, -1, -3, 0; matched_displacement 0, null, 1, -1, null, 0; n_matched 4). The quoted E15-H80 readings (183 of 190, 765 of 780, 1680 of 1680) equal the metrics JSON. The test docstring claim '4 of the 4 removed statements on POT 0.9.6.post1' reproduces on the bd0002e source.\n\nFor the orchestrator, outside this package: README.md lines 193-217, docs/solution/wmd-structure-distance-sota.md line 153, .claude/skills/docdistance/SKILL.md line 58, docs/api-reference.md and docs/cli-reference.md still describe moved as a comparison of displacement_norm with moved_tolerance. Once this package ships those statements are false. The implementer reported them under out_of_scope_needs, as the contract requires.\n\nOne observation from my own harness, not a property of this package: `_build_structural_details` on a negative-stride view (`e[::-1]`) and on a contiguous copy of the same values returned different smd and order_gap bytes for the real-model reversal fixture, on the build and on bd0002e alike. Any byte comparison across processes must pass arrays of the same memory layout.\n\nScratch files: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/qa (mutate.py, real_build.py, real_head.py, recompute.py and their logs). The gates wrote .coverage in the repository root through `make test`; I edited, staged and reverted nothing."
+   },
+   "repaired": false
+  },
+  {
+   "key": "reader-and-pool-warnings",
+   "result": {
+    "package": "reader-and-pool-warnings",
+    "status": "done",
+    "items": [
+     {
+      "id": "DEF-SEGM-12",
+      "met": true,
+      "evidence": "Repro with the real reader on data/interim/exec-summaries/ibm-ai-adoption/source/source-article.md after the change: markdown off returns 70 statements, 21 without a letter or digit ('-' 13, '###' 6, '##' 2), embeddings (70, 768), and exactly one warning: \"21 of 70 statements hold no letter and no digit (markdown markers such as '-' or '###') and are scored as statements; remove them with --markdown / markdown=True or --min-words / min_words\". markdown=True returns 48 statements, 0 such statements, no warning. Before the change the same script logged no warning. Unit tests (fake reader, inline fixture of 7 statements with 3 markers, because the test environment loads no model): tests/test_segmentation.py, 5 tests named in tests_added. 3 of them failed on the unchanged source; the 2 negative cases (no warning with markdown on, no warning for '42%') fail under the mutations 'markdown gate removed' and 'isalpha in place of isalnum'. Numbers unchanged: guardrail 0 difference(s), also with --grounded (55 pairs, 3 grounded)."
+     },
+     {
+      "id": "ACC-GEOM-22",
+      "met": true,
+      "evidence": "grep -n '71' src/docdistance/distance.py: constant comment (line 62-69), all_but_the_top docstring (168), compute_distance docstring (614-616, with 'The rule is the statement count', cosine 0.9834, 93% of the full-pool d', 8 summaries as that fixture's example), compute_structural (654), compute_source_conditioned (700). grep -c '71 pooled statements' docs/cli-reference.md returns 3: the three --anisotropy rows (lines 39, 60, 82) state 'the minimum estimation pool is about 71 pooled statements (E12-H65: the statement count is the rule, 8 of the ibm summaries is that fixture's example)'. Numbers copied from reports/E12-H65-cmr-pool-crossover-metrics.json (minimum_pool_statements 71.275, cos_mean 0.9834, dprime_frac_of_full 0.9333, pool of 2: 18.8 statements, cosine 0.8664)."
+     },
+     {
+      "id": "ACC-GEOM-23",
+      "met": true,
+      "evidence": "Constant ANISOTROPY_MIN_POOL = 71 at src/docdistance/distance.py:69, directly below SOURCE_SUPPORT_CUTOFF. The criterion's test with the real models: `docdistance distance-semantic --pairs pair.tsv --anisotropy` on a TSV of two ibm summaries (10 + 11 statements) exits 0, prints the JSON line of the pair on stdout and exactly 1 WARNING line on stderr: 'anisotropy pre-pass pool holds 21 statements, below the minimum of 71 pooled statements for estimating the common direction (E12-H65); the result is computed from this pool'. The same run without --anisotropy logs 0 warning lines. Automated: tests/test_cli.py::test_pairs_with_anisotropy_warns_once_per_pool_below_the_minimum (1 pair: 1 line naming 9 and 71; 2 pairs: 2 lines naming 9 and 11; no --anisotropy: 0 lines), tests/test_pipeline.py::test_symmetric_call_warns_once_on_a_pre_pass_pool_below_the_minimum over the 4 symmetric scoring calls (1 warning below the minimum, including the detail calls that apply the pre-pass twice; none at 71 statements; none with anisotropy off), test_pool_warning_boundary_is_the_minimum (70 warns, 71 does not), test_pool_warning_changes_no_number. All 7 cases failed on the unchanged source. Limit: the two source-conditioned calls log no pool warning, see notes."
+     },
+     {
+      "id": "ACC-GEOM-64",
+      "met": true,
+      "evidence": "grep -c in the all_but_the_top docstring (src/docdistance/distance.py:160-181) and in the anisotropy section of docs/solution/wmd-docdistance-solution-sota.md (two new bullets after 'Corpus-level step'): 103.7 → 1 and 1, 102.8 → 1 and 1, 0.5471 → 1 and 1; also -4.5, -3.6, 0.9165, 1 of 28 against 0 of 28, and the 22 one-word statements ('-' 13, '###' 6, '##' 2, 'Overview' 1). Both texts end the conditioned reading with 'one source and one reader setting, not a reading of the source-conditioned path in general'. grep -i 'removes source content|content variance' on both files returns no line about the projection (the only 'source content' hits are the two shipped coverage docstrings). Numbers copied from reports/E12-H64-centering-vs-projection-metrics.json, reports/E14-H75-centering-attribution-transfer-metrics.json and reports/E14-H76-conditioned-centering-probe-metrics.json. The body of all_but_the_top is unchanged."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_segmentation.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/docs/cli-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-cli-tests-parse-combined-output.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md"
+    ],
+    "tests_added": [
+     "tests/test_segmentation.py::test_default_reader_warns_about_statements_without_a_letter_or_digit",
+     "tests/test_segmentation.py::test_default_reader_does_not_warn_when_every_statement_holds_a_letter_or_digit",
+     "tests/test_segmentation.py::test_markdown_reader_does_not_warn_about_marker_statements",
+     "tests/test_segmentation.py::test_marker_warning_counts_the_statements_left_by_the_fragment_filter",
+     "tests/test_segmentation.py::test_marker_warning_is_logged_once_per_document_and_changes_no_distance",
+     "tests/test_pipeline.py::test_symmetric_call_warns_once_on_a_pre_pass_pool_below_the_minimum (4 parameters: semantic_distance, semantic_distance_with_details, structural_distance, structural_distance_with_details)",
+     "tests/test_pipeline.py::test_pool_warning_boundary_is_the_minimum",
+     "tests/test_pipeline.py::test_pool_warning_changes_no_number",
+     "tests/test_cli.py::test_pairs_with_anisotropy_warns_once_per_pool_below_the_minimum"
+    ],
+    "make_test": "209 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s) - last line \"verify: 55 pairs, 0 grounded, 0 difference(s)\"; with --grounded added: \"verify: 55 pairs, 3 grounded, 0 difference(s)\"",
+    "out_of_scope_needs": [
+     "tests/test_e2e.py - needed only if the pool warning is wanted on the source-conditioned calls as well: test_cli_wrt_source_shows_the_unsupported_counts parses res.output (stdout and stderr together) as JSON and compares res.output.strip() with the --result-only scalar. Its pool holds 12 statements and the pre-pass is on by default, so a pool warning on that path makes it fail with JSONDecodeError. It would have to read res.stdout. The source change is then `if anisotropy: _warn_small_pool(...)` with the source array in distance_wrt_source and distance_wrt_source_with_map of src/docdistance/pipeline.py."
+    ],
+    "notes": "All four items are met and the three gates are green on version 1.1.10 (make install raised it from 1.1.9; no commit, no tag, HEAD is still bd0002e).\n\nOne decision needs the orchestrator's reading. The pool warning (ACC-GEOM-23) is logged by the four symmetric scoring calls of DocDistance only, once per call, which is once per pair in a --pairs run. The two source-conditioned calls log no pool warning. I first placed it on all six calls; tests/test_e2e.py::test_cli_wrt_source_shows_the_unsupported_counts then failed, and that file is outside this package. Two further reasons: E12-H65 measured the minimum on pools without a source, and the pre-pass is on by default on the conditioned path, so the warning would appear on a default run of every short document set. The criterion's own test (distance-semantic --pairs) and both commands that have --pairs today are covered. The batch-memos package adds --pairs to distance-wrt-source: if that run must warn too, the edit is named in out_of_scope_needs. The docstrings of _warn_small_pool and compute_source_conditioned and the distance-wrt-source row of docs/cli-reference.md state that this path logs no warning.\n\nMarker warning (DEF-SEGM-12), behaviour to know:\n- The count is taken on the statements embed_statements returns, after the fragment filter. With min_words=2 the markers are gone and nothing is logged\n- One warning per embed_statements call. A document that appears in several rows of a --pairs file logs once per row; the grounded guardrail run logged it 3 times for the ibm source. A memo hit in the batch-memos package skips the call and therefore the warning\n- With markdown on nothing is logged, even when a bare '-' line without item text comes back as a statement (the markdown reader sends such a line to the prose splitter)\n\nChecks beyond the gates:\n- 24 mutations on a scratch copy of src/docdistance (markdown gate, isalnum rule, count and total, filter order, each anisotropy gate and each call site, the comparison, the constant, a second warning in each detail builder): 0 survived\n- uvx ruff@0.16.2 check --target-version py312: passed\n\nNot done, by choice:\n- src/docdistance/cli.py is unchanged. The --help text of --anisotropy on the two symmetric commands still reads 'needs a corpus, off by default for a pair'; the criterion names the docstring and the reference rows only\n- No unit test reads the docstrings or the two documents: ACC-GEOM-22 and ACC-GEOM-64 are tagged MANUAL and the grep results are in the evidence\n- The 'Corpus-level step' bullet and the sentence 'removing them is pure signal gain' of the solution document are as they were; the two new bullets sit beside them\n\nEnvironment facts:\n- graphify is not installed in this container (the interpreter recorded in tmp/graphify-out/.graphify_python does not exist) and the graph is dated 2026-08-31. Callers were read with grep: embed_statements is called by DocDistance.embed and the six scoring calls only\n- uv.lock records docdistance 1.1.9 while pyproject.toml reads 1.1.10: make install writes the lock before it increments the version"
+   },
+   "verify": {
+    "package": "reader-and-pool-warnings",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The documented statement that the source-conditioned calls log no pool warning has no test for distance_wrt_source_with_map, and only an incidental one for distance_wrt_source.",
+      "evidence": "FACT. Mutation on a scratch copy: adding `if anisotropy: _warn_small_pool(ea, eb)` before compute_source_conditioned in distance_wrt_source_with_map leaves tests/test_segmentation.py, test_pipeline.py, test_cli.py and test_e2e.py at 95 passed. The same edit in distance_wrt_source gives 1 failure, the JSON parse of res.output in tests/test_e2e.py::test_cli_wrt_source_shows_the_unsupported_counts, which is not an assertion about the warning. The absence is stated in three places: _warn_small_pool docstring (pipeline.py:279-288), compute_source_conditioned docstring (distance.py:698-701), distance-wrt-source row of docs/cli-reference.md. Materiality: nobody is harmed today, the code path does not exist; the three texts become false without a red test if a later package adds the warning. Remedy: DEFER to the batch-memos package, which decides whether that path warns.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+      "line": 279
+     },
+     {
+      "severity": "minor",
+      "claim": "With markdown on, the real reader returns bare markers and horizontal rules as statements and logs nothing, so the warning's first remedy (--markdown) does not remove them; the new test asserts this return as expected behaviour although the split_markdown docstring says marker-only lines are dropped.",
+      "evidence": "FACT, real models. Text `## Key findings / - / two prose sentences / ### / - / --- / * * *` (blank lines between): markdown=False returns 8 statements and the warning '5 of 8 statements hold no letter and no digit'; markdown=True returns the same 8 statements, 5 without a letter or digit, 0 warnings. encoders.py:164-166 states 'marker-only lines carry no content and are dropped'. tests/test_segmentation.py:298-303 asserts `statements.count(\"-\") == 2 and \"###\" in statements` with markdown=True, so a later correction of the markdown reader turns this test red. On the ibm source the remedy holds: markdown=True returns 48 statements, 0 markers. Materiality: a user whose markdown holds `---` rules or empty bullets and who follows the warning loses the warning and keeps the statements; no fixture under data/interim holds such a line (grep for rule lines: 0 files), and the brief fixes 'no warning when markdown is on'. JUDGEMENT on severity. Remedy: DEFER - the cause is in encoders.py, outside this package; register it as a defect of the markdown reader.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_segmentation.py",
+      "line": 298
+     },
+     {
+      "severity": "minor",
+      "claim": "The marker warning is logged once per embed_statements call, not once per document, and does not name the document; a --pairs run repeats an identical line for every row a document appears in.",
+      "evidence": "FACT, real models. `docdistance distance-semantic --pairs three.tsv --anisotropy` with the ibm source in rows 2 and 3 logged the line '21 of 70 statements hold no letter and no digit ...' twice, both without a document name, beside 1 pool warning for row 1 (20 statements). The brief says 'ONE loguru warning per document'. The implementer disclosed the per-row repetition in notes. Materiality: stderr volume and an unnamed document in a multi-row run; no number changes, stdout carried 3 JSON lines. Remedy: DEFER to the batch-memos package, whose embed memo removes the repeated call.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+      "line": 862
+     },
+     {
+      "severity": "minor",
+      "claim": "The comment on ANISOTROPY_MIN_POOL calls 71 'the smallest pool' without saying it is the smallest of six measured pool sizes, and does not name the encoder of the measurement.",
+      "evidence": "FACT. reports/E12-H65-cmr-pool-crossover-metrics.json measures pools of 2, 3, 4, 6, 8 and 11 documents only (config.pool_sizes, sweep_draws): 6 documents = 53.9 statements, cosine 0.9652, d' fraction 0.8878, does not qualify; 8 documents = 71.275 statements, 0.9834, 0.9333, qualifies. Pools of 54 to 70 statements were not measured, so the minimum lies between 54 and 71. config.encoder is 'mmBERT torch cpu fp32', the default path is OpenVINO INT8. The docstrings say 'about 71', which is the registered wording of ACC-GEOM-22; the numbers 71.275, 0.9834, 0.9333, 18.8 and 0.8664 match the file. Materiality: a reader of the constant takes a grid reading for a located crossover; the warning is conservative for 54 to 70 statements. Remedy: EDIT the comment at distance.py:62-68 to name the measured pool sizes.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 62
+     },
+     {
+      "severity": "minor",
+      "claim": "Three texts beside the changed ones still describe the pre-pass differently from the new rows and bullets.",
+      "evidence": "FACT. src/docdistance/cli.py:350 and :484 --help: 'all-but-the-top anisotropy removal - needs a corpus, off by default for a pair', while the two changed rows of docs/cli-reference.md say the pool is the statements of the two documents with a minimum of about 71. docs/solution/wmd-docdistance-solution-sota.md:71 keeps 'removing them is pure signal gain' beside the new bullet that reads the projection isolate at -4.5% and -3.6%. Line 80 keeps 'estimated from the pooled statements of all documents compared, so it sharpens a batch or corpus', while every shipped call pools one pair (pipeline.py:482, 654; a --pairs run logged one pool per row). The implementer disclosed all three as not done by choice; cli.py is in the package file list. ACC-GEOM-22 and ACC-GEOM-64 name only the docstrings, the reference rows and the stated readings, and their greps pass. Materiality: a reader of --help or of line 80 expects a corpus-level pool that no command provides. Remedy: EDIT the two help strings and the two sentences, or DEFER by decision of the orchestrator.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+      "line": 350
+     },
+     {
+      "severity": "minor",
+      "claim": "The loguru capture fixture is written twice with identical bodies, beside a third hand-written sink in the same file.",
+      "evidence": "FACT. tests/test_segmentation.py:102-107 (`logged`) and tests/test_pipeline.py:734-740 (`pool_warnings`) have the same body; tests/test_pipeline.py:701-716 adds and removes a sink by hand. There is no tests/conftest.py. Belief lost by merging them: none. Remedy: NEW MECHANISM - one fixture in tests/conftest.py, a file outside this package's list, so DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+      "line": 734
+     }
+    ],
+    "gates": {
+     "make_test": "209 passed, 1 skipped in 17.30s (exit 0)",
+     "make_lint": "18 files already formatted; All checks passed! (exit 0)",
+     "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s) (exit 0); with --grounded: verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP - 0 blocking, 0 major, 6 minor; the four items hold in the code and the tests fail on the unchanged behaviour.\n\nRisk census (source read: src/docdistance/pipeline.py:259-297, 825-995; src/docdistance/distance.py:62-69, 160-181, 608-620, 652-655, 696-701):\n- Marker rule and its markdown gate (pipeline.py:268, 862) - COVERED. Rule neutralised: 3 tests fail (matches the claim). Gate removed: 1 fails. isalpha for isalnum: 5 fail. any → all: 10 fail. Warning moved before the fragment filter: 1 fails. Wrong total: 3 fail. Statements dropped after the warning: 3 fail. Level lowered to info: 3 fail\n- Pool comparison, constant and the four call sites (pipeline.py:290, 908, 936, 970, 992) - COVERED. Comparison neutralised: 7 tests fail (matches the claim). < → <=: 5 fail. Constant 72: 6 fail. Count of one document only: 6 fail. Anisotropy gates removed: 11 fail. Pre-pass skipped on a small pool: 2 fail. Level lowered to info: 6 fail\n- No pool warning on the two source-conditioned calls - HOLLOW for distance_wrt_source_with_map (finding 1)\n- Docstring and document numbers (ACC-GEOM-22, ACC-GEOM-64, tagged MANUAL) - checked by grep and against the metrics files: 71.275, 0.9834, 0.9333, 18.8, 0.8664 (E12-H65); 1.0366 and -0.0451 (E12-H64); 1.0282 and -0.0356 (E14-H75); 0.5471, 0.9165, 22 one-word statements with '-' 13, '###' 6, '##' 2, 'Overview' 1 (E14-H76). No line says the projection removes source content\n\nRepro and test lines run with the real models:\n- DEF-SEGM-12 repro: markdown off 70 statements, 21 without a letter or digit, shape (70, 768), 1 warning '21 of 70 ...'; markdown=True 48 statements, 0, no warning; min_words=2 48 statements, no warning\n- ACC-GEOM-23 test: distance-semantic --pairs on a 2-document TSV with --anisotropy: exit 0, 1 JSON line on stdout, exactly 1 WARNING line on stderr naming 20 and 71; without --anisotropy 0 warning lines\n\nOther checks:\n- Additive policy: both guardrail runs report 0 difference(s); no default changed; the change adds stderr lines only\n- Python 3.12 syntax: `uvx ruff@0.16.2 check --target-version py312` - All checks passed\n- No dead code, speculative parameter or fallback branch found in the two helpers and their five call sites\n- No new quantity; ANISOTROPY_MIN_POOL is documented as a measured minimum, nothing approximate is called exact (finding 4 concerns the wording 'smallest pool')\n- Git state: HEAD is bd0002e (2026-09-17), nothing staged, the newest tag dates 2026-08-31. pyproject.toml reads 1.1.10 with modification time 21:30:22, logs/env-install.log 21:30:23 ends 'New version: 1.1.10'\n- File scope, read from modification times because the working tree also holds other packages' changes: this package's files were last written 21:20 to 21:27; encoders.py 18:27, __init__.py 19:11, cli.py 19:11, test_distance.py and test_e2e.py 19:12, test_structure.py 20:39, journal 18:11, defects 13:37, acceptance criteria 19:45, ledger 18:13 - all earlier. .claude/agent-memory is ignored by git\n- Per-pair pool warning in a --pairs run matches the brief ('once per pool'); it is not a finding\n\nCut list: no test to delete. The two negative marker cases, the boundary case and the parametrised call-site case each have a killing mutation. One duplicate fixture (finding 6).\n\nScratch files are under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad; no file in the repository was edited, staged or reverted. The gates wrote their usual coverage and cache files."
+   },
+   "repaired": false
+  },
+  {
+   "key": "batch-memos",
+   "result": {
+    "package": "batch-memos",
+    "status": "partial",
+    "items": [
+     {
+      "id": "ACC-CLI-29",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_all_pairs_sweep_encodes_each_document_once: 55 pairs of 11 files, 11 encodes with memo_size=64, 110 at the default memo_size=0, 55 equal results. tests/test_e2e.py::test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off[all-pairs]: 11 against 110 encodes through `distance-semantic --pairs`. Real models, data/interim/E12-H67/allpairs-55.tsv: encoder calls 110 → 11 in the shipped batch loop (3 of 3 repeats, logs/E13-batch-memos-measure.log) and 11 for 110 slots through the command itself (logs/E13-batch-memos-cli-counts.log). Each key part has a test that fails when the part is removed: resolved path (test_memo_key_is_the_resolved_path), mtime and size (test_new_mtime_alone_and_new_size_alone_each_miss_the_memo), markdown, min_words, skip_table_fragments (test_memo_key_holds_the_segmentation_arguments)."
+     },
+     {
+      "id": "ACC-CLI-30",
+      "met": true,
+      "evidence": "Real models, the two commands run with the memo on and off: 9 of 9 E12-H67 arms have equal sha256 (logs/E13-batch-memos-measure.log, `arm` records and `arms-summary` identical 9 of 9). JSONL digests: all-pairs 55 4bec474fbd; the same sweep with 55 details files b8e151418c (digest over the 55 file digests); 1-source-x2 17fedf3a3b; x5 c0f0d227a1; x11 438b2952db; disjoint 55 2235383095; distance-structural 57ca61ba07 with 55 details files 126363d336; filtered (--min-words 18 --skip-table-fragments) bf1a85efb5; markdown 62d98b6b3f. Suite: tests/test_e2e.py::test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off, 9 parametrised sweeps on stub models (JSONL and every details file, plus encode counts distinct files against slots); tests/test_pipeline.py::test_identity_pair_reads_the_same_with_and_without_the_memo (a file against itself: the memo returns a copy per call, one shared array would read SMD 0.0 instead of the value two encodes give). Guardrail with the memo forced on for every instance: 0 difference(s)."
+     },
+     {
+      "id": "ACC-CLI-31",
+      "met": false,
+      "evidence": "load condition not met. Reading taken: three interleaved off/on repeats of the shipped batch loop on data/interim/E12-H67/allpairs-55.tsv, model load excluded. Off 11.1512 / 10.9343 / 10.8569 s, on 1.1790 / 1.0895 / 1.0936 s, median ratio 9.998x (bar 3x). Encodes 110 → 11. JSONL byte-identical in all 6 runs (sha256 4bec474fbd). 1-minute load before the six runs: 33.57, 38.54, 38.54, 43.98, 43.98, 46.91. `some avg10` of /proc/pressure/cpu before the six runs: 0.00, 0.00, 0.00, 0.06, 0.06, 0.14. The wait before the first timed run lasted 601 s and ended at load 33.37. Log: logs/E13-batch-memos-measure.log."
+     },
+     {
+      "id": "ACC-CLI-32",
+      "met": true,
+      "evidence": "data/interim/E12-H67/disjoint-55.tsv, 110 unique files, 0 hits (110 encodes with the memo on and off, JSONL byte-identical). Five interleaved repeats per run order, medians. Order off → on: 17.4883 s against 17.7335 s, delta +1.40% (pair deltas -2.34, +0.39, +5.63, +1.85, +1.17). Order on → off: 17.1531 s against 17.1576 s, delta +0.03% (pair deltas +6.58, +1.72, -1.37, -1.03, +0.03). The memo bookkeeping timed alone on the 110 slots (key, lookup, copies, 46 evictions at the bound of 64): 4.39 ms, 0.025% of one run. Both set medians are within 2%. Limits of the reading: the spread between runs of one setting is about 5% and the first run after the model load is the slowest in both sets; every run started at a load of 8 or above (39.16 to 61.42, `some avg10` 0.00 to 1.30); the criterion names no load condition. tests/test_pipeline.py::test_memo_off_takes_no_key: the off setting reads no file identity, so the off runs carry no memo cost. Logs: logs/E13-batch-memos-measure.log, logs/E13-batch-memos-disjoint-reversed.log."
+     },
+     {
+      "id": "ACC-CLI-33",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_rewritten_file_is_encoded_again: pair scored, file B rewritten, pair scored again: exactly one new encode, 4 statements for B and the result equals the result of an instance without a memo. test_new_mtime_alone_and_new_size_alone_each_miss_the_memo: a rewrite of equal byte length with a later mtime is encoded again, and a longer rewrite that carries the earlier mtime is encoded again. Mutations `key: no mtime` and `key: no size` fail this test. Stated limit (docstring of pipeline._memo_key): a rewrite of equal byte size inside one timestamp step of the file system keeps the key."
+     },
+     {
+      "id": "ACC-CLI-34",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_embed_memo_evicts_beyond_its_bound: DocDistance(memo_size=3), 4 distinct documents, the first is encoded again on its next use (5 encodes) and the fourth is still served. test_embed_memo_evicts_the_least_recently_used_entry: at a bound of 2 a document served from the memo is kept and the other one is evicted. The bound is in entries; the `--pairs` batches use pipeline.MEMO_SIZE = 64. Mutations `no eviction`, `evicts one entry too late`, `evicts the newest entry`, `first in, first out` each fail a test."
+     },
+     {
+      "id": "ACC-CLI-35",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_raw_text_is_never_memoised: the same raw text pair scored twice gives 4 encodes, and the text of a memoised file given as raw text is encoded, not served. test_directory_argument_is_read_as_raw_text_on_every_call, test_raw_text_that_is_no_valid_path_gets_no_memo_key (NUL character), test_document_of_another_type_raises_the_reader_error (the reader's TypeError is unchanged). test_grounding_of_raw_text_is_never_memoised: a raw-text document or a raw-text source is computed on every call in the grounding memo as well, and each result equals the result without a memo."
+     },
+     {
+      "id": "ACC-CLI-36",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_drop_count_is_restored_on_a_memo_hit: document A drops 3 statements under min_words=3, document B none; scored again from the memo the pair reports {a: 3, b: 0}, and {a: 0, b: 3} with the order swapped, at 2 encodes in total. tests/test_e2e.py::test_cli_pairs_filtered_lines_carry_the_drop_counts_of_each_document: every JSONL line of a filtered batch carries 3 or 4 per document. Real models: the filtered arm (--min-words 18 --skip-table-fragments) is byte-identical with the memo on and off (sha256 bf1a85efb5). The marker warning of DEF-SEGM-12 is logged on a hit as on an encode (test_marker_warning_is_logged_on_a_memo_hit); the guardrail log holds 3 such warnings with the memo off and 3 with it on."
+     },
+     {
+      "id": "ACC-CLI-37",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_cli_wrt_source_pairs_emits_one_line_per_row_in_row_order: 55-row TSV against one source, one DocDistance built, 55 lines, ids in row order, the keys of each line are `pair` followed by the keys of the one-shot `--json` output in the same order. Real models: `distance-wrt-source --pairs data/interim/E12-H68/allpairs-55.tsv --source <ibm source>` gives 55 lines with the ids in row order (logs/E13-batch-memos-cli-counts.log). tests/test_cli.py::test_wrt_source_pairs_and_positionals_mutually_exclusive (exit 2 with the message of the other two commands), test_wrt_source_pairs_missing_file_emits_machine_error_object (io_error JSON, exit 1), test_wrt_source_help_has_source_option. tests/test_e2e.py::test_cli_wrt_source_pairs_writes_one_source_map_per_pair: with --pairs, --source-map-json takes a directory or a {pair} template and each file is byte-identical to the one-shot map."
+     },
+     {
+      "id": "ACC-CLI-38",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_wrt_source_sweep_computes_each_grounding_once: 55 pairs of 11 files against one source, 11 relevance grids and 12 encodes with the memo, 110 grids and 165 encodes without, 55 equal results, and distance_wrt_source_with_map is served from the same memo. Real models, data/interim/E12-H68/allpairs-55.tsv: reranker grid calls 110 → 11 and encodes 165 → 12 in the batch loop (logs/E13-batch-memos-measure.log), 11 grids and 12 encodes through the command itself (logs/E13-batch-memos-cli-counts.log). test_grounding_memo_key_holds_both_documents_and_the_segmentation: a rewritten source, a rewritten document and a new segmentation setting are each computed again."
+     },
+     {
+      "id": "ACC-CLI-39",
+      "met": true,
+      "evidence": "Real models: 55 one-shot `docdistance distance-wrt-source A B --source S --json` subprocesses against the batch lines: 55 of 55 equal by sha256 with the memo on and 55 of 55 with it off (logs/E13-batch-memos-measure.log, `oneshot-summary`). The two batch outputs are byte-identical (sha256 2b7d96c4f1), and the output of the command `distance-wrt-source --pairs` is byte-identical to them. Reading applied: a batch line is one line that starts with the `pair` id, the one-shot output is the same object printed with indent=2, so the line without `pair` printed with indent=2 is compared with the one-shot stdout. Suite: tests/test_e2e.py::test_cli_wrt_source_batch_line_equals_the_one_shot_json, 4 cases (55 rows at the defaults; --no-anisotropy; --min-words 4 --skip-table-fragments; --markdown), memo on and off."
+     },
+     {
+      "id": "ACC-CLI-40",
+      "met": false,
+      "evidence": "load condition not met. Reading taken: one interleaved off/on pass of the shipped batch loop on data/interim/E12-H68/allpairs-55.tsv against the ibm source, one warm instance per setting, model load excluded. Off 2691.37 s, on 261.395 s, ratio 10.296x (bar 5x). Grounding grids 110 → 11, encodes 165 → 12, the two outputs byte-identical. 1-minute load before the off run 55.05 and before the on run 39.79; `some avg10` of /proc/pressure/cpu 0.04 and 0.03. Log: logs/E13-batch-memos-measure.log."
+     },
+     {
+      "id": "ACC-CLI-41",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_grounding_memo_serves_copies: the grid and the entailment vector are set to 0 in place after the computation and again after a hit; the next hit equals the original both times, at 1 reranker call. test_embed_memo_serves_copies: the same for the statement list and the embedding array of the embed memo. Mutations `grid not copied`, `entailment not copied`, and the four copy mutations of the embed memo each fail a test."
+     },
+     {
+      "id": "ACC-CLI-42",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_grounding_memo_evicts_beyond_its_bound: DocDistance(memo_size=2), 3 documents against one source in the calls (1,2), (2,3), (1,3): 4 grids, the fourth is the grid of document 1 computed again; at memo_size=3 the same calls compute 3 grids. Mutation `constructor: grounding memo ignores memo_size` fails this test."
+     },
+     {
+      "id": "ACC-CLI-43",
+      "met": true,
+      "evidence": "data/interim/E12-H68/nofanout-2.tsv (2 rows, 4 documents, each once), three interleaved off/on repeats of the batch loop: off 100.608 / 99.900 / 99.586 s, on 99.433 / 99.189 / 99.344 s, median delta -0.56% (pair deltas -1.17, -0.71, -0.24). Grounding grids 4 with the memo on and 4 with it off: 0 grounding-memo hits, the count E12-H68 reported for its control. Embed memo: 0 hits for the 4 documents and 1 hit for the source file, which both rows read (6 encodes off, 5 on). 1-minute load before the six runs: 41.23, 37.47, 34.56, 34.24, 34.06, 35.76; `some avg10` 4.12, then 0.00 five times; the criterion names no load condition. Log: logs/E13-batch-memos-measure.log."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/refactor-test.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-batch-memos-measure.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-batch-memos-cli-counts.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-batch-memos-disjoint-reversed.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-detached-job-measures-the-source-at-import-time.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-timing-first-run-after-load-reads-slow.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-pot-same-object-cost-diagonal.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-stage-b-verifier-mutates-each-mechanism-clause.md"
+    ],
+    "tests_added": [
+     "tests/test_pipeline.py::test_all_pairs_sweep_encodes_each_document_once",
+     "tests/test_pipeline.py::test_memo_key_is_the_resolved_path",
+     "tests/test_pipeline.py::test_memo_key_holds_the_segmentation_arguments",
+     "tests/test_pipeline.py::test_identity_pair_reads_the_same_with_and_without_the_memo",
+     "tests/test_pipeline.py::test_rewritten_file_is_encoded_again",
+     "tests/test_pipeline.py::test_new_mtime_alone_and_new_size_alone_each_miss_the_memo",
+     "tests/test_pipeline.py::test_embed_memo_evicts_beyond_its_bound",
+     "tests/test_pipeline.py::test_embed_memo_evicts_the_least_recently_used_entry",
+     "tests/test_pipeline.py::test_raw_text_is_never_memoised",
+     "tests/test_pipeline.py::test_directory_argument_is_read_as_raw_text_on_every_call",
+     "tests/test_pipeline.py::test_document_of_another_type_raises_the_reader_error",
+     "tests/test_pipeline.py::test_raw_text_that_is_no_valid_path_gets_no_memo_key",
+     "tests/test_pipeline.py::test_memo_off_takes_no_key",
+     "tests/test_pipeline.py::test_drop_count_is_restored_on_a_memo_hit",
+     "tests/test_pipeline.py::test_marker_warning_is_logged_on_a_memo_hit",
+     "tests/test_pipeline.py::test_embed_memo_serves_copies",
+     "tests/test_pipeline.py::test_wrt_source_sweep_computes_each_grounding_once",
+     "tests/test_pipeline.py::test_grounding_memo_serves_copies",
+     "tests/test_pipeline.py::test_grounding_memo_evicts_beyond_its_bound",
+     "tests/test_pipeline.py::test_grounding_of_raw_text_is_never_memoised",
+     "tests/test_pipeline.py::test_grounding_memo_key_holds_both_documents_and_the_segmentation",
+     "tests/test_e2e.py::test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off (9 cases)",
+     "tests/test_e2e.py::test_cli_pairs_filtered_lines_carry_the_drop_counts_of_each_document",
+     "tests/test_e2e.py::test_cli_wrt_source_pairs_emits_one_line_per_row_in_row_order",
+     "tests/test_e2e.py::test_cli_wrt_source_batch_line_equals_the_one_shot_json (4 cases)",
+     "tests/test_e2e.py::test_cli_wrt_source_pairs_writes_one_source_map_per_pair (3 cases)",
+     "tests/test_cli.py::test_wrt_source_pairs_and_positionals_mutually_exclusive",
+     "tests/test_cli.py::test_wrt_source_pairs_missing_file_emits_machine_error_object",
+     "tests/test_cli.py::test_wrt_source_help_has_source_option (one assertion added: --pairs)"
+    ],
+    "make_test": "250 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s) - last line `verify: 55 pairs, 3 grounded, 0 difference(s)`, run on the final tree with --allow moved,n_moved --grounded; a second run with the memo forced on for every DocDistance also reports 0 difference(s)",
+    "out_of_scope_needs": [
+     "ACC-CLI-31 and ACC-CLI-40 need their reading repeated at a 1-minute load below 8. The script that took the readings is in the session scratchpad, not in the repository: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/batch-memos/measure.py (phases `semantic` and `wrt`, run as `CI=true .venv/bin/python measure.py --wait semantic wrt`). Copy it under reports/E13-campaign/ for the repeat; that folder is outside this package",
+     "docs/cli-reference.md, section `distance-wrt-source`: add the `--pairs FILE` row (TSV a-path<TAB>b-path[<TAB>id], one fixed --source, one JSON line per row = `pair` + the keys of the one-shot --json output) and state that --source-map-json takes a directory or a {pair} template in that mode; state for all three commands that a --pairs batch keeps up to 64 document files in a memo and that raw text is not memoised",
+     ".claude/skills/docdistance/SKILL.md line 63 says `--pairs` exists on `distance-semantic` and `distance-structural` only; this is false after this build",
+     "README.md lines 24 and 89-90 (batch scoring): add the `distance-wrt-source --pairs pairs.tsv -s source.md` form and the `DocDistance(memo_size=...)` parameter for Python sweeps",
+     "docs/solution/wmd-docdistance-solution-sota.md and docs/solution/wmd-source-conditioned-docdistance-solution-sota.md: batch latency rows (55-row all-pairs sweep 10.93 s → 1.09 s; 55-pair source-conditioned sweep 2691 s → 261 s), once the readings are repeated at load below 8",
+     "logs/README.md: one line for the family `E13-batch-memos-*.log` (readings of the batch-memos package: timed runs, nine-arm digests, one-shot comparison)"
+    ],
+    "notes": "Version after `make install`: 1.1.11 (was 1.1.10). 13 of 15 items met; ACC-CLI-31 and ACC-CLI-40 are returned met=false because every timed run started at a load of 8 or above (33 to 61 all evening, `some avg10` near 0), while their readings are 10.00x against 3x and 10.30x against 5x.\n\nDesign decisions the orchestrator may want to review:\n- The memo is an opt-in constructor parameter, `DocDistance(memo_size=0)` by default, as the additive policy of the primer states. The three `--pairs` branches of the CLI pass `pipeline.MEMO_SIZE` (64 entries), so a batch memoises without a new option. `DocDistance()` and the one-shot functions run the 1.1.5 path: no file identity is read, no copy is made. A Python sweep gets the memo with `DocDistance(memo_size=64)`. The E12-H67 lever describes a memo that is on in every instance; making that the default is a change of one default value and of the test helper `_memoising`.\n- One bound covers both memos (embed entries and grounding entries each at most `memo_size`). Eviction is least recently used, so the fixed source of a batch stays in the memo. No CLI option sets the bound or switches the memo off.\n- The grounding memo key is (memo key of the document, memo key of the source), taken by `embed_statements` before the file is read and handed over through `self._last_memo_key`, the same pattern as `_last_n_dropped`. A raw-text document or source bypasses both memos.\n- A hit returns copies of the statement list and of the arrays, and the stored entry is never handed out. This is required for byte-identity, not only for ACC-CLI-41: one array passed as both documents of a pair makes POT zero the cost diagonal (SMD 0.0 instead of 1.87e-4 for the ibm gold summary against itself).\n- A hit sets `_last_n_dropped` and logs the marker warning of DEF-SEGM-12 again, so a batch logs the same warnings per document with the memo on and off. The pool warning is logged in the scoring call and is not touched.\n- `--pairs` on `distance-wrt-source` reuses `_run_batch`; `--source-map-json` takes a directory or a `{pair}` template in that mode, like `--details-json` on the other two commands. This was not named in a criterion; the alternative was an error branch of the same size.\n- ACC-CLI-39 cannot hold on raw bytes: a batch line is one line with a `pair` id and the one-shot output is printed with indent=2. The tests and the 55-pair run compare the line without `pair`, printed with indent=2, against the one-shot stdout.\n- ACC-CLI-43 `hits == 0` is read on the grounding memo, as E12-H68 did. The embed memo serves the source once, because both rows read the same source file.\n- Limit stated in the docstring of `_memo_key`: a rewrite of equal byte size inside one timestamp step of the file system keeps the key and the memo serves the earlier content.\n\nChecks beyond the gates: 54 source mutations (one per clause of the key, the memo class, the hit path, the stored entry, the grounding memo and the CLI branch) each fail at least one test, 0 survivors; all 21 new pipeline tests and 17 of the 18 new end-to-end cases fail on the saved pre-change package, and the remaining one (`test_cli_pairs_filtered_lines_carry_the_drop_counts_of_each_document`) fails under the mutation that leaves the drop count unrestored.\n\nProcess notes:\n- A first readings job was started with the memo on by default and stopped during its load wait, before any timed run, when the default changed to off. All reported readings come from the second job on the final code.\n- After the readings I added one sentence to three docstrings of pipeline.py (the limit above). An AST comparison with docstrings removed shows the same code as the measured copy; cli.py is byte-equal. `make format`, `make lint`, `make test` and the guardrail ran after that edit.\n- I overwrote the gitignored `logs/refactor-test.log` with the output of one `make test` run (its registered purpose); the earlier content is lost.\n- Readings script, mutation list and outputs (55 one-shot JSON files, both batch JSONL files) are in the scratchpad folder `batch-memos/`; the logs are in `logs/E13-batch-memos-*.log`."
+   },
+   "verify": {
+    "package": "batch-memos",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The ordering rule \"the memo key is taken before the file is read\" has no test. The implementer's statement of 54 mutations with 0 survivors holds for the 54 listed, but this clause is not in the list and a mutation of it leaves the suite green.",
+      "evidence": "FACT. Mutation on a scratch copy of src/docdistance: in embed_statements the key under which the entry is stored is taken again after `_read` and the encode. Result: `118 passed` on tests/test_pipeline.py, tests/test_e2e.py, tests/test_cli.py. Reproduction with stub models and a `_read` wrapper that rewrites the file after the first read: live tree returns ['Old one','Old two'] then ['New one','New two','New three'] on the two later calls (correct); the mutated copy returns ['Old one','Old two'] on both later calls while the file holds the new text. MATERIALITY: harm needs a second process that rewrites a document between the stat and the read of one call, which is outside the sequential rewrite that ACC-CLI-33 names; the live code is correct, so nobody is harmed today. REMEDY: one test in tests/test_pipeline.py that wraps `pipeline._read` to rewrite the file after it returns and asserts that the next call returns the new statements. No source change.",
+      "file": "src/docdistance/pipeline.py",
+      "line": 935
+     },
+     {
+      "severity": "minor",
+      "claim": "ACC-CLI-32 is returned met on a median-of-five statistic that the criterion does not name. The single both-ways pass that the criterion's test line names reads outside the 2% bar in the first pass of each run order, and the spread between runs is larger than the bar.",
+      "evidence": "FACT from logs/E13-batch-memos-measure.log and logs/E13-batch-memos-disjoint-reversed.log: pair deltas off → on order -2.335, +0.39, +5.631, +1.846, +1.17; on → off order +6.58, +1.718, -1.366, -1.027, +0.03. 3 of 10 pairs exceed 2%. Mean of the 10 pair deltas +1.26%. The two medians (+1.40%, +0.03%) are inside the bar, as the implementer states, and the implementer disclosed the 5% spread. All 20 runs started at a 1-minute load of 39 to 61. The reading that decides the item is the bookkeeping timed alone: 4.391 ms for 110 slots against about 17 s per run (0.025%), with 110 encodes under both settings. JUDGEMENT: the wall-clock reading at this load cannot separate 0% from 2%; the item stands on the mechanism timing. MATERIALITY: none, the overhead is 4 ms. REMEDY: DEFER - repeat the disjoint sweep in the same job that repeats ACC-CLI-31 and ACC-CLI-40 at load below 8; no code change.",
+      "file": "logs/E13-batch-memos-measure.log"
+     },
+     {
+      "severity": "minor",
+      "claim": "The real-model readings of this package cannot be repeated from the repository. The measurement script and the memo-on guardrail exist only in the session scratchpad under /tmp, the registered guardrail never switches a memo on, and the logs are gitignored.",
+      "evidence": "FACT. reports/E13-campaign/baseline.py:31 builds `DocDistance()`, which is memo off, so `baseline.py verify` exercises the 1.1.5 path only. The memo-on guardrail is /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/batch-memos/guardrail_memo_on.py. The readings for ACC-CLI-30 (9 arms), 31, 32, 39 (55 one-shot runs), 40, 43 come from .../scratchpad/batch-memos/measure.py. `git check-ignore` reports `.gitignore:93:*.log` for logs/E13-batch-memos-measure.log. measure.py has mtime 22:38:08; the job that wrote the semantic, wrt, arms and oneshot records started at 22:22:02, so the file on disk was edited after that job loaded it. The implementer reported the script location under out_of_scope_needs; the package rules forbade writing under reports/E13-campaign/. MATERIALITY: ACC-CLI-31 and ACC-CLI-40 are open and need this script for their repeat. REMEDY: the orchestrator copies measure.py and guardrail_memo_on.py into reports/E13-campaign/ before the scratchpad is removed.",
+      "file": "reports/E13-campaign/baseline.py",
+      "line": 31
+     },
+     {
+      "severity": "minor",
+      "claim": "(taste) The stub harness of the memo tests is defined twice, and two of the nine parametrised sweeps retire no risk on stub models that a third does not.",
+      "evidence": "FACT. `_vec`, `_affinity`, `_CountingEncoder`, `_TextNLI`, `_all_pairs` and one reranker stub with an equal body under two names (`_CountingReranker`, `_TextReranker`) are defined in tests/test_pipeline.py:802-883 and again in tests/test_e2e.py:46,276-360; there is no tests/conftest.py. The two copies are equal today. JUDGEMENT: arms `source-x2` and `source-x5` of test_cli_pairs_output_is_byte_identical_with_the_memo_on_and_off run the same code path as `source-x11` with fewer rows; on stubs their deletion loses no belief. They cost under 0.1 s each and mirror the nine arms that ACC-CLI-30 names, so keeping them is defensible. REMEDY: DEFER. Cut list otherwise empty: the 42 new cases run in 6.67 s, the slowest is 2.17 s.",
+      "file": "tests/test_e2e.py",
+      "line": 276
+     }
+    ],
+    "gates": {
+     "make_test": "250 passed, 1 skipped in 22.15s (the skip is tests/test_bootstrap.py:118, an opt-in test against real S3, not part of this package)",
+     "make_lint": "All checks passed! (18 files already formatted; `uvx ruff@0.16.2 check --target-version py312 src tests` also reports All checks passed!)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0, run by me at load 32)"
+    },
+    "items_not_met": [
+     "ACC-CLI-31 - reading 9.998x against a bar of 3x, but every timed run started at a 1-minute load of 33.57 to 46.91; the criterion requires load below 8. The implementer returned it not met; I agree.",
+     "ACC-CLI-40 - reading 10.296x against a bar of 5x, but the two runs started at load 55.05 and 39.79; the criterion requires load below 8. The implementer returned it not met; I agree."
+    ],
+    "notes": "VERDICT: SHIP - 4 findings, all minor; no blocking or major finding. 13 items hold as claimed; ACC-CLI-31 and ACC-CLI-40 stay open on their load condition only.\n\nWhat I ran myself:\n- All three gates green (values in `gates`). Machine load during my runs: 30 to 37.\n- The 42 new test cases against the implementer's pre-change snapshot: 41 failed, 1 passed. The one that passes (test_cli_pairs_filtered_lines_carry_the_drop_counts_of_each_document) fails under the mutation that leaves the drop count unrestored on a hit, as does test_drop_count_is_restored_on_a_memo_hit (2 failed). No test of the package is unable to fail.\n- The 42 cases in reverse order: 42 passed. No order dependence. Rewrite tests change the size or set the mtime with os.utime, so none depends on the timestamp step of the file system.\n- Real models, `distance-semantic --pairs data/interim/E12-H67/allpairs-55.tsv`, memo on and off: sha256 4bec474fbd... both ways, 11 against 110 encoder calls. This equals the implementer's digest and the digest in reports/E12-H67-pairs-embed-memo-metrics.json, so the shipped numbers are bit-identical. Two sweeps outside the nine arms, `distance-semantic --anisotropy` and `distance-structural --anisotropy`, are also byte-identical on and off (11 against 110).\n- Eviction at the bound on stub models, all-pairs sweeps of N documents: N=63 → 63 encodes; N=65 → 128 of 4160 slots; N=80 → 1223 of 6320 slots. The memo degrades gradually above 64 documents; the comment at pipeline.py:67-73 is accurate.\n- Log numbers for ACC-CLI-31, 32, 40, 43, the cli-counts, the 9 of 9 arms and the 55 of 55 one-shot comparisons match the claims.\n\nReadings the adjudicator should confirm (disclosed by the implementer, not defects):\n- ACC-CLI-39: raw byte identity cannot hold because a batch line is one line with a `pair` id and the one-shot output is indented. Tests and the real-model run compare the line without `pair`, printed with indent=2.\n- ACC-CLI-43 `hits == 0`: grounding-memo hits are 0; the embed memo records 1 hit for the source file. The E12-H68 control recorded the same (grid_hits_on 0, embed_hits_on 1, nofanout_grid_hits 0), so the reading matches the registered control.\n- ACC-CLI-32 and ACC-CLI-43 have no suite test for wall time. A wall-clock assertion in the suite would fail intermittently at this load, so I do not rate its absence; the deterministic part (encode and grid counts, byte identity) is in the suite.\n\nChecks 3 to 8:\n- (3) Additive: diff of the pre-change snapshot against the tree touches only memo code. `DocDistance(memo_size=0)` is the default; test_memo_off_takes_no_key pins that the off path reads no file identity. One CLI surface change required by ACC-CLI-37: positionals A and B of distance-wrt-source are optional, and a missing positional now prints \"two documents (or --pairs FILE) required\" with exit 2 (exit code unchanged).\n- (4) Only cli.py and pipeline.py differ under src/ since the snapshot of 21:59:59; trackers, journal, ledger, docs, README and SKILL.md all have mtimes before that time. pyproject.toml and uv.lock changed through `make install` (1.1.10 → 1.1.11, installed metadata reads 1.1.11).\n- (5) No new quantity; no approximate value is called exact; the equal-size rewrite limit is stated at `_memo_key`.\n- (6) Python 3.12 syntax check passes.\n- (7) No dead code or unreachable branch found; each except clause of `_memo_key` has a test that reaches it.\n- (8) HEAD is bd0002e, newest tag is CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5, no journal entry names this package, ACC-CLI-29 to 43 are unchecked in the tracker.\n\nConfidence ladder: CI runs `make lint` and `make test` on Python 3.12, 3.13, 3.14; the suite has no tier selector and runs in about 22 s. The real-model tier for the memo-on path exists only as scratch scripts (finding 3).\n\nI edited no file in the repository. Scratch files: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/qa-review/"
+   },
+   "repaired": false
+  },
+  {
+   "key": "calibration-notes",
+   "result": {
+    "package": "calibration-notes",
+    "status": "done",
+    "items": [
+     {
+      "id": "ACC-CALIB-24",
+      "met": true,
+      "evidence": "Comment above STRUCTURE_THRESHOLD in src/docdistance/distance.py now reads: 0.90 'placed on the ibm ladder', ibm band (0.892817, 0.906144] with 0.006144 of headroom, wergeland band (0.908048, 0.973676] 'above the ibm band by 0.001904, so no cross-article band exists' (E12-H59). Check function acc_calib_24 formats the three values from reports/E12-H59-structure-threshold-transfer-metrics.json and searches the comment: FAIL on the unchanged tree (6 strings missing), ok after the edit."
+     },
+     {
+      "id": "ACC-CALIB-25",
+      "met": true,
+      "evidence": "docs/solution/wmd-structure-distance-sota.md, new section 'Calibration of the structural verdict': four numbered steps (build the k-swap ladder; collect the un-reordered pairs; sweep 0.85 to 0.99 in steps of 0.005; take the band that keeps every rung and pair on its side), the E12-H59 two-article sweep as worked example (table with rung 1, rung 2, lowest un-reordered pair and band per article) and the empty cross-article band (wergeland lower edge 0.908048 lies 0.001904 above the ibm upper edge, 0 of 29 swept thresholds valid on both). Check acc_calib_25 counts exactly 4 numbered steps and finds both bands: FAIL before, ok after."
+     },
+     {
+      "id": "ACC-CALIB-26",
+      "met": true,
+      "evidence": "docs/solution/wmd-docdistance-solution-sota.md, new section 'Calibration of the semantic verdict': E12-H63 card for 0.77 with band [0.7474, 0.7944] on INT8 and [0.7566, 0.8027] on fp, safe on both 0.760 to 0.790, leave-one-out haiku +2.30 points and adv2-b −1.64 points (the other 8 subsets move no edge, verified in the metrics file), INT8-to-fp drift 40.6% of the adv2-b margin, 3 of 10 documents above 20%, 0 verdict flips. Check acc_calib_26 formats every value from reports/E12-H63-semantic-threshold-band-metrics.json: FAIL before, ok after."
+     },
+     {
+      "id": "ACC-CALIB-27",
+      "met": true,
+      "evidence": "Comment above DEFAULT_THRESHOLD in src/docdistance/distance.py now quotes the shipped semantic_distance band, min gold 79.44% (haiku) against max adversarial 74.74% (adv2-b) on OpenVINO INT8, the fp band and the range valid on both, and states: 'The 79.7% / 75.0% this comment quoted before came from the dd.embed path of notebook 09 cell 10, not from semantic_distance.' Check acc_calib_27: FAIL before, ok after."
+     },
+     {
+      "id": "ACC-CALIB-28",
+      "met": true,
+      "evidence": "docs/solution/wmd-structure-distance-sota.md, paragraph 'Verdict under deletions' in the calibration section: order-preserving deletions lower structure_closeness to 0.8902 pooled at 4 deleted statements and 0.8219 for 3 statements deleted at the tail, both below 0.90 (E12-H62), so a content drop can read 'not similar'. It names what shipped: matched_order_gap reads the same 280 deletions at or below 0.005 in 280 of 280 cases, at the identity floor opw_gap(B, B) (E13-H70, documents of 11 to 14 statements), while order_gap, structure_closeness and the verdict keep their 1.1.5 values and no length correction ships. The earlier Limitations sentence 'The aggregate order_gap / structure_closeness is unaffected' contradicted E12-H62 and is corrected. Check acc_calib_28: FAIL before, ok after."
+     },
+     {
+      "id": "ACC-MAP-63",
+      "met": true,
+      "evidence": "grep of match_status, match_index, matched_order_gap, MATCH_CUTOFF, E13-H70 and E13-H71 in docs/api-reference.md, docs/cli-reference.md and docs/example-map-interpretations.md: 18 of 18 missing on the unchanged tree, 0 missing after. Readings quoted and compared with the ledger: E13-H71 held-out macro-F1 0.9772 at cutoff 0.325 and 0.9457 at 0.3100 against 0.3130 / 0.3266 for the 1.1.5 flags; E13-H70 280 of 280 deletions at or below 0.005, largest 6.101e-04, AUC 0.999903 against 0.950980. docs/api-reference.md also gains every other addition of the earlier packages: partial_matching, unsupported_count, compute_structural, SolverNotOptimal, memo_size, a constants table (MATCH_CUTOFF, MATCH_POSITION_EPS, SOURCE_SUPPORT_CUTOFF, ANISOTROPY_MIN_POOL, MOVED_TOLERANCE, MEMO_SIZE), the result fields and a table of the detail-file and source-map fields. docs/example-map-interpretations.md shows a real run of the installed 1.1.12 build on its two documents (n_kept 4, n_removed 2, n_added 2; matched_order_gap 0.3168 with n_matched 4)."
+     },
+     {
+      "id": "ACC-GEOM-46",
+      "met": true,
+      "evidence": "docs/solution/wmd-docdistance-solution-sota.md, paragraph 'A kernel pre-pass was measured and does not ship (E14-H77, Refuted)' with one table row per bandwidth m = 0.25, 1, 4, 16, 64: lowest cost Spearman over the 11 gate pools 0.9816, 0.9091, 0.5087, 0.0712, −0.0664 (copy of the linear pre-pass: no, all five), stability of the top component per pool group (ibm symmetric pool / 10 triples / Wergeland pool), conditioned contrast with violations, ibm symmetric margin with V, Wergeland margin with V, the shipped row (2.413, +19.41, +54.74) and the decision that no kernel pre-pass ships. Check acc_geom_46 formats 38 values from reports/E14-H77-kernel-pca-prepass-metrics.json: all 38 missing before, 0 missing after."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-structure-distance-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/api-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/cli-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/example-map-interpretations.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/skills/docdistance/SKILL.md",
+     "/home/lab/workspace/learning/projects/docdistance/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/refactor-test.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-ledger-readings-registered-arm-vs-shipped-constant.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-documentation-package-checks.md"
+    ],
+    "tests_added": [],
+    "make_test": "250 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s) - last line 'verify: 55 pairs, 0 grounded, 0 difference(s)', run with --allow moved,n_moved on the final source",
+    "out_of_scope_needs": [
+     "docs/acc-crit-docdistance.md, ACC-CALIB-28: the body ends 'until a length correction ships'. No length correction of order_gap ships; the remedy is the new field matched_order_gap. The tracker wording is the orchestrator's to amend.",
+     "tests/: this package owns no test file and its seven items are tagged MANUAL, so no test was added. The two check scripts are in the session scratchpad, not in the repository: <scratchpad>/calibration-notes/check_docs.py (one function per criterion, numbers formatted from the metrics files) and check_numbers.py (every decimal in the added lines looked up in the ledger, the registers, the metrics files and the CLI run outputs). Copy them under reports/E13-campaign/ if the checks are to be repeatable.",
+     "src/docdistance/cli.py (noted by the reader-and-pool-warnings verifier, still open): the --help text of --anisotropy on the two symmetric commands reads 'needs a corpus, off by default for a pair', while docs/cli-reference.md states the minimum of about 71 pooled statements."
+    ],
+    "notes": "Version after `make install`: 1.1.12 (run once, after the comment edit, before the gates).\n\nNo behaviour change: `ast.dump` of src/docdistance/distance.py equals the copy taken before the first edit, so only the two comment blocks differ. Tests ran on the final source (21 s); the guardrail ran after the last source edit.\n\nSources of the numbers: the ledger sections E06, E12, E13, E14, E15 and the metrics files under reports/. 294 decimal tokens in the added lines were looked up, 0 without a source; counts such as '111 of 120' were compared by hand. 26 added links and anchors resolve.\n\nCLI outputs in the documents are real runs of the installed 1.1.12 build: the worked example (semantic and structural details, `--json`, panel) and one ibm pair through `distance-wrt-source` one-shot and `--pairs` with `--source-map-json` (gold against adv2-b: n_unsupported 1 / 0).\n\nDecisions inside the package:\n- Readings are quoted at the shipped constants where the ledger gives a registered arm. Example: the no-edit control reads 1 of 117 with the per-half cutoff of E13-H71 and 0 of 117 at 0.325 (E15-H79 metrics, key c0325_e6); the API reference states the second and names the cutoff of every other reading\n- The batch readings are the ledger's notebook-prototype readings (E12-H67 9.94x, E12-H68 10.03x), labelled as such. The readings of the batch-memos package were taken with the load condition not met and are not quoted\n- README detail samples are left as they are. They carry version 1.1.4 and are not a run of a fixture pair (no ibm pair of the baseline reads smd 0.286827), so real values for the new keys cannot be added. The new fields are in bullets that say the sample predates them, with a link to the worked example\n- docs/example-map-interpretations.md now states that its values come from the 1.1.12 development build. The values of the keys the 1.1.2 run showed are unchanged\n- New limit documented from the worked-example run: matched_order_gap is not bounded by order_gap (0.3168 over 4 matched statements against 0.2185 over 6). The structure document also states that on the 66 fixture pairs of unequal count a mean of 4.68 statements is matched and the median matched gap is 0.0000 (E15-H79), so the field does not replace order_gap on independently written documents\n- The unsupported-statement count counts 0 of the 4 statements of the information-noise tier (Set 2) and 9 of 17 of the information-loss tier (E15-H78). The source-conditioned document states this as a limit: the count reads embedding distance, not entailment\n\nFalse or stale statements found in owned files and NOT changed, because they are outside the seven items and the brief:\n1. docs/solution/wmd-source-conditioned-docdistance-solution-sota.md still states the E03 reading of the grounding axis (gold intrusions 2 → 0, tier means 0.084 / 0.141 / 0.236, 'a high grounding residual flags drift'). E12-H69 read 6 gold intrusions with Set 1 above Set 2 on the current INT8 models, and my run read grd 0.0017 for the gold anchor against 0.0016 for adv2-b. The same document says in three places that D_grd is not in the library; the library returns grd_a / grd_b / d_grd. Its abstract quotes a 3.39x range gain where the docstring says about 7.4x and E14-H76 read 6.3433x\n2. docs/solution/wmd-docdistance-solution-sota.md, Mechanism: 'removing them is pure signal gain' stands beside the E12-H64 reading that the projection isolate recovers −4.5%\n3. docs/cli-reference.md and docs/api-reference.md lack the 1.1.5 options --markdown, --min-words, --skip-table-fragments and --home in the per-command tables and signatures. I added --pairs and the Batch mode section only\nA decision on these three belongs to the Star Colonel or the review stage.\n\nTwo memory files were added for later sessions: the registered-arm against shipped-constant trap, and the check method for a documentation package."
+   },
+   "verify": {
+    "package": "calibration-notes",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The checks of the seven items are not in the repository. `tests_added` is empty and the two check scripts exist only in the session scratchpad. Two of the scratch checks are weak: `acc_geom_46` searches the whole document for needles that include the bare strings `0`, `16`, `64` and `0.25`, and `acc_map_63` searches six names only.",
+      "evidence": "MATERIALITY: no user of the product is harmed; the seven items are tagged MANUAL in docs/acc-crit-docdistance.md, so a manual check satisfies the contract. I reproduced each check in both directions: at HEAD the needles (0.892817, 0.908048, 0.7474, 79.44, 0.8902, 0.8219, E14-H77, match_status, matched_order_gap, MATCH_CUTOFF, E13-H70/H71, 'Calibration of the') read 0 hits in all six files; on the working tree `check_docs.py --base distance.before.py` reads '0 of 9 check(s) failed' and `check_numbers.py` reads '0 number(s) without a source'. Mutation that leaves `acc_geom_46` green: exchange the contrast cells of the rows m = 4 and m = 16 of the kernel table. I closed that gap by hand: every cell of the five bandwidth rows and of the shipped row equals reports/E14-H77-kernel-pca-prepass-metrics.json (cost_spearman_min_gate_pools, monotone_copy, bootstrap_stability ibm / triples min-max / wergeland, contrast, V_sel, both margins, both V). REMEDY: DEFER, or copy the two scripts under reports/E13-campaign/ as the implementer proposes; that is the orchestrator's decision. I do not recommend a pytest test: a test that searches comments and prose for strings guards text, not behaviour.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/docs/acc-crit-docdistance.md",
+      "line": 398
+     },
+     {
+      "severity": "minor",
+      "claim": "An owned document still holds a false statement that the package left in place: line 110 says '`D_grd` not yet in the library', while the library returns `grd_a` / `grd_b` / `d_grd` and line 60, added by this package, says the unsupported count 'does not replace `D_grd`'.",
+      "evidence": "MATERIALITY: a reader of the solution document is told the grounding axis is absent from the library; the statement is present at HEAD (`git show HEAD:<file> | grep -c 'not yet in the library'` → 1), is outside the seven items, and the implementer disclosed it in the notes together with two other stale statements (the 3.39x range gain, 'pure signal gain'). `SourceConditionedResult.__dataclass_fields__` on the installed build lists grd_a, grd_b, d_grd, and docs/cli-reference.md lists the three keys in the `--json` output. REMEDY: EDIT line 110 on the Star Colonel's decision; not required by any item of this package.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+      "line": 110
+     },
+     {
+      "severity": "minor",
+      "claim": "The note 'make install: run once, after the comment edit, before the gates' does not match the file times in full: src/docdistance/distance.py was written again 16 minutes after the install.",
+      "evidence": "MATERIALITY: none; the install is editable and only comments differ. Times: pre-edit copy distance.before.py 00:33:36, pyproject.toml and logs/env-install.log 00:34:15 ('New version: 1.1.12'), distance.py last write 00:50:36, logs/refactor-test.log 00:51:04 (250 passed, 1 skipped), implementer's baseline-verify.log 00:51:47 (0 differences). The test run and the guardrail are both later than the last source write, so the claim 'tests ran on the final source' holds. `ast.dump` of the current distance.py equals `ast.dump` of the pre-edit copy, and `diff` shows two comment blocks only (lines 30-36 and 39-50). The eight documents were written at 00:52:54 and 00:53:58, after the gates; the number check reads 297 tokens today against the 294 the note quotes, 0 without a source. REMEDY: DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 30
+     }
+    ],
+    "gates": {
+     "make_test": "250 passed, 1 skipped in 29.14s (exit 0; the skipped test is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in, needs real S3)",
+     "make_lint": "18 files already formatted; All checks passed! (also `uvx ruff@0.16.2 check --target-version py312`: All checks passed!)",
+     "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP - 3 findings, all minor; the seven items hold, the three gates are green.\n\nWhat I checked myself, beyond the implementer's scripts:\n- ACC-CALIB-24 / 27: both comment blocks read in src/docdistance/distance.py lines 29-51. Bands, headroom 0.006144, gap 0.001904, 79.44 / 74.74, the fp band, the 0.760 to 0.790 range and the notebook 09 cell 10 origin sentence are present and equal reports/E12-H59 and E12-H63 metrics. DEFAULT_THRESHOLD is 0.77 and STRUCTURE_THRESHOLD is 0.90, unchanged\n- ACC-CALIB-25: four numbered steps, the two-article table and the empty cross-article band are present. Step 1 matches the E11 notebook (6 displacement bins, mean per bin, mean over base documents) and the fixture meta (swap counts 0 to 40, 14 seeds). The swept thresholds named valid (0.895 to 0.905 ibm, 0.910 to 0.970 wergeland, 0 of 29 on both) follow from the bands\n- ACC-CALIB-26: bands, widths, leave-one-out moves (+2.30, -1.64, the other 8 subsets 0.0), drift 40.6%, 3 of 10, V 0/24 on both backends and the anchor-swap band equal the E12-H63 metrics\n- ACC-CALIB-28: 0.9493 / 0.9052 / 0.9141 / 0.8902 and 0.8219 equal E12-H62 `structure_closeness_per_k` and `per_family.tail.3`; 280 of 280, 6.101e-04, AUC 0.999903 / 0.950980 equal E13-H70\n- ACC-MAP-63: every quoted E13-H70, E13-H71, E13-H72, E13-H73, E13-H74, E15-H78, E15-H79, E15-H80 reading that I looked up has a matching key in its metrics file or a line in the ledger (about 130 values). Signatures, constants and their modules, result fields, the iteration cap, the panel text, the JSONL `pair` key, the memo key and the warning sites match the installed code. New exports of `__init__.py` and the one new CLI option (`--pairs` on distance-wrt-source) are all documented\n- Worked example: I ran both CLI commands on the two documents with the installed build. The `--json` result is equal to the document digit for digit (matched_order_gap 0.31681132314249016, n_matched 4), the two verbatim records are equal to the run key for key, summary reads n_kept 4 / n_removed 2 / n_added 2, and the structural details file does not carry matched_order_gap, as documented\n- 26 links and anchors in the added lines resolve\n- ACC-GEOM-46: table verified row by row (see finding 1)\n\nContract checks: (3) additive policy holds - comments only in distance.py, guardrail 0 differences. (4) outside the package list the implementer reports pyproject.toml, uv.lock and logs/env-install.log (expected from `make install`), logs/refactor-test.log (ignored by git, already indexed in logs/README.md) and three files under .claude/agent-memory/ (ignored by git, agent memory). (5) no new quantity in this package; the documents call partial_matching an annotation, matched_order_gap and unsupported_count scores, residual_a a metric; nothing approximate is called exact. (6) Python 3.12 syntax check passes. (7) no code added. (8) HEAD is still bd0002e of 2026-09-17, no tag after 2026-08-31, nothing staged; journal, ledger and both trackers were last written between 13:37 and 19:45 on 2026-10-09, before this package's work (00:33 to 00:54 on 2026-10-10); the seven items are still unchecked in the tracker.\n\nLens summary: the package changes no behaviour, so the test suite gains and loses nothing; cut list is empty because no test was added. The risk the package carries is a false number or a false description in a document, and that risk is retired only by the manual comparison above, which nothing in the repository repeats.\n\nOpen item for the orchestrator, from the implementer and confirmed: ACC-CALIB-28 in the tracker ends 'until a length correction ships'; no length correction of order_gap ships, the remedy is the new field.\n\nSide effects of my own work: I wrote scratch files into the root of the shared scratchpad before I moved to the subdirectory verify-calib/ (flat.py, h59.txt, h63.txt, h70.txt, h71.txt, h77.txt, baseline.log, test.log). Files named h72.txt and h73.txt from another agent were already there, so I may have overwritten that agent's h70.txt, h71.txt, h77.txt or flat.py. I did not edit, stage or revert any file of the repository, and I did not run `make install`."
+   },
+   "repaired": false
+  }
+ ],
+ "final": {
+  "package": "final-gate",
+  "verified": true,
+  "findings": [],
+  "gates": {
+   "make_test": "250 passed, 1 skipped in 21.11s (exit 0, 251 collected)",
+   "make_lint": "All checks passed! (exit 0; format check line: 18 files already formatted)",
+   "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0)"
+  },
+  "items_not_met": [],
+  "notes": "All five commands exited 0, and there was no commit and no tag. Lens: qa-engineer. I edited no file in the repository; logs went to the session scratchpad.\n\nRemaining last lines:\n- `uvx ruff@0.16.2 check --target-version py312`: `All checks passed!`\n- `git status --short`: `?? reports/E15-H80-moved-on-matched-pairs-metrics.json`. The output has 91 lines: 68 modified and unstaged, 23 untracked, 0 staged. It was identical before and after I ran the gates.\n\nBaseline verify: the literal last line of the output is `<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute`. The result line `verify: 55 pairs, 3 grounded, 0 difference(s)` is the line before it. A consumer that reads only the last line gets the warning, not the result.\n\nNo commit: `git log -1 --oneline` prints `bd0002e chore: refresh uv.lock`, dated 2026-09-17. That commit is also the newest reflog entry. `main` is not ahead of `origin/main`, and the stash list is empty.\n\nNo tag: `git tag --points-at HEAD` printed nothing. The newest tag in the repository is `CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5` from 2026-08-31.\n\nVersion line: `7:version = \"1.1.12\"` in the working tree; HEAD holds `1.1.5`. The installed package metadata also reads 1.1.12, so the gates ran on the current build. `make lint` and `make test` do not depend on `make install`, and the version did not change during my run.\n\nThe 1 skipped test is `tests/test_bootstrap.py:118`, an opt-in test that downloads from the real S3 bucket. There were no failures, errors or xfails.\n\nLoad average was 31.7 at the start and 35.3 at the end, which applies to the 21.11 s test timing.\n\nThe prompt supplied no bar (purpose, input universe, primary path). I ran the gates only and made no severity-rated review of the test suite, so the empty findings list covers gate results, not test-strategy quality."
+ }
+}

@@ -117,7 +117,7 @@
       "kept_moved_conjunction": 0,
       "kept_max_abs_norm": 0.0417,
       "removed_no_counterpart": 1,
-      "removed_moved_conjunction": 1
+      "removed_moved_conjunction": 2
     }
   },
   "reversal": {
@@ -139,7 +139,7 @@
     "true_positives_lost": 0,
     "false_fires_shipped": 0,
     "false_fires_conjunction": 0,
-    "wall_seconds": 2.87
+    "wall_seconds": 3.04
   },
   "moved_counts": {
     "insertion": {
@@ -155,8 +155,8 @@
       "conjunction": 0
     },
     "shrink_text": {
-      "shipped": 1,
-      "conjunction": 1
+      "shipped": 2,
+      "conjunction": 2
     },
     "reversal_orth": {
       "shipped": 12,
@@ -263,7 +263,7 @@
   },
   "verdict": "Promoted",
   "timings": {
-    "model_load_and_embed_s": 15.9,
-    "reorder_pool_s": 2.87
+    "model_load_and_embed_s": 17.3,
+    "reorder_pool_s": 3.04
   }
 }

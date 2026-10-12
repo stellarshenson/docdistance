@@ -4,19 +4,24 @@ The heavy dependencies (torch, transformers, openvino, wtpsplit, huggingface_hub
 lazily inside the functions, so the pure-numpy :mod:`docdistance.distance` core stays
 importable - and unit-testable - without them.
 
-Inference never downloads. The constructors set ``HF_HUB_OFFLINE=1`` and resolve each model from the
-init mirror (``docdistance.json`` model paths), then the local dev dir, then the HuggingFace cache;
-a model missing from all three raises :class:`ModelsNotInstalled` pointing at ``docdistance init``.
+Inference never downloads. With ``offline=True`` each constructor holds the HuggingFace Hub library
+in offline mode while its model loads (:func:`_hub_offline`) and resolves the model from the init
+mirror (``docdistance.json`` model paths), then the local dev dir, then the HuggingFace cache; a
+model missing from all three raises :class:`ModelsNotInstalled` pointing at ``docdistance init``.
 Downloading happens only in :func:`docdistance.bootstrap.init`, which the ``init`` CLI command calls.
 """
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 import contextlib
+from html.parser import HTMLParser
 import io
 import os
 from pathlib import Path
 import re
+import sys
+import threading
 
 from loguru import logger
 import numpy as np
@@ -27,6 +32,13 @@ from docdistance import config
 # and advisory warnings (e.g. dropped LM-head keys) that leak past stderr redirection
 os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
 os.environ.setdefault("TRANSFORMERS_NO_ADVISORY_WARNINGS", "1")
+
+# block OpenVINO's usage telemetry before openvino is ever imported - `import openvino` otherwise
+# sends a Google Analytics event through a multiprocessing.Process, and under the forkserver start
+# method (the Linux default from Python 3.14) that child re-imports the main module, so a script
+# without a main guard runs twice. A None entry makes `import openvino_telemetry` raise ImportError,
+# on which OpenVINO falls back to its bundled no-op stub (openvino.tools.ovc.telemetry_stub)
+sys.modules.setdefault("openvino_telemetry", None)
 
 EMBED_BATCH = 64
 MAX_TOKENS = 128
@@ -83,11 +95,60 @@ def _set_hf_token() -> None:
     os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
-def _resolve_ov_dir(key: str, hf_repo: str, local_fallback: Path, offline: bool) -> Path:
+_hub_lock = threading.Lock()
+_hub_scopes = 0  # scopes of _hub_flag open now, on all threads
+_hub_before = False  # the value of the flag before the first of them started
+
+
+@contextlib.contextmanager
+def _hub_flag(offline: bool) -> Iterator[None]:
+    """Hold the offline flag of the HuggingFace Hub library at ``offline`` until the scope ends.
+
+    The library reads ``HF_HUB_OFFLINE`` from the environment once, when it is imported, and
+    :func:`_require_models_extra` imports it, so a change of the variable after that import changes
+    nothing. Every request reads ``huggingface_hub.constants.HF_HUB_OFFLINE``, the flag this scope
+    sets, whichever module imported the library first.
+
+    The flag belongs to the process, so the scopes of all threads are counted under one lock: the
+    value the flag had before the first scope started is put back when the last scope ends. Two
+    loads that overlap on two threads both stay offline until the later one ends. A scope with the
+    opposite value that overlaps (a model load during ``docdistance init``) sets the flag for both
+    from its start until the last scope ends.
+    """
+    global _hub_scopes, _hub_before
+    from huggingface_hub import constants
+
+    with _hub_lock:
+        if _hub_scopes == 0:
+            _hub_before = constants.HF_HUB_OFFLINE
+        _hub_scopes += 1
+        constants.HF_HUB_OFFLINE = offline
+    try:
+        yield
+    finally:
+        with _hub_lock:
+            _hub_scopes -= 1
+            if _hub_scopes == 0:
+                constants.HF_HUB_OFFLINE = _hub_before
+
+
+def _hub_offline(offline: bool) -> contextlib.AbstractContextManager[None]:
+    """Hold the HuggingFace Hub library in offline mode while a model loads (DEF-DEPS-14).
+
+    With ``offline`` true the load reads the local cache only (:func:`_hub_flag`); the mode the
+    library had is put back afterwards, so a later ``docdistance init`` in the same process still
+    reaches the Hub. With ``offline`` false the mode of the library is left as it is.
+    """
+    return _hub_flag(True) if offline else contextlib.nullcontext()
+
+
+def _resolve_ov_dir(key: str, hf_repo: str, local_fallback: Path) -> Path:
     """Resolve an OpenVINO IR dir for ``key``: init mirror -> local dev dir -> HuggingFace snapshot.
 
     The init mirror (``docdistance.json`` model paths) wins so a provisioned S3 / local model is used
-    offline; otherwise fall back to the dev ``models/`` dir, then download from the Hub.
+    offline; otherwise fall back to the dev ``models/`` dir, then to the HuggingFace snapshot: the
+    cached one when the caller holds the Hub library offline (:func:`_hub_offline`), a download
+    otherwise.
     """
     from docdistance import settings
 
@@ -96,8 +157,6 @@ def _resolve_ov_dir(key: str, hf_repo: str, local_fallback: Path, offline: bool)
         return Path(mirror)
     if local_fallback and (Path(local_fallback) / "openvino_model.xml").exists():
         return Path(local_fallback)
-    if offline:
-        os.environ.setdefault("HF_HUB_OFFLINE", "1")
     from huggingface_hub import snapshot_download
 
     try:
@@ -123,18 +182,20 @@ class Segmenter:
     def __init__(self, offline: bool = True):
         _require_models_extra()
         _set_hf_token()
-        if offline:
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
         from docdistance import settings
 
         sat_src = (
             settings.get().model_paths.get("sat") or config.SAT_MODEL
         )  # init mirror or HF name
-        with contextlib.redirect_stderr(io.StringIO()):
+        # an init mirror holds the tokenizer beside the weights (DEF-DEPS-17); without that file
+        # wtpsplit loads the tokenizer by its Hub name, config.SAT_TOKENIZER, from the cache
+        in_mirror = (Path(sat_src) / "tokenizer.json").exists()
+        tokenizer = {"tokenizer_name_or_path": sat_src} if in_mirror else {}
+        with contextlib.redirect_stderr(io.StringIO()), _hub_offline(offline):
             from wtpsplit import SaT
 
             try:
-                self._sat = SaT(sat_src)
+                self._sat = SaT(sat_src, **tokenizer)
             except Exception as exc:  # missing weights under offline mode
                 raise ModelsNotInstalled(_INSTALL_HINT) from exc
         logger.debug("loaded SAT segmenter '{}'", sat_src)
@@ -144,8 +205,12 @@ class Segmenter:
             return [s.strip() for s in self._sat.split(text) if s.strip()]
 
 
-_HEADING_RE = re.compile(r"^#{1,6}\s+")
-_LIST_RE = re.compile(r"^(?:[-*+]|\d+[.)])\s+")
+# a heading or bullet marker matches with text after it or bare; a bare one leaves no text to embed.
+# A bare numbered marker ("42.") stays prose: it can be the last word of a wrapped paragraph
+_HEADING_RE = re.compile(r"^#{1,6}(?:\s+|$)")
+_LIST_RE = re.compile(r"^(?:[-*+](?:\s+|$)|\d+[.)]\s+)")
+# horizontal rule: 3 or more of one of - * _ with or without spaces between them
+_RULE_RE = re.compile(r"^([-*_])(?:\s*\1){2,}$")
 
 
 def split_markdown(text: str, prose_split) -> tuple[list[str], list[str]]:
@@ -155,9 +220,12 @@ def split_markdown(text: str, prose_split) -> tuple[list[str], list[str]]:
     structural line becomes one atomic statement: the reported text keeps the raw line, the
     embedded text strips the markup (heading hashes, list markers, table pipes). Fence delimiter
     lines, table separator rows (``|---|---|``) and marker-only lines carry no content and are
-    dropped. Prose paragraphs go through ``prose_split`` (the SaT segmenter's ``split``), where
-    reported and embedded text coincide. Returns the parallel ``(reported, embedded)`` lists,
-    row-aligned so ``embedded[i]`` is the encoder input for ``reported[i]``.
+    dropped. A marker-only line is a bare heading marker (``###``), a bare bullet (``-``, ``*``,
+    ``+``) or a horizontal rule (``---``, ``***``, ``___``, with or without spaces); it ends the
+    prose paragraph before it. Prose paragraphs go through ``prose_split`` (the SaT segmenter's
+    ``split``), where reported and embedded text coincide. Returns the parallel
+    ``(reported, embedded)`` lists, row-aligned so ``embedded[i]`` is the encoder input for
+    ``reported[i]``.
     """
     reported: list[str] = []
     embedded: list[str] = []
@@ -186,7 +254,7 @@ def split_markdown(text: str, prose_split) -> tuple[list[str], list[str]]:
         if in_fence:
             atomic(line, stripped)
             continue
-        if not stripped:
+        if not stripped or _RULE_RE.match(stripped):
             flush_prose()
             continue
         if _HEADING_RE.match(stripped):
@@ -208,6 +276,174 @@ def split_markdown(text: str, prose_split) -> tuple[list[str], list[str]]:
         prose.append(stripped)
     flush_prose()
     return reported, embedded
+
+
+# the HTML reader: tags by what html_to_markdown writes for them. Every other tag is inline and
+# leaves its text only
+# tags dropped with what they hold. head is not one of them: a document may omit its end tag and
+# the body tag, and the dropped region would then hold the whole document. title is dropped
+# wherever it stands, since a document may omit the head tag around it
+_HTML_DROPPED = frozenset({"script", "style", "template", "noscript", "svg", "title"})
+_HTML_HEADINGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
+_HTML_LISTS = frozenset({"ul", "ol"})
+_HTML_CELLS = frozenset({"td", "th"})
+# tags whose text is a paragraph; hr holds no text and only ends the paragraph before it
+_HTML_PARAGRAPHS = frozenset(
+    {"p", "div", "blockquote", "section", "article", "dt", "dd", "figcaption", "caption", "hr"}
+    | {"header", "footer", "main", "nav", "aside", "address", "form"}
+    | {"figure", "details", "summary"}
+)
+# tags that open a block of their own kind: a heading line, a list-item line, a fenced block
+_HTML_OWN_BLOCK = _HTML_HEADINGS | {"li", "pre"}
+# tags that end the open block; a table row and its cells are handled apart from them
+_HTML_BLOCKS = _HTML_OWN_BLOCK | _HTML_LISTS | _HTML_PARAGRAPHS
+
+
+class _MarkdownWriter(HTMLParser):
+    """The parser behind :func:`html_to_markdown`: one open block, one open table row, the lines."""
+
+    def __init__(self) -> None:
+        super().__init__()  # convert_charrefs is on: character references arrive decoded
+        self.lines: list[str] = []
+        self._text: list[str] = []  # text of the open block
+        self._kind = "p"  # the open block: "p", "h1" to "h6", "li", "pre" or "cell"
+        self._cells: list[str] = []  # closed cells of the open table row
+        # the open lists, outermost first: the items opened so far in an ol, None for a ul
+        self._lists: list[int | None] = []
+        self._dropping = 0  # open elements of _HTML_DROPPED
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag in _HTML_DROPPED:
+            self._dropping += 1
+        if self._dropping:
+            return
+        if tag == "br":
+            self._text.append("\n")
+        elif tag == "tr":
+            self.end_row()
+        elif tag in _HTML_CELLS:
+            self._end_block()
+            self._kind = "cell"
+        elif tag in _HTML_BLOCKS:
+            self._break(tag, opens=tag if tag in _HTML_OWN_BLOCK else "p")
+        if tag in _HTML_LISTS:
+            self._lists.append(0 if tag == "ol" else None)
+        elif tag == "li" and self._lists and self._lists[-1] is not None:
+            self._lists[-1] += 1  # the number of this item; the start attribute is not read
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in _HTML_DROPPED:
+            self._dropping = max(self._dropping - 1, 0)  # an end tag without a start drops nothing
+        elif self._dropping:
+            return
+        elif tag in ("tr", "table"):
+            self.end_row()
+        elif tag in _HTML_BLOCKS:
+            self._break(tag)
+        if tag in _HTML_LISTS and self._lists:  # an end tag without a start closes no list
+            self._lists.pop()
+
+    def handle_data(self, data: str) -> None:
+        if self._dropping:
+            return
+        # a paragraph is written on one line: a line break of its source text is whitespace, so
+        # the line break a br adds is the only one its text holds
+        self._text.append(data.replace("\n", " ") if self._kind == "p" else data)
+
+    def _break(self, tag: str, opens: str = "p") -> None:
+        """End the open block at the block tag ``tag`` and open a block of the kind ``opens``.
+
+        A cell keeps every block inside it and a list item keeps the paragraphs inside it: there
+        the tag is a space in the text and the block stays open.
+        """
+        if self._kind == "cell" or (self._kind == "li" and tag in _HTML_PARAGRAPHS):
+            self._text.append(" ")
+            return
+        self._end_block()
+        self._kind = opens
+
+    def _end_block(self) -> None:
+        """Write the open block as its markdown lines; the open block is a paragraph afterwards."""
+        text, kind = "".join(self._text), self._kind
+        self._text.clear()
+        self._kind = "p"
+        if kind == "pre":
+            self.lines += ["```", *text.strip("\n").splitlines(), "```"]
+        elif kind == "cell":
+            self._cells.append(" ".join(text.replace("|", " ").split()))
+        elif kind == "p":
+            collapsed = (" ".join(line.split()) for line in text.split("\n"))
+            lines = [line for line in collapsed if line]
+            if lines:
+                self.lines += [*lines, ""]
+        elif text.split():
+            marker = self._item_marker() if kind == "li" else "#" * int(kind[1])
+            self.lines.append(" ".join([marker, *text.split()]))
+
+    def _item_marker(self) -> str:
+        """The marker of the open list item: its indentation, then its number or a dash.
+
+        Two spaces per list around its own. The number and a full stop in an ``ol``; a dash in a
+        ``ul`` and outside any list.
+        """
+        number = self._lists[-1] if self._lists else None
+        return "  " * (len(self._lists) - 1) + ("-" if number is None else f"{number}.")
+
+    def end_row(self) -> None:
+        """End the open block and write the cells of the open table row as one pipe row."""
+        self._end_block()
+        if self._cells:
+            self.lines.append("| " + " | ".join(self._cells) + " |")
+            self._cells.clear()
+
+
+def html_to_markdown(text: str) -> str:
+    """Write the block structure of an HTML text as the markdown lines :func:`split_markdown` reads.
+
+    The HTML reader is this conversion followed by the markdown reader, so the section scan and the
+    fragment filters work on an HTML document as on a markdown one.
+
+    - ``h1`` to ``h6``: the level in ``#``, a space, the text on one line
+    - ``li``: a marker and the text on one line, indented by two spaces per list around its own,
+      as a nested markdown list is. The marker is ``- `` in a ``ul``. In an ``ol`` it is the number
+      of the item and a full stop (``1. ``, ``2. ``, ...): each ``ol`` counts its items from 1, a
+      nested one as well, the ``start`` attribute is not read, and an item without text takes its
+      number and writes no line. The text of an item ends where a list nested in it starts
+    - ``tr``: ``| cell | cell |`` from its ``td`` and ``th`` texts; a ``|`` inside a cell becomes a
+      space. No separator row is written: :func:`split_markdown` drops it
+    - ``pre``: a fenced block with the lines of its text
+    - ``p``, ``div``, ``blockquote``, ``section``, ``article``, ``dt``, ``dd``, ``figcaption``,
+      ``caption``, ``header``, ``footer``, ``main``, ``nav``, ``aside``, ``address``, ``form``,
+      ``figure``, ``details``, ``summary`` and text outside any block: a paragraph followed by a
+      blank line
+    - ``br``: a line break in the open block; ``hr``: the end of the paragraph before it
+    - ``script``, ``style``, ``template``, ``noscript``, ``svg``, ``title`` (also outside a
+      ``head``) and comments: dropped with what they hold. ``head`` is not dropped: a document may
+      omit its end tag and the ``body`` tag. Of what a ``head`` holds, ``title``, ``script`` and
+      ``style`` are dropped by themselves, and ``meta``, ``link`` and ``base`` hold no text
+    - every other tag (``a``, ``em``, ``strong``, ``span``, ``code``, ``sup``, ``img``, ...): the
+      text inside it only, so an ``img`` leaves nothing
+
+    Character references are decoded. Whitespace inside a heading, a list item and a cell collapses
+    to single spaces. A paragraph is written on one line with its whitespace collapsed to single
+    spaces: the prose segmenter cuts at every line break, so the statements of an HTML document do
+    not depend on how its source text is wrapped. A ``br`` is the only line break inside a
+    paragraph, and a line left empty by two of them is removed. A ``p`` inside an ``li`` is text of
+    that item, and every block inside a cell is text of that cell. U+FEFF, the byte order mark, is
+    removed from the converted text.
+
+    Malformed HTML raises nothing: the parser of the standard library is lenient, and an unclosed
+    block ends at the next block or at the end of the text. The characters of a paragraph are not
+    escaped, so a paragraph line that starts with a markdown marker is read by
+    :func:`split_markdown` as that structure, and inline markup that a markdown document keeps as
+    characters (``**bold**``) has no counterpart in the converted text. Text outside any block is
+    one paragraph up to the next block, so a text without tags is converted to one line.
+    """
+    writer = _MarkdownWriter()
+    writer.feed(text)
+    writer.close()
+    writer.end_row()
+    return "\n".join(writer.lines).replace("\ufeff", "").strip("\n")
 
 
 def _length_order(tok, sents: list[str]) -> list[int]:
@@ -232,15 +468,16 @@ class OpenVINOEncoder:
         import openvino as ov
         from transformers import AutoTokenizer
 
-        src = _resolve_ov_dir(
-            "mmbert", config.MMBERT_OPENVINO_HF, config.MMBERT_OPENVINO_LOCAL, offline
-        )
+        with _hub_offline(offline):
+            src = _resolve_ov_dir(
+                "mmbert", config.MMBERT_OPENVINO_HF, config.MMBERT_OPENVINO_LOCAL
+            )
+            self._tok = AutoTokenizer.from_pretrained(str(src))
         core = ov.Core()
         model = core.read_model(str(src / "openvino_model.xml"))
         # 2nd input name is dropped to '74' (attention_mask) during conversion - feed positionally
         self._innames = [i.get_any_name() for i in model.inputs]
         self._cm = core.compile_model(model, "CPU", {"PERFORMANCE_HINT": "LATENCY"})
-        self._tok = AutoTokenizer.from_pretrained(str(src))
         logger.debug("loaded OpenVINO INT8 encoder from {}", src)
 
     def encode(self, sents: list[str]) -> np.ndarray:
@@ -275,14 +512,12 @@ class TorchEncoder:
     def __init__(self, offline: bool = True, device: str | None = None):
         _require_models_extra()
         _set_hf_token()
-        if offline:
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
         import torch
         from transformers import AutoConfig, AutoModel, AutoTokenizer
 
         self._torch = torch
         self._dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        with contextlib.redirect_stderr(io.StringIO()):
+        with contextlib.redirect_stderr(io.StringIO()), _hub_offline(offline):
             conf = AutoConfig.from_pretrained(config.MMBERT_TORCH_MODEL)
             conf.reference_compile = False  # avoid the ModernBERT first-forward torch.compile hang
             try:
@@ -347,14 +582,15 @@ class OpenVINOReranker(_Reranker):
         import openvino as ov
         from transformers import AutoTokenizer
 
-        src = _resolve_ov_dir(
-            "reranker", config.RERANKER_OPENVINO_HF, config.RERANKER_OPENVINO_LOCAL, offline
-        )
+        with _hub_offline(offline):
+            src = _resolve_ov_dir(
+                "reranker", config.RERANKER_OPENVINO_HF, config.RERANKER_OPENVINO_LOCAL
+            )
+            self._tok = AutoTokenizer.from_pretrained(str(src))
         core = ov.Core()
         model = core.read_model(str(src / "openvino_model.xml"))
         self._innames = [i.get_any_name() for i in model.inputs]
         self._cm = core.compile_model(model, "CPU", {"PERFORMANCE_HINT": "THROUGHPUT"})
-        self._tok = AutoTokenizer.from_pretrained(str(src))
         logger.debug("loaded OpenVINO INT8 reranker from {}", src)
 
     def _pair_logits(self, a: list[str], b: list[str]) -> np.ndarray:
@@ -385,15 +621,13 @@ class TorchReranker(_Reranker):
     def __init__(self, offline: bool = True, device: str | None = None):
         _require_models_extra()
         _set_hf_token()
-        if offline:
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
         import torch
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
         self._torch = torch
         self._dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
         dtype = torch.float16 if self._dev == "cuda" else torch.float32
-        with contextlib.redirect_stderr(io.StringIO()):
+        with contextlib.redirect_stderr(io.StringIO()), _hub_offline(offline):
             try:
                 self._tok = AutoTokenizer.from_pretrained(config.RERANKER_TORCH_MODEL)
                 m = AutoModelForSequenceClassification.from_pretrained(config.RERANKER_TORCH_MODEL)
@@ -442,12 +676,13 @@ class OpenVINONLI:
         import openvino as ov
         from transformers import AutoTokenizer
 
-        src = _resolve_ov_dir("nli", config.NLI_OPENVINO_HF, config.NLI_OPENVINO_LOCAL, offline)
+        with _hub_offline(offline):
+            src = _resolve_ov_dir("nli", config.NLI_OPENVINO_HF, config.NLI_OPENVINO_LOCAL)
+            self._tok = AutoTokenizer.from_pretrained(str(src))
         core = ov.Core()
         model = core.read_model(str(src / "openvino_model.xml"))
         self._innames = [i.get_any_name() for i in model.inputs]
         self._cm = core.compile_model(model, "CPU", {"PERFORMANCE_HINT": "THROUGHPUT"})
-        self._tok = AutoTokenizer.from_pretrained(str(src))
         cfg = json.loads((src / "config.json").read_text(encoding="utf-8"))
         self._entail = _entail_index(cfg.get("id2label", {}))
         logger.debug("loaded OpenVINO INT8 NLI from {} (entail idx {})", src, self._entail)
@@ -477,15 +712,13 @@ class TorchNLI:
     def __init__(self, offline: bool = True, device: str | None = None):
         _require_models_extra()
         _set_hf_token()
-        if offline:
-            os.environ.setdefault("HF_HUB_OFFLINE", "1")
         import torch
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
         self._torch = torch
         self._dev = device or ("cuda" if torch.cuda.is_available() else "cpu")
         dtype = torch.float16 if self._dev == "cuda" else torch.float32
-        with contextlib.redirect_stderr(io.StringIO()):
+        with contextlib.redirect_stderr(io.StringIO()), _hub_offline(offline):
             try:
                 self._tok = AutoTokenizer.from_pretrained(config.NLI_TORCH_MODEL)
                 m = AutoModelForSequenceClassification.from_pretrained(config.NLI_TORCH_MODEL)

@@ -10,14 +10,22 @@ Inputs are raw text or a path to a text/markdown file (auto-detected). Every mar
 outside a fenced code block is stripped from files so titles do not count as statements; deeper
 headings (``## `` and below) are kept, since they carry section content, and ``# `` comment lines
 inside fences are kept verbatim. Files are read as UTF-8.
+
+``input_format`` names the reader of every document of a call (:data:`INPUT_FORMATS`): ``plain``
+gives the whole text to the prose segmenter; ``markdown`` and ``html`` read the block structure;
+``auto``, the default, chooses one of the three per document from its file extension. With the
+default the numbers for ``.md``, ``.markdown``, ``.html`` and ``.htm`` files can differ from 1.1.5,
+which read every document with the plain reader; ``input_format="plain"`` returns them.
 """
 
 from __future__ import annotations
 
 from bisect import bisect_right
 from importlib import metadata
+import os
 from pathlib import Path
 import re
+from stat import S_ISREG
 
 from loguru import logger
 import numpy as np
@@ -25,14 +33,30 @@ import numpy as np
 from docdistance import config, settings
 from docdistance import distance as _core
 from docdistance.distance import (
+    ANISOTROPY_MIN_POOL,
     DEFAULT_THRESHOLD,
+    MATCH_CUTOFF,
     SMD_MAX,
+    SOURCE_SUPPORT_CUTOFF,
     STRUCTURE_THRESHOLD,
     DistanceResult,
     SourceConditionedResult,
     StructuralResult,
 )
-from docdistance.encoders import Segmenter, load_encoder, load_nli, load_reranker, split_markdown
+from docdistance.encoders import (
+    Segmenter,
+    html_to_markdown,
+    load_encoder,
+    load_nli,
+    load_reranker,
+    split_markdown,
+)
+
+# the values of ``input_format``. ``plain`` is the prose segmenter on the whole text, ``markdown``
+# is :func:`~docdistance.encoders.split_markdown`, ``html`` is
+# :func:`~docdistance.encoders.html_to_markdown` followed by the markdown reader, and ``auto``, the
+# default, is one of the three, chosen per document by :func:`_reader_by_extension`
+INPUT_FORMATS = ("plain", "markdown", "html", "auto")
 
 # per-statement "changed" cutoff: a ground cost above the shipped closeness threshold (heuristic).
 # Derived, so it tracks DEFAULT_THRESHOLD: the 0.725 -> 0.77 recalibration moves it 0.389 -> 0.325,
@@ -46,11 +70,38 @@ DIFF_CHANGED_COST = (1.0 - DEFAULT_THRESHOLD) * SMD_MAX
 # balanced (metric) optimal transport.
 NO_COUNTERPART_COST = 0.6
 
-# "moved" cutoff on the target-relative displacement |target_index/n_b - index/n_a|: relative
-# positions are length-invariant, so uniform shrinkage or growth leaves in-place statements near 0
-# on this scale; 0.05 (5% of the document) absorbs the residual rank jitter of a length change
-# while a genuine section relocation exceeds it.
+# "moved" tolerance (E15-H80). A statement reads moved when it is matched - in a one-to-one pair of
+# partial_matching, ground cost below MATCH_CUTOFF - its matched_displacement is not 0, the norm
+# abs(matched_displacement / n_matched) is above this tolerance, and its record is not
+# no_counterpart. matched_displacement is the rank of the matched target among the matched targets
+# minus the rank of the statement among the matched statements; n_matched is the number of pairs.
+# These ranks do not change when a statement without a pair is added or removed, and no tie of the
+# exact plan is read (DEF-TRANS-13). On a fully matched pair of equal statement counts the flag
+# equals the E12-H61 conjunction displacement != 0 and abs(displacement_norm) > MOVED_TOLERANCE
+# (1680 of 1680 permutations of 11 to 14 statements), with one exception: a rank step of exactly
+# 5% of the count (1 of 20, 2 of 40) reads not moved, where target_index/n_b - index/n_a exceeds
+# 0.05 at some positions through float rounding (183 of 190 and 765 of 780 single transpositions
+# equal at 20 and 40 statements).
 MOVED_TOLERANCE = 0.05
+
+# bound, in entries, of each of the two memos of a DocDistance in a ``--pairs`` batch (E12-H67,
+# E12-H68): the statements and embeddings of at most this many document files, and the grounding
+# results of at most this many (document file, source file) pairs. Beyond the bound the least
+# recently used entry is evicted. A sweep over all pairs of N documents encodes each document
+# once while N is at most the bound (N + 1 with a source). An entry of the first memo holds
+# 4 * dim bytes per statement, about 3 kB at 768 dimensions.
+MEMO_SIZE = 64
+
+# the three states of the one-to-one matching, one line each in the ``definitions`` block of both
+# detail files
+_MATCH_DEFINITIONS = {
+    "kept": (
+        "in a pair of the one-to-one matching of A and B statements: pair ground cost < "
+        "match_cutoff on the embeddings as passed in, before any anisotropy pre-pass"
+    ),
+    "removed": "statement of A in no pair of the one-to-one matching",
+    "added": "statement of B in no pair of the one-to-one matching",
+}
 
 # stamped into every detail file so a reader knows what wrote it and against which release
 try:
@@ -68,15 +119,12 @@ def _norm_text(text: str) -> str:
     return " ".join(text.casefold().split())
 
 
-def _load_body(path: Path) -> str:
-    # explicit utf-8: the default is the locale encoding, which silently mojibakes an
-    # accented document on a cp1252 host and raises on an ASCII one
-    lines = path.read_text(encoding="utf-8").splitlines()
+def _strip_titles(text: str) -> str:
     # hash-space stripping is title stripping only: inside a fenced code block a "# " line
     # is a bash/python comment, not a heading, so fence state gates the filter
     kept = []
     in_fence = False
-    for ln in lines:
+    for ln in text.splitlines():
         stripped = ln.lstrip()
         if stripped.startswith(("```", "~~~")):
             in_fence = not in_fence
@@ -88,25 +136,32 @@ def _load_body(path: Path) -> str:
     return "\n".join(kept).strip()
 
 
+def _load_body(path: Path) -> str:
+    # explicit utf-8: the default is the locale encoding, which silently mojibakes an
+    # accented document on a cp1252 host and raises on an ASCII one
+    return _strip_titles(path.read_text(encoding="utf-8"))
+
+
 # extensions that make a non-resolving single-line argument look like a mistyped file path
-_PATHLIKE_SUFFIXES = (".md", ".txt", ".rst", ".html")
+_PATHLIKE_SUFFIXES = (".md", ".markdown", ".txt", ".rst", ".html", ".htm")
 
 
 def _looks_like_path(doc: str) -> bool:
-    if "\n" in doc or len(doc) >= 256:
+    # "<" opens a tag: every closing tag of a one-line HTML text holds "/", and it is no path
+    if "\n" in doc or len(doc) >= 256 or "<" in doc:
         return False
     return "/" in doc or "\\" in doc or doc.lower().endswith(_PATHLIKE_SUFFIXES)
 
 
-def _read(doc: str | Path) -> str:
-    """Resolve a document argument: an existing file path is read, anything else is treated as text."""
+def _file_of(doc: str | Path) -> Path | None:
+    """The file a document argument names; ``None`` when the argument is raw text."""
     if isinstance(doc, Path):
-        return _load_body(doc)
+        return doc
     if isinstance(doc, str):
         try:
             p = Path(doc)
             if p.exists() and p.is_file():
-                return _load_body(p)
+                return p
         except OSError:
             pass
         if _looks_like_path(doc):
@@ -115,8 +170,135 @@ def _read(doc: str | Path) -> str:
                 "treating it as raw text",
                 doc,
             )
-        return doc.strip()
+        return None
     raise TypeError(f"document must be str or Path, got {type(doc).__name__}")
+
+
+def _read(doc: str | Path) -> str:
+    """Resolve a document argument: an existing file path is read, anything else is treated as text."""
+    path = _file_of(doc)
+    return doc.strip() if path is None else _load_body(path)
+
+
+def _requested_format(markdown: bool, input_format: str) -> str:
+    """The reader a call asks for: ``input_format``, or ``"markdown"`` when ``markdown`` is set.
+
+    ``markdown=True`` alone equals ``input_format="markdown"``. Raises ``ValueError`` for a value
+    outside :data:`INPUT_FORMATS`, and for ``markdown=True`` beside ``"plain"`` or ``"html"``,
+    which name two readers. ``"auto"`` is the default of every call, so ``markdown=True`` beside
+    it is ``markdown=True`` alone.
+    """
+    if input_format not in INPUT_FORMATS:
+        raise ValueError(
+            f"unknown input_format {input_format!r}; choose one of {', '.join(INPUT_FORMATS)}"
+        )
+    if not markdown:
+        return input_format
+    if input_format in ("plain", "html"):
+        raise ValueError(
+            f"markdown=True and input_format={input_format!r} name two readers; pass one of them"
+        )
+    return "markdown"
+
+
+# the reader ``auto`` chooses for a file, by its extension in lower case. A file with another
+# extension, a file without extension and raw text are read by the plain reader
+_READER_BY_EXTENSION = {
+    ".md": "markdown",
+    ".markdown": "markdown",
+    ".html": "html",
+    ".htm": "html",
+}
+
+
+def _reader_by_extension(path: Path | None) -> str:
+    """The reader ``auto`` chooses for a document: ``plain``, ``markdown`` or ``html``.
+
+    ``path`` is the file the document argument names, ``None`` for raw text, which reads
+    ``plain``. The extension is the part of the file name from its last dot, compared without
+    letter case (:data:`_READER_BY_EXTENSION`): ``a.md.txt`` reads ``plain``, and so does a name
+    whose only dots stand at its start, such as ``.md``. The content of the file is not read.
+    """
+    if path is None:
+        return "plain"
+    return _READER_BY_EXTENSION.get(os.path.splitext(path)[1].lower(), "plain")
+
+
+def _read_as(doc: str | Path, requested: str) -> tuple[str, str]:
+    """The text a reader segments and the reader that segments it: ``plain``, ``markdown`` or ``html``.
+
+    ``requested`` is a value of :data:`INPUT_FORMATS`. ``plain`` and ``markdown`` read the document
+    as :func:`_read` does. ``auto`` chooses the reader with :func:`_reader_by_extension` and reads
+    the same text for ``plain`` and ``markdown``. Under ``html`` the returned text is the output of
+    :func:`~docdistance.encoders.html_to_markdown`, the text the markdown reader and the section
+    scan then read. The title lines of a file are removed after that conversion: the ``h1`` of an
+    HTML file is no statement, like the ``# `` line of a markdown file, and a ``# `` line inside
+    a ``pre`` block is kept, like the one inside a fence.
+    """
+    if requested in ("plain", "markdown"):
+        return _read(doc), requested
+    path = _file_of(doc)
+    reader = _reader_by_extension(path) if requested == "auto" else "html"
+    text = doc if path is None else path.read_text(encoding="utf-8")
+    if reader == "html":
+        text = html_to_markdown(text)
+    return (text.strip() if path is None else _strip_titles(text)), reader
+
+
+def _memo_key(
+    doc: str | Path, input_format: str, min_words: int, skip_table_fragments: bool
+) -> tuple | None:
+    """The memo key of a document argument, ``None`` when the argument does not name a file.
+
+    ``(resolved path, mtime in ns, size, input_format, min_words, skip_table_fragments, reader of
+    the name)``: the file identity, the three segmentation arguments and the reader that
+    :func:`_reader_by_extension` chooses for the name as given, which decide the statements and
+    the drop count. ``input_format`` is the requested value, so ``auto`` and the reader it chooses
+    for a file are two entries. Two names of one file are two entries when their extensions
+    choose two readers: a symbolic link ``notes.txt`` to ``a.md`` resolves to the path of
+    ``a.md``, and ``auto`` reads each name with the reader of its own extension. A file that is
+    rewritten has a new mtime or a new size, so its earlier entry is not served again. The limit:
+    a rewrite of equal byte size inside one timestamp step of the file system keeps the key, and
+    the memo then serves the earlier content. Raw text has no such identity and is never
+    memoised; :func:`_read` decides what an argument without a key is.
+    """
+    try:
+        path = Path(doc)
+        stat = path.stat()
+    except (OSError, ValueError, TypeError):  # no such file, or not usable as a path
+        return None
+    if not S_ISREG(stat.st_mode):  # a directory is read as raw text
+        return None
+    return (
+        str(path.resolve()),
+        stat.st_mtime_ns,
+        stat.st_size,
+        input_format,
+        min_words,
+        skip_table_fragments,
+        _reader_by_extension(path),
+    )
+
+
+class _Memo:
+    """Store of at most ``bound`` entries that evicts the least recently used; ``bound`` 0 keeps none."""
+
+    def __init__(self, bound: int):
+        self.bound = bound
+        self._entries: dict = {}
+
+    def get(self, key):
+        """The entry under ``key``, which becomes the most recently used; ``None`` without one."""
+        entry = self._entries.pop(key, None)
+        if entry is not None:
+            self._entries[key] = entry  # last position; the first key is the least recently used
+        return entry
+
+    def put(self, key, entry) -> None:
+        """Keep ``entry`` under ``key``, then evict the least recently used entry beyond the bound."""
+        self._entries[key] = entry
+        if len(self._entries) > self.bound:
+            del self._entries[next(iter(self._entries))]
 
 
 # any markdown heading line - the section scan tracks all levels present in the body
@@ -222,16 +404,88 @@ def _filter_fragments(
     return keep_r, keep_e, len(reported) - len(keep_r)
 
 
-def _seg_kwargs(markdown: bool, min_words: int, skip_table_fragments: bool) -> dict:
-    """Only the non-default segmentation kwargs - a default call keeps the original call shape."""
+def _seg_kwargs(input_format: str, min_words: int, skip_table_fragments: bool) -> dict:
+    """Only the non-default segmentation kwargs - a default call keeps the original call shape.
+
+    ``input_format`` is the reader a call asks for (:func:`_requested_format`); its default is
+    ``"auto"``.
+    """
     seg: dict = {}
-    if markdown:
-        seg["markdown"] = True
+    if input_format != "auto":
+        seg["input_format"] = input_format
     if min_words > 0:
         seg["min_words"] = min_words
     if skip_table_fragments:
         seg["skip_table_fragments"] = True
     return seg
+
+
+def _file_prefix(doc: str | Path) -> str:
+    """The start of a log line about a document: its path as given and a colon when it names a file."""
+    return f"{doc}: " if os.path.isfile(doc) else ""
+
+
+def _warn_marker_statements(statements: list[str], doc: str | Path) -> None:
+    """Log one warning when statements of the plain reader hold no letter and no digit (DEF-SEGM-12).
+
+    The plain reader is the prose segmenter. It has no markdown rule, so a bare list or heading
+    marker (``-``, ``###``) comes back as a statement of its own: 21 of the 70 statements of the ibm
+    source article. Such statements repeat and each carries ``1/n`` of the transport mass. The
+    warning names their count, the statement total and the two options that remove them: the
+    markdown reader and the word filter. The statements are left as they are. When ``doc`` names a
+    file the line starts with its path as given, so a ``--pairs`` run says which document it
+    concerns; the line of a raw-text document carries no name.
+    """
+    n_markers = sum(not any(ch.isalnum() for ch in text) for text in statements)
+    if n_markers:
+        logger.warning(
+            "{}{} of {} statements hold no letter and no digit (markdown markers such as '-' or "
+            "'###') and are scored as statements; remove them with --markdown / markdown=True or "
+            "--min-words / min_words",
+            _file_prefix(doc),
+            n_markers,
+            len(statements),
+        )
+
+
+def _warn_small_pool(emb_a: np.ndarray, emb_b: np.ndarray) -> None:
+    """Log one warning when an anisotropy pre-pass pool is below ``ANISOTROPY_MIN_POOL`` (ACC-GEOM-23).
+
+    The pool is the statements of the two documents of a symmetric scoring call, the set
+    :func:`~docdistance.distance.all_but_the_top` estimates the common direction from. Each such
+    call has one pool and calls this once, so a detail call, which applies the pre-pass to that
+    pool twice, logs once, and a ``--pairs`` run logs once per pair. The pre-pass still runs on the
+    pool and every number is the one it gives. The source-conditioned calls log no such warning:
+    their pool holds the source as well, and the minimum was measured on pools without one.
+    """
+    n_pooled = len(emb_a) + len(emb_b)
+    if n_pooled < ANISOTROPY_MIN_POOL:
+        logger.warning(
+            "anisotropy pre-pass pool holds {} statements, below the minimum of {} pooled "
+            "statements for estimating the common direction (E12-H65); the result is computed "
+            "from this pool",
+            n_pooled,
+            ANISOTROPY_MIN_POOL,
+        )
+
+
+def _source_support(emb: np.ndarray, src_emb: np.ndarray) -> list[dict]:
+    """Per statement, its nearest source statement and whether the source supports the statement.
+
+    ``nearest_source_cost`` is the ground cost to the nearest source statement and ``unsupported``
+    whether that cost exceeds ``SOURCE_SUPPORT_CUTOFF`` - the per-statement form of
+    :func:`~docdistance.distance.unsupported_count`, a score and not a metric. Pass the embeddings
+    before the anisotropy pre-pass: the cutoff holds on those only.
+    """
+    cost = _core.cost_matrix(emb, src_emb)
+    return [
+        {
+            "nearest_source_index": int(j),
+            "nearest_source_cost": round(float(row[j]), 4),
+            "unsupported": bool(row[j] > SOURCE_SUPPORT_CUTOFF),
+        }
+        for row, j in zip(cost, cost.argmin(1))
+    ]
 
 
 def _align_statements(
@@ -240,11 +494,13 @@ def _align_statements(
     src_sents: list[str],
     src_emb: np.ndarray,
     top_k: int,
+    support: list[dict],
     sections: list[str] | None = None,
 ) -> list[dict]:
     """Per statement, its top-``k`` source statements by soft coverage weight.
 
-    ``sections`` carries each statement's heading chain (empty strings when unknown).
+    ``support`` carries each statement's nearest-source fields (:func:`_source_support`) onto its
+    record. ``sections`` carries each statement's heading chain (empty strings when unknown).
     """
     secs = sections if sections is not None else [""] * len(sents)
     align = _core.coverage_alignment(emb, src_emb)  # [n, n_source], rows sum to 1
@@ -260,7 +516,9 @@ def _align_statements(
             }
             for j in top
         ]
-        out.append({"index": i, "text": sents[i], "section": secs[i], "matches": matches})
+        out.append(
+            {"index": i, "text": sents[i], "section": secs[i], "matches": matches, **support[i]}
+        )
     return out
 
 
@@ -286,18 +544,31 @@ def _build_source_map(
     chain onto its record (empty strings when unknown). Anisotropy removal is applied the same
     way as the source-conditioned distance (over the pooled A/B/S statements), so the map
     reflects the same geometry the selection axis is scored on.
+    Each record also names its nearest source statement (``nearest_source_index`` /
+    ``nearest_source_cost``) and carries ``unsupported`` (:func:`_source_support`). These three are
+    read on the embeddings as passed in, before the pre-pass, where ``SOURCE_SUPPORT_CUTOFF``
+    holds; the header states the cutoff as ``source_support_cutoff`` and counts the unsupported
+    statements per document in ``n_unsupported``, the same counts as ``n_unsupported_a`` /
+    ``n_unsupported_b`` of the source-conditioned result.
     """
+    # read before the pre-pass, on the embeddings SOURCE_SUPPORT_CUTOFF is calibrated on
+    support_a, support_b = _source_support(ea, es), _source_support(eb, es)
     if anisotropy:
         fixed = _core.all_but_the_top({"a": ea, "b": eb, "s": es}, k=1)
         ea, eb, es = fixed["a"], fixed["b"], fixed["s"]
     return {
         "top_k": top_k,
         "anisotropy": anisotropy,
+        "source_support_cutoff": SOURCE_SUPPORT_CUTOFF,
         "n_statements": {"a": len(sa), "b": len(sb), "source": len(ss)},
+        "n_unsupported": {
+            "a": sum(record["unsupported"] for record in support_a),
+            "b": sum(record["unsupported"] for record in support_b),
+        },
         "n_dropped": n_dropped or {"a": 0, "b": 0, "source": 0},
         "drop_rules": drop_rules or {"min_words": 0, "skip_table_fragments": False},
-        "a": _align_statements(sa, ea, ss, es, top_k, sections=sections_a),
-        "b": _align_statements(sb, eb, ss, es, top_k, sections=sections_b),
+        "a": _align_statements(sa, ea, ss, es, top_k, support_a, sections=sections_a),
+        "b": _align_statements(sb, eb, ss, es, top_k, support_b, sections=sections_b),
     }
 
 
@@ -367,7 +638,18 @@ def _build_semantic_details(
     statements renormalise the marginals, so ``smd`` is computed over the filtered set.
     Anisotropy removal is applied the same way as :func:`~docdistance.distance.compute_distance`, so the
     map reflects the same geometry the distance is scored on.
+    The one-to-one pairs of :func:`~docdistance.distance.partial_matching` (E13-H71) sit beside the
+    plan: each flow carries ``match_index``, the B statement its A statement is paired with
+    (``null`` without a pair), and ``match_status`` ``kept`` or ``removed``; each ``targets`` record
+    carries ``match_source_index`` and ``match_status`` ``kept`` or ``added``; ``summary`` counts
+    them in ``n_kept`` / ``n_removed`` / ``n_added``. The pairs are computed on the embeddings as
+    passed in, before anisotropy removal, the geometry ``MATCH_CUTOFF`` is calibrated on, so they
+    do not change with ``anisotropy``. They are an annotation that depends on that cutoff, not a
+    distance: the plan and ``smd`` are untouched.
     """
+    # matched before the pre-pass, on the embeddings MATCH_CUTOFF is calibrated on
+    match_of_a = dict(_core.partial_matching(ea, eb).tolist())  # A index -> its paired B index
+    match_of_b = {j: i for i, j in match_of_a.items()}
     if anisotropy:
         fixed = _core.all_but_the_top({"a": ea, "b": eb}, k=1)
         ea, eb = fixed["a"], fixed["b"]
@@ -387,6 +669,8 @@ def _build_semantic_details(
         flow["no_counterpart"] = bool(min_cost > NO_COUNTERPART_COST)
         # the cheapest-cost target, the same match ``changed`` is judged against
         flow["identical"] = _norm_text(sa[i]) == _norm_text(sb[int(cost[i].argmin())])
+        flow["match_index"] = match_of_a.get(i)
+        flow["match_status"] = "kept" if i in match_of_a else "removed"
     # target-side view: per B statement, its cheapest incoming source (full column minimum, the
     # mirror of the full-row minimum behind ``changed``) and the summed row-normalised inflow
     norm_plan = plan / plan.sum(axis=1, keepdims=True)  # rows as fractions, matching flow weights
@@ -398,6 +682,8 @@ def _build_semantic_details(
             "best_source_index": int(cost[:, j].argmin()),
             "min_incoming_cost": round(float(cost[:, j].min()), 4),
             "total_incoming_weight": round(float(norm_plan[:, j].sum()), 4),
+            "match_status": "kept" if j in match_of_b else "added",
+            "match_source_index": match_of_b.get(j),
         }
         for j in range(len(sb))
     ]
@@ -433,6 +719,7 @@ def _build_semantic_details(
         "thresholds": {
             "changed_cost": changed_cost,
             "no_counterpart_cost": NO_COUNTERPART_COST,
+            "match_cutoff": MATCH_CUTOFF,
         },
         "definitions": {
             "changed": "cheapest ground cost over the statement's full cost row > changed_cost",
@@ -446,6 +733,7 @@ def _build_semantic_details(
             "share_below_changed": (
                 "share of a section's statements with cheapest row cost <= changed_cost"
             ),
+            **_MATCH_DEFINITIONS,
         },
         "summary": {
             "cost_bands": cost_bands,
@@ -454,6 +742,9 @@ def _build_semantic_details(
             "top_changed": sorted(range(len(min_costs)), key=lambda i: (-min_costs[i], i))[
                 :_TOP_CHANGED_N
             ],
+            "n_kept": len(match_of_a),
+            "n_removed": len(sa) - len(match_of_a),
+            "n_added": len(sb) - len(match_of_a),
         },
         "anisotropy": anisotropy,
         "n_statements": {"a": len(sa), "b": len(sb)},
@@ -484,10 +775,22 @@ def _build_structural_details(
     (1 = same order). Each statement carries its crisp exact-EMD ``target`` and rank ``displacement`` from
     that alignment (the per-statement signal comes from the crisp coupling, not the soft OPW plan),
     plus ``displacement_norm`` - the target-relative position shift ``target_index/n_b - index/n_a``,
-    which does not saturate when the documents differ in length - and ``moved``, defined as
-    ``abs(displacement_norm) > MOVED_TOLERANCE``. When the aligned pair's ground cost exceeds
-    ``NO_COUNTERPART_COST`` the target is an absorber, not a location: the record carries
-    ``no_counterpart: true`` with ``displacement_norm: null`` and ``moved: false``.
+    which does not saturate when the documents differ in length. When the aligned pair's ground
+    cost exceeds ``NO_COUNTERPART_COST`` the target is an absorber, not a location: the record
+    carries ``no_counterpart: true`` with ``displacement_norm: null`` and ``moved: false``.
+    ``moved`` is read on the one-to-one pairs of :func:`~docdistance.distance.partial_matching`
+    (E15-H80), not on that alignment. ``matched_displacement`` is the rank of the statement's
+    matched target among the matched targets minus the rank of the statement among the matched
+    statements, ``null`` when the statement has no match, and ``moved`` is ``matched AND
+    matched_displacement != 0 AND abs(matched_displacement / n_matched) > MOVED_TOLERANCE AND NOT
+    no_counterpart``, with ``n_matched`` the number of pairs. A statement added or removed without
+    a match changes no rank and flags nothing. On a document that repeats a statement this does
+    not always hold: ``moved`` flagged a kept statement in 4 of 120 pure deletions of a
+    62-statement document with 9 repeated statements (E15-H80, see
+    :func:`~docdistance.distance.partial_matching`). The pairs are computed on the embeddings as
+    passed in, before anisotropy removal, the geometry ``MATCH_CUTOFF`` is calibrated on, so
+    ``matched_displacement`` does not change with ``anisotropy``. ``moved`` is an annotation that
+    depends on that cutoff, not a distance.
     Each record also carries ``cost`` - the ground cost of the aligned pair, so moved-intact
     separates from vanished-with-absorption without joining the semantic file - and the heaviest
     target of the already-computed OT ``plan`` as ``semantic_target_index`` / ``semantic_target_cost``
@@ -503,13 +806,24 @@ def _build_structural_details(
     The header is self-describing: ``generator`` / ``version`` stamp the writer,
     ``structure_closeness_definition`` states the formula behind ``structure_closeness``,
     ``thresholds`` carries the cutoffs in force and ``definitions`` what each per-statement field
-    means against them. ``summary`` aggregates the statements once for every consumer -
+    means against them, with the three states of the matching (``kept``, ``removed``, ``added``).
+    ``summary`` aggregates the statements once for every consumer -
     ``n_moved``, ``n_no_counterpart`` and the median ``displacement_norm`` over the
     counterpart-bearing statements (null when none bears a counterpart).
     ``n_dropped`` / ``drop_rules`` record the pre-encoding fragment filter (zeros when off) - dropped
     statements renormalise the marginals, so ``smd`` is computed over the filtered set.
     Anisotropy removal is applied as in :func:`_build_semantic_details`.
     """
+    # matched before the pre-pass, on the embeddings MATCH_CUTOFF is calibrated on;
+    # rows (A index, B index), ascending in the A index
+    pairs = _core.partial_matching(ea, eb)
+    n_matched = len(pairs)
+    # per pair: rank of its B statement among the matched targets minus rank of its A statement
+    # among the matched statements, which is the row of the pair
+    target_ranks = np.argsort(np.argsort(pairs[:, 1]))
+    matched_displacement = dict(
+        zip(pairs[:, 0].tolist(), (target_ranks - np.arange(n_matched)).tolist())
+    )
     if anisotropy:
         fixed = _core.all_but_the_top({"a": ea, "b": eb}, k=1)
         ea, eb = fixed["a"], fixed["b"]
@@ -527,6 +841,7 @@ def _build_structural_details(
     for i in range(n_a):
         j = int(align[i])
         k = int(plan[i].argmax())  # heaviest semantic target of the already-computed OT plan
+        shift = matched_displacement.get(i)  # None: the statement is in no pair
         aligned_costs.append(float(cost[i, j]))
         record = {
             "index": i,
@@ -540,6 +855,7 @@ def _build_structural_details(
             "semantic_target_cost": round(float(cost[i, k]), 4),
             "targets_differ": bool(k != j),
             "displacement": int(disp[i]),  # raw rank shift, kept for continuity; 0 = in place
+            "matched_displacement": shift,  # rank shift among the matched pairs
         }
         if float(cost[i, j]) > NO_COUNTERPART_COST:
             # the aligned target absorbs the mass without being a counterpart: it names no
@@ -548,9 +864,10 @@ def _build_structural_details(
             record["moved"] = False
             record["no_counterpart"] = True
         else:
-            displacement_norm = j / n_b - i / n_a
-            record["displacement_norm"] = round(displacement_norm, 4)
-            record["moved"] = bool(abs(displacement_norm) > MOVED_TOLERANCE)
+            record["displacement_norm"] = round(j / n_b - i / n_a, 4)
+            record["moved"] = (
+                shift is not None and shift != 0 and abs(shift / n_matched) > MOVED_TOLERANCE
+            )
             record["no_counterpart"] = False
         statements.append(record)
     section_aggregates = []
@@ -589,11 +906,20 @@ def _build_structural_details(
             "changed_cost": DIFF_CHANGED_COST,
             "no_counterpart_cost": NO_COUNTERPART_COST,
             "moved_tolerance": MOVED_TOLERANCE,
+            "match_cutoff": MATCH_CUTOFF,
         },
         "definitions": {
             "displacement": "raw rank shift of the crisp alignment; 0 = in place",
             "displacement_norm": "target_index/n_b - index/n_a",
-            "moved": "abs(displacement_norm) > moved_tolerance",
+            "matched_displacement": (
+                "rank of the statement's paired B statement among the paired B statements minus "
+                "the rank of the statement among the kept A statements; null when not kept"
+            ),
+            "moved": (
+                "matched AND matched_displacement != 0 AND "
+                "abs(matched_displacement / n_matched) > moved_tolerance AND NOT no_counterpart; "
+                "matched = kept, n_matched = number of kept statements"
+            ),
             "no_counterpart": (
                 "aligned-pair ground cost > no_counterpart_cost; "
                 "displacement_norm null, moved false"
@@ -601,6 +927,7 @@ def _build_structural_details(
             "share_below_changed": (
                 "share of a section's statements with aligned-pair cost <= changed_cost"
             ),
+            **_MATCH_DEFINITIONS,
         },
         "summary": {
             "n_moved": sum(r["moved"] for r in statements),
@@ -624,9 +951,27 @@ class DocDistance:
     Models load lazily on first use: the encoder + segmenter for ``wmd``, plus the reranker + NLI for
     ``wmd-wrt-source``. Each scoring method first checks the readiness gate, so an un-init'd mode
     raises :class:`~docdistance.settings.NotInitializedError` before any model load.
+
+    ``memo_size`` above 0 switches on two memos (E12-H67, E12-H68), each bounded at that many
+    entries with the least recently used entry evicted beyond it; the ``--pairs`` batches of the
+    CLI pass :data:`MEMO_SIZE`. The first keeps the statements, the embeddings and the drop count
+    of a document file under its :func:`_memo_key`, so a file that recurs across calls is
+    segmented and encoded once. The second keeps the relevance grid and the entailment vector of
+    a (document file, source file) pair, so the source-conditioned calls compute them once per
+    pair. Both hold what is computed before the anisotropy pre-pass, which pools the documents of
+    one call. A document given as raw text enters neither memo. The memos change no returned
+    value while every rewrite of a file changes its mtime or its size (the limit is stated at
+    :func:`_memo_key`). At the default ``memo_size=0`` both are off and every call reads and
+    encodes its documents, as in 1.1.5.
     """
 
-    def __init__(self, backend: str = "openvino", offline: bool = True, device: str | None = None):
+    def __init__(
+        self,
+        backend: str = "openvino",
+        offline: bool = True,
+        device: str | None = None,
+        memo_size: int = 0,
+    ):
         self.backend = backend
         self._offline = offline
         self._device = device
@@ -634,6 +979,11 @@ class DocDistance:
         self._encoder = None
         self._reranker = None
         self._nli = None
+        # memo key -> (statements, embeddings, n_dropped, reader that ran)
+        self._embed_memo = _Memo(memo_size)
+        # (document memo key, source memo key) -> (relevance grid, entailment vector)
+        self._grounding_memo = _Memo(memo_size)
+        self._last_memo_key = None  # memo key of the latest embed_statements call; None: no memo
         self._last_n_dropped = 0  # fragment-filter drop count of the latest embed_statements call
         self.last_n_dropped: dict[
             str, int
@@ -669,6 +1019,7 @@ class DocDistance:
         doc: str | Path,
         *,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> tuple[list[str], np.ndarray]:
@@ -679,19 +1030,64 @@ class DocDistance:
         markers) is stripped from the text that is embedded while the raw line is the text
         reported - and only prose paragraphs go through SaT.
 
+        ``input_format`` names the reader, one of :data:`INPUT_FORMATS`. ``"auto"``, the default,
+        chooses it from the file extension (:func:`_reader_by_extension`): ``.md`` and
+        ``.markdown`` the markdown reader, ``.html`` and ``.htm`` the HTML reader, every other
+        file and raw text the plain reader. ``"plain"`` is the prose segmenter on the whole text,
+        the reader of every document in 1.1.5. ``"markdown"`` equals ``markdown=True``. ``"html"``
+        converts the text with :func:`~docdistance.encoders.html_to_markdown` and reads the
+        result as markdown. One DEBUG line names the reader that ran and, for a file under
+        ``"auto"``, that its extension chose it. An unknown value, and ``markdown=True`` beside
+        ``"plain"`` or ``"html"``, raise ``ValueError`` before a model loads
+        (:func:`_requested_format`).
+
         ``min_words`` / ``skip_table_fragments`` drop fragment statements after segmentation and
         before encoding (see :func:`_filter_fragments`). Filtering changes the SMD: every statement
         carries 1/n of the transport mass, so the marginals renormalise over the surviving
         statements. The drop count lands in ``self._last_n_dropped`` so callers can report it -
         nothing is silently lost.
+
+        When the reader that ran is the plain one, also under ``"auto"``, statements that hold
+        no letter and no digit after the filter (bare markers such as ``-`` or ``###``) are
+        returned and embedded like every other statement, and one warning per document names
+        their count (see :func:`_warn_marker_statements`).
+
+        A document file met before under the same :func:`_memo_key` is served from the memo of the
+        instance: the statements and the vectors are copies of the ones the first call computed,
+        ``self._last_n_dropped`` is set to the count of that call and the marker warning is logged
+        again. The copies keep the two documents of a pair distinct arrays, as two encodes are:
+        the ground cost of one array against itself has an exactly zero diagonal, while two equal
+        arrays leave the float32 rounding residue there (SMD 1.87e-4 for the ibm gold summary
+        against itself).
         """
+        requested = _requested_format(markdown, input_format)
         self._ensure_base()
-        text = _read(doc)
-        if markdown:
-            statements, embed_texts = split_markdown(text, self._segmenter.split)
-        else:
+        # taken before the file is read, so an entry never holds content older than its key
+        key = (
+            _memo_key(doc, requested, min_words, skip_table_fragments)
+            if self._embed_memo.bound
+            else None
+        )
+        self._last_memo_key = key
+        entry = self._embed_memo.get(key)
+        if entry is not None:
+            statements, embeddings, self._last_n_dropped, reader = entry
+            if reader == "plain":
+                _warn_marker_statements(statements, doc)
+            return list(statements), embeddings.copy()
+        text, reader = _read_as(doc, requested)
+        prefix = _file_prefix(doc)
+        logger.debug(
+            "{}read by the {} reader{}",
+            prefix,
+            reader,
+            " (chosen by the file extension)" if requested == "auto" and prefix else "",
+        )
+        if reader == "plain":
             statements = self._segmenter.split(text)
             embed_texts = statements
+        else:
+            statements, embed_texts = split_markdown(text, self._segmenter.split)
         statements, embed_texts, n_dropped = _filter_fragments(
             statements, embed_texts, min_words=min_words, skip_table_fragments=skip_table_fragments
         )
@@ -702,18 +1098,26 @@ class DocDistance:
                     f"document produced no statements ({n_dropped} dropped by the fragment filter)"
                 )
             raise ValueError("document produced no statements")
-        return statements, self._encoder.encode(embed_texts)
+        if reader == "plain":
+            _warn_marker_statements(statements, doc)
+        embeddings = self._encoder.encode(embed_texts)
+        if key is not None:
+            # copies: the caller owns what is returned and may change it in place
+            self._embed_memo.put(key, (list(statements), embeddings.copy(), n_dropped, reader))
+        return statements, embeddings
 
     def embed(
         self,
         doc: str | Path,
         *,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> np.ndarray:
         """Segment then embed a document into L2-normalized statement vectors ``[n, dim]``."""
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        requested = _requested_format(markdown, input_format)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         return self.embed_statements(doc, **seg)[1]
 
     def _grounding(
@@ -728,6 +1132,30 @@ class DocDistance:
         ]
         return R, self._nli.entail(premises, doc_sents)
 
+    def _grounding_memoised(
+        self,
+        doc_key: tuple | None,
+        src_key: tuple | None,
+        doc_sents: list[str],
+        src_sents: list[str],
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """:meth:`_grounding`, computed once per (document file, source file) pair of this instance.
+
+        ``doc_key`` / ``src_key`` are the memo keys :meth:`embed_statements` took for the two
+        documents. Both arrays are functions of the two statement lists only, which the keys
+        identify. Each call returns copies, so a caller that changes one in place does not change
+        what a later call returns. Without a key for either document (raw text, memo off) the
+        arrays are computed and nothing is kept.
+        """
+        if doc_key is None or src_key is None:
+            return self._grounding(doc_sents, src_sents)
+        entry = self._grounding_memo.get((doc_key, src_key))
+        if entry is None:
+            entry = self._grounding(doc_sents, src_sents)
+            self._grounding_memo.put((doc_key, src_key), entry)
+        relevance, entail = entry
+        return relevance.copy(), entail.copy()
+
     def semantic_distance(
         self,
         a: str | Path,
@@ -736,15 +1164,19 @@ class DocDistance:
         anisotropy: bool = False,
         threshold: float = DEFAULT_THRESHOLD,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> DistanceResult:
         settings.require_ready("wmd")
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        requested = _requested_format(markdown, input_format)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         ea = self.embed(a, **seg)
         dropped_a = self._last_n_dropped
         eb = self.embed(b, **seg)
         self.last_n_dropped = {"a": dropped_a, "b": self._last_n_dropped}
+        if anisotropy:
+            _warn_small_pool(ea, eb)
         return _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
 
     def semantic_distance_with_details(
@@ -756,6 +1188,7 @@ class DocDistance:
         threshold: float = DEFAULT_THRESHOLD,
         changed_cost: float = DIFF_CHANGED_COST,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> tuple[DistanceResult, dict]:
@@ -766,11 +1199,14 @@ class DocDistance:
         distance result itself does not depend on it.
         """
         settings.require_ready("wmd")
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        requested = _requested_format(markdown, input_format)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         sa, ea = self.embed_statements(a, **seg)
         dropped_a = self._last_n_dropped
         sb, eb = self.embed_statements(b, **seg)
         self.last_n_dropped = {"a": dropped_a, "b": self._last_n_dropped}
+        if anisotropy:
+            _warn_small_pool(ea, eb)
         result = _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
         details = _build_semantic_details(
             sa,
@@ -781,8 +1217,8 @@ class DocDistance:
             changed_cost=changed_cost,
             n_dropped=self.last_n_dropped,
             drop_rules={"min_words": min_words, "skip_table_fragments": skip_table_fragments},
-            sections=_statement_sections(_read(a), sa),
-            sections_b=_statement_sections(_read(b), sb),
+            sections=_statement_sections(_read_as(a, requested)[0], sa),
+            sections_b=_statement_sections(_read_as(b, requested)[0], sb),
         )
         return result, details
 
@@ -794,15 +1230,19 @@ class DocDistance:
         anisotropy: bool = False,
         threshold: float = STRUCTURE_THRESHOLD,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> StructuralResult:
         settings.require_ready("wmd")
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        requested = _requested_format(markdown, input_format)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         emb_a = self.embed(a, **seg)
         dropped_a = self._last_n_dropped
         emb_b = self.embed(b, **seg)
         self.last_n_dropped = {"a": dropped_a, "b": self._last_n_dropped}
+        if anisotropy:
+            _warn_small_pool(emb_a, emb_b)
         return _core.compute_structural(emb_a, emb_b, anisotropy=anisotropy, threshold=threshold)
 
     def structural_distance_with_details(
@@ -813,16 +1253,20 @@ class DocDistance:
         anisotropy: bool = False,
         threshold: float = STRUCTURE_THRESHOLD,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> tuple[StructuralResult, dict]:
         """The structural (order) distance result and the per-statement displacement details, sharing one encode pass."""
         settings.require_ready("wmd")
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        requested = _requested_format(markdown, input_format)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         sa, ea = self.embed_statements(a, **seg)
         dropped_a = self._last_n_dropped
         sb, eb = self.embed_statements(b, **seg)
         self.last_n_dropped = {"a": dropped_a, "b": self._last_n_dropped}
+        if anisotropy:
+            _warn_small_pool(ea, eb)
         result = _core.compute_structural(ea, eb, anisotropy=anisotropy, threshold=threshold)
         details = _build_structural_details(
             sa,
@@ -832,8 +1276,8 @@ class DocDistance:
             anisotropy=anisotropy,
             n_dropped=self.last_n_dropped,
             drop_rules={"min_words": min_words, "skip_table_fragments": skip_table_fragments},
-            sections_a=_statement_sections(_read(a), sa),
-            sections_b=_statement_sections(_read(b), sb),
+            sections_a=_statement_sections(_read_as(a, requested)[0], sa),
+            sections_b=_statement_sections(_read_as(b, requested)[0], sb),
         )
         return result, details
 
@@ -845,20 +1289,23 @@ class DocDistance:
         *,
         anisotropy: bool = True,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> SourceConditionedResult:
         settings.require_ready("wmd-wrt-source")
+        requested = _requested_format(markdown, input_format)  # raises before a model loads
         self._ensure_grounding()
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         sa, ea = self.embed_statements(a, **seg)
-        dropped_a = self._last_n_dropped
+        dropped_a, key_a = self._last_n_dropped, self._last_memo_key
         sb, eb = self.embed_statements(b, **seg)
-        dropped_b = self._last_n_dropped
+        dropped_b, key_b = self._last_n_dropped, self._last_memo_key
         ss, es = self.embed_statements(source, **seg)
+        key_s = self._last_memo_key
         self.last_n_dropped = {"a": dropped_a, "b": dropped_b, "source": self._last_n_dropped}
-        ra, enta = self._grounding(sa, ss)
-        rb, entb = self._grounding(sb, ss)
+        ra, enta = self._grounding_memoised(key_a, key_s, sa, ss)
+        rb, entb = self._grounding_memoised(key_b, key_s, sb, ss)
         return _core.compute_source_conditioned(
             ea,
             eb,
@@ -879,21 +1326,24 @@ class DocDistance:
         anisotropy: bool = True,
         top_k: int = 3,
         markdown: bool = False,
+        input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
     ) -> tuple[SourceConditionedResult, dict]:
         """The source-conditioned result and the statement-to-source alignment map, sharing one encode pass."""
         settings.require_ready("wmd-wrt-source")
+        requested = _requested_format(markdown, input_format)  # raises before a model loads
         self._ensure_grounding()
-        seg = _seg_kwargs(markdown, min_words, skip_table_fragments)
+        seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         sa, ea = self.embed_statements(a, **seg)
-        dropped_a = self._last_n_dropped
+        dropped_a, key_a = self._last_n_dropped, self._last_memo_key
         sb, eb = self.embed_statements(b, **seg)
-        dropped_b = self._last_n_dropped
+        dropped_b, key_b = self._last_n_dropped, self._last_memo_key
         ss, es = self.embed_statements(source, **seg)
+        key_s = self._last_memo_key
         self.last_n_dropped = {"a": dropped_a, "b": dropped_b, "source": self._last_n_dropped}
-        ra, enta = self._grounding(sa, ss)
-        rb, entb = self._grounding(sb, ss)
+        ra, enta = self._grounding_memoised(key_a, key_s, sa, ss)
+        rb, entb = self._grounding_memoised(key_b, key_s, sb, ss)
         result = _core.compute_source_conditioned(
             ea,
             eb,
@@ -915,8 +1365,8 @@ class DocDistance:
             top_k=top_k,
             n_dropped=self.last_n_dropped,
             drop_rules={"min_words": min_words, "skip_table_fragments": skip_table_fragments},
-            sections_a=_statement_sections(_read(a), sa),
-            sections_b=_statement_sections(_read(b), sb),
+            sections_a=_statement_sections(_read_as(a, requested)[0], sa),
+            sections_b=_statement_sections(_read_as(b, requested)[0], sb),
         )
         return result, smap
 
@@ -931,14 +1381,17 @@ def semantic_distance(
     offline: bool = True,
     device: str | None = None,
     markdown: bool = False,
+    input_format: str = "auto",
     min_words: int = 0,
     skip_table_fragments: bool = False,
 ) -> DistanceResult:
     """Symmetric Statement Mover's Distance between documents ``a`` and ``b`` (loads models, then scores).
 
-    ``markdown`` enables markdown-aware segmentation; ``min_words`` / ``skip_table_fragments``
-    drop fragment statements before encoding, which renormalises the transport marginals and so
-    changes the SMD (see :meth:`DocDistance.embed_statements`).
+    ``markdown`` enables markdown-aware segmentation and ``input_format`` names the reader of
+    every document (``plain``, ``markdown``, ``html``, or ``auto``, the default, which chooses it
+    from the file extension); ``min_words`` /
+    ``skip_table_fragments`` drop fragment statements before encoding, which renormalises the
+    transport marginals and so changes the SMD (see :meth:`DocDistance.embed_statements`).
     """
     return DocDistance(backend=backend, offline=offline, device=device).semantic_distance(
         a,
@@ -946,6 +1399,7 @@ def semantic_distance(
         anisotropy=anisotropy,
         threshold=threshold,
         markdown=markdown,
+        input_format=input_format,
         min_words=min_words,
         skip_table_fragments=skip_table_fragments,
     )
@@ -961,14 +1415,17 @@ def structural_distance(
     offline: bool = True,
     device: str | None = None,
     markdown: bool = False,
+    input_format: str = "auto",
     min_words: int = 0,
     skip_table_fragments: bool = False,
 ) -> StructuralResult:
     """Structural (order) distance between documents ``a`` and ``b`` (loads models, then scores).
 
-    ``markdown`` enables markdown-aware segmentation; ``min_words`` / ``skip_table_fragments``
-    drop fragment statements before encoding, which renormalises the transport marginals and so
-    changes the SMD (see :meth:`DocDistance.embed_statements`).
+    ``markdown`` enables markdown-aware segmentation and ``input_format`` names the reader of
+    every document (``plain``, ``markdown``, ``html``, or ``auto``, the default, which chooses it
+    from the file extension); ``min_words`` /
+    ``skip_table_fragments`` drop fragment statements before encoding, which renormalises the
+    transport marginals and so changes the SMD (see :meth:`DocDistance.embed_statements`).
     """
     return DocDistance(backend=backend, offline=offline, device=device).structural_distance(
         a,
@@ -976,6 +1433,7 @@ def structural_distance(
         anisotropy=anisotropy,
         threshold=threshold,
         markdown=markdown,
+        input_format=input_format,
         min_words=min_words,
         skip_table_fragments=skip_table_fragments,
     )
@@ -991,14 +1449,17 @@ def source_conditioned_distance(
     offline: bool = True,
     device: str | None = None,
     markdown: bool = False,
+    input_format: str = "auto",
     min_words: int = 0,
     skip_table_fragments: bool = False,
 ) -> SourceConditionedResult:
     """Source-conditioned distance d(A, B | S): selection divergence + each document's distance to S.
 
-    ``markdown`` enables markdown-aware segmentation; ``min_words`` / ``skip_table_fragments``
-    drop fragment statements before encoding, which renormalises the transport marginals and so
-    changes the SMD (see :meth:`DocDistance.embed_statements`).
+    ``markdown`` enables markdown-aware segmentation and ``input_format`` names the reader of
+    every document (``plain``, ``markdown``, ``html``, or ``auto``, the default, which chooses it
+    from the file extension); ``min_words`` /
+    ``skip_table_fragments`` drop fragment statements before encoding, which renormalises the
+    transport marginals and so changes the SMD (see :meth:`DocDistance.embed_statements`).
     """
     return DocDistance(backend=backend, offline=offline, device=device).distance_wrt_source(
         a,
@@ -1006,6 +1467,7 @@ def source_conditioned_distance(
         source,
         anisotropy=anisotropy,
         markdown=markdown,
+        input_format=input_format,
         min_words=min_words,
         skip_table_fragments=skip_table_fragments,
     )

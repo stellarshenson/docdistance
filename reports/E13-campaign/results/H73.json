@@ -1,0 +1,191 @@
+{
+  "id": "E13-H73",
+  "slug": "nearest-source-residual",
+  "model": "opus",
+  "verdict": "Refuted",
+  "verdict_number": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading)",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "statement-level AUC of nearest-source cost, own vs foreign, one-sided, pre-pass on: 0.7889 (fail); one-sided, pre-pass off: 0.9670 (pass) (bar >= 0.9; 98 own x 38 foreign = 3724 pairs). The record names no pre-pass setting for the gate; the notebook's rule kills only when both settings read below the bar; settings that pass: one-sided, pre-pass off"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "DEF-TRANS-8 on source[0::7][:10], shipped compute_source_conditioned, pre-pass on: residual_a 0.958 (registered 0.958), closeness_a 0.322 (registered 0.322); pre-pass off: residual_a 0.517, closeness_a 0.634"
+  },
+  "prediction_check": {
+    "predicted": "verbatim extract 0.322 → >= 0.99; Spearman(insertion dose, residual) >= 0.95; deletions move it by under 10% of one insertion",
+    "observed": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading) | one-sided, pre-pass on (kill-gate AUC 0.7889): deletion ratio 310.4% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 0.9643 (bar >= 0.95, met under the per-trajectory reading; 0.8674 under the pooled-points reading) | direction on the verdict arm: (i) matched; (ii) matched; (iii) not defined by the record; one-sided, pre-pass off: median |delta| under deletions 0.005211 against 0.005043 for balanced (shipped), pre-pass off, not below the baseline | direction matched on all three predicted effects: False; the registered magnitude of all three held: False",
+    "direction_matched": false
+  },
+  "acceptance": {
+    "bar": "PASS iff verbatim-extract closeness >= 0.99 AND median per-document Spearman(k foreign insertions, residual) >= 0.95 over k in 0..4 AND median |delta residual| under k in 1..4 deletions <= 10% of the mean one-insertion effect",
+    "met": false,
+    "readings": {
+      "os_pre": {
+        "label": "one-sided, pre-pass on",
+        "verbatim_closeness": 0.999892,
+        "median_per_document_spearman": 0.964286,
+        "median_spearman_pooled_points_not_the_bar_rule": 0.867383,
+        "deletion_ratio": 3.103977,
+        "met": false
+      },
+      "os_raw": {
+        "label": "one-sided, pre-pass off",
+        "verbatim_closeness": 0.999917,
+        "median_per_document_spearman": 1.0,
+        "median_spearman_pooled_points_not_the_bar_rule": 0.949202,
+        "deletion_ratio": 0.340866,
+        "met": false
+      },
+      "bal_pre": {
+        "label": "balanced (shipped default), pre-pass on",
+        "verbatim_closeness": 0.322442,
+        "median_per_document_spearman": -0.842857,
+        "median_spearman_pooled_points_not_the_bar_rule": -0.75896,
+        "deletion_ratio": null,
+        "met": false
+      },
+      "bal_raw": {
+        "label": "balanced (shipped), pre-pass off",
+        "verbatim_closeness": 0.634268,
+        "median_per_document_spearman": -0.257143,
+        "median_spearman_pooled_points_not_the_bar_rule": -0.325271,
+        "deletion_ratio": null,
+        "met": false
+      }
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the one-sided residual is a score and a lower bound of the balanced residual (0 violations in 1166 scored documents), not a metric",
+    "notes": "pre-pass replica equals the shipped residual_a exactly on 1166/1166 scored documents; BLAS limited to 1 thread for the arms, readings identical to the default thread count: balanced True, one-sided True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+  },
+  "key_numbers": {
+    "verdict_arm": "os_raw",
+    "gate_auc": {
+      "os_pre": 0.788937,
+      "os_raw": 0.966971
+    },
+    "def_trans_8": {
+      "residual_a": 0.958211,
+      "closeness_a": 0.322442
+    },
+    "verbatim_closeness": {
+      "os_pre": 0.999892,
+      "os_raw": 0.999917,
+      "bal_pre": 0.322442,
+      "bal_raw": 0.634268
+    },
+    "median_per_document_spearman": {
+      "os_pre": 0.964286,
+      "os_raw": 1.0,
+      "bal_pre": -0.842857,
+      "bal_raw": -0.257143
+    },
+    "median_spearman_pooled_points": {
+      "os_pre": 0.867383,
+      "os_raw": 0.949202,
+      "bal_pre": -0.75896,
+      "bal_raw": -0.325271
+    },
+    "pooled_points_spearman_ceiling": 0.98382,
+    "deletion_ratio": {
+      "os_pre": 3.103977,
+      "os_raw": 0.340866,
+      "bal_pre": null,
+      "bal_raw": null
+    },
+    "deletion_ratio_k1_only": {
+      "os_pre": 1.762462,
+      "os_raw": 0.231179,
+      "bal_pre": null,
+      "bal_raw": null
+    },
+    "deletion_ratio_matched_documents": {
+      "os_pre": 2.051242,
+      "os_raw": 0.439435,
+      "bal_pre": null,
+      "bal_raw": null
+    },
+    "p90_abs_delta_deletion": {
+      "os_pre": 0.063941,
+      "os_raw": 0.015233,
+      "bal_pre": 0.041843,
+      "bal_raw": 0.014021
+    },
+    "direction_by_effect": {
+      "verbatim extract 0.322 → >= 0.99": true,
+      "Spearman(insertion dose, residual) >= 0.95": true,
+      "deletions move it by under 10% of one insertion": null
+    },
+    "one_insertion_effect": {
+      "os_pre": 0.007492,
+      "os_raw": 0.015286,
+      "bal_pre": -0.013275,
+      "bal_raw": -0.00441
+    },
+    "median_abs_delta_deletion": {
+      "os_pre": 0.023256,
+      "os_raw": 0.005211,
+      "bal_pre": 0.015477,
+      "bal_raw": 0.005043
+    },
+    "mean_signed_delta_deletion": {
+      "os_pre": -0.006297,
+      "os_raw": -0.000112,
+      "bal_pre": 0.017885,
+      "bal_raw": 0.006223
+    },
+    "mean_signed_delta_share": {
+      "os_pre": -0.840411,
+      "os_raw": -0.007299,
+      "bal_pre": null,
+      "bal_raw": null
+    },
+    "min_per_document_spearman": {
+      "os_pre": -0.478571,
+      "os_raw": 0.921429,
+      "bal_pre": -0.971429,
+      "bal_raw": -1.0
+    },
+    "tier_mean": {
+      "os_pre": {
+        "gold": 0.979488,
+        "adv1": 1.21614,
+        "adv2": 1.185292
+      },
+      "os_raw": {
+        "gold": 0.282889,
+        "adv1": 0.356138,
+        "adv2": 0.318515
+      },
+      "bal_pre": {
+        "gold": 1.231843,
+        "adv1": 1.377749,
+        "adv2": 1.386734
+      },
+      "bal_raw": {
+        "gold": 0.702585,
+        "adv1": 0.770721,
+        "adv2": 0.758664
+      }
+    },
+    "spearman_vs_model_graded_documents": {
+      "os_pre": 0.363636,
+      "os_raw": 0.418182,
+      "bal_pre": 0.154545,
+      "bal_raw": 0.318182
+    }
+  },
+  "result_summary": "Refuted: the registered bar joins three conditions with AND and the deletion condition is not met. Kill-gate (statement-level AUC of nearest-source cost, 98 own statements against 38 wergeland statements, ibm source, bar 0.9): 0.9670 with the anisotropy pre-pass off and 0.7889 with it on. The record names no pre-pass setting for the gate. Under the notebook's rule (killed only when both settings fail) the gate passes on the raw embeddings and the verdict is read on the one-sided residual with the pre-pass off; read on the default call (pre-pass on) the outcome is Killed-at-gate. Sanity check: DEF-TRANS-8 reproduced on source[0::7][:10] with the shipped default pre-pass (residual_a 0.958, closeness_a 0.322); each copied statement keeps 0.142857 = n/m of its mass on its own copy. Condition (i) met by construction: verbatim-extract closeness 0.9999 in both one-sided arms, against 0.3224 (balanced, pre-pass on) and 0.6343 (balanced, pre-pass off); a copied statement has nearest-source cost zero in any residual with the source marginal released, so this condition cannot fail for the lever. Condition (ii) met under the per-trajectory reading (mean over 14 seeds of the 5-dose Spearman): median per-document Spearman 1.0000 (pre-pass off) and 0.9643 (pre-pass on); under the pooled-points reading the same doses read 0.9492 and 0.8674, below the 0.95 bar (a perfectly ordered response reads 0.9838 there). On the same doses the shipped balanced residual reads -0.2571 and -0.8429, so it falls when foreign statements are added. Condition (iii) not met: the median |residual change| under 1 to 4 deletions is 34.1% of one insertion with the pre-pass off and 310.4% with it on, against a bar of 10%; one deletion only reads 23.1%, the same 10 documents in numerator and denominator read 43.9%. The one-sided residual does not move less under deletions than the balanced baseline on the same doses: median |change| 0.005211 against 0.005043 (pre-pass off) and 0.023256 against 0.015477 (pre-pass on). Prediction: the registered size held on (i) and (ii) and was falsified on (iii); the direction matched on (i) and (ii) and is not defined by the record on (iii), so direction_matched is false. With the pre-pass off the mean signed change under deletions is -0.7% of one insertion; the balanced residual rises under deletions (+0.00622 pre-pass off, +0.01789 pre-pass on). The per-case movement comes from the spread of the per-statement costs (0.0532) against the gap to the foreign costs (0.1197). No bar: tier means of the one-sided residual with the pre-pass off are gold 0.2829, adv1 0.3561, adv2 0.3185; Spearman against the model-graded residual is +0.4182 over the 11 documents and +0.6340 over the 98 statements. Guardrails hold: V 0/24, default-path smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline, no file changed under src/ or tests/.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H73-kj-nearest-source-residual.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H73-nearest-source-residual-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H73-nearest-source-residual.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "1. Gate rule. The record does not say which pre-pass setting the kill-gate reads. The notebook's rule: the run is killed only when both settings read below 0.9, and the verdict is read on a setting that passes. Read on the default call alone (pre-pass on, AUC 0.7889) the outcome is Killed-at-gate. Neither reading promotes the lever. The choice between the two rules is the orchestrator's. 2. Default call. compute_source_conditioned applies the pre-pass by default. Inside that call the one-sided residual reads AUC 0.7889 against 0.9670 on raw embeddings, a deletion ratio of 310.4%, and a dose-response of -0.4786 on the one-statement document adv2-a. A DEF-TRANS-8 fix computed after the default pre-pass would read these numbers. Which pre-pass step causes the loss (mean subtraction or component removal) was not decomposed. 3. Condition (i) holds by construction: the nearest source statement of a copied statement is the statement itself, so its cost is zero up to float32 rounding. Of the three bar conditions, one could have failed and was met: (ii), under the configured reading rule. An extract that paraphrases the source was not measured; a later record for this lever needs one for condition (i) to be a test. 4. Reading rules. Three rules are the executor's because the record leaves them open: the gate over two pre-pass settings, the per-document Spearman, the foreign set. The notebook was executed more than once, so its outputs do not prove that each rule was written before the first numbers were seen. Per-document Spearman: mean over 14 seeds of the Spearman of each 5-dose trajectory; the record does not mention seeds, and with all 70 points of a document pooled the medians are 0.9492 (pre-pass off) and 0.8674 (on), below the bar. Foreign set: wergeland statements of 5 words or more with the HTML provenance comment of the fixture file removed, 38 statements; with the 6 heading fragments included the gate AUCs are 0.9260 and 0.7270. 5. Direction rule. Written in the repair round, after the readings were known: closeness above the balanced baseline for (i), median per-document Spearman above zero for (ii), no direction reading for (iii) because the record registers a size for the deletion effect and nothing else. It replaces a 100% threshold on the deletion ratio that the record does not contain. This changed direction_matched from true to false. No measured number differs between the previous execution and this one. 6. Fixture size: one source article, one foreign article on a related topic, 11 summaries of which two have 1 and 3 statements; adv2-a has no deletion dose (532 deletion cases, 616 inserted documents). The mean one-insertion effect in the denominator of condition (iii) includes adv2-a. 7. Pre-pass pool: the pre-pass arms use the pool of compute_source_conditioned(X, X, S), the call shape of the DEF-TRANS-8 reproduction. In a call with two different documents the pre-pass pools both, so the residual of one document depends on the other. 8. BLAS was limited to 1 thread for the arms; the readings are identical (np.array_equal) to the default thread count on the 12 checked documents. 9. docs/ is written by other campaign processes while executors run, so the docs/ reading is reported and is not part of the hold condition; in this execution 0 files under docs/ changed. This notebook writes only the metrics JSON."
+}

@@ -1,6 +1,6 @@
 """Pure-numpy optimal-transport core for document distance.
 
-No heavy ML dependencies - only numpy and POT (``ot``). Segmentation and embedding live in
+No heavy ML dependencies - only numpy, scipy and POT (``ot``). Segmentation and embedding live in
 ``encoders.py``; this module operates on statement-embedding arrays: L2-normalized float32 of
 shape ``[n_statements, dim]``. Every function here is deterministic and CPU-only, which is why
 the unit tests can exercise it without loading a single model.
@@ -9,6 +9,8 @@ The distance is the exact Statement Mover's Distance (SMD) - optimal transport b
 statement clouds with the metric ground cost ``sqrt(2 - 2cos)`` (Euclidean on L2-normalized
 vectors). ``wcd`` and ``rwmd`` are the cheap lower bounds (``WCD <= RWMD <= SMD``). The
 source-conditioned helpers re-base the transport onto a common source ``S``.
+``partial_matching`` pairs statements one to one under a cost cutoff; ``matched_order_gap`` and
+``unsupported_count`` are scores that depend on a calibrated cutoff, not metrics.
 """
 
 from __future__ import annotations
@@ -17,6 +19,7 @@ from dataclasses import asdict, dataclass
 
 import numpy as np
 import ot
+from scipy.optimize import linear_sum_assignment
 
 from docdistance import config
 
@@ -24,20 +27,57 @@ from docdistance import config
 SMD_MAX = float(np.sqrt(2.0))
 
 # closeness cutoff for the similar / not-similar verdict; heuristic, calibrate per corpus.
-# Band from notebook 09 cell 10 (11 ibm-ai-adoption fixtures, OpenVINO INT8): min gold 79.7%
-# (haiku) vs max adversarial 75.0% (adv2-b), so any cutoff in [0.750, 0.797] separates the
-# tiers. In-sample: the same 11 documents set it and are scored by it.
+# Band on the shipped semantic_distance path (E12-H63: 11 ibm-ai-adoption fixtures, OpenVINO
+# INT8): min gold 79.44% (haiku) vs max adversarial 74.74% (adv2-b), so any cutoff in
+# [0.7474, 0.7944] separates the tiers. On the fp backend the band is [0.7566, 0.8027]; 0.760 to
+# 0.790 separates the tiers on both. In-sample: the same 11 documents set it and are scored by
+# it, and each edge is one document. The 79.7% / 75.0% this comment quoted before came from the
+# dd.embed path of notebook 09 cell 10, not from semantic_distance. The leave-one-out and backend
+# readings: docs/solution/wmd-docdistance-solution-sota.md, Calibration of the semantic verdict.
 DEFAULT_THRESHOLD = 0.77
 
-# closeness cutoff for the structural (order) verdict, calibrated on the E11 scramble ladder
-# (reports/E11-structure-sota-decision.json .scramble.ibm.H55), whose closeness rungs run
-# 0.970 / 0.893 / 0.820 / 0.761 / 0.727 / 0.706 from lightest reorder to full scramble
+# closeness cutoff for the structural (order) verdict, placed on the ibm ladder of the E11
+# scramble fixture (reports/E11-structure-sota-decision.json .scramble.ibm.H55), whose closeness
+# rungs run 0.970 / 0.893 / 0.820 / 0.761 / 0.727 / 0.706 from lightest reorder to full scramble
 # (wergeland bottoms at 0.720). The order-gap scale is compressed relative to the semantic
 # one, so a semantic cutoff fires on almost nothing here: 0.725 catches only the deepest
 # rung, 0.77 catches three of six. 0.90 puts the boundary between rung 1 (a light reorder,
-# still "similar") and rung 2 (a genuine rearrangement). It is not a max-margin point -
-# the nearest un-reordered pair in the E11 diffuse set clears it by well under a point.
+# still "similar") and rung 2 (a genuine rearrangement). It is not a max-margin point: the
+# thresholds that keep every ibm rung and every un-reordered ibm pair on its side are the band
+# (0.892817, 0.906144], so 0.90 has 0.006144 of headroom below the nearest un-reordered ibm pair.
+# The wergeland band is (0.908048, 0.973676], above the ibm band by 0.001904, so no cross-article
+# band exists and 0.90 reads wergeland rung 2 as "similar" (E12-H59). Calibrate per corpus; the
+# procedure: docs/solution/wmd-structure-distance-sota.md, Calibration of the structural verdict.
 STRUCTURE_THRESHOLD = 0.90
+
+# ground cost below which partial_matching pairs two statements, calibrated in E13-H71
+# (reports/E13-H71-partial-matching-map-metrics.json) on 900 edited copies of the 10
+# structure-fixture documents, labels kept / removed / added: chosen on half A of the documents,
+# held-out macro-F1 0.9772 on half B, and the in-sample optimum over all 10. Any cutoff from 0.28
+# to 0.44 keeps the macro-F1 of both halves at or above 0.90. Calibrated on raw embeddings, not on
+# the output of all_but_the_top. A measured value: it is not the derived DIFF_CHANGED_COST of
+# pipeline.py, (1 - DEFAULT_THRESHOLD) * sqrt(2) = 0.3253.
+MATCH_CUTOFF = 0.325
+
+# cost to the nearest source statement above which unsupported_count counts a statement,
+# calibrated in E15-H78 (reports/E15-H78-raw-nearest-source-count-metrics.json): the mean of the
+# cutoffs 0.3375 and 0.3550 chosen on the two calibration halves of the 7 gold-tier ibm summaries,
+# statements of those summaries against statements of a second article. Held-out balanced accuracy
+# 0.9412 / 0.9272; 0.9868 with the two articles exchanged and no refit. Valid on raw embeddings
+# only: after all_but_the_top the held-out readings are 0.8168 / 0.7277.
+SOURCE_SUPPORT_CUTOFF = 0.34625
+
+# minimum number of pooled statements for the all_but_the_top estimate, measured in E12-H65
+# (reports/E12-H65-cmr-pool-crossover-metrics.json) with the torch fp32 encoder, not the default
+# OpenVINO INT8 one, on pools of 2, 3, 4, 6, 8 and 11 of the 11 ibm summaries. 71 is the smallest
+# of those six pool sizes whose direction reads a mean cosine of at least 0.98 to the full-pool
+# direction (0.9834) and keeps at least 90% of the full-pool d' (93.3%): 8 summaries, 71.3
+# statements on average. The next smaller pool measured, 6 summaries with 53.9 statements, reads
+# 0.9652 and 88.8%; no pool between 54 and 71 statements was measured. The rule is the statement
+# count; on that fixture, whose summaries hold 1 to 13 statements, it is 8 documents. A pool
+# below the minimum is still scored: the symmetric scoring calls of DocDistance (pipeline.py) log
+# one warning that names its count.
+ANISOTROPY_MIN_POOL = 71
 
 
 def cost_matrix(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
@@ -53,9 +93,52 @@ def _ab(X: np.ndarray, Y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return _uniform(len(X)), _uniform(len(Y))
 
 
+class SolverNotOptimal(RuntimeError):
+    """The exact solver returned without an optimal coupling, so its cost is not the distance."""
+
+
+# POT's default cap on network-simplex iterations; the cap never drops below it, so a problem the
+# default cap solves runs the same iterations to the same result
+EMD_MIN_ITER = 100_000
+
+
+def _emd_iter_cap(n: int, m: int) -> int:
+    """Iteration cap of an ``n x m`` exact solve: one iteration per arc, never below POT's default.
+
+    The iterations needed grow with the size: 3000 x 3000 random unit vectors need up to 138000,
+    more than POT's fixed default of 100000 allows. Measured need per arc (POT 0.9.6, random unit
+    vectors): 0.015 at 3000 x 3000, 0.65 at 60000 x 2 and exactly 1 at ``n x 1``. A problem with
+    one statement on one side is solved at ``n`` iterations and not at ``n - 1``, so above 100000
+    statements the cap has no spare iteration on that shape. The readings are printed by
+    ``reports/E13-campaign/checks/solver-cap/cap_readings.py``.
+    """
+    return max(EMD_MIN_ITER, n * m)
+
+
+def _exact_ot(a: np.ndarray, b: np.ndarray, C: np.ndarray) -> tuple[np.ndarray, float]:
+    """Exact network-simplex transport of ``a`` onto ``b`` under ground cost ``C``: ``(plan, cost)``.
+
+    The one entry to the exact solver. POT only warns when the solver ends without an optimal
+    coupling and still returns a result. That result is not optimal and can be infeasible, so its
+    cost is not the distance and is not a bound of it: a 12 x 9 problem stopped after 1 iteration
+    returned 58% of the mass at cost 0.687 against the distance 1.223, and a 3000 x 3000 problem
+    stopped at POT's default cap returned a feasible coupling at 0.661948 against 0.661777. Any
+    solver warning therefore raises :class:`SolverNotOptimal` instead.
+    """
+    n, m = C.shape
+    cap = _emd_iter_cap(n, m)
+    plan, log = ot.emd(a, b, C, numItermax=cap, log=True)
+    if log["warning"] is not None:
+        raise SolverNotOptimal(
+            f"the exact solver stopped before optimality on a {n} x {m} problem "
+            f"(iteration cap {cap}); POT reports: {log['warning']}"
+        )
+    return plan, log["cost"]
+
+
 def smd(X: np.ndarray, Y: np.ndarray) -> float:
     """The distance: exact Statement Mover's Distance via the network-simplex LP."""
-    return float(ot.emd2(*_ab(X, Y), cost_matrix(X, Y)))
+    return _exact_ot(*_ab(X, Y), cost_matrix(X, Y))[1]
 
 
 def transport_plan(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
@@ -67,7 +150,7 @@ def transport_plan(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
     most statements map to one or a few others - the interpretable statement-to-statement alignment the
     distance is built from.
     """
-    return ot.emd(*_ab(X, Y), cost_matrix(X, Y))
+    return _exact_ot(*_ab(X, Y), cost_matrix(X, Y))[0]
 
 
 def wcd(X: np.ndarray, Y: np.ndarray) -> float:
@@ -97,7 +180,21 @@ def all_but_the_top(emb: dict[str, np.ndarray], k: int = 1) -> dict[str, np.ndar
     Subtract the pooled mean and project out the top-``k`` principal components (via SVD of the
     mean-centered matrix), then re-L2-normalize. De-bunches the anisotropic mmBERT cosines and
     widens the distance dynamic range while preserving statement ordering. Operates over the
-    pooled statements of all documents in ``emb`` so the common direction is shared.
+    pooled statements of all documents in ``emb`` so the common direction is shared. The estimate
+    needs a pool of about :data:`ANISOTROPY_MIN_POOL` (71) statements (E12-H65).
+
+    Which of the two steps carries the effect was measured per path, at ``k=1``:
+
+    - Symmetric panels: the centering carries the gain. Centering and re-normalizing without the
+      projection recovers 103.7% of the margin gain of the full pre-pass on the ibm panel (E12-H64)
+      and 102.8% on the Wergeland pool (E14-H75). The projection isolate (first centered component
+      removed, mean restored) reads -4.5% and -3.6%.
+    - Source-conditioned path, ibm fixture, plain reader: centering without the projection reads
+      0.5471x the ``DR(D_sel)`` of the full pre-pass and 1 of 28 selection-axis violations against
+      0 of 28 (E14-H76). The difference is traced to 22 one-word markup statements that the plain
+      reader returns from that source (``-`` 13 times, ``###`` 6, ``##`` 2, ``Overview`` 1): with
+      them removed, centering alone reads 0.9165x at 0 of 28. This is one source and one reader
+      setting, not a reading of the source-conditioned path in general.
     """
     keys = list(emb)
     pool = np.concatenate([emb[key] for key in keys], 0)
@@ -218,10 +315,17 @@ def opw_gap(
     transport polytope U(a, b) (see :func:`_round_to_polytope`), so it is a valid coupling and its cost
     is bounded below by the SMD; the ``max(0, ...)`` clamp only absorbs LP rounding noise. ``D`` is built
     once and reused across the OPW cost and the SMD.
+
+    The gap of a document with itself is in general not zero (it is 0.0 for one statement) and grows
+    with the statement count: ``opw_gap(P, P)`` reads 5.182e-03 at 30 statements and 6.786e-03 at 53
+    (E13-H70, one document). On unequal statement counts the gap also includes the cost of the surplus
+    statements, so a deletion that keeps the order of the remaining statements reads like a reorder:
+    0.227 for 2 of 10 statements deleted (DEF-TRANS-10). :func:`matched_order_gap` is the reading over
+    the statements both documents hold.
     """
     D = cost_matrix(X, Y)
     cost = float((_opw_plan(D, lambda1, lambda2, sigma, iters) * D).sum())
-    content = float(ot.emd2(*_ab(X, Y), D))
+    content = _exact_ot(*_ab(X, Y), D)[1]
     return max(0.0, cost - content)
 
 
@@ -238,7 +342,7 @@ def _aligned_plan(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
     n, m = D.shape
     pos = np.abs((np.arange(1, n + 1) / n)[:, None] - (np.arange(1, m + 1) / m)[None, :])
     eps = 1e-6 * (float(D.max()) + 1.0)
-    return ot.emd(*_ab(X, Y), D + eps * pos)
+    return _exact_ot(*_ab(X, Y), D + eps * pos)[0]
 
 
 def order_alignment(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
@@ -255,6 +359,80 @@ def structure_displacement(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
     align = order_alignment(X, Y)
     order = np.argsort(np.argsort(align, kind="stable"), kind="stable")
     return order - np.arange(len(order))
+
+
+# --- E13-H71 partial matching: one-to-one statement pairs + E13-H70 order gap over them ---
+
+
+# weight of the position term in the partial-matching assignment cost (E15-H79), six orders of
+# magnitude below MATCH_CUTOFF: it decides among matchings of equal ground cost and changed 0 of
+# the 13223 matchings measured on documents without repeated statements
+MATCH_POSITION_EPS = 1e-6
+
+
+def partial_matching(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    """One-to-one statement pairs of ``X`` and ``Y``; shape ``[n_pairs, 2]``, rows ``(i, j)`` ascending in ``i``.
+
+    A unit-capacity assignment on the ground cost capped at :data:`MATCH_CUTOFF`: each statement is in
+    at most one pair, and a pair whose ground cost is at or above the cutoff is left out, so a statement
+    without a counterpart stays unmatched (E13-H71). The pairs annotate the two documents; they are
+    not a distance and not a metric.
+
+    The assignment cost carries the position term ``MATCH_POSITION_EPS * abs(i/n - j/m)``, positions
+    counted from 0. The matching is deterministic: two calls return the same pairs. The term ranks
+    the copies of a repeated statement by position: among matchings of exactly equal capped ground
+    cost, one with the smallest sum of ``abs(i/n - j/m)`` is returned. The copies are not always
+    paired in document order. ``abs`` is convex but not strictly convex: when every tied copy shifts
+    the same way by more than the spacing of the copies, the in-order and the crossed pairing have
+    the same position sum and the assignment solver decides. Example: 16 statements with one
+    statement at positions 8 and 9, statements 11, 13 and 14 deleted, returns the pairs ``(8, 9)``
+    and ``(9, 8)``. The term does not read which copy of a repeated statement was deleted. Measured
+    limit (E15-H79, Refuted on this bar): on a 62-statement document with 9 repeated statements the
+    matched statements were textually equal to the shorter document in 111 of 120 pure deletions,
+    against a bar of 114. A cost difference above the weight is not ranked: the rows of one
+    statement encoded inside two documents differed by up to 4.095e-03 in one embedding entry
+    (E15-H79).
+    """
+    cost = cost_matrix(X, Y)
+    n, m = cost.shape
+    position = np.abs(np.arange(n)[:, None] / n - np.arange(m)[None, :] / m)
+    rows, cols = linear_sum_assignment(
+        np.minimum(cost, MATCH_CUTOFF) + MATCH_POSITION_EPS * position
+    )
+    kept = cost[rows, cols] < MATCH_CUTOFF  # the ground cost, without the position term
+    return np.column_stack([rows[kept], cols[kept]])
+
+
+def _order_gap_over(X: np.ndarray, Y: np.ndarray, pairs: np.ndarray) -> float | None:
+    """:func:`opw_gap` of the statements named in ``pairs``, each side in its own document order.
+
+    ``None`` when ``pairs`` is empty. A fully matched pair of equal statement counts goes to
+    :func:`opw_gap` unmodified: POT sets the cost diagonal to exactly 0 only when both arguments are
+    one array object, so indexed copies of ``(E, E)`` read a different last digit than ``(E, E)``.
+    """
+    if len(pairs) == 0:
+        return None
+    if len(pairs) == len(X) == len(Y):
+        return opw_gap(X, Y)
+    return opw_gap(X[pairs[:, 0]], Y[np.sort(pairs[:, 1])])
+
+
+def matched_order_gap(X: np.ndarray, Y: np.ndarray) -> float | None:
+    """Order gap over the statements both documents hold: :func:`opw_gap` of the matched sub-sequences (E13-H70).
+
+    The statements paired by :func:`partial_matching` are kept, each document in its own order, and the
+    shipped :func:`opw_gap` is read on them; ``None`` when no pair is matched. A SCORE, NOT a metric,
+    like :func:`opw_gap`. With equal statement counts and every statement matched the value is exactly
+    ``opw_gap(X, Y)``.
+
+    A deletion that keeps the order of the remaining statements reads the order gap of the shorter
+    document against a copy of itself, in general not zero: that floor grows with the statement count
+    (see :func:`opw_gap`) and differs from ``opw_gap(Y, Y)`` on one array object by float32 rounding of
+    the zero costs (at most 7.813e-06 measured, E15-H79). Measured on documents of 11 to 14 statements
+    without repeated statements: 280 of 280 such deletions read at or below 0.005, where ``opw_gap``
+    read 0 of 280. With repeated statements the limit of :func:`partial_matching` applies.
+    """
+    return _order_gap_over(X, Y, partial_matching(X, Y))
 
 
 # --- source-conditioned core: metric selection axis + reranker/NLI grounding residual (D_grd) ---
@@ -298,17 +476,37 @@ def selection_divergence(cov_a: np.ndarray, cov_b: np.ndarray, S: np.ndarray) ->
     Ground cost is ``sqrt(2 - 2cos)`` on the source-statement embeddings, so D_sel stays a metric -
     the guarantee conditioning on a fixed ``S`` buys back. Captures same source, different picks.
     """
-    return float(ot.emd2(np.asarray(cov_a), np.asarray(cov_b), cost_matrix(S, S)))
+    return _exact_ot(np.asarray(cov_a), np.asarray(cov_b), cost_matrix(S, S))[1]
 
 
 def ungrounded_residual(X: np.ndarray, S: np.ndarray) -> float:
-    """Per-document geometric grounding proxy: the transport cost SMD(X, S) (distance of X to S).
+    """Balanced transport cost from document ``X`` to the whole source ``S``: ``smd(X, S)``, a metric.
 
-    A coarse, metric stand-in for the grounding residual - higher means the document drifts
-    further from any source statement. The model-graded :func:`grounding_residual` (reranker + NLI)
-    is the sharper signal; this is the geometric distance-to-source fallback when no models scored.
+    Both marginals are uniform, so each source statement accepts ``1/n_S`` of the mass: a statement of
+    a document shorter than the source keeps at most ``n_X/n_S`` of its mass on its nearest source
+    statement. The cost therefore grows when a document covers only part of the source: 10 statements
+    copied verbatim from a 70-statement source read 0.958 (DEF-TRANS-8). It is not the share of the
+    document the source does not support. :func:`unsupported_count` (``n_unsupported_a`` /
+    ``n_unsupported_b`` of the result) counts the statements with no near source statement
+    (nearest-source cost above :data:`SOURCE_SUPPORT_CUTOFF`); it is not a reading of entailment.
+    The model-graded reading is :func:`grounding_residual` (reranker + NLI; ``grd_a`` / ``grd_b``).
     """
     return smd(X, S)
+
+
+def unsupported_count(X: np.ndarray, S: np.ndarray) -> int:
+    """Count of statements of ``X`` whose nearest source statement costs more than :data:`SOURCE_SUPPORT_CUTOFF`.
+
+    One-sided: each statement is compared with its nearest statement of ``S`` only, so a document that
+    covers part of the source is not charged for the rest of it, and removing a supported statement
+    leaves the count unchanged (E15-H78). A SCORE, NOT a metric. Pass raw embeddings: the cutoff is
+    not valid after :func:`all_but_the_top`.
+
+    The count reads distance to the source, not entailment by it, and does not replace
+    :func:`grounding_residual`. A faithful summary can read above 0: 8 of the 77 statements of the 7
+    gold-tier ibm summaries are counted (E15-H78).
+    """
+    return int((cost_matrix(X, S).min(1) > SOURCE_SUPPORT_CUTOFF).sum())
 
 
 def grounding_residual(reranker: np.ndarray, entail: np.ndarray) -> float:
@@ -358,7 +556,16 @@ class DistanceResult:
 
 @dataclass
 class StructuralResult:
-    """Structural (order) distance result. ``order_gap`` is the E11-H55 OPW order-gap; ``structure_closeness`` its readout."""
+    """Structural (order) distance result. ``order_gap`` is the E11-H55 OPW order-gap; ``structure_closeness`` its readout.
+
+    On unequal statement counts ``order_gap`` includes the cost of the surplus statements: a deletion
+    that keeps the order of the remaining statements lowers ``structure_closeness`` and can turn
+    ``verdict`` to ``not similar`` (DEF-TRANS-10). ``matched_order_gap`` is the order gap over the
+    ``n_matched`` statement pairs both documents hold (:func:`matched_order_gap`), ``None`` when no
+    pair is matched; it equals ``order_gap`` when the counts are equal and every statement is matched.
+    For a document against itself both gaps are in general not zero and grow with the statement count
+    (see :func:`opw_gap`). ``structure_closeness`` and ``verdict`` are read from ``order_gap`` only.
+    """
 
     smd: float
     order_gap: float
@@ -368,6 +575,8 @@ class StructuralResult:
     anisotropy: bool
     n_statements_a: int
     n_statements_b: int
+    matched_order_gap: float | None
+    n_matched: int
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -379,8 +588,16 @@ class SourceConditionedResult:
 
     ``grd_a`` / ``grd_b`` are the reranker x NLI grounding residuals (E03-H11), present only when the
     grounding models scored; ``d_grd`` is the grounding-axis separation ``|grd_a - grd_b|``. They stay
-    ``None`` on the metric-only path (no models), where ``residual_a`` / ``residual_b`` (geometric
-    distance-to-source) carry the grounding proxy.
+    ``None`` on the metric-only path (no models).
+
+    ``residual_a`` / ``residual_b`` are the balanced transport cost from each document to the whole
+    source (:func:`ungrounded_residual`). They grow when a document covers only part of the source -
+    10 statements copied verbatim from a 70-statement source read 0.958 - so they are not the share of
+    a document the source does not support. ``n_unsupported_a`` / ``n_unsupported_b`` are the count
+    of statements with no near source statement: the nearest source statement costs more than
+    :data:`SOURCE_SUPPORT_CUTOFF` (:func:`unsupported_count`), taken on the embeddings as passed in,
+    before the anisotropy pre-pass. A score, not a metric, and not a reading of entailment: the
+    model-graded reading is ``grd_a`` / ``grd_b`` (:func:`grounding_residual`).
     """
 
     d_sel: float
@@ -391,6 +608,8 @@ class SourceConditionedResult:
     n_statements_a: int
     n_statements_b: int
     n_statements_source: int
+    n_unsupported_a: int
+    n_unsupported_b: int
     coverage_a: list[float]
     coverage_b: list[float]
     grd_a: float | None = None
@@ -413,6 +632,15 @@ def compute_distance(
     ``anisotropy`` is off by default: all-but-the-top estimates the shared direction from a corpus,
     so over a single document pair it strips genuine shared meaning and distorts the scale. The
     validated nb04 verdict uses raw embeddings; enable anisotropy only over a pooled corpus.
+
+    The pool here is the statements of the two documents, and the minimum estimation pool is about
+    :data:`ANISOTROPY_MIN_POOL` (71) pooled statements. The rule is the statement count. Measured in
+    E12-H65 with the torch fp32 encoder, not the default OpenVINO INT8 one, on pools of 2, 3, 4, 6,
+    8 and 11 of the 11 ibm summaries: 71 is the smallest of those six pool sizes whose direction
+    reads a mean cosine of at least 0.98 to the full-pool direction (0.9834) and keeps at least 90%
+    of the full-pool d' (93.3%). On that fixture this is 8 summaries, 71.3 statements on average; a
+    pool of 2 of them holds 19 statements on average and reads a cosine of 0.8664. A smaller pool
+    is scored all the same, and :class:`~docdistance.pipeline.DocDistance` logs a warning for it.
     """
     n_a, n_b = len(emb_a), len(emb_b)
     if anisotropy:
@@ -446,9 +674,16 @@ def compute_structural(
     ``order_gap``, and ``structure_closeness = closeness(order_gap)`` is the SMD-scale readout
     (1 = same order). The verdict uses :data:`STRUCTURE_THRESHOLD`, not the semantic cutoff -
     the order-gap scale is compressed, so a semantic threshold never fires here.
-    ``anisotropy`` is off by default for the same reason as :func:`compute_distance`.
+    ``anisotropy`` is off by default for the same reason as :func:`compute_distance`, and the same
+    minimum estimation pool applies: about :data:`ANISOTROPY_MIN_POOL` (71) pooled statements.
+
+    ``n_matched`` counts the pairs of :func:`partial_matching` on the embeddings as passed in, the
+    geometry :data:`MATCH_CUTOFF` is calibrated on, so the pairs are the same with ``anisotropy`` on
+    and off. ``matched_order_gap`` is the order gap over those pairs in the geometry ``order_gap``
+    uses.
     """
     n_a, n_b = len(emb_a), len(emb_b)
+    pairs = partial_matching(emb_a, emb_b)
     if anisotropy:
         fixed = all_but_the_top({"a": emb_a, "b": emb_b}, k=1)
         emb_a, emb_b = fixed["a"], fixed["b"]
@@ -464,6 +699,8 @@ def compute_structural(
         anisotropy=anisotropy,
         n_statements_a=n_a,
         n_statements_b=n_b,
+        matched_order_gap=_order_gap_over(emb_a, emb_b, pairs),
+        n_matched=len(pairs),
     )
 
 
@@ -481,15 +718,26 @@ def compute_source_conditioned(
     """Assemble a :class:`SourceConditionedResult` from A, B and source statement embeddings.
 
     Anisotropy removal (all-but-the-top, k=1) is on by default: the source supplies the corpus the
-    shared direction is estimated from, and removing it widens the ``D_sel`` dynamic range ~7.4x at
-    0 ordinality violations (E04-H15). Pass ``anisotropy=False`` to opt out.
+    shared direction is estimated from, and removing it widens the ``D_sel`` dynamic range 6.34x at
+    0 selection-axis violations on the 10 ibm triples (E14-H76; lever E04-H15). Pass
+    ``anisotropy=False`` to opt out. The pool is the statements of A, B and the source together.
+    The minimum estimation pool of about :data:`ANISOTROPY_MIN_POOL` (71) pooled statements was
+    measured on pools of summaries without a source (E12-H65, see :func:`compute_distance`); on
+    this path a pool below it logs no warning.
 
     When the grounding arrays are supplied (``reranker_*`` the doc x source relevance grid,
     ``entail_*`` the per-statement entailment probability), the E03-H11 grounding residual is computed
     per document into ``grd_a`` / ``grd_b`` and ``d_grd = |grd_a - grd_b|``; without them those stay
     ``None`` and only the metric selection axis + geometric residuals are returned.
+
+    ``n_unsupported_a`` / ``n_unsupported_b`` (:func:`unsupported_count`) are taken on the embeddings
+    as passed in, before the pre-pass: :data:`SOURCE_SUPPORT_CUTOFF` is valid on raw embeddings only
+    (held-out balanced accuracy 0.9412 / 0.9272 raw, 0.8168 / 0.7277 after the pre-pass, E15-H78), so
+    ``anisotropy`` on and off return the same counts.
     """
     n_a, n_b, n_s = len(emb_a), len(emb_b), len(emb_source)
+    unsupported_a = unsupported_count(emb_a, emb_source)
+    unsupported_b = unsupported_count(emb_b, emb_source)
     if anisotropy:
         fixed = all_but_the_top({"a": emb_a, "b": emb_b, "s": emb_source}, k=1)
         emb_a, emb_b, emb_source = fixed["a"], fixed["b"], fixed["s"]
@@ -517,6 +765,8 @@ def compute_source_conditioned(
         n_statements_a=n_a,
         n_statements_b=n_b,
         n_statements_source=n_s,
+        n_unsupported_a=unsupported_a,
+        n_unsupported_b=unsupported_b,
         coverage_a=cov_a.tolist(),
         coverage_b=cov_b.tolist(),
         grd_a=grd_a,

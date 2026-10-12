@@ -7,7 +7,7 @@
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 PROJECT_NAME = docdistance
 MODULE_NAME = docdistance
-PYTHON_VERSION = 3.13
+PYTHON_VERSION = 3.14
 # python3 first: Ubuntu/Debian ship no bare `python` unless python-is-python3 is installed,
 # which made the default goal and preflight fail with a misleading "install Python" message.
 # Resolve to a bare NAME, never a path: an empty value would make preflight's `command -v`

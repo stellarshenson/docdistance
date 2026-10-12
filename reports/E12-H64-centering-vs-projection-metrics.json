@@ -39,7 +39,7 @@
     },
     "max_rel_delta_by_row": {
       "baseline": 0.028016901303526808,
-      "full": 0.05056257918964408
+      "full": 0.05056257918964523
     },
     "rows": {
       "baseline": {
@@ -74,16 +74,16 @@
         },
         "observed": {
           "V": 0,
-          "margin_pts": 19.414396463424623,
-          "dprime": 7.310049184864293,
-          "R": 1.4754817113727638,
-          "DR": 0.22533667125962623
+          "margin_pts": 19.414396463424644,
+          "dprime": 7.310049184864304,
+          "R": 1.4754817113727643,
+          "DR": 0.22533667125962628
         },
         "rel_delta": {
-          "margin_pts": 0.05056257918964408,
-          "dprime": 0.019532661766289133,
-          "R": 0.00439830541648862,
-          "DR": 0.014275278829281592
+          "margin_pts": 0.05056257918964523,
+          "dprime": 0.019532661766290618,
+          "R": 0.00439830541648832,
+          "DR": 0.01427527882928135
         }
       }
     }
@@ -116,20 +116,20 @@
       "V": 0,
       "margin_pts": 19.952554955749292,
       "margin_gain_pts": 15.24423754777914,
-      "recovery_fraction": 1.0365942880012649,
+      "recovery_fraction": 1.0365942880012633,
       "recovery_fraction_registered_denominator": 1.0967077372502978,
-      "dprime": 7.384320592704309,
-      "R": 1.6144572921410345,
+      "dprime": 7.384320592704303,
+      "R": 1.6144572921410338,
       "DR": 0.27121554432516853,
       "DR_x_baseline": 3.107333056035639,
       "distances": {
         "gold-2": 0.8087340071797371,
-        "v1": 0.8759130586277357,
-        "v2": 0.7522210115736181,
+        "v1": 0.8759130586277356,
+        "v2": 0.752221011573618,
         "opus": 0.8286638119003988,
         "sonnet": 0.9072127434942459,
         "haiku": 1.0226209619870552,
-        "adv1-a": 1.44891654253006,
+        "adv1-a": 1.4489165425300599,
         "adv1-b": 1.4131747166315718,
         "adv2-a": 1.4249132871627805,
         "adv2-b": 1.3047927002112067
@@ -139,7 +139,7 @@
       "V": 0,
       "margin_pts": 4.044454232474026,
       "margin_gain_pts": -0.6638631754961271,
-      "recovery_fraction": -0.04514209212345427,
+      "recovery_fraction": -0.04514209212345421,
       "recovery_fraction_registered_denominator": -0.04775994068317461,
       "dprime": 6.320730269476042,
       "R": 1.474373037631897,
@@ -160,14 +160,14 @@
     },
     "c full shipped": {
       "V": 0,
-      "margin_pts": 19.414396463424623,
-      "margin_gain_pts": 14.70607905545447,
+      "margin_pts": 19.414396463424644,
+      "margin_gain_pts": 14.706079055454492,
       "recovery_fraction": 1.0,
-      "recovery_fraction_registered_denominator": 1.057991298953559,
-      "dprime": 7.310049184864293,
-      "R": 1.4754817113727638,
-      "DR": 0.22533667125962623,
-      "DR_x_baseline": 2.5816960052355484,
+      "recovery_fraction_registered_denominator": 1.0579912989535605,
+      "dprime": 7.310049184864304,
+      "R": 1.4754817113727643,
+      "DR": 0.22533667125962628,
+      "DR_x_baseline": 2.5816960052355493,
       "distances": {
         "gold-2": 0.869516993065675,
         "v1": 0.9613741739229726,
@@ -176,7 +176,7 @@
         "sonnet": 0.964581506782108,
         "haiku": 1.0635447460871474,
         "adv1-a": 1.36922342479229,
-        "adv1-b": 1.338105773925781,
+        "adv1-b": 1.3381057739257813,
         "adv2-a": 1.4177283167839052,
         "adv2-b": 1.3450323621431983
       }
@@ -198,7 +198,7 @@
   },
   "acceptance": {
     "bar": "exactly one isolate arm >= 60% of the full-composition margin gain at V=0/24, metric property intact",
-    "full_composition_gain_pts": 14.70607905545447,
+    "full_composition_gain_pts": 14.706079055454492,
     "full_composition_gain_pts_registered": 13.9,
     "arms_reaching_bar": [
       "a center+renorm"
@@ -293,7 +293,7 @@
       },
       "c full shipped": {
         "adversary": "adv1-b",
-        "adversary_distance": 1.338105773925781,
+        "adversary_distance": 1.3381057739257813,
         "gold": "haiku",
         "gold_distance": 1.0635447460871474
       }
@@ -318,24 +318,24 @@
     "baseline_R": 1.669675503342983,
     "arm_a_margin_pts": 19.952554955749292,
     "arm_a_gain_pts": 15.24423754777914,
-    "arm_a_recovery": 1.0365942880012649,
+    "arm_a_recovery": 1.0365942880012633,
     "arm_a_recovery_registered_denominator": 1.0967077372502978,
     "arm_a_DR": 0.27121554432516853,
     "arm_a_DR_x_baseline": 3.107333056035639,
-    "arm_a_dprime": 7.384320592704309,
-    "arm_a_R": 1.6144572921410345,
+    "arm_a_dprime": 7.384320592704303,
+    "arm_a_R": 1.6144572921410338,
     "arm_b_margin_pts": 4.044454232474026,
     "arm_b_gain_pts": -0.6638631754961271,
-    "arm_b_recovery": -0.04514209212345427,
+    "arm_b_recovery": -0.04514209212345421,
     "arm_b_recovery_registered_denominator": -0.04775994068317461,
     "arm_b_DR": 0.05878107419066151,
     "arm_b_dprime": 6.320730269476042,
     "arm_b_R": 1.474373037631897,
-    "arm_c_margin_pts": 19.414396463424623,
-    "arm_c_gain_pts": 14.70607905545447,
-    "arm_c_DR": 0.22533667125962623,
-    "arm_c_dprime": 7.310049184864293,
-    "full_composition_margin_gain_pts": 14.70607905545447,
+    "arm_c_margin_pts": 19.414396463424644,
+    "arm_c_gain_pts": 14.706079055454492,
+    "arm_c_DR": 0.22533667125962628,
+    "arm_c_dprime": 7.310049184864304,
+    "full_composition_margin_gain_pts": 14.706079055454492,
     "full_composition_margin_gain_pts_registered": 13.9,
     "cos_uncentered_pc1_mean": 0.9999992251396179,
     "cos_centered_pc1_mean": 0.021381409838795662,
@@ -346,9 +346,9 @@
     "n_documents": 11
   },
   "acceptance_readings": {
-    "full_composition_margin_gain_pts": 14.70607905545447,
-    "arm_a_center_renorm_recovery": 1.0365942880012649,
-    "arm_b_project_only_recovery": -0.04514209212345427,
+    "full_composition_margin_gain_pts": 14.706079055454492,
+    "arm_a_center_renorm_recovery": 1.0365942880012633,
+    "arm_b_project_only_recovery": -0.04514209212345421,
     "arm_a_recovery_registered_denominator": 1.0967077372502978,
     "arm_b_recovery_registered_denominator": -0.04775994068317461,
     "arms_reaching_bar": 1,
@@ -357,8 +357,8 @@
     "arm_c_V": 0
   },
   "transform_cost_ms_indicative": {
-    "a center+renorm": 0.09627294930396602,
-    "c full shipped": 168.81189539999468
+    "a center+renorm": 0.07339945004787296,
+    "c full shipped": 506.99463609926164
   },
   "verdict": "Confirmed"
 }

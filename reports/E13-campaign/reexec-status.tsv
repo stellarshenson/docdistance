@@ -1,0 +1,33 @@
+E12-H69-kj-relevance-gate-form	0	0	24
+E12-H59-kj-structure-threshold-transfer	0	0	40
+E07-kj-structure-distance	0	0	44
+E08-kj-structure-distance-metric	0	0	47
+E12-H60-kj-no-counterpart-valley	0	0	114
+E12-H61-kj-moved-conjunction	0	0	36
+E12-H62-kj-order-gap-length-residual	0	0	42
+E12-H64-kj-centering-vs-projection	0	0	77
+E12-H66-kj-norm-mass-marginals	0	0	67
+E09-kj-anisotropy-cmr	0	0	373
+E12-H65-kj-cmr-pool-crossover	0	0	171
+LANE-DONE	2026-10-09T09:13:54Z
+E10-kj-structure-sensitive-distance	0	0	35
+E11-kj-structure-sota-decision	0	0	22
+E01-kj-wmd-contrast-hypotheses	0	0	42
+LANE-DONE	2026-10-09T09:15:03Z
+E02-kj-source-conditioned-grounding	0	0	1051
+E03-kj-source-conditioned-improvements	0	0	574
+E12-H63-kj-semantic-threshold-band	0	0	90
+LANE-DONE	2026-10-09T09:33:45Z
+E04-kj-source-conditioned-performance	0	0	117
+LANE-DONE	2026-10-09T10:25:29Z
+E05-kj-source-conditioned-cpu-speed	0	0	141
+E06-kj-trained-scorers-cpu	1	0	779
+E12-H68-kj-grounding-grid-memo	0	0	5254
+E12-H67-kj-pairs-embed-memo	143	0	5882
+LANE-DONE	2026-10-09T14:51:39Z
+E06-kj-trained-scorers-cpu	0	0	800
+LANE-DONE	2026-10-09T15:05:12Z
+E12-H67-kj-pairs-embed-memo	0	0	3779
+LANE-DONE	2026-10-09T16:08:24Z
+E16-H81-kj-autodetected-reader-default	0	0	44
+LANE-DONE	2026-10-11T23:48:16Z

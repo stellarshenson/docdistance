@@ -1,0 +1,153 @@
+{
+ "id": "E16-H81",
+ "slug": "autodetected-reader-default",
+ "model": "opus",
+ "verdict": "Killed-at-gate",
+ "verdict_number": "kill-gate: the default reader returns a marker statement on 0 of 11 summaries (the record requires at least 1); detect_format returns markdown for 12 of 12 ibm documents (the record requires at least 11)",
+ "kill_gate": {
+  "ran": true,
+  "passed": false,
+  "reading": "detect_format returns markdown for 12 of 12 ibm documents (the gate requires at least 11); the default reader returns at least 1 marker statement on 0 of 11 summaries (the gate requires at least 1): 0 of the 98 summary statements hold no letter and no digit. The ibm source reads 21 of 70 marker statements under the default reader; it is in none of the 55 scored pairs"
+ },
+ "sanity_check": {
+  "required": true,
+  "passed": true,
+  "reading": "plain arm (no input_format argument): 55 pair distances against the stored 1.1.5 baseline, largest absolute difference 0.0e+00 (55 of 55 equal as floats; tolerance 0.001); band edges 0.7474 (adv2-b) and 0.7944 (haiku) against 0.7474 and 0.7944 of E12-H63, differences 4.3e-05 and 4.0e-05"
+ },
+ "prediction_check": {
+  "predicted": "detection right on every fixture document; on the 10 non-reference ibm summaries against the gold reference the closeness under auto is lower than under plain for at least 9 of 10; the band from the highest adversarial closeness to the lowest gold-tier closeness under auto is non-empty, at least as wide as the plain band of the same run and lies 0.01 to 0.06 lower; Spearman of the 55 pair distances between the two readers at least 0.90; every HTML render reads the embedded statements of its markdown original",
+  "observed": "detection right on 36 of 36 fixture documents; closeness under auto lower for 2 of 10 summaries, equal as floats for 7, higher for 1; auto band 0.7474 to 0.7944, non-empty True, width 0.0471 against 0.0471 under plain; plain edge minus auto edge +0.0000 (lower) and +0.0000 (upper), midpoint +0.0000, predicted 0.01 to 0.06; Spearman 0.9816; HTML renders with the embedded statements of their original 11 of 12. Effects with a direction: {'closeness lower under auto for at least 9 of 10': False, 'both band edges lower under auto': False}. Parts of the prediction that held: 4 of 7",
+  "direction_matched": false
+ },
+ "acceptance": {
+  "bar": "PASS iff, on the shipped INT8 path: (1) detect_format returns markdown for the 12 ibm documents, html for their 12 HTML renders and plain for their 12 plain controls; (2) under auto every gold-tier summary reads a higher closeness to the gold reference than every adversarial summary, and the band between the two tiers is at least as wide as the band under plain in the same run; (3) the Spearman correlation of the 55 pair distances between plain and auto is at least 0.90; (4) for each of the 12 documents the embedded statement list of the HTML render under auto equals the list of the markdown original under auto, string for string, and the SMD between the two is at most 0.001; (5) the 55 pair distances under plain equal the stored 1.1.5 baseline",
+  "met": false,
+  "readings": {
+   "status": "the five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict",
+   "1_detection": "36 of 36 right (markdown originals 12 of 12, HTML renders 12 of 12, plain controls 12 of 12): met",
+   "2_tier_order_and_band_width": "under auto the lowest gold-tier closeness 0.7944 (haiku) against the highest adversarial closeness 0.7474 (adv2-b), tier order True; band width auto 0.047083 against plain 0.047083, at least as wide True; the documents that set the edges and the reference read the same statements under both readers: True: met",
+   "3_spearman": "0.9816 (bar >= 0.9); 28 of 55 pairs read the same float under both readers, Spearman over the 27 pairs that differ 0.9597: met",
+   "4_html_twin": "embedded lists equal for 11 of 12 documents, SMD <= 0.001 for 11 of 12 (largest 2.856e-03, source; largest with equal lists 3.575e-04): not met",
+   "5_plain_equals_baseline": "np.array_equal on the 55 pair distances of the plain arm against the stored 1.1.5 baseline: True: met"
+  }
+ },
+ "guardrails": {
+  "V": "0/24",
+  "src_untouched": true,
+  "metric_property": "no distance function is changed: the two arms pass different statement lists to the shipped smd. Measured on the 11 summaries: triangle violations plain 0/495 (smallest slack 0.1771), auto 0/495 (0.1771); symmetry, largest absolute difference between the two orientations of a pair: plain 2.2e-16, auto 2.2e-16; largest d(A, A) through the public call: plain 3.57e-04, auto 3.57e-04",
+  "notes": "V per reader: plain 0/24, auto 0/24. sha256 over src/**/*.py 39db9393d7336386 and tests/**/*.py ab6d4acb4d80e73f, equal before and after the run: True; the notebook writes only its fixture files under data/interim/E16-H81 and its metrics JSON. The 55 plain pair distances equal the stored 1.1.5 baseline by np.array_equal: True. DEFAULT_THRESHOLD read from the package: 0.77. docdistance 1.1.21, one instance, memo bound 64, 52 entries; offline flag of huggingface_hub True. The ledger block equals the registered block (sha256): True"
+ },
+ "key_numbers": {
+  "docdistance_version": "1.1.21",
+  "gate_markdown_detected": "12/12",
+  "gate_summaries_with_marker_statement": "0/11",
+  "summary_marker_statements_plain": "0/98",
+  "source_marker_statements": {
+   "plain": "21/70",
+   "auto": "0/48"
+  },
+  "harness_max_abs_diff_55_pairs": 0.0,
+  "detection_right": "36/36",
+  "band": {
+   "plain": {
+    "lo": 0.7474,
+    "lo_doc": "adv2-b",
+    "hi": 0.7944,
+    "hi_doc": "haiku",
+    "width": 0.0471,
+    "midpoint": 0.7709,
+    "V": "0/24"
+   },
+   "auto": {
+    "lo": 0.7474,
+    "lo_doc": "adv2-b",
+    "hi": 0.7944,
+    "hi_doc": "haiku",
+    "width": 0.0471,
+    "midpoint": 0.7709,
+    "V": "0/24"
+   }
+  },
+  "band_shift_plain_minus_auto": {
+   "lo": 0.0,
+   "hi": 0.0,
+   "midpoint": 0.0
+  },
+  "closeness_auto_vs_plain": {
+   "lower": 2,
+   "equal": 7,
+   "higher": 1
+  },
+  "closeness_delta_points": {
+   "gold-2": 0.0,
+   "v1": 0.0,
+   "v2": 0.0,
+   "opus": -0.91,
+   "sonnet": 0.01,
+   "haiku": 0.0,
+   "adv1-a": -1.34,
+   "adv1-b": 0.0,
+   "adv2-a": 0.0,
+   "adv2-b": 0.0
+  },
+  "summaries_with_differing_statements": [
+   "opus",
+   "sonnet",
+   "adv1-a"
+  ],
+  "spearman_55_pairs": 0.9816,
+  "pairs_equal_as_floats": "28/55",
+  "spearman_differing_pairs": 0.9597,
+  "max_abs_pair_difference": 0.0322,
+  "twin_lists_equal": "11/12",
+  "twin_smd_within_bar": "11/12",
+  "twin_max_smd": 0.002856,
+  "twin_max_smd_document": "source",
+  "default_threshold": 0.77,
+  "threshold_against_auto_band": {
+   "inside": true,
+   "above_lower_edge": 0.0226,
+   "below_upper_edge": 0.0244,
+   "midpoint": 0.7709,
+   "threshold_minus_midpoint": -0.0009
+  },
+  "verdict_flips_at_threshold": "0/10",
+  "n_unsupported_7_gold_tier": {
+   "plain": 8,
+   "auto": 9
+  },
+  "match_status_vs_source_7_gold_tier": {
+   "plain": {
+    "kept": 62,
+    "removed": 15,
+    "added": 428
+   },
+   "auto": {
+    "kept": 63,
+    "removed": 16,
+    "added": 273
+   }
+  },
+  "wergeland_band_measurable": false,
+  "outside_record_smd_ibm_source_vs_wergeland_source": {
+   "plain": 0.6416,
+   "auto": 0.5255
+  },
+  "outside_record_plain_marker_to_content": {
+   "mass": 0.2423,
+   "mean_ground_cost": 1.0758
+  },
+  "outside_record_plain_marker_to_marker": {
+   "mass": 0.0577,
+   "mean_ground_cost": 0.2229
+  }
+ },
+ "result_summary": "Verdict Killed-at-gate. Harness check passed: the plain arm reads the 55 stored 1.1.5 pair distances with a largest difference of 0.0e+00 and the band 0.7474 (adv2-b) to 0.7944 (haiku). Kill-gate not passed: detect_format returns markdown for 12 of 12 ibm documents, and the default reader returns a marker statement on 0 of 11 summaries (0 of 98 summary statements hold no letter and no digit). The ibm source is the one ibm document with marker statements (21 of 70 under plain, 0 of 48 under auto) and it is in none of the 55 pairs. Bar status: the five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict. Clause 1: detection right on 36 of 36. Clause 2: the auto band is 0.7474 (adv2-b) to 0.7944 (haiku), width 0.0471 against 0.0471 under plain; closeness under auto is lower for 2 of 10 summaries, equal for 7, higher for 1. Clause 3: Spearman 0.9816; 28 of 55 pairs read the same float under both readers. Clause 4: embedded lists equal for 11 of 12 renders, SMD at most 0.001 for 11 of 12 (largest 2.856e-03, source). Clause 5: the plain arm equals the stored baseline by np.array_equal: True. The statement lists of 3 of 11 summaries differ between the readers (opus, sonnet, adv1-a): in 3 of them one statement of the default reader is returned under auto as two statements whose join by one space equals it, in 3 of them the first of the two does not end with a full stop, a question mark or an exclamation mark, and in 3 of them the segmenter returns the statement count of auto when it is given that paragraph alone. DEFAULT_THRESHOLD 0.77 against the auto band: lower edge < threshold <= upper edge is True, 0.0226 above the lower edge and 0.0244 below the upper edge; midpoint of the auto band 0.7709, threshold minus midpoint -0.0009. Wergeland article: a band between two tiers can be read: False (0 adversarial-tier documents in the fixtures). n_unsupported of the 7 gold-tier summaries against the ibm source: 8 of 77 statements under plain, 9 of 79 under auto. Outside the record, on the one fixture pair in which both documents hold marker statements: SMD(ibm source, Wergeland source) 0.6416 under plain and 0.5255 under auto; under plain 0.2423 of the mass moves from an ibm marker statement to a Wergeland content statement at a mean ground cost of 1.0758",
+ "artifacts": {
+  "notebook": "notebooks/experiments/E16-H81-kj-autodetected-reader-default.ipynb",
+  "metrics_json": "reports/E16-H81-autodetected-reader-default-metrics.json",
+  "log": "logs/E16-H81-autodetected-reader-default.log"
+ },
+ "notebook_errors": 0,
+ "caveats": "The five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict. The 11 scored summaries hold 0 marker statements under the default reader, so no pair of the 55 and no band edge exercises the registered mechanism (equal marker statements of two documents that exchange mass); this run does not show what a structural reader does to the distance between two documents that both hold markers, apart from the one cross-article pair read outside the record. The readers differ on 3 of 11 summaries through segmentation, not through markers: the markdown reader passes each paragraph to the segmenter on its own (the segmenter on the paragraph alone returns the statement count of auto for 3 of 3). Clause 2 reads equal bands when the documents that set the edges and the reference keep their statements: embedded lists equal under both readers {'adv2-b': True, 'gold': True, 'haiku': True}. Clause 3: 28 of 55 pairs hold two documents with equal statement lists and read the same float under both readers; the correlation over the other 27 is 0.9597. Clause 4 is read on renders of one generator (markdown_it, commonmark with tables); HTML from other tools was not read. The band is in-sample on 11 documents and each edge is one document (E12-H63). The Wergeland article has 0 adversarial-tier documents and its 6 stored documents are statement lists without a file, so no band was read for it; detect_format reads the Wergeland files as {'raw-extract.txt': 'markdown', 'source-article.md': 'markdown'}, and raw-extract.txt is a text extract of the PDF. Executor rules, because the record leaves them open: the marker rule (no letter and no digit), the pair order of baseline.py, the band shift read on each edge, n_unsupported through unsupported_count against the ibm source, match_status counts against the ibm source with the reference pairs as second reading, the threshold position as lower edge < threshold <= upper edge, and direction_matched as the two effects of the prediction that have a direction. Executor note on the run: before the notebook was built, one probe read the two gate conditions without any distance, and a second probe after it computed the distances of both arms to fix the table layout. The notebook was then executed 6 times, the first stopped at an import error; the changes between executions concerned tables, wording, three second readings (the segmenter on one paragraph alone, summary statements under 5 words, the marker strings of the pair read outside the record), one figure axis and one progress bar; none of them changed a registered bar, threshold or constant. Two markdown cells were reworded after the last execution; every code cell and every output is from that execution"
+}

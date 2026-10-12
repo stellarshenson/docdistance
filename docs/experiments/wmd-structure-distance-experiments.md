@@ -17,6 +17,31 @@ Pre-registered experiments log for a **structure axis** on top of the mmBERT Sta
 > per-hypothesis long tail has not been reconciled; read any unreconciled figure off the artefact.
 > The E08-E11 batches ran on the NVIDIA RTX PRO 6000 Blackwell Max-Q as recorded in every report's
 > `device` field, not the RTX 5000 Ada named in older prose.
+>
+> **Re-execution of 2026-10-09.** The E07 to E11 notebooks were re-executed on the NVIDIA RTX PRO
+> 4000 Blackwell. The audit [`reexec-drift-audit.md`](../../reports/E13-campaign/results/reexec-drift-audit.md)
+> covers the batches E07 to E10: it compares the files of commit `bd0002e` with the re-executed
+> files and with the records of these batches. E11 is outside the audit. Fourteen records carry a
+> log line with both readings. Three of them state a verdict label
+> that the stored artefact contradicts in both files: E08-H44 (`Confirmed` here, range clause not
+> met, stored label `Reported`), E08-H47 (`Refuted` here, stored label `Kept`) and E09-H53
+> (`Refuted` here, stored label `Confirmed`). These differences are older than the re-execution.
+>
+> **E11 readings.** `reports/E11-structure-sota-decision.json` reads, at `bd0002e` and after the
+> re-execution: content-invariance 0.0038 (H55) against 0.615 (H44), translation-invariance 0.0011
+> against 0.459, back-translation reword 0.0011 against 0.132, scramble top bin of H55 0.416 (ibm)
+> and 0.396 (Wergeland). The E11 record of this log quotes 0.005 and 0.735, 0.001 and 0.417, 0.0017
+> and 0.149. The decision for H55 holds on both sets; the solution document and the README quote
+> the stored values from 2026-10-10.
+>
+> **Build of record.** The note of the same name at the top of
+> [`wmd-docdistance-experiments.md`](wmd-docdistance-experiments.md) holds for this log as well: its
+> notebooks E07 to E11 are records on docdistance 1.1.5, the source of commit `bd0002e`, and none of
+> them passes a file to a pipeline call.
+
+## Authors
+
+- `@kj` Konrad Jelen
 
 ## Problem overview
 
@@ -378,6 +403,8 @@ Exploratory, **not** the core for the order/section deliverable. Gromov-Wasserst
 - **Acceptance bar** - reorder-invariance confirmed (`GW ≈ 0` on reorder), and GW separates a purpose-built rewrite perturbation; GW metric property verified
 - **Kill-gates** - (1) a dedicated relational-rewrite (merge/split) perturbation is still absent; the E07 run used the cross-summary pairs as a relational-difference proxy (GW 0.0134 vs ≈0 on reorder); (2) intra-document similarity must carry variance - if `C_A` is near-uniform, GW is noise and the axis is dropped
 - **Verdict** - Confirmed (reorder-invariant) - GW ≈ 0.0000 on a pure reorder against 0.0134 on cross-summary pairs; GW is a relational, not order, instrument exactly as the design states
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: GW 0.0134 on cross-summary pairs. Both files of reports/E07-structure-distance-metrics.json (bd0002e and the re-execution of 2026-10-09) read 0.0249; the reorder mean reads 3.31e-10 and 9.15e-11. The verdict holds
 
 ### E07-H35 Fused Gromov-Wasserstein (content + relational)
 
@@ -401,6 +428,8 @@ Prove the structure axis is a genuine second dimension and make it cheap enough 
 - **Prediction** - `|ρ|` low on the real off-grid pairs, not only on the constructed grid (which is *built* orthogonal, so a low grid-`ρ` partly measures the construction)
 - **Acceptance bar** - `|ρ(structure, SMD)|` ≤ 0.3 with the bootstrap CI excluding redundancy, on the off-grid pairs - but Pearson catches **linear** dependence only (`|ρ| ≤ 0.3` still permits ~9% shared variance), so pair it with a rank or distance-correlation measure; not confirmable on this fixture (see the Statistical protocol), exploratory until the second-article fixture
 - **Verdict** - Exploratory - Pearson `ρ` = 0.657 (95% bootstrap CI [0.540, 0.757], half-width 0.109). The CI lies entirely **above** the registered `|ρ| ≤ 0.3` margin, so orthogonality between the τ-read and SMD is not supported on this fixture. Pre-registered as non-confirmatory, so the verdict stands as Exploratory; note this measured the Phase-6 τ-induced read, not the shipped E10-H55 OPW order-gap
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - Pearson rho 0.6572 with CI 0.5403 to 0.7574 at bd0002e; 0.6633 with CI 0.5482 to 0.7630 on the re-execution of 2026-10-09 (the GPU model differs). The lower bound stays above 0.3, so the verdict holds
 
 ### E07-H37 Metric property and cheap lower bound
 
@@ -410,6 +439,8 @@ Prove the structure axis is a genuine second dimension and make it cheap enough 
 - **Prediction** - exact GW/FGW satisfy the triangle inequality; the lower bound stays `≤` exact and cuts per-pair latency
 - **Acceptance bar** - metric verified on the sample; bound `≤` exact on every pair; latency reduced - the bound flagged as a non-exact lower bound, never the exact distance
 - **Verdict** - Reported - `τ`-structure triangle-inequality violation rate 4% (it is a derived disorder, not claimed a metric; only GW/FGW are), per-pair cost `τ` 0.33 ms against SMD 0.08 ms and GW 0.43 ms
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: triangle violation rate 4%. The files read 0.075 at bd0002e and 0.08 on the re-execution of 2026-10-09. The verdict is a report without a threshold
 
 ## E07 - Phase 6: the secondary metric: bounded, explainable, riding on the semantic transport
 
@@ -517,6 +548,8 @@ The E07 batch left one honest gap: the surviving structure read (the `τ`-from-`
 - **Acceptance bar** - triangle violations ≤ 1% on sampled triples; Spearman(displacement, distance) ≥ 0.9 with zero inversions; dynamic-range ratio ≥ the E07 footrule / off-diagonal baselines; naive margin ≥ the registered minimum on the diffuse regime
 - **Known failure mode** - penalizes absolute position, so a pure shift (an insertion at the top displaces every later statement) reads as disorder; the discriminating contrast against E08-H45
 - **Verdict** - **Confirmed** (applicability: High) - λ=0 reproduces SMD (max `|Δ|` = 1.3e-12), 0% triangle violations (a true Wasserstein metric, against the `τ`-footrule's 4%), Spearman 1.00 with zero inversions; the dynamic-range ratio scales with λ (0 → 4.1 → 6.7 → 8.8) and clears both E07 baselines (footrule 6.4, off-diagonal 7.4) at λ=0.5; λ selection deferred to the second-article fixture. The metric, wide-dynamic-range structure distance the batch set out to find - the one mechanism that ships, caveated only by its absolute-position sensitivity (E08-H45's translation-invariance is the property to graft later)
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: Confirmed, range ratio 0 → 4.1 → 6.7 → 8.8 over lambda, above footrule 6.4 and off-diagonal 7.4 at lambda 0.5. Both files of reports/E08-structure-distance-metrics.json read 1.66, 2.53 and 3.14 at lambda 0.1, 0.25 and 0.5 (3.1428 at bd0002e, 3.1424 on the re-execution of 2026-10-09) against footrule 5.7993 / 5.7924 and off-diagonal 6.6820 / 6.6787, and store the label 'Reported'. The range clause of the bar is met in neither file; the triangle clause (0%) and the Spearman clause (1.0, 0 inversions) hold. The shipped structure metric is the E10-H55 order gap, not this lever
 
 ### E08-H45 Positional Fused Gromov-Wasserstein (Gromov-Wasserstein, dug deeper)
 
@@ -526,6 +559,8 @@ The E07 batch left one honest gap: the surviving structure read (the `τ`-from-`
 - **Prediction** - unlike E07-H35 (FGW = SMD flat across `α`), positional-FGW rises monotonically with reorder; 0% triangle violations; a pure shift reads ≈0 (the contrast with E08-H44); an interior `α*` beats `α = 0`
 - **Acceptance bar** - monotone separation above the paraphrase floor; triangle violations 0 within solver tolerance; shift-invariance shown (≈0 on a pure shift, ≤ paraphrase p95); dynamic-range ratio ≥ the E07 baselines; `α*` selection deferred to the second-article fixture (report the `α`-curve, no forking path on one article)
 - **Verdict** - **Refuted** as an order measure (applicability: Low) - rises mid-range (0.005 → 0.056 across bins 0-4, the contrast with E07-H35's flat = SMD holds) and is translation-invariant (pure-shift FGW 0.0000 against the position-augmented 0.134), 0% triangle violations (a metric); but it **collapses at full scramble** (peak bin 4, drops at bin 5, Spearman 0.43) as the Gromov isometry solution reasserts (α=1 → 0), so it is a metric but not a monotone order-disorder measure. GW is confirmed (again) not the order instrument; its translation-invariance is the one property worth salvaging
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: Spearman 0.43, peak bin 4. Both files read Spearman 0.3714 with 2 inversions and peak bin 3; collapse at full scramble is True in both. The verdict holds
 
 ### E08-H46 Optimal-assignment footrule (the metric repair and baseline bridge)
 
@@ -535,6 +570,8 @@ The E07 batch left one honest gap: the surviving structure read (the `τ`-from-`
 - **Prediction** - 0% triangle violations on equal-length pairs (metric by construction); monotone in displacement; tracks soft `τ` on a sharp `T`, diverges (more honest, less saturated) on a diffuse `T`; narrower dynamic range than E08-H44/H45 (still a bounded rank statistic)
 - **Acceptance bar** - violation rate 0 on equal-length triples; monotone; dynamic-range ratio reported and expected below E08-H44/H45 (the point of the comparison); equal-length only - unequal-length real conversions still need the true-OT metrics
 - **Verdict** - **Confirmed** (applicability: Low) - equal-length triangle violations 0.0% (a true metric on the symmetric group, the repair the `τ`-footrule needed), Spearman 1.00 zero inversions, range ratio 6.2 - narrower than E08-H44's 6.7 as designed. A clean metric repair, but **only on equal-length pairs**; real conversions change statement counts, where it is undefined - so low applicability to the use case, useful as a diagnostic baseline
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: range ratio 6.2, narrower than the 6.7 of E08-H44. Both files read range ratio 5.3929 against 2.5269 for E08-H44 at lambda 0.25, with narrower_than_h1 False
 
 ### E08-H47 Anisotropy removal under the two-document constraint
 
@@ -544,6 +581,8 @@ The E07 batch left one honest gap: the surviving structure read (the `τ`-from-`
 - **Prediction** - offline-frozen drops the cross-summary `T` median row-entropy from 0.13 toward 0.00, widens the dynamic range of E08-H44/H45 and `τ` and their naive margin on the diffuse regime, with the semantic SMD axis held; per-pair pooled over-corrects on 25-statement docs, so offline-frozen wins
 - **Acceptance bar** - row-entropy reduction with SMD fidelity held (Pearson vs raw-SMD ≥ a registered floor); dynamic range and naive margin both widen by a registered amount on the diffuse regime; the offline-vs-per-pair contrast documented; never corpus-fit on the test pair
 - **Verdict** - **Refuted** / inert (applicability: None) - offline-frozen ABTT does not sharpen the cross-summary `T` (row-entropy 0.129 → 0.130, per-pair 0.135) because raw `T` is already concentrated (~0.13, no room), and the naive margin does not widen (+0.005 → −0.009); SMD fidelity held (Pearson 0.94). The lever adds nothing where `T` is already sharp - consistent with E07; it could still matter on a genuinely diffuse `T`, untested here
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: Refuted, row-entropy 0.129 → 0.130, naive margin +0.005 → -0.009, Pearson 0.94. Artefact at bd0002e: row-entropy 0.1228 → 0.1204, naive margin 0.0927 → 0.0726, Pearson 0.9772, stored label 'Kept'. Re-execution 2026-10-09: 0.1216 → 0.1204, 0.0908 → 0.0818, 0.9772, 'Kept'. The naive margin does not widen in either file; the row-entropy falls in both files, where the record states no sharpening
 
 ### E08-H48 Displacement-weighted anti-monotone transport mass (creative)
 
@@ -553,6 +592,9 @@ The E07 batch left one honest gap: the surviving structure read (the `τ`-from-`
 - **Prediction** - monotone in displacement; the displacement-weighted form has a materially wider dynamic range than the unweighted off-diagonal mass; fewer triangle violations than the barycentric `τ`-footrule; kept only if its range rivals the true-OT metrics
 - **Acceptance bar** - monotone Spearman ≥ 0.9; triangle-violation rate reported against `τ`-footrule's 4%; dynamic-range ratio reported against E08-H44/H45 and the off-diagonal-mass baseline; the bounded / scaled form stated
 - **Verdict** - **Refuted** as a metric (applicability: Low) - displacement-weighted anti-monotone mass is monotone (Spearman 1.00, zero inversions) with a wide range (8.1 unweighted, 7.2 weighted), but **6.7% triangle violations, more than the `τ`-footrule** (~4%), against the prediction. A wide-range disorder read, not a metric - it does not solve the metric problem E08-H44 solves
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: 6.7% triangle violations, range 8.1 unweighted and 7.2 weighted. The files read a triangle rate 0.06 at bd0002e and 0.0667 on the re-execution of 2026-10-09, and range 7.20 unweighted and 4.13 weighted in both. The verdict holds
+  - log: 2026-10-10 @kj - final review wf_73bb512c-5af - the clause 'more than the tau-footrule (~4%)' of the Verdict rests on the constant tau_tri = 0.035 in code cell 24 of the E08 notebook. reports/E07-structure-distance-metrics.json reads E07-H37 triangle_violation_rate 0.075 at bd0002e and 0.08 on the re-execution (200 triples); this lever reads 0.06 and 0.0667 (150 triples), below the stored E07 rate in both files. The clause is not supported by the stored files; 'not a metric' holds at any rate above 0, so the label stays
 
 ## E09 - common-mode rejection and segmentation granularity (executed)
 
@@ -580,6 +622,8 @@ E08-H47 found the offline anisotropy lever inert - but on the byte-identical fix
 - **Prediction** - on diffuse pairs the rejection drops `T` row-entropy below the raw ~0.13 and widens the structural naive margin, while the semantic tier ordering stays at 0 violations and SMD fidelity (rank vs raw) holds; or the semantic axis degrades, exposing the topic-removal cost
 - **Acceptance bar** - structural margin/entropy gain on diffuse pairs AND semantic ordering preserved (0 violations) with SMD-fidelity above a registered floor; CMRR > 1
 - **Verdict** - **Refuted** (applicability: None) - per-pair both-document top-1 CMR does **not** sharpen the diffuse `T` (row-entropy 0.129 → 0.135, the plan got *more* diffuse, g_struct −0.049) and hurts the semantic ordering (SMD-fidelity Spearman 0.741, l_sem 0.259, +1/24 tier violation, naive margin +0.005 → −0.006); CMRR −0.19. The opposite of the prediction - the common mode of two same-article summaries is shared **topic**, not just frequency anisotropy, so rejecting it blurs both axes. Same null as E08-H47 but for the opposite reason - there `T` was already sharp; here there is a real common mode, but it is topic, and removing it costs
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: row-entropy 0.129 → 0.135, fidelity 0.741, 1 of 24 tier violations, CMRR -0.19. Artefact at bd0002e: 0.1228 → 0.1237, fidelity 0.8695, 0 tier violations, CMRR -0.0568. Re-execution 2026-10-09: 0.1216 → 0.1237, 0.8695, 0, CMRR -0.1295. CMRR is below 1 in both files, so the verdict holds
 
 ### E09-H50 Selectivity - per-pair vs offline-frozen vs raw
 
@@ -589,6 +633,8 @@ E08-H47 found the offline anisotropy lever inert - but on the byte-identical fix
 - **Prediction** - offline-frozen preserves the semantic shared-content signal better (no topic removal) but sharpens less; per-pair sharpens more but pays on the semantic axis; one clears CMRR > 1, the other does not
 - **Acceptance bar** - the arm with the highest CMRR on the diffuse pairs, with the semantic-vs-structural tradeoff reported for each
 - **Verdict** - **Inconclusive** (applicability: None) - the predicted selectivity ordering holds - offline-frozen (anisotropy-only direction) preserves semantics far better (fidelity 0.921 vs per-pair 0.741) but sharpens less - and offline-frozen is the safer arm (CMRR −0.11 vs per-pair −0.19), but neither clears CMRR > 1, so no shipping winner on the diffuse pairs. Offline-frozen is the arm to keep if the lever is ever revisited
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: offline-frozen fidelity 0.921, CMRR -0.11 against -0.19 per pair. The files read offline-frozen CMRR 0.6387 at bd0002e and 0.3358 on the re-execution of 2026-10-09, fidelity 0.9695, winner offline-frozen (k=1) in both. Below 1 in both, so the verdict holds
 
 ### E09-H51 Rejection depth - top-D sweep
 
@@ -598,6 +644,8 @@ E08-H47 found the offline anisotropy lever inert - but on the byte-identical fix
 - **Prediction** - CMRR peaks at D=1 (possibly D=2); D≥3 degrades the semantic axis (over-rejection), and the removed direction's bootstrap stability falls off past D=1-2
 - **Acceptance bar** - the D maximizing CMRR; flag the D at which the removed direction's stability drops below a registered threshold (the over-rejection onset)
 - **Verdict** - **Inconclusive** (applicability: None) - best D = 0 (raw); CMRR by depth [0.00, −0.19, −0.27, −0.16] is net-negative at every removal depth, and the removed-direction bootstrap stability is below the 0.9 bar everywhere (D1 0.77, D2 0.86, D3 0.83), confirming the ~28-statements-per-pair pooled estimate is too shaky to trust. The pre-registered "peak at shallow D" shape does not appear - the optimum is no removal
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: CMRR by depth 0.00, -0.19, -0.27, -0.16; stability 0.77, 0.86, 0.83. Artefact at bd0002e: 0.0, -0.0568, -0.1255, -0.5598; stability 0.7355, 0.8783, 0.8338. Re-execution 2026-10-09: 0.0, -0.1295, -0.1627, -0.5933; stability 0.7354, 0.8783, 0.8337. best_d is 0 in both files, so the verdict holds
 
 ### E09-H52 Segmentation granularity - sample count vs unit noise
 
@@ -607,6 +655,8 @@ E08-H47 found the offline anisotropy lever inert - but on the byte-identical fix
 - **Prediction** - finer segmentation improves the top-1 estimate's stability and the CMR benefit up to a point, then per-unit embedding noise degrades both the semantic and structural axes - a sweet spot in the middle
 - **Acceptance bar** - a granularity at which per-pair CMR clears the E09-H49 bar that the coarse segmentation could not; report the granularity-vs-CMRR curve
 - **Verdict** - **Refuted** (applicability: None) - finer segmentation moves CMRR in the predicted direction (default −0.19 → fine +0.12, n~33) and improves top-1 PCA stability (0.77 → 0.86) - the sweet-spot trend is real - but the best granularity (fine, CMRR 0.12) still does not clear the E09-H49 bar (CMRR > 1). Used the documented clause-split fallback (split on `, ; : -`, 4-word floor; the SAT `Segmenter` exposes no public threshold knob)
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: CMRR default -0.19 → fine +0.12. Artefact at bd0002e: coarse -0.0119, default -0.0568, fine 0.6953. Re-execution 2026-10-09: 0.0018, -0.1295, 0.6034. The best value is below 1 in both files, so the verdict holds
 
 ### E09-H53 The single (basic SMD) under both-document CMR
 
@@ -616,6 +666,8 @@ E08-H47 found the offline anisotropy lever inert - but on the byte-identical fix
 - **Prediction** - inert on the sharp byte-identical pairs (E08-H47-like); on diffuse pairs the rejection widens the SMD dynamic range but may compress the gold/adversarial margin if it removes shared topic - the content SOTA's "DR up 3.2x, d' down" tradeoff, now estimated per-pair from both documents
 - **Acceptance bar** - SMD tier ordering preserved (0 violations) with dynamic range up via both-document CMR on a single pair; the d' tradeoff reported
 - **Verdict** - **Refuted** (applicability: None) - the single-pair dynamic-range claim holds (SMD std 0.036 → 0.117, ×3.25, the content-SOTA "DR up" effect recovered per-pair from both documents) but the d' guard fails - gold/adversarial tier d' falls 2.81 → 2.28 and CMR introduces 1/24 tier violation, so tier ordering is **not** preserved. The topic-removal cost is real on a lone pair - both-document CMR is not a safe substitute for corpus anisotropy removal on the basic SMD
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: Refuted, tier d' 2.81 → 2.28 and 1 of 24 tier violations. Both files of reports/E09-anisotropy-cmr-metrics.json (bd0002e and the re-execution of 2026-10-09) store the label 'Confirmed': SMD dynamic range 0.0864 → 0.2093 (2.42x), tier d' 5.97 → 8.02, 0 of 24 tier violations. The record and its artefact contradict each other on the verdict; the difference is older than the re-execution. The same lever (pre-pass estimated from the two documents of one pair) was measured again as E12-H64 and E12-H65 in wmd-docdistance-experiments.md
 
 ## E10 - structure-sensitive, content-invariant distances (executed)
 
@@ -662,6 +714,8 @@ The arc leaves one property unclaimed. E08-H44 position-augmented Wasserstein sh
 - **Prediction** - monotone, blind to paraphrase; Kendall-tau is a metric on the induced ranks → a metric, dissolving the E09 two-document anisotropy problem (the source is the anchor)
 - **Acceptance bar** - Spearman ≥ 0.9; ≈ 0 on paraphrase; triangle violations 0 on equal-length induced ranks; shared-source vs one-doc-anchor contrast reported
 - **Verdict** - **Inconclusive** (applicability: Low) - achieves the combined property (pure-shift 0, Spearman 1.00 rising through the top bin) and is a metric on equal-length induced ranks (0% triangle), but **fails content-invariance against the proxy** (paraphrase-proxy median 0.1) because embedding jitter reassigns source bins, and the triangle breaks on diffuse unequal-length pairs (22.7%) - a metric only in the equal-length regime, like E08-H46. Inconclusive pending a true paraphrase control and an unequal-length-robust source binning
+- **Log**
+  - log: 2026-10-10 @kj - audit 2026-10-10 (reports/E13-campaign/results/reexec-drift-audit.md) - record: paraphrase-proxy median 0.1, 22.7% triangle violations on diffuse pairs. Both files read paraphrase median 0.0460 and triangle rate 0.2067; the paraphrase p95 reads 0.2893 at bd0002e and 0.3116 on the re-execution of 2026-10-09. content_pass is False in both files, so the verdict holds
 
 ### E10-H57 Sequence edit distance on a shared codebook (table-turning, non-OT string paradigm)
 

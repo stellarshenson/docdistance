@@ -1,0 +1,1628 @@
+{
+  "id": "E15-H80",
+  "slug": "moved-on-matched-pairs",
+  "environment": {
+    "python": "3.14.8",
+    "docdistance": "1.1.5",
+    "pot": "0.9.6.post1",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "encoder": "mmBERT OpenVINO INT8 (CPU)"
+  },
+  "seed": 0,
+  "lever": {
+    "c": 0.325,
+    "eps": 1e-06,
+    "moved_tolerance": 0.05,
+    "no_counterpart_cost": 0.6,
+    "definition": "not no_counterpart AND matched AND matched_displacement != 0 AND abs(matched_displacement / n_matched) > moved_tolerance",
+    "matching": "linear_sum_assignment on min(cost, c) + eps * abs(i / n - j / m); a pair with cost >= c is unmatched"
+  },
+  "arms": {
+    "shipped": "shipped (norm only)",
+    "conjunction": "conjunction (E12-H61 baseline)",
+    "conjunction_and_matched": "conjunction AND matched",
+    "lever": "lever (matched pairs)",
+    "lever_no_tiebreak": "lever, no tie-break"
+  },
+  "scope": {
+    "n_statements_min": 11,
+    "n_statements_max": 14,
+    "repeated_statements_in_base_documents": 0,
+    "repeated_statements_in_paraphrases": 0
+  },
+  "sanity_check": {
+    "passed": true,
+    "pool": {
+      "passed": true,
+      "n_permutations": 1680,
+      "relocated_statements": 13675,
+      "true_positives_shipped": 13675,
+      "true_positives_conjunction": 13675,
+      "true_positives_lost": 0,
+      "false_fires_shipped": 0,
+      "false_fires_conjunction": 0,
+      "record": {
+        "flagged": 13675,
+        "lost": 0,
+        "n_permutations": 1680
+      }
+    },
+    "arm_consistency": {
+      "passed": true,
+      "record_conjunction_equal_compiled_pool": 1680,
+      "record_conjunction_equal_compiled_fixtures": 6,
+      "saved_h61_fixture_counts_reproduced": 6,
+      "fixtures": [
+        {
+          "fixture": "insertion",
+          "shipped": 4,
+          "conjunction": 0,
+          "saved_shipped": 4,
+          "saved_conjunction": 0,
+          "record_equal": true
+        },
+        {
+          "fixture": "worked_example",
+          "shipped": 4,
+          "conjunction": 4,
+          "saved_shipped": 4,
+          "saved_conjunction": 4,
+          "record_equal": true
+        },
+        {
+          "fixture": "shrink_orth",
+          "shipped": 0,
+          "conjunction": 0,
+          "saved_shipped": 0,
+          "saved_conjunction": 0,
+          "record_equal": true
+        },
+        {
+          "fixture": "shrink_text",
+          "shipped": 2,
+          "conjunction": 2,
+          "saved_shipped": 2,
+          "saved_conjunction": 2,
+          "record_equal": true
+        },
+        {
+          "fixture": "reversal_orth",
+          "shipped": 12,
+          "conjunction": 12,
+          "saved_shipped": 12,
+          "saved_conjunction": 12,
+          "record_equal": true
+        },
+        {
+          "fixture": "reversal_text",
+          "shipped": 12,
+          "conjunction": 12,
+          "saved_shipped": 12,
+          "saved_conjunction": 12,
+          "record_equal": true
+        }
+      ]
+    },
+    "deletion_set": {
+      "passed": true,
+      "cases": 280,
+      "ceiling": 0.005,
+      "within_ceiling_c060": 280,
+      "within_ceiling_c0325": 280,
+      "shipped_above_ceiling": 280,
+      "saved_h70_values_equal": "5/5",
+      "readings": {
+        "cases": {
+          "here": 280,
+          "saved": 280
+        },
+        "matched gap <= 0.005 at c = 0.6": {
+          "here": 280,
+          "saved": 280
+        },
+        "matched median at c = 0.6": {
+          "here": 6.73362e-05,
+          "saved": 6.73362e-05
+        },
+        "matched max at c = 0.6": {
+          "here": 0.000610062,
+          "saved": 0.000610062
+        },
+        "shipped opw_gap median": {
+          "here": 0.102628,
+          "saved": 0.102628
+        }
+      },
+      "functions_copied_unchanged": {
+        "delete_positions": true,
+        "deletion_plans": true,
+        "match_statements": true,
+        "matched_opw_gap": true,
+        "rung_of": true
+      },
+      "h61_substitutions_copied_unchanged": true
+    }
+  },
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "cases": 280,
+    "cases_with_conjunction_flag": 246,
+    "share": 0.878571,
+    "flagged_kept": 678,
+    "flagged_removed": 472,
+    "per_k": {
+      "1": {
+        "cases": 70,
+        "case_with_flag": 43,
+        "flagged_kept": 84,
+        "flagged_removed": 29,
+        "removed_no_counterpart": 34
+      },
+      "2": {
+        "cases": 70,
+        "case_with_flag": 64,
+        "flagged_kept": 156,
+        "flagged_removed": 94,
+        "removed_no_counterpart": 28
+      },
+      "3": {
+        "cases": 70,
+        "case_with_flag": 69,
+        "flagged_kept": 182,
+        "flagged_removed": 138,
+        "removed_no_counterpart": 35
+      },
+      "4": {
+        "cases": 70,
+        "case_with_flag": 70,
+        "flagged_kept": 256,
+        "flagged_removed": 211,
+        "removed_no_counterpart": 16
+      }
+    }
+  },
+  "clause_1_deletions": {
+    "met": true,
+    "cases": 280,
+    "lever_cases_with_0_flags": 280,
+    "survivors_recovered": 280,
+    "no_counterpart_rule_acted": 0,
+    "conjunction_case_share": 0.878571,
+    "per_arm": {
+      "shipped": {
+        "flagged_kept": 1149,
+        "flagged_removed": 526,
+        "cases_with_flag": 274,
+        "cases": 280,
+        "kept_statements": 2772,
+        "removed_statements": 700
+      },
+      "conjunction": {
+        "flagged_kept": 678,
+        "flagged_removed": 472,
+        "cases_with_flag": 246,
+        "cases": 280,
+        "kept_statements": 2772,
+        "removed_statements": 700
+      },
+      "conjunction_and_matched": {
+        "flagged_kept": 678,
+        "flagged_removed": 0,
+        "cases_with_flag": 202,
+        "cases": 280,
+        "kept_statements": 2772,
+        "removed_statements": 700
+      },
+      "lever": {
+        "flagged_kept": 0,
+        "flagged_removed": 0,
+        "cases_with_flag": 0,
+        "cases": 280,
+        "kept_statements": 2772,
+        "removed_statements": 700
+      },
+      "lever_no_tiebreak": {
+        "flagged_kept": 0,
+        "flagged_removed": 0,
+        "cases_with_flag": 0,
+        "cases": 280,
+        "kept_statements": 2772,
+        "removed_statements": 700
+      }
+    },
+    "cases_with_flag_per_k": {
+      "1": {
+        "shipped": 64,
+        "conjunction": 43,
+        "conjunction_and_matched": 34,
+        "lever": 0,
+        "lever_no_tiebreak": 0
+      },
+      "2": {
+        "shipped": 70,
+        "conjunction": 64,
+        "conjunction_and_matched": 47,
+        "lever": 0,
+        "lever_no_tiebreak": 0
+      },
+      "3": {
+        "shipped": 70,
+        "conjunction": 69,
+        "conjunction_and_matched": 54,
+        "lever": 0,
+        "lever_no_tiebreak": 0
+      },
+      "4": {
+        "shipped": 70,
+        "conjunction": 70,
+        "conjunction_and_matched": 67,
+        "lever": 0,
+        "lever_no_tiebreak": 0
+      }
+    }
+  },
+  "clause_2_verbatim_pool": {
+    "met": true,
+    "permutations": 1680,
+    "fully_matched": 1680,
+    "matching_equals_exact_plan": 1680,
+    "relocated_statements": 13675,
+    "in_place_statements": 7157,
+    "no_counterpart_rule_acted": 0,
+    "per_arm": {
+      "shipped": {
+        "pool_equality_count": 1680,
+        "true_relocations_flagged": 13675,
+        "false_fires": 0
+      },
+      "conjunction": {
+        "pool_equality_count": 1680,
+        "true_relocations_flagged": 13675,
+        "false_fires": 0
+      },
+      "conjunction_and_matched": {
+        "pool_equality_count": 1680,
+        "true_relocations_flagged": 13675,
+        "false_fires": 0
+      },
+      "lever": {
+        "pool_equality_count": 1680,
+        "true_relocations_flagged": 13675,
+        "false_fires": 0
+      },
+      "lever_no_tiebreak": {
+        "pool_equality_count": 1680,
+        "true_relocations_flagged": 13675,
+        "false_fires": 0
+      }
+    }
+  },
+  "clause_3_reworded_reorders": {
+    "met": true,
+    "bar": 0.98,
+    "pairs": 1680,
+    "bases_used": [
+      "gold",
+      "gold-2",
+      "v1",
+      "v2",
+      "opus",
+      "sonnet",
+      "haiku",
+      "werg-a",
+      "werg-b",
+      "werg-c"
+    ],
+    "bases_left_out": [],
+    "retention": 1.0,
+    "retention_numerator": 13675,
+    "retention_denominator": 13675,
+    "retention_min_per_base": 1.0,
+    "retention_per_base": {
+      "gold": 1.0,
+      "gold-2": 1.0,
+      "v1": 1.0,
+      "v2": 1.0,
+      "opus": 1.0,
+      "sonnet": 1.0,
+      "haiku": 1.0,
+      "werg-a": 1.0,
+      "werg-b": 1.0,
+      "werg-c": 1.0
+    },
+    "relocated_statements": 13675,
+    "statements_that_did_not_relocate": 7157,
+    "fully_matched": 1680,
+    "matching_equals_exact_plan": 1680,
+    "no_counterpart_rule_acted": 0,
+    "per_arm": {
+      "shipped": {
+        "retention_numerator": 13675,
+        "retention_denominator": 13675,
+        "retention": 1.0,
+        "true_relocations_flagged": 13675,
+        "false_fires_on_not_relocated": 0,
+        "pairs_with_flags_equal_to_conjunction": 1680
+      },
+      "conjunction": {
+        "retention_numerator": 13675,
+        "retention_denominator": 13675,
+        "retention": 1.0,
+        "true_relocations_flagged": 13675,
+        "false_fires_on_not_relocated": 0,
+        "pairs_with_flags_equal_to_conjunction": 1680
+      },
+      "conjunction_and_matched": {
+        "retention_numerator": 13675,
+        "retention_denominator": 13675,
+        "retention": 1.0,
+        "true_relocations_flagged": 13675,
+        "false_fires_on_not_relocated": 0,
+        "pairs_with_flags_equal_to_conjunction": 1680
+      },
+      "lever": {
+        "retention_numerator": 13675,
+        "retention_denominator": 13675,
+        "retention": 1.0,
+        "true_relocations_flagged": 13675,
+        "false_fires_on_not_relocated": 0,
+        "pairs_with_flags_equal_to_conjunction": 1680
+      },
+      "lever_no_tiebreak": {
+        "retention_numerator": 13675,
+        "retention_denominator": 13675,
+        "retention": 1.0,
+        "true_relocations_flagged": 13675,
+        "false_fires_on_not_relocated": 0,
+        "pairs_with_flags_equal_to_conjunction": 1680
+      }
+    },
+    "alignment_check": {
+      "statements": 124,
+      "true_pair_cost_max": 0.322901,
+      "true_pairs_at_or_above_c": 0,
+      "per_base": {
+        "gold": {
+          "n": 11,
+          "n_bt": 11,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 11,
+          "col_min_on_diagonal": 11,
+          "true_cost_max": 0.288564,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.30042,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "gold-2": {
+          "n": 13,
+          "n_bt": 13,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 13,
+          "col_min_on_diagonal": 13,
+          "true_cost_max": 0.262141,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.289713,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "v1": {
+          "n": 12,
+          "n_bt": 12,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 12,
+          "col_min_on_diagonal": 12,
+          "true_cost_max": 0.213628,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.300738,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "v2": {
+          "n": 12,
+          "n_bt": 12,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 12,
+          "col_min_on_diagonal": 12,
+          "true_cost_max": 0.306936,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.267236,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "opus": {
+          "n": 13,
+          "n_bt": 13,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 13,
+          "col_min_on_diagonal": 13,
+          "true_cost_max": 0.297756,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.298978,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "sonnet": {
+          "n": 11,
+          "n_bt": 11,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 11,
+          "col_min_on_diagonal": 11,
+          "true_cost_max": 0.23519,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.30178,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "haiku": {
+          "n": 14,
+          "n_bt": 14,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 14,
+          "col_min_on_diagonal": 14,
+          "true_cost_max": 0.322901,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.319761,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "werg-a": {
+          "n": 11,
+          "n_bt": 11,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 11,
+          "col_min_on_diagonal": 11,
+          "true_cost_max": 0.222005,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.31058,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "werg-b": {
+          "n": 13,
+          "n_bt": 13,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 13,
+          "col_min_on_diagonal": 13,
+          "true_cost_max": 0.256245,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.345062,
+          "identity_matching": true,
+          "aligned": true
+        },
+        "werg-c": {
+          "n": 14,
+          "n_bt": 14,
+          "names_base": true,
+          "stored_equal": true,
+          "row_min_on_diagonal": 14,
+          "col_min_on_diagonal": 14,
+          "true_cost_max": 0.218599,
+          "true_at_or_above_c": 0,
+          "other_cost_min": 0.310807,
+          "identity_matching": true,
+          "aligned": true
+        }
+      }
+    }
+  },
+  "clause_4_fixtures": {
+    "met": true,
+    "worked_example_statements_without_match": [
+      1,
+      4
+    ],
+    "bar": {
+      "insertion": [
+        0,
+        6
+      ],
+      "swap": [
+        2,
+        2
+      ],
+      "reversal": [
+        12,
+        12
+      ],
+      "shrinkage": [
+        0,
+        12
+      ]
+    },
+    "parts": {
+      "insertion": true,
+      "swap": true,
+      "reversal": true,
+      "shrinkage": true
+    },
+    "per_arm": {
+      "shipped": {
+        "insertion": [
+          4,
+          6
+        ],
+        "swap": [
+          2,
+          2
+        ],
+        "worked_example_all": [
+          4,
+          6
+        ],
+        "reversal_orth": [
+          12,
+          12
+        ],
+        "reversal_text": [
+          12,
+          12
+        ],
+        "shrinkage": [
+          2,
+          12
+        ],
+        "shrinkage_kept": [
+          0,
+          8
+        ],
+        "shrinkage_removed": [
+          2,
+          4
+        ],
+        "shrinkage_orth": [
+          0,
+          12
+        ]
+      },
+      "conjunction": {
+        "insertion": [
+          0,
+          6
+        ],
+        "swap": [
+          2,
+          2
+        ],
+        "worked_example_all": [
+          4,
+          6
+        ],
+        "reversal_orth": [
+          12,
+          12
+        ],
+        "reversal_text": [
+          12,
+          12
+        ],
+        "shrinkage": [
+          2,
+          12
+        ],
+        "shrinkage_kept": [
+          0,
+          8
+        ],
+        "shrinkage_removed": [
+          2,
+          4
+        ],
+        "shrinkage_orth": [
+          0,
+          12
+        ]
+      },
+      "conjunction_and_matched": {
+        "insertion": [
+          0,
+          6
+        ],
+        "swap": [
+          2,
+          2
+        ],
+        "worked_example_all": [
+          2,
+          6
+        ],
+        "reversal_orth": [
+          12,
+          12
+        ],
+        "reversal_text": [
+          12,
+          12
+        ],
+        "shrinkage": [
+          0,
+          12
+        ],
+        "shrinkage_kept": [
+          0,
+          8
+        ],
+        "shrinkage_removed": [
+          0,
+          4
+        ],
+        "shrinkage_orth": [
+          0,
+          12
+        ]
+      },
+      "lever": {
+        "insertion": [
+          0,
+          6
+        ],
+        "swap": [
+          2,
+          2
+        ],
+        "worked_example_all": [
+          2,
+          6
+        ],
+        "reversal_orth": [
+          12,
+          12
+        ],
+        "reversal_text": [
+          12,
+          12
+        ],
+        "shrinkage": [
+          0,
+          12
+        ],
+        "shrinkage_kept": [
+          0,
+          8
+        ],
+        "shrinkage_removed": [
+          0,
+          4
+        ],
+        "shrinkage_orth": [
+          0,
+          12
+        ]
+      },
+      "lever_no_tiebreak": {
+        "insertion": [
+          0,
+          6
+        ],
+        "swap": [
+          2,
+          2
+        ],
+        "worked_example_all": [
+          2,
+          6
+        ],
+        "reversal_orth": [
+          12,
+          12
+        ],
+        "reversal_text": [
+          12,
+          12
+        ],
+        "shrinkage": [
+          0,
+          12
+        ],
+        "shrinkage_kept": [
+          0,
+          8
+        ],
+        "shrinkage_removed": [
+          0,
+          4
+        ],
+        "shrinkage_orth": [
+          0,
+          12
+        ]
+      }
+    }
+  },
+  "reported_without_bar": {
+    "reordered_and_deleted_ladder": {
+      "k": 2,
+      "unique_permutations": 1611,
+      "cases": 11277,
+      "statements": 139909,
+      "removed_statements": 22554,
+      "no_counterpart_rule_acted": 0,
+      "survivors_recovered": 11277,
+      "matched_pairs_min": 9,
+      "matched_pairs_max": 12,
+      "per_arm": {
+        "shipped": {
+          "tp": 77921,
+          "fp_kept": 11131,
+          "fp_removed": 18304,
+          "fn": 5857,
+          "n_true": 83778,
+          "precision": 0.725819,
+          "recall": 0.930089
+        },
+        "conjunction": {
+          "tp": 73549,
+          "fp_kept": 5482,
+          "fp_removed": 17444,
+          "fn": 10229,
+          "n_true": 83778,
+          "precision": 0.762363,
+          "recall": 0.877904
+        },
+        "conjunction_and_matched": {
+          "tp": 73549,
+          "fp_kept": 5482,
+          "fp_removed": 0,
+          "fn": 10229,
+          "n_true": 83778,
+          "precision": 0.930635,
+          "recall": 0.877904
+        },
+        "lever": {
+          "tp": 83778,
+          "fp_kept": 0,
+          "fp_removed": 0,
+          "fn": 0,
+          "n_true": 83778,
+          "precision": 1.0,
+          "recall": 1.0
+        },
+        "lever_no_tiebreak": {
+          "tp": 83778,
+          "fp_kept": 0,
+          "fp_removed": 0,
+          "fn": 0,
+          "n_true": 83778,
+          "precision": 1.0,
+          "recall": 1.0
+        }
+      },
+      "per_rung": {
+        "1": {
+          "cases": 1267,
+          "shipped": {
+            "precision": 0.342146,
+            "recall": 0.840304
+          },
+          "conjunction": {
+            "precision": 0.416506,
+            "recall": 0.758701
+          },
+          "conjunction_and_matched": {
+            "precision": 0.572627,
+            "recall": 0.758701
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "2": {
+          "cases": 1904,
+          "shipped": {
+            "precision": 0.578704,
+            "recall": 0.86727
+          },
+          "conjunction": {
+            "precision": 0.637234,
+            "recall": 0.783007
+          },
+          "conjunction_and_matched": {
+            "precision": 0.823585,
+            "recall": 0.783007
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "3": {
+          "cases": 2191,
+          "shipped": {
+            "precision": 0.731189,
+            "recall": 0.908832
+          },
+          "conjunction": {
+            "precision": 0.765341,
+            "recall": 0.844128
+          },
+          "conjunction_and_matched": {
+            "precision": 0.940023,
+            "recall": 0.844128
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "4": {
+          "cases": 2905,
+          "shipped": {
+            "precision": 0.799056,
+            "recall": 0.939774
+          },
+          "conjunction": {
+            "precision": 0.815127,
+            "recall": 0.891234
+          },
+          "conjunction_and_matched": {
+            "precision": 0.976073,
+            "recall": 0.891234
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "5": {
+          "cases": 2009,
+          "shipped": {
+            "precision": 0.818341,
+            "recall": 0.962163
+          },
+          "conjunction": {
+            "precision": 0.828863,
+            "recall": 0.92343
+          },
+          "conjunction_and_matched": {
+            "precision": 0.982616,
+            "recall": 0.92343
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "6": {
+          "cases": 1001,
+          "shipped": {
+            "precision": 0.815367,
+            "recall": 0.973137
+          },
+          "conjunction": {
+            "precision": 0.829674,
+            "recall": 0.949053
+          },
+          "conjunction_and_matched": {
+            "precision": 0.985044,
+            "recall": 0.949053
+          },
+          "lever": {
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "lever_no_tiebreak": {
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        }
+      }
+    },
+    "tied_plan_rows": {
+      "tie_atol": 1e-12,
+      "cases": 280,
+      "cases_with_tied_removed_statement": 259,
+      "share": 0.925,
+      "cases_with_tied_removed_statement_exact_equality": 245,
+      "tied_removed_statements": 590,
+      "tied_removed_statements_exact_equality": 524,
+      "removed_statements": 700,
+      "largest_tie": 13,
+      "most_tie_resolutions": 36,
+      "cases_where_tie_resolutions_change_the_flags": {
+        "shipped": 221,
+        "conjunction": 257,
+        "lever": 0
+      },
+      "restated_flag_lines_equal_shipped": 280,
+      "example": {
+        "base": "gold",
+        "k": 1,
+        "family": "head",
+        "statement": 0,
+        "n_a": 11,
+        "n_b": 10,
+        "aligned_target": 1,
+        "row_entries": [
+          "0.009090909090909094",
+          "0.009090909090909094",
+          "0.009090909090909094",
+          "0.009090909090909094"
+        ],
+        "tied_targets": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    }
+  },
+  "outside_the_record": {
+    "cutoff_on_reworded_reorders": {
+      "in_bar": false,
+      "pairs": 1680,
+      "true_pairs": 124,
+      "true_pair_cost_max": 0.322901,
+      "margin_below_registered_cutoff": 0.0020995,
+      "cutoffs_with_retention_below_bar": [
+        0.25,
+        0.28,
+        0.3
+      ],
+      "registered_row_equals_clause_3": true,
+      "per_cutoff": {
+        "0.25": {
+          "true_pairs_at_or_above_c": 11,
+          "kept": 12195,
+          "retention": 0.891773,
+          "lost_unmatched": 1216,
+          "lost_matched": 264,
+          "false_fires": 789,
+          "fully_matched": 672
+        },
+        "0.28": {
+          "true_pairs_at_or_above_c": 4,
+          "kept": 13084,
+          "retention": 0.956782,
+          "lost_unmatched": 445,
+          "lost_matched": 146,
+          "false_fires": 336,
+          "fully_matched": 1008
+        },
+        "0.3": {
+          "true_pairs_at_or_above_c": 2,
+          "kept": 13359,
+          "retention": 0.976892,
+          "lost_unmatched": 224,
+          "lost_matched": 92,
+          "false_fires": 176,
+          "fully_matched": 1344
+        },
+        "0.32": {
+          "true_pairs_at_or_above_c": 1,
+          "kept": 13530,
+          "retention": 0.989397,
+          "lost_unmatched": 102,
+          "lost_matched": 43,
+          "false_fires": 112,
+          "fully_matched": 1512
+        },
+        "0.325": {
+          "true_pairs_at_or_above_c": 0,
+          "kept": 13675,
+          "retention": 1.0,
+          "lost_unmatched": 0,
+          "lost_matched": 0,
+          "false_fires": 0,
+          "fully_matched": 1680
+        },
+        "0.35": {
+          "true_pairs_at_or_above_c": 0,
+          "kept": 13675,
+          "retention": 1.0,
+          "lost_unmatched": 0,
+          "lost_matched": 0,
+          "false_fires": 0,
+          "fully_matched": 1680
+        },
+        "0.45": {
+          "true_pairs_at_or_above_c": 0,
+          "kept": 13675,
+          "retention": 1.0,
+          "lost_unmatched": 0,
+          "lost_matched": 0,
+          "false_fires": 0,
+          "fully_matched": 1680
+        },
+        "0.6": {
+          "true_pairs_at_or_above_c": 0,
+          "kept": 13675,
+          "retention": 1.0,
+          "lost_unmatched": 0,
+          "lost_matched": 0,
+          "false_fires": 0,
+          "fully_matched": 1680
+        }
+      }
+    },
+    "reworded_survivors": {
+      "in_bar": false,
+      "cases": 280,
+      "true_pairs_only": 280,
+      "survivors_matched": 2772,
+      "per_arm": {
+        "shipped": {
+          "flagged_kept": 1149,
+          "flagged_removed": 496,
+          "cases_with_flag": 277,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "conjunction": {
+          "flagged_kept": 704,
+          "flagged_removed": 454,
+          "cases_with_flag": 250,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "conjunction_and_matched": {
+          "flagged_kept": 704,
+          "flagged_removed": 0,
+          "cases_with_flag": 205,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "lever": {
+          "flagged_kept": 0,
+          "flagged_removed": 0,
+          "cases_with_flag": 0,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "lever_no_tiebreak": {
+          "flagged_kept": 0,
+          "flagged_removed": 0,
+          "cases_with_flag": 0,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        }
+      }
+    },
+    "long_document": {
+      "in_bar": false,
+      "document": "source",
+      "statements": 62,
+      "repeated_statements": 9,
+      "repeated_texts": {
+        "-": 9
+      },
+      "statements_after_removal": 53,
+      "k": 2,
+      "draws_per_length": 20,
+      "seed": "[7, prefix length, draw]",
+      "docs": {
+        "repeated statements kept": {
+          "cases": 120,
+          "survivors_recovered": {
+            "recovered": 110,
+            "recovered_no_tiebreak": 88
+          },
+          "per_arm": {
+            "shipped": {
+              "flagged_kept": 97,
+              "flagged_removed": 117,
+              "cases_with_flag": 108
+            },
+            "conjunction": {
+              "flagged_kept": 72,
+              "flagged_removed": 110,
+              "cases_with_flag": 108
+            },
+            "conjunction_and_matched": {
+              "flagged_kept": 67,
+              "flagged_removed": 0,
+              "cases_with_flag": 41
+            },
+            "lever": {
+              "flagged_kept": 4,
+              "flagged_removed": 4,
+              "cases_with_flag": 4
+            },
+            "lever_no_tiebreak": {
+              "flagged_kept": 69,
+              "flagged_removed": 19,
+              "cases_with_flag": 31
+            }
+          },
+          "lever_flagged_cases": [
+            {
+              "doc_arm": "repeated statements kept",
+              "n": 14,
+              "deleted": [
+                8,
+                11
+              ],
+              "lever_flagged": [
+                7,
+                8
+              ],
+              "lever_unmatched": [
+                6,
+                11
+              ],
+              "repeated_in_prefix": [
+                4,
+                6,
+                8
+              ],
+              "survivors_recovered": false,
+              "positional_lever": 0.428571,
+              "positional_true": 0.428571,
+              "positional_reading": "equal"
+            },
+            {
+              "doc_arm": "repeated statements kept",
+              "n": 14,
+              "deleted": [
+                2,
+                4
+              ],
+              "lever_flagged": [
+                4,
+                5
+              ],
+              "lever_unmatched": [
+                2,
+                6
+              ],
+              "repeated_in_prefix": [
+                4,
+                6,
+                8
+              ],
+              "survivors_recovered": false,
+              "positional_lever": 0.547619,
+              "positional_true": 0.595238,
+              "positional_reading": "lever matching smaller"
+            },
+            {
+              "doc_arm": "repeated statements kept",
+              "n": 14,
+              "deleted": [
+                1,
+                4
+              ],
+              "lever_flagged": [
+                4,
+                5
+              ],
+              "lever_unmatched": [
+                1,
+                6
+              ],
+              "repeated_in_prefix": [
+                4,
+                6,
+                8
+              ],
+              "survivors_recovered": false,
+              "positional_lever": 0.595238,
+              "positional_true": 0.642857,
+              "positional_reading": "lever matching smaller"
+            },
+            {
+              "doc_arm": "repeated statements kept",
+              "n": 14,
+              "deleted": [
+                8,
+                12
+              ],
+              "lever_flagged": [
+                7,
+                8
+              ],
+              "lever_unmatched": [
+                6,
+                12
+              ],
+              "repeated_in_prefix": [
+                4,
+                6,
+                8
+              ],
+              "survivors_recovered": false,
+              "positional_lever": 0.452381,
+              "positional_true": 0.452381,
+              "positional_reading": "equal"
+            }
+          ],
+          "cases_with_flag_per_length": {
+            "14": {
+              "shipped": 19,
+              "conjunction": 19,
+              "conjunction_and_matched": 18,
+              "lever": 4,
+              "lever_no_tiebreak": 6
+            },
+            "20": {
+              "shipped": 20,
+              "conjunction": 20,
+              "conjunction_and_matched": 9,
+              "lever": 0,
+              "lever_no_tiebreak": 2
+            },
+            "30": {
+              "shipped": 19,
+              "conjunction": 19,
+              "conjunction_and_matched": 7,
+              "lever": 0,
+              "lever_no_tiebreak": 6
+            },
+            "40": {
+              "shipped": 15,
+              "conjunction": 15,
+              "conjunction_and_matched": 3,
+              "lever": 0,
+              "lever_no_tiebreak": 10
+            },
+            "50": {
+              "shipped": 16,
+              "conjunction": 16,
+              "conjunction_and_matched": 0,
+              "lever": 0,
+              "lever_no_tiebreak": 4
+            },
+            "62": {
+              "shipped": 19,
+              "conjunction": 19,
+              "conjunction_and_matched": 4,
+              "lever": 0,
+              "lever_no_tiebreak": 3
+            }
+          },
+          "survivors_recovered_per_length": {
+            "14": {
+              "recovered": 15,
+              "recovered_no_tiebreak": 14
+            },
+            "20": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 18
+            },
+            "30": {
+              "recovered": 17,
+              "recovered_no_tiebreak": 13
+            },
+            "40": {
+              "recovered": 18,
+              "recovered_no_tiebreak": 10
+            },
+            "50": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 16
+            },
+            "62": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 17
+            }
+          }
+        },
+        "repeated statements removed": {
+          "cases": 120,
+          "survivors_recovered": {
+            "recovered": 120,
+            "recovered_no_tiebreak": 120
+          },
+          "per_arm": {
+            "shipped": {
+              "flagged_kept": 83,
+              "flagged_removed": 133,
+              "cases_with_flag": 112
+            },
+            "conjunction": {
+              "flagged_kept": 45,
+              "flagged_removed": 131,
+              "cases_with_flag": 108
+            },
+            "conjunction_and_matched": {
+              "flagged_kept": 45,
+              "flagged_removed": 0,
+              "cases_with_flag": 18
+            },
+            "lever": {
+              "flagged_kept": 0,
+              "flagged_removed": 0,
+              "cases_with_flag": 0
+            },
+            "lever_no_tiebreak": {
+              "flagged_kept": 0,
+              "flagged_removed": 0,
+              "cases_with_flag": 0
+            }
+          },
+          "lever_flagged_cases": [],
+          "cases_with_flag_per_length": {
+            "14": {
+              "shipped": 20,
+              "conjunction": 16,
+              "conjunction_and_matched": 11,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "20": {
+              "shipped": 20,
+              "conjunction": 20,
+              "conjunction_and_matched": 5,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "30": {
+              "shipped": 17,
+              "conjunction": 17,
+              "conjunction_and_matched": 2,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "40": {
+              "shipped": 16,
+              "conjunction": 16,
+              "conjunction_and_matched": 0,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "50": {
+              "shipped": 19,
+              "conjunction": 19,
+              "conjunction_and_matched": 0,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "53": {
+              "shipped": 20,
+              "conjunction": 20,
+              "conjunction_and_matched": 0,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            }
+          },
+          "survivors_recovered_per_length": {
+            "14": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            },
+            "20": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            },
+            "30": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            },
+            "40": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            },
+            "50": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            },
+            "53": {
+              "recovered": 20,
+              "recovered_no_tiebreak": 20
+            }
+          }
+        }
+      }
+    },
+    "tolerance_boundary": {
+      "in_bar": false,
+      "scan_max_length": 100,
+      "lengths_with_differing_cells": {
+        "20": {
+          "cells": 14,
+          "rank_steps": [
+            1
+          ]
+        },
+        "40": {
+          "cells": 30,
+          "rank_steps": [
+            2
+          ]
+        },
+        "60": {
+          "cells": 44,
+          "rank_steps": [
+            3
+          ]
+        },
+        "80": {
+          "cells": 62,
+          "rank_steps": [
+            4
+          ]
+        },
+        "100": {
+          "cells": 76,
+          "rank_steps": [
+            5
+          ]
+        }
+      },
+      "single_transpositions": [
+        {
+          "n": 14,
+          "transpositions": 91,
+          "fully_matched": 91,
+          "equal": 91,
+          "differing_rank_steps": {},
+          "statements_only_conjunction_flags": 0,
+          "statements_only_lever_flags": 0
+        },
+        {
+          "n": 20,
+          "transpositions": 190,
+          "fully_matched": 190,
+          "equal": 183,
+          "differing_rank_steps": {
+            "1": 7
+          },
+          "statements_only_conjunction_flags": 14,
+          "statements_only_lever_flags": 0
+        },
+        {
+          "n": 40,
+          "transpositions": 780,
+          "fully_matched": 780,
+          "equal": 765,
+          "differing_rank_steps": {
+            "2": 15
+          },
+          "statements_only_conjunction_flags": 30,
+          "statements_only_lever_flags": 0
+        }
+      ]
+    }
+  },
+  "prediction": {
+    "parts": {
+      "conjunction flags >= 1 statement in at least 10% of the deletion cases": true,
+      "lever flags 0 statements in 280/280": true,
+      "flags equal on 1680/1680 verbatim permutations": true,
+      "lever keeps 99% to 100% of the true relocations the conjunction flags": true,
+      "fixtures read insertion 0/6, swap 2/2, reversal 12/12, shrinkage 0/12": true
+    },
+    "held": true
+  },
+  "outside_the_record_own_encoding": {
+    "in_bar": false,
+    "deletion_cases": {
+      "cases": 280,
+      "rows_bitwise_equal": 259,
+      "max_abs_row_diff": 0.00686408,
+      "survivors_recovered": 280,
+      "flag_array_equal_to_row_copy_reading": {
+        "shipped": 280,
+        "conjunction": 280,
+        "conjunction_and_matched": 280,
+        "lever": 280,
+        "lever_no_tiebreak": 280
+      },
+      "per_arm": {
+        "shipped": {
+          "flagged_kept": 1149,
+          "flagged_removed": 526,
+          "cases_with_flag": 274,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "conjunction": {
+          "flagged_kept": 678,
+          "flagged_removed": 472,
+          "cases_with_flag": 246,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "conjunction_and_matched": {
+          "flagged_kept": 678,
+          "flagged_removed": 0,
+          "cases_with_flag": 202,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "lever": {
+          "flagged_kept": 0,
+          "flagged_removed": 0,
+          "cases_with_flag": 0,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        },
+        "lever_no_tiebreak": {
+          "flagged_kept": 0,
+          "flagged_removed": 0,
+          "cases_with_flag": 0,
+          "cases": 280,
+          "kept_statements": 2772,
+          "removed_statements": 700
+        }
+      }
+    },
+    "permutations": {
+      "pairs": 120,
+      "rows_bitwise_equal": 120,
+      "max_abs_row_diff": 0.0,
+      "lever_equals_conjunction": 120,
+      "flag_array_equal_to_row_copy_reading": {
+        "shipped": 120,
+        "conjunction": 120,
+        "conjunction_and_matched": 120,
+        "lever": 120,
+        "lever_no_tiebreak": 120
+      }
+    }
+  },
+  "acceptance": {
+    "bar": "PASS iff, at c = 0.325 and eps = 1e-6: (1) the lever flags 0 statements in 280/280 order-preserving deletion cases; (2) lever flags np.array_equal to the conjunction flags on every one of the 1680 verbatim permutations; (3) the lever flags >= 98% of the truly relocated statements the conjunction flags on reworded reorders, pooled over the 10 bases; (4) fixtures insertion 0 of 6, swap 2 of 2, reversal 12 of 12, text shrinkage 0 of 12",
+    "clause_1_met": true,
+    "clause_2_met": true,
+    "clause_3_met": true,
+    "clause_4_met": true,
+    "met": true,
+    "verdict": "Promoted"
+  },
+  "guardrails": {
+    "V": "0/24",
+    "panel_margin_pts": 4.7083,
+    "triangle_checks": 990,
+    "triangle_violations": 0,
+    "triangle_tolerance": 0.0,
+    "triangle_min_margin": 0.177149,
+    "metric_property_held": true,
+    "src_untouched": true,
+    "sha256": {
+      "src": "be7e159f81c53284",
+      "tests": "00ea6c7799307adb"
+    },
+    "git_status_src_tests": "clean",
+    "shipped_details_byte_identical": true,
+    "held": true,
+    "rows_that_can_fail": "V, triangle inequality, sha256 of src and tests, git status"
+  }
+}

@@ -1,0 +1,2864 @@
+{
+  "id": "E15-H78",
+  "slug": "raw-nearest-source-count",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met) | second readings - disjoint foreign halves: held-out 0.9559 / 0.9125, extract 0 / 0 flagged, second article 0.9868, bar met; short source statements removed: held-out 0.9412 / 0.9272, extract 1 / 1 flagged, second article 0.9868, bar not met; after the shipped pre-pass: held-out 0.8168 / 0.7277, extract 0 / 0 flagged, second article 0.9803, bar not met; second article with back-translated own statements: 0.9868",
+  "second_readings": {
+    "disjoint foreign halves, same arm": "held-out balanced accuracy 0.9559 (A→B, cutoff 0.3425) and 0.9125 (B→A, cutoff 0.3575) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.35000 (bar >= 0.85, met)",
+    "short source statements removed, foreign set whole": "held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 1 and 1 of 10 flagged under the two cutoffs (bar 0, not met); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met)",
+    "after the shipped pre-pass, short kept, foreign set whole": "held-out balanced accuracy 0.8168 (A→B, cutoff 1.1250) and 0.7277 (B→A, cutoff 1.1050) (bar >= 0.9 in both, not met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9803 at the mean cutoff 1.11500 (bar >= 0.85, met)",
+    "second article with back-translated own statements, registered arm": "balanced accuracy 0.9868 at the same cutoff"
+  },
+  "environment": {
+    "python": "3.14.8",
+    "docdistance": "1.1.5",
+    "pot": "0.9.6.post1",
+    "numpy": "2.4.6",
+    "uptime_at_start": "13:08:31 up 1 day, 14:29,  0 user,  load average: 19.67, 63.62, 78.26",
+    "blas_threads_for_arms": 1
+  },
+  "configuration": {
+    "split": {
+      "A": {
+        "gold": "exec-summary-gold-opus-4-6.md",
+        "v2": "exec-summary-2-opus-4-6.md",
+        "sonnet": "exec-summary-sonnet-4-6.md",
+        "haiku": "exec-summary-haiku-4-5.md"
+      },
+      "B": {
+        "gold-2": "exec-summary-gold-2-opus-4-6.md",
+        "v1": "exec-summary-1-opus-4-6.md",
+        "opus": "exec-summary-opus-4-6.md"
+      }
+    },
+    "directions": {
+      "A→B": {
+        "calibration_half": "A",
+        "held_out_half": "B"
+      },
+      "B→A": {
+        "calibration_half": "B",
+        "held_out_half": "A"
+      }
+    },
+    "grid": {
+      "step": 0.005,
+      "max": 2.0,
+      "points": 401
+    },
+    "min_words": 5,
+    "bars": {
+      "gate_auc_min": 0.9,
+      "held_ba": 0.9,
+      "extract_flagged": 0,
+      "second_ba": 0.85
+    },
+    "prediction_intervals": {
+      "cutoff": [
+        0.33,
+        0.45
+      ],
+      "held_ba": [
+        0.9,
+        0.96
+      ],
+      "second_ba": [
+        0.85,
+        0.95
+      ]
+    },
+    "doses": {
+      "ks": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "n_seeds": 14,
+      "seed": 42,
+      "seed_disjoint_draws": 43
+    },
+    "entailment_label_min": 0.5,
+    "registered_second_article_reading": [
+      "comment kept",
+      "sections"
+    ]
+  },
+  "fixture": {
+    "statements_by_document": {
+      "gold": 10,
+      "gold-2": 12,
+      "v1": 11,
+      "v2": 11,
+      "opus": 11,
+      "sonnet": 9,
+      "haiku": 13,
+      "adv1-a": 8,
+      "adv1-b": 9,
+      "adv2-a": 1,
+      "adv2-b": 3
+    },
+    "own_statements_by_half": {
+      "A": 43,
+      "B": 34
+    },
+    "n_ibm_source_statements": {
+      "kept": 70,
+      "removed": 42
+    },
+    "n_ibm_source_statements_one_word": 22,
+    "n_foreign_statements": 38,
+    "n_second_source_statements": {
+      "comment kept, short kept": 52,
+      "comment kept, short removed": 42,
+      "comment removed, short kept": 44,
+      "comment removed, short removed": 38
+    },
+    "n_second_article_own_statements": {
+      "sections": 38,
+      "back-translations": 38
+    },
+    "sections_found_verbatim_in_second_source": 36,
+    "sections_equal_the_foreign_set": false,
+    "back_translations_found_verbatim_in_second_source": 1,
+    "extract_statements_under_5_words": 1,
+    "extract_short_texts": [
+      "###"
+    ],
+    "nearest_ibm_source_statement_is_short": {
+      "statements_of_the_11_summaries": 0,
+      "foreign_statements": 0
+    },
+    "second_source_statements_absent_from_comment_removed_segmentation": 8,
+    "nearest_second_source_statement_is_comment_or_short": {
+      "section statements": 0,
+      "back-translated statements": 0,
+      "gold-tier ibm statements": 0
+    },
+    "fingerprint_matches_e12_h69": true
+  },
+  "kill_gate": {
+    "bar": 0.9,
+    "killed": false,
+    "auc_by_half": {
+      "raw_kept": {
+        "A": 0.987148,
+        "B": 0.979102
+      },
+      "raw_removed": {
+        "A": 0.987148,
+        "B": 0.979102
+      }
+    },
+    "auc_all_gold_tier": {
+      "raw_kept": 0.983595,
+      "raw_removed": 0.983595
+    }
+  },
+  "harness_check": {
+    "passed": true,
+    "source_statements_under_5_words": "kept",
+    "numbers": {
+      "AUC, 98 own x 38 foreign statements, raw embeddings (E13-H73)": {
+        "measured": 0.966971,
+        "registered": 0.967,
+        "decimals": 4,
+        "reproduced": true
+      },
+      "AUC, same pairs, after the pre-pass (E13-H73)": {
+        "measured": 0.788937,
+        "registered": 0.7889,
+        "decimals": 4,
+        "reproduced": true
+      },
+      "verbatim extract, closeness of the mean nearest-source cost, raw (E13-H73)": {
+        "measured": 0.999917,
+        "registered": 0.9999,
+        "decimals": 4,
+        "reproduced": true
+      },
+      "verbatim extract, shipped closeness_a (E13-H73)": {
+        "measured": 0.322442,
+        "registered": 0.3224,
+        "decimals": 4,
+        "reproduced": true
+      },
+      "shipped residual, pre-pass off, median per-document Spearman under insertions, 11 documents (E13-H73)": {
+        "measured": -0.257143,
+        "registered": -0.2571,
+        "decimals": 4,
+        "reproduced": true
+      },
+      "mean nearest-source cost, median |change| under deletions over one insertion, raw (E13-H73)": {
+        "measured": 0.340866,
+        "registered": 0.341,
+        "decimals": 3,
+        "reproduced": true
+      },
+      "one-word statements among the 70 ibm source statements (E14-H76)": {
+        "measured": 22.0,
+        "registered": 22,
+        "decimals": 0,
+        "reproduced": true
+      }
+    },
+    "shipped_spearman_11_documents": {
+      "bal_pre": -0.842857,
+      "bal_raw": -0.257143,
+      "os_pre": 0.964286,
+      "os_raw": 1.0
+    },
+    "mean_cost_deletion_11_documents": {
+      "median_abs_delta": 0.005211,
+      "one_insertion_effect": 0.015286,
+      "ratio": 0.340866,
+      "n_cases": 532
+    }
+  },
+  "arms": {
+    "raw_kept": {
+      "label": "raw, short kept (registered)",
+      "embedding": "raw",
+      "short_source_statements": "kept",
+      "clause_1": {
+        "whole": {
+          "mean_cutoff": 0.34625,
+          "directions": {
+            "A→B": {
+              "cutoff": 0.3375,
+              "run_lo": 0.335,
+              "run_hi": 0.34,
+              "run_points": 2,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.94186,
+              "calibration_auc": 0.987148,
+              "held_auc": 0.979102,
+              "held_ba": 0.941176,
+              "held_tpr": 1.0,
+              "held_tnr": 0.882353,
+              "held_ba_over_run_min": 0.941176,
+              "held_ba_over_run_max": 0.955882,
+              "held_own_flagged": 4,
+              "held_own_total": 34,
+              "held_foreign_flagged": 38,
+              "held_foreign_total": 38,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            },
+            "B→A": {
+              "cutoff": 0.355,
+              "run_lo": 0.355,
+              "run_hi": 0.355,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.958978,
+              "calibration_auc": 0.979102,
+              "held_auc": 0.987148,
+              "held_ba": 0.927173,
+              "held_tpr": 0.947368,
+              "held_tnr": 0.906977,
+              "held_ba_over_run_min": 0.927173,
+              "held_ba_over_run_max": 0.927173,
+              "held_own_flagged": 4,
+              "held_own_total": 43,
+              "held_foreign_flagged": 36,
+              "held_foreign_total": 38,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            }
+          }
+        },
+        "disjoint": {
+          "mean_cutoff": 0.35,
+          "directions": {
+            "A→B": {
+              "cutoff": 0.3425,
+              "run_lo": 0.335,
+              "run_hi": 0.35,
+              "run_points": 4,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.94186,
+              "calibration_auc": 0.98776,
+              "held_auc": 0.975232,
+              "held_ba": 0.955882,
+              "held_tpr": 1.0,
+              "held_tnr": 0.911765,
+              "held_ba_over_run_min": 0.929567,
+              "held_ba_over_run_max": 0.955882,
+              "held_own_flagged": 3,
+              "held_own_total": 34,
+              "held_foreign_flagged": 19,
+              "held_foreign_total": 19,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            },
+            "B→A": {
+              "cutoff": 0.3575,
+              "run_lo": 0.355,
+              "run_hi": 0.36,
+              "run_points": 2,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.958978,
+              "calibration_auc": 0.975232,
+              "held_auc": 0.98776,
+              "held_ba": 0.912485,
+              "held_tpr": 0.894737,
+              "held_tnr": 0.930233,
+              "held_ba_over_run_min": 0.924113,
+              "held_ba_over_run_max": 0.927173,
+              "held_own_flagged": 3,
+              "held_own_total": 43,
+              "held_foreign_flagged": 17,
+              "held_foreign_total": 19,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            }
+          }
+        }
+      },
+      "clause_2": {
+        "whole": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 0.000691,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        },
+        "disjoint": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 0.000691,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        }
+      },
+      "clause_3": {
+        "comment kept, sections": {
+          "auc": 0.97676,
+          "own_max_cost": 0.508262,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment kept, back-translations": {
+          "auc": 0.976077,
+          "own_max_cost": 0.539243,
+          "own_median_cost": 0.148577,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment removed, sections": {
+          "auc": 0.97676,
+          "own_max_cost": 0.508262,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment removed, back-translations": {
+          "auc": 0.976077,
+          "own_max_cost": 0.539243,
+          "own_median_cost": 0.148577,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        }
+      },
+      "bar": {
+        "whole": {
+          "held_ba": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.986842,
+          "second_ba_back_translations": 0.986842,
+          "clause_1_met": true,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": true
+        },
+        "disjoint": {
+          "held_ba": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.986842,
+          "second_ba_back_translations": 0.986842,
+          "clause_1_met": true,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": true
+        }
+      },
+      "doses": {
+        "whole": {
+          "exact_k_share_all_k": 0.910714,
+          "rise_below_k_share": 0.089286,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 1.0,
+          "supported_nonzero_cases": 0,
+          "any_zero_share": 0.755102,
+          "any_mean_change": -0.270408,
+          "any_equals_minus_removed_flagged_share": 1.0,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.005163,
+          "mean_cost_one_insertion": 0.011332,
+          "mean_cost_deletion_ratio": 0.455567,
+          "exact_k_share": [
+            0.94898,
+            0.928571,
+            0.897959,
+            0.867347
+          ],
+          "mean_rise": [
+            0.94898,
+            1.928571,
+            2.897959,
+            3.867347
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 1.0,
+            "B→A": 0.84375
+          },
+          "base_count": {
+            "gold": 0,
+            "gold-2": 1,
+            "v1": 1,
+            "v2": 1,
+            "opus": 2,
+            "sonnet": 0,
+            "haiku": 3
+          }
+        },
+        "disjoint": {
+          "exact_k_share_all_k": 0.857143,
+          "rise_below_k_share": 0.142857,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 1.0,
+          "supported_nonzero_cases": 0,
+          "any_zero_share": 0.811224,
+          "any_mean_change": -0.201531,
+          "any_equals_minus_removed_flagged_share": 1.0,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.005163,
+          "mean_cost_one_insertion": 0.011472,
+          "mean_cost_deletion_ratio": 0.449999,
+          "exact_k_share": [
+            0.908163,
+            0.867347,
+            0.846939,
+            0.806122
+          ],
+          "mean_rise": [
+            0.908163,
+            1.867347,
+            2.836735,
+            3.795918
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 1.0,
+            "B→A": 0.75
+          },
+          "base_count": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 1,
+            "v2": 1,
+            "opus": 2,
+            "sonnet": 0,
+            "haiku": 2
+          }
+        }
+      },
+      "tiers": {
+        "mean_cutoff": 0.34625,
+        "mean_cost": {
+          "gold": 0.285798,
+          "gold-2": 0.257149,
+          "v1": 0.278864,
+          "v2": 0.285325,
+          "opus": 0.305918,
+          "sonnet": 0.266267,
+          "haiku": 0.300901,
+          "adv1-a": 0.360347,
+          "adv1-b": 0.351928,
+          "adv2-a": 0.316234,
+          "adv2-b": 0.320796
+        },
+        "count": {
+          "gold": 1,
+          "gold-2": 0,
+          "v1": 1,
+          "v2": 1,
+          "opus": 2,
+          "sonnet": 0,
+          "haiku": 3,
+          "adv1-a": 4,
+          "adv1-b": 5,
+          "adv2-a": 0,
+          "adv2-b": 0
+        },
+        "tier_mean_cost": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "tier_count": {
+          "gold": 8,
+          "adv1": 9,
+          "adv2": 0
+        },
+        "tier_statements": {
+          "gold": 77,
+          "adv1": 17,
+          "adv2": 4
+        }
+      },
+      "entailment": {
+        "adversarial": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.654545,
+          "concordance": 0.607656,
+          "spearman": 0.307342,
+          "flagged": 9,
+          "flagged_and_not_entailed": 5,
+          "not_flagged_and_not_entailed": 5
+        },
+        "all_summaries": {
+          "n": 98,
+          "n_not_entailed": 43,
+          "auc_binary": 0.677801,
+          "concordance": 0.642602,
+          "spearman": 0.40741,
+          "flagged": 17,
+          "flagged_and_not_entailed": 10,
+          "not_flagged_and_not_entailed": 33
+        }
+      }
+    },
+    "raw_removed": {
+      "label": "raw, short removed",
+      "embedding": "raw",
+      "short_source_statements": "removed",
+      "clause_1": {
+        "whole": {
+          "mean_cutoff": 0.34625,
+          "directions": {
+            "A→B": {
+              "cutoff": 0.3375,
+              "run_lo": 0.335,
+              "run_hi": 0.34,
+              "run_points": 2,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.94186,
+              "calibration_auc": 0.987148,
+              "held_auc": 0.979102,
+              "held_ba": 0.941176,
+              "held_tpr": 1.0,
+              "held_tnr": 0.882353,
+              "held_ba_over_run_min": 0.941176,
+              "held_ba_over_run_max": 0.955882,
+              "held_own_flagged": 4,
+              "held_own_total": 34,
+              "held_foreign_flagged": 38,
+              "held_foreign_total": 38,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            },
+            "B→A": {
+              "cutoff": 0.355,
+              "run_lo": 0.355,
+              "run_hi": 0.355,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.958978,
+              "calibration_auc": 0.979102,
+              "held_auc": 0.987148,
+              "held_ba": 0.927173,
+              "held_tpr": 0.947368,
+              "held_tnr": 0.906977,
+              "held_ba_over_run_min": 0.927173,
+              "held_ba_over_run_max": 0.927173,
+              "held_own_flagged": 4,
+              "held_own_total": 43,
+              "held_foreign_flagged": 36,
+              "held_foreign_total": 38,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            }
+          }
+        },
+        "disjoint": {
+          "mean_cutoff": 0.35,
+          "directions": {
+            "A→B": {
+              "cutoff": 0.3425,
+              "run_lo": 0.335,
+              "run_hi": 0.35,
+              "run_points": 4,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.94186,
+              "calibration_auc": 0.98776,
+              "held_auc": 0.975232,
+              "held_ba": 0.955882,
+              "held_tpr": 1.0,
+              "held_tnr": 0.911765,
+              "held_ba_over_run_min": 0.929567,
+              "held_ba_over_run_max": 0.955882,
+              "held_own_flagged": 3,
+              "held_own_total": 34,
+              "held_foreign_flagged": 19,
+              "held_foreign_total": 19,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            },
+            "B→A": {
+              "cutoff": 0.3575,
+              "run_lo": 0.355,
+              "run_hi": 0.36,
+              "run_points": 2,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.958978,
+              "calibration_auc": 0.975232,
+              "held_auc": 0.98776,
+              "held_ba": 0.912485,
+              "held_tpr": 0.894737,
+              "held_tnr": 0.930233,
+              "held_ba_over_run_min": 0.924113,
+              "held_ba_over_run_max": 0.927173,
+              "held_own_flagged": 3,
+              "held_own_total": 43,
+              "held_foreign_flagged": 17,
+              "held_foreign_total": 19,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            }
+          }
+        }
+      },
+      "clause_2": {
+        "whole": {
+          "flagged": {
+            "A→B": 1,
+            "B→A": 1,
+            "mean": 1
+          },
+          "flagged_under_5_words": {
+            "A→B": 1,
+            "B→A": 1,
+            "mean": 1
+          },
+          "max_cost": 1.161591,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        },
+        "disjoint": {
+          "flagged": {
+            "A→B": 1,
+            "B→A": 1,
+            "mean": 1
+          },
+          "flagged_under_5_words": {
+            "A→B": 1,
+            "B→A": 1,
+            "mean": 1
+          },
+          "max_cost": 1.161591,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        }
+      },
+      "clause_3": {
+        "comment kept, sections": {
+          "auc": 0.97676,
+          "own_max_cost": 0.508262,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment kept, back-translations": {
+          "auc": 0.976077,
+          "own_max_cost": 0.539243,
+          "own_median_cost": 0.148577,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment removed, sections": {
+          "auc": 0.97676,
+          "own_max_cost": 0.508262,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "comment removed, back-translations": {
+          "auc": 0.976077,
+          "own_max_cost": 0.539243,
+          "own_median_cost": 0.148577,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        }
+      },
+      "bar": {
+        "whole": {
+          "held_ba": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "extract_flagged": {
+            "A→B": 1,
+            "B→A": 1
+          },
+          "second_ba": 0.986842,
+          "second_ba_back_translations": 0.986842,
+          "clause_1_met": true,
+          "clause_2_met": false,
+          "clause_3_met": true,
+          "met": false
+        },
+        "disjoint": {
+          "held_ba": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          },
+          "extract_flagged": {
+            "A→B": 1,
+            "B→A": 1
+          },
+          "second_ba": 0.986842,
+          "second_ba_back_translations": 0.986842,
+          "clause_1_met": true,
+          "clause_2_met": false,
+          "clause_3_met": true,
+          "met": false
+        }
+      },
+      "doses": {
+        "whole": {
+          "exact_k_share_all_k": 0.910714,
+          "rise_below_k_share": 0.089286,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 1.0,
+          "supported_nonzero_cases": 0,
+          "any_zero_share": 0.755102,
+          "any_mean_change": -0.270408,
+          "any_equals_minus_removed_flagged_share": 1.0,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.005163,
+          "mean_cost_one_insertion": 0.011332,
+          "mean_cost_deletion_ratio": 0.455567,
+          "exact_k_share": [
+            0.94898,
+            0.928571,
+            0.897959,
+            0.867347
+          ],
+          "mean_rise": [
+            0.94898,
+            1.928571,
+            2.897959,
+            3.867347
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 1.0,
+            "B→A": 0.84375
+          },
+          "base_count": {
+            "gold": 0,
+            "gold-2": 1,
+            "v1": 1,
+            "v2": 1,
+            "opus": 2,
+            "sonnet": 0,
+            "haiku": 3
+          }
+        },
+        "disjoint": {
+          "exact_k_share_all_k": 0.857143,
+          "rise_below_k_share": 0.142857,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 1.0,
+          "supported_nonzero_cases": 0,
+          "any_zero_share": 0.811224,
+          "any_mean_change": -0.201531,
+          "any_equals_minus_removed_flagged_share": 1.0,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.005163,
+          "mean_cost_one_insertion": 0.011472,
+          "mean_cost_deletion_ratio": 0.449999,
+          "exact_k_share": [
+            0.908163,
+            0.867347,
+            0.846939,
+            0.806122
+          ],
+          "mean_rise": [
+            0.908163,
+            1.867347,
+            2.836735,
+            3.795918
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 1.0,
+            "B→A": 0.75
+          },
+          "base_count": {
+            "gold": 0,
+            "gold-2": 0,
+            "v1": 1,
+            "v2": 1,
+            "opus": 2,
+            "sonnet": 0,
+            "haiku": 2
+          }
+        }
+      },
+      "tiers": {
+        "mean_cutoff": 0.34625,
+        "mean_cost": {
+          "gold": 0.285798,
+          "gold-2": 0.257149,
+          "v1": 0.278864,
+          "v2": 0.285325,
+          "opus": 0.305918,
+          "sonnet": 0.266267,
+          "haiku": 0.300901,
+          "adv1-a": 0.360347,
+          "adv1-b": 0.351928,
+          "adv2-a": 0.316234,
+          "adv2-b": 0.320796
+        },
+        "count": {
+          "gold": 1,
+          "gold-2": 0,
+          "v1": 1,
+          "v2": 1,
+          "opus": 2,
+          "sonnet": 0,
+          "haiku": 3,
+          "adv1-a": 4,
+          "adv1-b": 5,
+          "adv2-a": 0,
+          "adv2-b": 0
+        },
+        "tier_mean_cost": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "tier_count": {
+          "gold": 8,
+          "adv1": 9,
+          "adv2": 0
+        },
+        "tier_statements": {
+          "gold": 77,
+          "adv1": 17,
+          "adv2": 4
+        }
+      },
+      "entailment": {
+        "adversarial": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.654545,
+          "concordance": 0.607656,
+          "spearman": 0.307342,
+          "flagged": 9,
+          "flagged_and_not_entailed": 5,
+          "not_flagged_and_not_entailed": 5
+        },
+        "all_summaries": {
+          "n": 98,
+          "n_not_entailed": 43,
+          "auc_binary": 0.677801,
+          "concordance": 0.642602,
+          "spearman": 0.40741,
+          "flagged": 17,
+          "flagged_and_not_entailed": 10,
+          "not_flagged_and_not_entailed": 33
+        }
+      }
+    },
+    "pre_kept": {
+      "label": "pre-pass, short kept",
+      "embedding": "pre",
+      "short_source_statements": "kept",
+      "clause_1": {
+        "whole": {
+          "mean_cutoff": 1.115,
+          "directions": {
+            "A→B": {
+              "cutoff": 1.125,
+              "run_lo": 1.125,
+              "run_hi": 1.125,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.771726,
+              "calibration_auc": 0.80967,
+              "held_auc": 0.838235,
+              "held_ba": 0.816821,
+              "held_tpr": 0.780702,
+              "held_tnr": 0.852941,
+              "held_ba_over_run_min": 0.816821,
+              "held_ba_over_run_max": 0.816821,
+              "held_own_flagged": 190,
+              "held_own_total": 1292,
+              "held_foreign_flagged": 89,
+              "held_foreign_total": 114,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            },
+            "B→A": {
+              "cutoff": 1.105,
+              "run_lo": 1.105,
+              "run_hi": 1.105,
+              "run_points": 1,
+              "n_runs_at_maximum": 2,
+              "calibration_ba": 0.817724,
+              "calibration_auc": 0.838235,
+              "held_auc": 0.80967,
+              "held_ba": 0.727739,
+              "held_tpr": 0.835526,
+              "held_tnr": 0.619951,
+              "held_ba_over_run_min": 0.727739,
+              "held_ba_over_run_max": 0.727739,
+              "held_own_flagged": 621,
+              "held_own_total": 1634,
+              "held_foreign_flagged": 127,
+              "held_foreign_total": 152,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            }
+          }
+        },
+        "disjoint": {
+          "mean_cutoff": 1.1275,
+          "directions": {
+            "A→B": {
+              "cutoff": 1.135,
+              "run_lo": 1.135,
+              "run_hi": 1.135,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.752142,
+              "calibration_auc": 0.817625,
+              "held_auc": 0.832817,
+              "held_ba": 0.821207,
+              "held_tpr": 0.789474,
+              "held_tnr": 0.852941,
+              "held_ba_over_run_min": 0.821207,
+              "held_ba_over_run_max": 0.821207,
+              "held_own_flagged": 95,
+              "held_own_total": 646,
+              "held_foreign_flagged": 45,
+              "held_foreign_total": 57,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            },
+            "B→A": {
+              "cutoff": 1.12,
+              "run_lo": 1.12,
+              "run_hi": 1.12,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.842879,
+              "calibration_auc": 0.832817,
+              "held_auc": 0.817625,
+              "held_ba": 0.743421,
+              "held_tpr": 0.75,
+              "held_tnr": 0.736842,
+              "held_ba_over_run_min": 0.743421,
+              "held_ba_over_run_max": 0.743421,
+              "held_own_flagged": 215,
+              "held_own_total": 817,
+              "held_foreign_flagged": 57,
+              "held_foreign_total": 76,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            }
+          }
+        }
+      },
+      "clause_2": {
+        "whole": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 0.000691,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        },
+        "disjoint": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 0.000691,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        }
+      },
+      "clause_3": {
+        "comment kept, sections": {
+          "auc": 0.994532,
+          "own_max_cost": 1.200183,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 1.110538,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.115,
+            "ba": 0.980349,
+            "tpr": 0.987013,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 76
+          },
+          "disjoint": {
+            "cutoff": 1.1275,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        },
+        "comment kept, back-translations": {
+          "auc": 0.993848,
+          "own_max_cost": 1.21349,
+          "own_median_cost": 0.510712,
+          "foreign_min_cost": 1.110538,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.115,
+            "ba": 0.980349,
+            "tpr": 0.987013,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 76
+          },
+          "disjoint": {
+            "cutoff": 1.1275,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        },
+        "comment removed, sections": {
+          "auc": 0.994874,
+          "own_max_cost": 1.217918,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 1.123508,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.115,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 1.1275,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        },
+        "comment removed, back-translations": {
+          "auc": 0.993165,
+          "own_max_cost": 1.233765,
+          "own_median_cost": 0.509985,
+          "foreign_min_cost": 1.123508,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.115,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 1.1275,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        }
+      },
+      "bar": {
+        "whole": {
+          "held_ba": {
+            "A→B": 0.816821,
+            "B→A": 0.727739
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.980349,
+          "second_ba_back_translations": 0.980349,
+          "clause_1_met": false,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": false
+        },
+        "disjoint": {
+          "held_ba": {
+            "A→B": 0.821207,
+            "B→A": 0.743421
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.967362,
+          "second_ba_back_translations": 0.967362,
+          "clause_1_met": false,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": false
+        }
+      },
+      "doses": {
+        "whole": {
+          "exact_k_share_all_k": 0.5,
+          "rise_below_k_share": 0.405612,
+          "rise_above_k_share": 0.094388,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 0.818878,
+          "supported_nonzero_cases": 71,
+          "any_zero_share": 0.42602,
+          "any_mean_change": -0.645408,
+          "any_equals_minus_removed_flagged_share": 0.821429,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.020738,
+          "mean_cost_one_insertion": 0.013024,
+          "mean_cost_deletion_ratio": 1.592253,
+          "exact_k_share": [
+            0.683673,
+            0.581633,
+            0.408163,
+            0.326531
+          ],
+          "mean_rise": [
+            0.897959,
+            1.632653,
+            2.265306,
+            3.091837
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 0.60119,
+            "B→A": 0.424107
+          },
+          "base_count": {
+            "gold": 4,
+            "gold-2": 1,
+            "v1": 1,
+            "v2": 3,
+            "opus": 3,
+            "sonnet": 3,
+            "haiku": 6
+          }
+        },
+        "disjoint": {
+          "exact_k_share_all_k": 0.581633,
+          "rise_below_k_share": 0.375,
+          "rise_above_k_share": 0.043367,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 0.831633,
+          "supported_nonzero_cases": 66,
+          "any_zero_share": 0.482143,
+          "any_mean_change": -0.571429,
+          "any_equals_minus_removed_flagged_share": 0.836735,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.020738,
+          "mean_cost_one_insertion": 0.014707,
+          "mean_cost_deletion_ratio": 1.410085,
+          "exact_k_share": [
+            0.734694,
+            0.612245,
+            0.489796,
+            0.489796
+          ],
+          "mean_rise": [
+            0.72449,
+            1.510204,
+            2.520408,
+            3.540816
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 0.797619,
+            "B→A": 0.419643
+          },
+          "base_count": {
+            "gold": 3,
+            "gold-2": 1,
+            "v1": 1,
+            "v2": 2,
+            "opus": 3,
+            "sonnet": 2,
+            "haiku": 5
+          }
+        }
+      },
+      "tiers": {
+        "mean_cutoff": 1.115,
+        "mean_cost": {
+          "gold": 0.994889,
+          "gold-2": 0.909716,
+          "v1": 0.936255,
+          "v2": 1.006166,
+          "opus": 1.025848,
+          "sonnet": 0.955999,
+          "haiku": 1.027542,
+          "adv1-a": 1.215653,
+          "adv1-b": 1.216627,
+          "adv2-a": 1.261208,
+          "adv2-b": 1.109375
+        },
+        "count": {
+          "gold": 4,
+          "gold-2": 1,
+          "v1": 2,
+          "v2": 2,
+          "opus": 3,
+          "sonnet": 3,
+          "haiku": 5,
+          "adv1-a": 7,
+          "adv1-b": 9,
+          "adv2-a": 1,
+          "adv2-b": 2
+        },
+        "tier_mean_cost": {
+          "gold": 0.979488,
+          "adv1": 1.21614,
+          "adv2": 1.185292
+        },
+        "tier_count": {
+          "gold": 20,
+          "adv1": 16,
+          "adv2": 3
+        },
+        "tier_statements": {
+          "gold": 77,
+          "adv1": 17,
+          "adv2": 4
+        }
+      },
+      "entailment": {
+        "adversarial": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.690909,
+          "concordance": 0.61244,
+          "spearman": 0.289055,
+          "flagged": 19,
+          "flagged_and_not_entailed": 9,
+          "not_flagged_and_not_entailed": 1
+        },
+        "all_summaries": {
+          "n": 98,
+          "n_not_entailed": 43,
+          "auc_binary": 0.602114,
+          "concordance": 0.587245,
+          "spearman": 0.253679,
+          "flagged": 39,
+          "flagged_and_not_entailed": 20,
+          "not_flagged_and_not_entailed": 23
+        }
+      }
+    },
+    "pre_removed": {
+      "label": "pre-pass, short removed",
+      "embedding": "pre",
+      "short_source_statements": "removed",
+      "clause_1": {
+        "whole": {
+          "mean_cutoff": 1.14,
+          "directions": {
+            "A→B": {
+              "cutoff": 1.135,
+              "run_lo": 1.135,
+              "run_hi": 1.135,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.811582,
+              "calibration_auc": 0.829865,
+              "held_auc": 0.882353,
+              "held_ba": 0.838622,
+              "held_tpr": 0.973684,
+              "held_tnr": 0.70356,
+              "held_ba_over_run_min": 0.838622,
+              "held_ba_over_run_max": 0.838622,
+              "held_own_flagged": 383,
+              "held_own_total": 1292,
+              "held_foreign_flagged": 111,
+              "held_foreign_total": 114,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            },
+            "B→A": {
+              "cutoff": 1.145,
+              "run_lo": 1.145,
+              "run_hi": 1.145,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.857585,
+              "calibration_auc": 0.882353,
+              "held_auc": 0.829865,
+              "held_ba": 0.796741,
+              "held_tpr": 0.927632,
+              "held_tnr": 0.665851,
+              "held_ba_over_run_min": 0.796741,
+              "held_ba_over_run_max": 0.796741,
+              "held_own_flagged": 546,
+              "held_own_total": 1634,
+              "held_foreign_flagged": 141,
+              "held_foreign_total": 152,
+              "n_foreign_calibration": 38,
+              "n_foreign_held": 38
+            }
+          }
+        },
+        "disjoint": {
+          "mean_cutoff": 1.145,
+          "directions": {
+            "A→B": {
+              "cutoff": 1.13,
+              "run_lo": 1.13,
+              "run_hi": 1.13,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.799266,
+              "calibration_auc": 0.801714,
+              "held_auc": 0.904025,
+              "held_ba": 0.842879,
+              "held_tpr": 1.0,
+              "held_tnr": 0.685759,
+              "held_ba_over_run_min": 0.842879,
+              "held_ba_over_run_max": 0.842879,
+              "held_own_flagged": 203,
+              "held_own_total": 646,
+              "held_foreign_flagged": 57,
+              "held_foreign_total": 57,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            },
+            "B→A": {
+              "cutoff": 1.16,
+              "run_lo": 1.16,
+              "run_hi": 1.16,
+              "run_points": 1,
+              "n_runs_at_maximum": 1,
+              "calibration_ba": 0.883127,
+              "calibration_auc": 0.904025,
+              "held_auc": 0.801714,
+              "held_ba": 0.768207,
+              "held_tpr": 0.828947,
+              "held_tnr": 0.707466,
+              "held_ba_over_run_min": 0.768207,
+              "held_ba_over_run_max": 0.768207,
+              "held_own_flagged": 239,
+              "held_own_total": 817,
+              "held_foreign_flagged": 63,
+              "held_foreign_total": 76,
+              "n_foreign_calibration": 19,
+              "n_foreign_held": 19
+            }
+          }
+        }
+      },
+      "clause_2": {
+        "whole": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 1.040443,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        },
+        "disjoint": {
+          "flagged": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "flagged_under_5_words": {
+            "A→B": 0,
+            "B→A": 0,
+            "mean": 0
+          },
+          "max_cost": 1.040443,
+          "max_cost_statements_of_5_words_or_more": 0.000691
+        }
+      },
+      "clause_3": {
+        "comment kept, sections": {
+          "auc": 0.997949,
+          "own_max_cost": 1.149105,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 1.104028,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.14,
+            "ba": 0.954375,
+            "tpr": 0.935065,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 72
+          },
+          "disjoint": {
+            "cutoff": 1.145,
+            "ba": 0.947881,
+            "tpr": 0.922078,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 71
+          }
+        },
+        "comment kept, back-translations": {
+          "auc": 0.998291,
+          "own_max_cost": 1.136663,
+          "own_median_cost": 0.513248,
+          "foreign_min_cost": 1.104028,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.14,
+            "ba": 0.967532,
+            "tpr": 0.935065,
+            "tnr": 1.0,
+            "own_flagged": 0,
+            "foreign_flagged": 72
+          },
+          "disjoint": {
+            "cutoff": 1.145,
+            "ba": 0.961039,
+            "tpr": 0.922078,
+            "tnr": 1.0,
+            "own_flagged": 0,
+            "foreign_flagged": 71
+          }
+        },
+        "comment removed, sections": {
+          "auc": 0.995215,
+          "own_max_cost": 1.206268,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 1.126504,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.14,
+            "ba": 0.973855,
+            "tpr": 0.974026,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 75
+          },
+          "disjoint": {
+            "cutoff": 1.145,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        },
+        "comment removed, back-translations": {
+          "auc": 0.998291,
+          "own_max_cost": 1.1701,
+          "own_median_cost": 0.561927,
+          "foreign_min_cost": 1.126504,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 1.14,
+            "ba": 0.973855,
+            "tpr": 0.974026,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 75
+          },
+          "disjoint": {
+            "cutoff": 1.145,
+            "ba": 0.967362,
+            "tpr": 0.961039,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 74
+          }
+        }
+      },
+      "bar": {
+        "whole": {
+          "held_ba": {
+            "A→B": 0.838622,
+            "B→A": 0.796741
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.954375,
+          "second_ba_back_translations": 0.967532,
+          "clause_1_met": false,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": false
+        },
+        "disjoint": {
+          "held_ba": {
+            "A→B": 0.842879,
+            "B→A": 0.768207
+          },
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "second_ba": 0.947881,
+          "second_ba_back_translations": 0.961039,
+          "clause_1_met": false,
+          "clause_2_met": true,
+          "clause_3_met": true,
+          "met": false
+        }
+      },
+      "doses": {
+        "whole": {
+          "exact_k_share_all_k": 0.545918,
+          "rise_below_k_share": 0.454082,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 0.72449,
+          "supported_nonzero_cases": 108,
+          "any_zero_share": 0.313776,
+          "any_mean_change": -0.918367,
+          "any_equals_minus_removed_flagged_share": 0.808673,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.01627,
+          "mean_cost_one_insertion": 0.012169,
+          "mean_cost_deletion_ratio": 1.337027,
+          "exact_k_share": [
+            0.734694,
+            0.612245,
+            0.44898,
+            0.387755
+          ],
+          "mean_rise": [
+            0.693878,
+            1.520408,
+            2.295918,
+            3.173469
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 0.291667,
+            "B→A": 0.736607
+          },
+          "base_count": {
+            "gold": 4,
+            "gold-2": 3,
+            "v1": 3,
+            "v2": 4,
+            "opus": 5,
+            "sonnet": 2,
+            "haiku": 5
+          }
+        },
+        "disjoint": {
+          "exact_k_share_all_k": 0.431122,
+          "rise_below_k_share": 0.568878,
+          "rise_above_k_share": 0.0,
+          "n_insertion_trials": 392,
+          "supported_cases": 392,
+          "supported_zero_share": 0.732143,
+          "supported_nonzero_cases": 105,
+          "any_zero_share": 0.372449,
+          "any_mean_change": -0.852041,
+          "any_equals_minus_removed_flagged_share": 0.795918,
+          "n_deletion_cases": 392,
+          "mean_cost_median_abs_delta": 0.01627,
+          "mean_cost_one_insertion": 0.012605,
+          "mean_cost_deletion_ratio": 1.290708,
+          "exact_k_share": [
+            0.806122,
+            0.469388,
+            0.306122,
+            0.142857
+          ],
+          "mean_rise": [
+            0.785714,
+            1.346939,
+            2.0,
+            2.765306
+          ],
+          "exact_k_share_by_direction": {
+            "A→B": 0.47619,
+            "B→A": 0.397321
+          },
+          "base_count": {
+            "gold": 4,
+            "gold-2": 3,
+            "v1": 3,
+            "v2": 4,
+            "opus": 5,
+            "sonnet": 1,
+            "haiku": 5
+          }
+        }
+      },
+      "tiers": {
+        "mean_cutoff": 1.14,
+        "mean_cost": {
+          "gold": 1.060431,
+          "gold-2": 0.976417,
+          "v1": 1.071335,
+          "v2": 1.081807,
+          "opus": 1.075814,
+          "sonnet": 1.000144,
+          "haiku": 1.118208,
+          "adv1-a": 1.22333,
+          "adv1-b": 1.184697,
+          "adv2-a": 1.14403,
+          "adv2-b": 1.194424
+        },
+        "count": {
+          "gold": 4,
+          "gold-2": 3,
+          "v1": 3,
+          "v2": 4,
+          "opus": 4,
+          "sonnet": 2,
+          "haiku": 5,
+          "adv1-a": 7,
+          "adv1-b": 7,
+          "adv2-a": 1,
+          "adv2-b": 3
+        },
+        "tier_mean_cost": {
+          "gold": 1.05488,
+          "adv1": 1.204013,
+          "adv2": 1.169227
+        },
+        "tier_count": {
+          "gold": 25,
+          "adv1": 14,
+          "adv2": 4
+        },
+        "tier_statements": {
+          "gold": 77,
+          "adv1": 17,
+          "adv2": 4
+        }
+      },
+      "entailment": {
+        "adversarial": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.572727,
+          "concordance": 0.550239,
+          "spearman": 0.155245,
+          "flagged": 18,
+          "flagged_and_not_entailed": 10,
+          "not_flagged_and_not_entailed": 0
+        },
+        "all_summaries": {
+          "n": 98,
+          "n_not_entailed": 43,
+          "auc_binary": 0.728541,
+          "concordance": 0.675437,
+          "spearman": 0.506127,
+          "flagged": 43,
+          "flagged_and_not_entailed": 29,
+          "not_flagged_and_not_entailed": 14
+        }
+      }
+    }
+  },
+  "baseline": {
+    "extract": {
+      "short kept": {
+        "residual_a_default": 0.958211,
+        "closeness_a_default": 0.322442,
+        "residual_a_prepass_off": 0.517224,
+        "closeness_a_prepass_off": 0.634268
+      },
+      "short removed": {
+        "residual_a_default": 0.928621,
+        "closeness_a_default": 0.343366,
+        "residual_a_prepass_off": 0.410459,
+        "closeness_a_prepass_off": 0.709762
+      }
+    },
+    "insertion_doses": {
+      "short kept": {
+        "bal_pre": {
+          "label": "shipped residual_a, default call (pre-pass on)",
+          "mean_by_k": [
+            1.231843,
+            1.226026,
+            1.222804,
+            1.221189,
+            1.220736
+          ],
+          "median_spearman_gold_tier": -0.771429,
+          "n_negative_gold_tier": 7,
+          "median_spearman_11_documents": -0.842857,
+          "per_document_spearman": {
+            "gold": -0.707143,
+            "gold-2": -0.907143,
+            "v1": -0.135714,
+            "v2": -0.771429,
+            "opus": -0.735714,
+            "sonnet": -0.842857,
+            "haiku": -0.878571
+          }
+        },
+        "bal_raw": {
+          "label": "shipped residual_a, pre-pass off",
+          "mean_by_k": [
+            0.702585,
+            0.701748,
+            0.701041,
+            0.700639,
+            0.700864
+          ],
+          "median_spearman_gold_tier": -0.014286,
+          "n_negative_gold_tier": 4,
+          "median_spearman_11_documents": -0.257143,
+          "per_document_spearman": {
+            "gold": 0.007143,
+            "gold-2": -0.214286,
+            "v1": -0.014286,
+            "v2": 0.021429,
+            "opus": -0.342857,
+            "sonnet": -0.671429,
+            "haiku": 0.042857
+          }
+        },
+        "os_pre": {
+          "label": "mean nearest-source cost, after the pre-pass",
+          "mean_by_k": [
+            0.979488,
+            0.992512,
+            1.004904,
+            1.016908,
+            1.027957
+          ],
+          "median_spearman_gold_tier": 0.992857,
+          "n_negative_gold_tier": 0,
+          "median_spearman_11_documents": 0.964286,
+          "per_document_spearman": {
+            "gold": 0.992857,
+            "gold-2": 1.0,
+            "v1": 0.992857,
+            "v2": 0.964286,
+            "opus": 0.921429,
+            "sonnet": 0.985714,
+            "haiku": 1.0
+          }
+        },
+        "os_raw": {
+          "label": "mean nearest-source cost, raw",
+          "mean_by_k": [
+            0.282889,
+            0.294221,
+            0.303687,
+            0.311975,
+            0.318843
+          ],
+          "median_spearman_gold_tier": 1.0,
+          "n_negative_gold_tier": 0,
+          "median_spearman_11_documents": 1.0,
+          "per_document_spearman": {
+            "gold": 1.0,
+            "gold-2": 1.0,
+            "v1": 1.0,
+            "v2": 1.0,
+            "opus": 1.0,
+            "sonnet": 1.0,
+            "haiku": 1.0
+          }
+        }
+      },
+      "short removed": {
+        "bal_pre": {
+          "label": "shipped residual_a, default call (pre-pass on)",
+          "mean_by_k": [
+            1.20749,
+            1.202449,
+            1.200176,
+            1.200072,
+            1.201988
+          ],
+          "median_spearman_gold_tier": -0.314286,
+          "n_negative_gold_tier": 4,
+          "median_spearman_11_documents": -0.657143,
+          "per_document_spearman": {
+            "gold": 0.0,
+            "gold-2": -0.314286,
+            "v1": -0.378571,
+            "v2": -0.671429,
+            "opus": 0.071429,
+            "sonnet": 0.407143,
+            "haiku": -0.728571
+          }
+        },
+        "bal_raw": {
+          "label": "shipped residual_a, pre-pass off",
+          "mean_by_k": [
+            0.393087,
+            0.393985,
+            0.395416,
+            0.397314,
+            0.399804
+          ],
+          "median_spearman_gold_tier": 0.592857,
+          "n_negative_gold_tier": 0,
+          "median_spearman_11_documents": 0.542857,
+          "per_document_spearman": {
+            "gold": 0.542857,
+            "gold-2": 0.75,
+            "v1": 0.928571,
+            "v2": 0.514286,
+            "opus": 0.542857,
+            "sonnet": 0.592857,
+            "haiku": 1.0
+          }
+        },
+        "os_pre": {
+          "label": "mean nearest-source cost, after the pre-pass",
+          "mean_by_k": [
+            1.05488,
+            1.067048,
+            1.077955,
+            1.08732,
+            1.095813
+          ],
+          "median_spearman_gold_tier": 0.985714,
+          "n_negative_gold_tier": 0,
+          "median_spearman_11_documents": 0.9,
+          "per_document_spearman": {
+            "gold": 1.0,
+            "gold-2": 0.992857,
+            "v1": 0.964286,
+            "v2": 0.878571,
+            "opus": 0.835714,
+            "sonnet": 0.985714,
+            "haiku": 0.985714
+          }
+        },
+        "os_raw": {
+          "label": "mean nearest-source cost, raw",
+          "mean_by_k": [
+            0.282889,
+            0.294221,
+            0.303687,
+            0.311975,
+            0.318843
+          ],
+          "median_spearman_gold_tier": 1.0,
+          "n_negative_gold_tier": 0,
+          "median_spearman_11_documents": 1.0,
+          "per_document_spearman": {
+            "gold": 1.0,
+            "gold-2": 1.0,
+            "v1": 1.0,
+            "v2": 1.0,
+            "opus": 1.0,
+            "sonnet": 1.0,
+            "haiku": 1.0
+          }
+        }
+      }
+    }
+  },
+  "guardrails": {
+    "hold": true,
+    "readings": {
+      "V before the arms": {
+        "reading": "0/24",
+        "ok": true
+      },
+      "V after the arms": {
+        "reading": "0/24",
+        "ok": true
+      },
+      "smd, 10 anchor pairs, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "order_gap, 10 anchor pairs, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "source-conditioned, 3 saved pairs x 5 fields, before == after (np.array_equal)": {
+        "reading": "True",
+        "ok": true
+      },
+      "smd == saved 1.1.5 baseline (np.array_equal), before / after": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "order_gap == saved 1.1.5 baseline (np.array_equal), before / after": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "source-conditioned == saved 1.1.5 baseline (np.array_equal), before / after": {
+        "reading": "True / True",
+        "ok": true
+      },
+      "mean nearest-source cost > shipped balanced residual (lower-bound violations), scored documents": {
+        "reading": "0/2508",
+        "ok": true
+      },
+      "count between 0 and the number of statements, every dosed document": {
+        "reading": "True",
+        "ok": true
+      },
+      "src/ files whose bytes changed during the run": {
+        "reading": "0/15",
+        "ok": true
+      },
+      "tests/ files whose bytes changed during the run": {
+        "reading": "0/9",
+        "ok": true
+      },
+      "git status --porcelain -- src tests is empty": {
+        "reading": "True",
+        "ok": true
+      }
+    },
+    "panel_before": {
+      "V": 0.0,
+      "margin_pts": 4.708317,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282
+    },
+    "panel_after": {
+      "V": 0.0,
+      "margin_pts": 4.708317,
+      "dprime": 4.683998,
+      "R": 1.669676,
+      "DR": 0.087282
+    },
+    "files_changed_during_run": {
+      "src": [],
+      "tests": [],
+      "docs": []
+    },
+    "blas_1_thread_equals_default": {
+      "bal_pre": true,
+      "pre_costs": true
+    }
+  },
+  "prediction_check": {
+    "calibrated cutoff between 0.33 and 0.45": {
+      "observed": "0.3375 (A→B) and 0.3550 (B→A)",
+      "magnitude_held": true,
+      "magnitude": "held",
+      "direction_matched": null
+    },
+    "held-out balanced accuracy 0.90 to 0.96 in both directions": {
+      "observed": "0.9412 (A→B) and 0.9272 (B→A)",
+      "magnitude_held": true,
+      "magnitude": "held",
+      "direction_matched": true
+    },
+    "second-article balanced accuracy 0.85 to 0.95": {
+      "observed": "0.9868",
+      "magnitude_held": false,
+      "magnitude": "not held, above the interval",
+      "direction_matched": true
+    },
+    "the shipped balanced residual falls under the same insertions": {
+      "observed": "median per-document Spearman -0.0143 with the pre-pass off (4 of 7 gold-tier documents negative) and -0.7714 on the default call (7 of 7 negative)",
+      "magnitude_held": null,
+      "magnitude": "no size registered",
+      "direction_matched": true
+    }
+  },
+  "result": {
+    "id": "E15-H78",
+    "slug": "raw-nearest-source-count",
+    "model": "opus",
+    "verdict": "Promoted",
+    "verdict_number": "raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met) | second readings - disjoint foreign halves: held-out 0.9559 / 0.9125, extract 0 / 0 flagged, second article 0.9868, bar met; short source statements removed: held-out 0.9412 / 0.9272, extract 1 / 1 flagged, second article 0.9868, bar not met; after the shipped pre-pass: held-out 0.8168 / 0.7277, extract 0 / 0 flagged, second article 0.9803, bar not met; second article with back-translated own statements: 0.9868",
+    "kill_gate": {
+      "ran": true,
+      "passed": true,
+      "reading": "AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, raw embeddings, short source statements kept: half A 0.9871, half B 0.9791 (bar >= 0.9 on both halves); with short source statements removed: half A 0.9871, half B 0.9791; split: half A = gold, v2, sonnet, haiku; half B = gold-2, v1, opus"
+    },
+    "sanity_check": {
+      "required": false,
+      "passed": true,
+      "reading": "the record names no sanity check; executor's harness check: 7 of 7 numbers of the record's Evidence line reproduced at the record's decimals - AUC, 98 own x 38 foreign statements, raw embeddings (E13-H73): 0.966971 against 0.9670; AUC, same pairs, after the pre-pass (E13-H73): 0.788937 against 0.7889; verbatim extract, closeness of the mean nearest-source cost, raw (E13-H73): 0.999917 against 0.9999; verbatim extract, shipped closeness_a (E13-H73): 0.322442 against 0.3224; shipped residual, pre-pass off, median per-document Spearman under insertions, 11 documents (E13-H73): -0.257143 against -0.2571; mean nearest-source cost, median |change| under deletions over one insertion, raw (E13-H73): 0.340866 against 0.341; one-word statements among the 70 ibm source statements (E14-H76): 22 against 22; all seven are read with source statements under 5 words kept"
+    },
+    "prediction_check": {
+      "predicted": "calibrated cutoff between 0.33 and 0.45; held-out balanced accuracy 0.90 to 0.96 in both directions; second-article balanced accuracy 0.85 to 0.95; the shipped balanced residual falls under the same insertions (E13-H73 read Spearman -0.2571)",
+      "observed": "calibrated cutoff between 0.33 and 0.45: 0.3375 (A→B) and 0.3550 (B→A) (magnitude held, direction not defined by the record); held-out balanced accuracy 0.90 to 0.96 in both directions: 0.9412 (A→B) and 0.9272 (B→A) (magnitude held, direction matched); second-article balanced accuracy 0.85 to 0.95: 0.9868 (magnitude not held, above the interval, direction matched); the shipped balanced residual falls under the same insertions: median per-document Spearman -0.0143 with the pre-pass off (4 of 7 gold-tier documents negative) and -0.7714 on the default call (7 of 7 negative) (magnitude no size registered, direction matched) | direction_matched is true only when the 3 effects that have a direction read matched and the cutoff lies in its registered interval",
+      "direction_matched": true
+    },
+    "acceptance": {
+      "bar": "PASS iff, with the cutoff chosen on the calibration half of the 7 gold-tier ibm summaries (split by document, both directions scored): (1) held-out balanced accuracy of the flag, own gold-tier statements against inserted wergeland statements of 5+ words, >= 0.90 in both directions; (2) the 10-statement verbatim extract source[0::7][:10] reads 0 flagged statements; (3) with the mean of the two cutoffs and no refit, on the wergeland source: statements of werg-a, werg-b, werg-c against ibm gold-tier statements, balanced accuracy >= 0.85",
+      "met": true,
+      "readings": {
+        "raw_kept, foreign set whole": {
+          "label": "raw, short kept (registered), foreign set whole (registered)",
+          "cutoffs": {
+            "A→B": 0.3375,
+            "B→A": 0.355
+          },
+          "mean_cutoff": 0.34625,
+          "held_ba": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "clause_1_met": true,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.986842,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.986842,
+          "met": true
+        },
+        "raw_kept, foreign set disjoint": {
+          "label": "raw, short kept (registered), foreign set in disjoint halves",
+          "cutoffs": {
+            "A→B": 0.3425,
+            "B→A": 0.3575
+          },
+          "mean_cutoff": 0.35,
+          "held_ba": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          },
+          "clause_1_met": true,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.986842,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.986842,
+          "met": true
+        },
+        "raw_removed, foreign set whole": {
+          "label": "raw, short removed, foreign set whole (registered)",
+          "cutoffs": {
+            "A→B": 0.3375,
+            "B→A": 0.355
+          },
+          "mean_cutoff": 0.34625,
+          "held_ba": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "clause_1_met": true,
+          "extract_flagged": {
+            "A→B": 1,
+            "B→A": 1
+          },
+          "clause_2_met": false,
+          "second_ba": 0.986842,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.986842,
+          "met": false
+        },
+        "raw_removed, foreign set disjoint": {
+          "label": "raw, short removed, foreign set in disjoint halves",
+          "cutoffs": {
+            "A→B": 0.3425,
+            "B→A": 0.3575
+          },
+          "mean_cutoff": 0.35,
+          "held_ba": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          },
+          "clause_1_met": true,
+          "extract_flagged": {
+            "A→B": 1,
+            "B→A": 1
+          },
+          "clause_2_met": false,
+          "second_ba": 0.986842,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.986842,
+          "met": false
+        },
+        "pre_kept, foreign set whole": {
+          "label": "pre-pass, short kept, foreign set whole (registered)",
+          "cutoffs": {
+            "A→B": 1.125,
+            "B→A": 1.105
+          },
+          "mean_cutoff": 1.115,
+          "held_ba": {
+            "A→B": 0.816821,
+            "B→A": 0.727739
+          },
+          "clause_1_met": false,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.980349,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.980349,
+          "met": false
+        },
+        "pre_kept, foreign set disjoint": {
+          "label": "pre-pass, short kept, foreign set in disjoint halves",
+          "cutoffs": {
+            "A→B": 1.135,
+            "B→A": 1.12
+          },
+          "mean_cutoff": 1.1275,
+          "held_ba": {
+            "A→B": 0.821207,
+            "B→A": 0.743421
+          },
+          "clause_1_met": false,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.967362,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.967362,
+          "met": false
+        },
+        "pre_removed, foreign set whole": {
+          "label": "pre-pass, short removed, foreign set whole (registered)",
+          "cutoffs": {
+            "A→B": 1.135,
+            "B→A": 1.145
+          },
+          "mean_cutoff": 1.14,
+          "held_ba": {
+            "A→B": 0.838622,
+            "B→A": 0.796741
+          },
+          "clause_1_met": false,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.954375,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.967532,
+          "met": false
+        },
+        "pre_removed, foreign set disjoint": {
+          "label": "pre-pass, short removed, foreign set in disjoint halves",
+          "cutoffs": {
+            "A→B": 1.13,
+            "B→A": 1.16
+          },
+          "mean_cutoff": 1.145,
+          "held_ba": {
+            "A→B": 0.842879,
+            "B→A": 0.768207
+          },
+          "clause_1_met": false,
+          "extract_flagged": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "clause_2_met": true,
+          "second_ba": 0.947881,
+          "clause_3_met": true,
+          "second_ba_back_translations_not_the_bar": 0.961039,
+          "met": false
+        }
+      }
+    },
+    "guardrails": {
+      "V": "0/24",
+      "src_untouched": true,
+      "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the count is a score with integer values, not a metric; the mean nearest-source cost is a lower bound of the shipped balanced residual (0 violations in 2508 comparisons)",
+      "notes": "BLAS limited to 1 thread for the arms, readings identical to the default thread count: shipped residual_a True, pre-pass statement costs True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+    },
+    "key_numbers": {
+      "verdict_arm": "raw_kept",
+      "verdict_foreign_reading": "whole",
+      "split": {
+        "A": [
+          "gold",
+          "v2",
+          "sonnet",
+          "haiku"
+        ],
+        "B": [
+          "gold-2",
+          "v1",
+          "opus"
+        ]
+      },
+      "gate_auc": {
+        "raw_kept": {
+          "A": 0.987148,
+          "B": 0.979102
+        },
+        "raw_removed": {
+          "A": 0.987148,
+          "B": 0.979102
+        }
+      },
+      "cutoffs": {
+        "raw_kept": {
+          "whole": {
+            "A→B": 0.3375,
+            "B→A": 0.355,
+            "mean": 0.34625
+          },
+          "disjoint": {
+            "A→B": 0.3425,
+            "B→A": 0.3575,
+            "mean": 0.35
+          }
+        },
+        "raw_removed": {
+          "whole": {
+            "A→B": 0.3375,
+            "B→A": 0.355,
+            "mean": 0.34625
+          },
+          "disjoint": {
+            "A→B": 0.3425,
+            "B→A": 0.3575,
+            "mean": 0.35
+          }
+        },
+        "pre_kept": {
+          "whole": {
+            "A→B": 1.125,
+            "B→A": 1.105,
+            "mean": 1.115
+          },
+          "disjoint": {
+            "A→B": 1.135,
+            "B→A": 1.12,
+            "mean": 1.1275
+          }
+        },
+        "pre_removed": {
+          "whole": {
+            "A→B": 1.135,
+            "B→A": 1.145,
+            "mean": 1.14
+          },
+          "disjoint": {
+            "A→B": 1.13,
+            "B→A": 1.16,
+            "mean": 1.145
+          }
+        }
+      },
+      "held_ba": {
+        "raw_kept": {
+          "whole": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "disjoint": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          }
+        },
+        "raw_removed": {
+          "whole": {
+            "A→B": 0.941176,
+            "B→A": 0.927173
+          },
+          "disjoint": {
+            "A→B": 0.955882,
+            "B→A": 0.912485
+          }
+        },
+        "pre_kept": {
+          "whole": {
+            "A→B": 0.816821,
+            "B→A": 0.727739
+          },
+          "disjoint": {
+            "A→B": 0.821207,
+            "B→A": 0.743421
+          }
+        },
+        "pre_removed": {
+          "whole": {
+            "A→B": 0.838622,
+            "B→A": 0.796741
+          },
+          "disjoint": {
+            "A→B": 0.842879,
+            "B→A": 0.768207
+          }
+        }
+      },
+      "extract_flagged": {
+        "raw_kept": {
+          "whole": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "disjoint": {
+            "A→B": 0,
+            "B→A": 0
+          }
+        },
+        "raw_removed": {
+          "whole": {
+            "A→B": 1,
+            "B→A": 1
+          },
+          "disjoint": {
+            "A→B": 1,
+            "B→A": 1
+          }
+        },
+        "pre_kept": {
+          "whole": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "disjoint": {
+            "A→B": 0,
+            "B→A": 0
+          }
+        },
+        "pre_removed": {
+          "whole": {
+            "A→B": 0,
+            "B→A": 0
+          },
+          "disjoint": {
+            "A→B": 0,
+            "B→A": 0
+          }
+        }
+      },
+      "second_ba": {
+        "raw_kept": {
+          "whole": 0.986842,
+          "disjoint": 0.986842
+        },
+        "raw_removed": {
+          "whole": 0.986842,
+          "disjoint": 0.986842
+        },
+        "pre_kept": {
+          "whole": 0.980349,
+          "disjoint": 0.967362
+        },
+        "pre_removed": {
+          "whole": 0.954375,
+          "disjoint": 0.947881
+        }
+      },
+      "second_ba_back_translations": {
+        "raw_kept": {
+          "whole": 0.986842,
+          "disjoint": 0.986842
+        },
+        "raw_removed": {
+          "whole": 0.986842,
+          "disjoint": 0.986842
+        },
+        "pre_kept": {
+          "whole": 0.980349,
+          "disjoint": 0.967362
+        },
+        "pre_removed": {
+          "whole": 0.967532,
+          "disjoint": 0.961039
+        }
+      },
+      "exact_k_share": {
+        "raw_kept": {
+          "whole": [
+            0.94898,
+            0.928571,
+            0.897959,
+            0.867347
+          ],
+          "disjoint": [
+            0.908163,
+            0.867347,
+            0.846939,
+            0.806122
+          ]
+        },
+        "raw_removed": {
+          "whole": [
+            0.94898,
+            0.928571,
+            0.897959,
+            0.867347
+          ],
+          "disjoint": [
+            0.908163,
+            0.867347,
+            0.846939,
+            0.806122
+          ]
+        },
+        "pre_kept": {
+          "whole": [
+            0.683673,
+            0.581633,
+            0.408163,
+            0.326531
+          ],
+          "disjoint": [
+            0.734694,
+            0.612245,
+            0.489796,
+            0.489796
+          ]
+        },
+        "pre_removed": {
+          "whole": [
+            0.734694,
+            0.612245,
+            0.44898,
+            0.387755
+          ],
+          "disjoint": [
+            0.806122,
+            0.469388,
+            0.306122,
+            0.142857
+          ]
+        }
+      },
+      "registered_arm_raw_short_kept_foreign_set_whole": {
+        "held_ba_over_run_min_max": {
+          "A→B": [
+            0.941176,
+            0.955882
+          ],
+          "B→A": [
+            0.927173,
+            0.927173
+          ]
+        },
+        "size_of_one_statement": {
+          "A→B": {
+            "one_own_statement": 0.014706,
+            "one_foreign_statement": 0.013158,
+            "errors_below_bar": 3
+          },
+          "B→A": {
+            "one_own_statement": 0.011628,
+            "one_foreign_statement": 0.013158,
+            "errors_below_bar": 3
+          }
+        },
+        "second_article": {
+          "auc": 0.97676,
+          "own_max_cost": 0.508262,
+          "own_median_cost": 0.0,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "second_article_back_translations": {
+          "auc": 0.976077,
+          "own_max_cost": 0.539243,
+          "own_median_cost": 0.148577,
+          "foreign_min_cost": 0.398348,
+          "n_own": 38,
+          "n_foreign": 77,
+          "whole": {
+            "cutoff": 0.34625,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          },
+          "disjoint": {
+            "cutoff": 0.35,
+            "ba": 0.986842,
+            "tpr": 1.0,
+            "tnr": 0.973684,
+            "own_flagged": 1,
+            "foreign_flagged": 77
+          }
+        },
+        "deletions": {
+          "supported_cases": 392,
+          "supported_zero_share": 1.0,
+          "any_zero_share": 0.755102,
+          "any_mean_change": -0.270408,
+          "mean_cost_deletion_ratio": 0.455567
+        },
+        "count_at_k0_held_out_documents": {
+          "gold": 0,
+          "gold-2": 1,
+          "v1": 1,
+          "v2": 1,
+          "opus": 2,
+          "sonnet": 0,
+          "haiku": 3
+        }
+      },
+      "tier_mean_cost": {
+        "raw_kept": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "raw_removed": {
+          "gold": 0.282889,
+          "adv1": 0.356138,
+          "adv2": 0.318515
+        },
+        "pre_kept": {
+          "gold": 0.979488,
+          "adv1": 1.21614,
+          "adv2": 1.185292
+        },
+        "pre_removed": {
+          "gold": 1.05488,
+          "adv1": 1.204013,
+          "adv2": 1.169227
+        }
+      },
+      "tier_count": {
+        "raw_kept": {
+          "gold": 8,
+          "adv1": 9,
+          "adv2": 0
+        },
+        "raw_removed": {
+          "gold": 8,
+          "adv1": 9,
+          "adv2": 0
+        },
+        "pre_kept": {
+          "gold": 20,
+          "adv1": 16,
+          "adv2": 3
+        },
+        "pre_removed": {
+          "gold": 25,
+          "adv1": 14,
+          "adv2": 4
+        }
+      },
+      "adversarial_vs_entailment": {
+        "raw_kept": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.654545,
+          "concordance": 0.607656,
+          "spearman": 0.307342,
+          "flagged": 9,
+          "flagged_and_not_entailed": 5,
+          "not_flagged_and_not_entailed": 5
+        },
+        "raw_removed": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.654545,
+          "concordance": 0.607656,
+          "spearman": 0.307342,
+          "flagged": 9,
+          "flagged_and_not_entailed": 5,
+          "not_flagged_and_not_entailed": 5
+        },
+        "pre_kept": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.690909,
+          "concordance": 0.61244,
+          "spearman": 0.289055,
+          "flagged": 19,
+          "flagged_and_not_entailed": 9,
+          "not_flagged_and_not_entailed": 1
+        },
+        "pre_removed": {
+          "n": 21,
+          "n_not_entailed": 10,
+          "auc_binary": 0.572727,
+          "concordance": 0.550239,
+          "spearman": 0.155245,
+          "flagged": 18,
+          "flagged_and_not_entailed": 10,
+          "not_flagged_and_not_entailed": 0
+        }
+      },
+      "shipped_residual_spearman_gold_tier": {
+        "short kept": {
+          "bal_pre": -0.771429,
+          "bal_raw": -0.014286,
+          "os_pre": 0.992857,
+          "os_raw": 1.0
+        },
+        "short removed": {
+          "bal_pre": -0.314286,
+          "bal_raw": 0.592857,
+          "os_pre": 0.985714,
+          "os_raw": 1.0
+        }
+      },
+      "prediction_by_effect": {
+        "calibrated cutoff between 0.33 and 0.45": {
+          "magnitude": "held",
+          "magnitude_held": true,
+          "direction_matched": null
+        },
+        "held-out balanced accuracy 0.90 to 0.96 in both directions": {
+          "magnitude": "held",
+          "magnitude_held": true,
+          "direction_matched": true
+        },
+        "second-article balanced accuracy 0.85 to 0.95": {
+          "magnitude": "not held, above the interval",
+          "magnitude_held": false,
+          "direction_matched": true
+        },
+        "the shipped balanced residual falls under the same insertions": {
+          "magnitude": "no size registered",
+          "magnitude_held": null,
+          "direction_matched": true
+        }
+      },
+      "second_readings": {
+        "disjoint foreign halves, same arm": "held-out balanced accuracy 0.9559 (A→B, cutoff 0.3425) and 0.9125 (B→A, cutoff 0.3575) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.35000 (bar >= 0.85, met)",
+        "short source statements removed, foreign set whole": "held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 1 and 1 of 10 flagged under the two cutoffs (bar 0, not met); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met)",
+        "after the shipped pre-pass, short kept, foreign set whole": "held-out balanced accuracy 0.8168 (A→B, cutoff 1.1250) and 0.7277 (B→A, cutoff 1.1050) (bar >= 0.9 in both, not met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9803 at the mean cutoff 1.11500 (bar >= 0.85, met)",
+        "second article with back-translated own statements, registered arm": "balanced accuracy 0.9868 at the same cutoff"
+      }
+    },
+    "result_summary": "Promoted: on the registered reading (raw embeddings, source statements under 5 words kept, foreign set whole) the bar is met. Kill-gate: AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, 0.9871 on half A and 0.9791 on half B (bar 0.9). Harness check, the executor's because the record names none: 7 of 7 numbers of the record's Evidence line reproduced. Clause (1), met: cutoffs 0.3375 and 0.3550, held-out balanced accuracy 0.9412 (A→B) and 0.9272 (B→A) against 0.9; with the foreign set in disjoint halves 0.9559 and 0.9125; one statement moves a held-out reading by 0.0116 to 0.0147 and 3 further wrong flags bring it below the bar. Clause (2), met by construction, every extract statement is a source statement: 0 and 0 of 10 extract statements flagged under the two cutoffs; with source statements under 5 words removed the extract reads 1 and 1 flagged (extract statements under 5 words: ###), so that reported reading has clause (2) not met. Clause (3), met: balanced accuracy 0.9868 at the mean cutoff 0.34625 with no refit, 77 of 77 ibm statements flagged and 37 of 38 wergeland section statements not flagged; 36 of those section statements are copies of source statements, and with back-translated own statements the reading is 0.9868. Reported without a bar: the count rises by exactly k in 0.9107 of the 392 insertion trials (0.9490, 0.9286, 0.8980, 0.8673 at k = 1 to 4); deleting supported statements leaves the count unchanged in 392 of 392 cases, which holds by construction on raw embeddings, while the mean of the same costs moves by 45.6% of one insertion; the 7 gold-tier documents read 0 to 3 flagged statements at k = 0; tier mean cost gold 0.2829, adv1 0.3561, adv2 0.3185 with 8 of 77, 9 of 17 and 0 of 4 statements flagged at the mean cutoff; the 21 statements of the 4 adversarial summaries against 1 - entailment read AUC 0.6545 (10 labelled not entailed at the executor's label of 0.5); the same flag after the shipped pre-pass reads 0.8168 and 0.7277 on clause (1), not met. Baseline on the same insertions: shipped residual_a median per-document Spearman -0.7714 on the default call and -0.0143 with the pre-pass off over the 7 gold-tier documents. Prediction: calibrated cutoff between 0.33 and 0.45 - held; held-out balanced accuracy 0.90 to 0.96 in both directions - held; second-article balanced accuracy 0.85 to 0.95 - not held, above the interval; the shipped balanced residual falls under the same insertions - no size registered. Guardrails hold: V 0/24, default-path smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline, files changed under src/ 0 and under tests/ 0.",
+    "artifacts": {
+      "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H78-kj-raw-nearest-source-count.ipynb",
+      "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H78-raw-nearest-source-count-metrics.json",
+      "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H78-raw-nearest-source-count.log"
+    }
+  }
+}

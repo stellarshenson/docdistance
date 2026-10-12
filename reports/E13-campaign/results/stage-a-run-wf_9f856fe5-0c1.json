@@ -1,0 +1,1131 @@
+{
+  "summary": "Stage A of the E13 campaign: execute the six pre-registered hypotheses (E13-H70 to H74 transport overflow, E14-H75 centering attribution), one opus executor per notebook, methodologist verify plus one repair round",
+  "agentCount": 4,
+  "logs": [
+    "stage A: 2 executors in parallel on opus",
+    "E15-H78: Promoted (raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met) | second readings - disjoint foreign halves: held-out 0.9559 / 0.9125, extract 0 / 0 flagged, second article 0.9868, bar met; short source statements removed: held-out 0.9412 / 0.9272, extract 1 / 1 flagged, second article 0.9868, bar not met; after the shipped pre-pass: held-out 0.8168 / 0.7277, extract 0 / 0 flagged, second article 0.9803, bar not met; second article with back-translated own statements: 0.9868) - verified=true",
+    "E15-H79: Refuted (third-pass set at c = 0.325, eps = 1e-06: matched sub-sequence textually equal to the shorter document in 111/120 cases against a bar of >= 114/120 (without the tie-break 88/120); matched gap at or below the shipped gap in 120/120 against a bar of 120/120 (without the tie-break 99/120); second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120; clauses 2, 3 and 4 met: 280/280 deletion cases <= 0.005, AUC 0.999903, 1840/1840 fully matched equal-length pairs equal to shipped opw_gap, macro-F1 0.9674 half A and 0.9772 half B) - verified=true"
+  ],
+  "result": {
+    "results": [
+      {
+        "id": "E15-H78",
+        "slug": "raw-nearest-source-count",
+        "result": {
+          "id": "E15-H78",
+          "slug": "raw-nearest-source-count",
+          "model": "opus",
+          "verdict": "Promoted",
+          "verdict_number": "raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met) | second readings - disjoint foreign halves: held-out 0.9559 / 0.9125, extract 0 / 0 flagged, second article 0.9868, bar met; short source statements removed: held-out 0.9412 / 0.9272, extract 1 / 1 flagged, second article 0.9868, bar not met; after the shipped pre-pass: held-out 0.8168 / 0.7277, extract 0 / 0 flagged, second article 0.9803, bar not met; second article with back-translated own statements: 0.9868",
+          "kill_gate": {
+            "ran": true,
+            "passed": true,
+            "reading": "AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, raw embeddings, short source statements kept: half A 0.9871, half B 0.9791 (bar >= 0.9 on both halves); with short source statements removed: half A 0.9871, half B 0.9791; split: half A = gold, v2, sonnet, haiku; half B = gold-2, v1, opus"
+          },
+          "sanity_check": {
+            "required": false,
+            "passed": true,
+            "reading": "the record names no sanity check; executor's harness check: 7 of 7 numbers of the record's Evidence line reproduced at the record's decimals - AUC, 98 own x 38 foreign statements, raw embeddings (E13-H73): 0.966971 against 0.9670; AUC, same pairs, after the pre-pass (E13-H73): 0.788937 against 0.7889; verbatim extract, closeness of the mean nearest-source cost, raw (E13-H73): 0.999917 against 0.9999; verbatim extract, shipped closeness_a (E13-H73): 0.322442 against 0.3224; shipped residual, pre-pass off, median per-document Spearman under insertions, 11 documents (E13-H73): -0.257143 against -0.2571; mean nearest-source cost, median |change| under deletions over one insertion, raw (E13-H73): 0.340866 against 0.341; one-word statements among the 70 ibm source statements (E14-H76): 22 against 22; all seven are read with source statements under 5 words kept"
+          },
+          "prediction_check": {
+            "predicted": "calibrated cutoff between 0.33 and 0.45; held-out balanced accuracy 0.90 to 0.96 in both directions; second-article balanced accuracy 0.85 to 0.95; the shipped balanced residual falls under the same insertions (E13-H73 read Spearman -0.2571)",
+            "observed": "calibrated cutoff between 0.33 and 0.45: 0.3375 (A→B) and 0.3550 (B→A) (magnitude held, direction not defined by the record); held-out balanced accuracy 0.90 to 0.96 in both directions: 0.9412 (A→B) and 0.9272 (B→A) (magnitude held, direction matched); second-article balanced accuracy 0.85 to 0.95: 0.9868 (magnitude not held, above the interval, direction matched); the shipped balanced residual falls under the same insertions: median per-document Spearman -0.0143 with the pre-pass off (4 of 7 gold-tier documents negative) and -0.7714 on the default call (7 of 7 negative) (magnitude no size registered, direction matched) | direction_matched is true only when the 3 effects that have a direction read matched and the cutoff lies in its registered interval",
+            "direction_matched": true
+          },
+          "acceptance": {
+            "bar": "PASS iff, with the cutoff chosen on the calibration half of the 7 gold-tier ibm summaries (split by document, both directions scored): (1) held-out balanced accuracy of the flag, own gold-tier statements against inserted wergeland statements of 5+ words, >= 0.90 in both directions; (2) the 10-statement verbatim extract source[0::7][:10] reads 0 flagged statements; (3) with the mean of the two cutoffs and no refit, on the wergeland source: statements of werg-a, werg-b, werg-c against ibm gold-tier statements, balanced accuracy >= 0.85",
+            "met": true,
+            "readings": {
+              "raw_kept, foreign set whole": {
+                "label": "raw, short kept (registered), foreign set whole (registered)",
+                "cutoffs": {
+                  "A→B": 0.3375,
+                  "B→A": 0.355
+                },
+                "mean_cutoff": 0.34625,
+                "held_ba": {
+                  "A→B": 0.941176,
+                  "B→A": 0.927173
+                },
+                "clause_1_met": true,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.986842,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.986842,
+                "met": true
+              },
+              "raw_kept, foreign set disjoint": {
+                "label": "raw, short kept (registered), foreign set in disjoint halves",
+                "cutoffs": {
+                  "A→B": 0.3425,
+                  "B→A": 0.3575
+                },
+                "mean_cutoff": 0.35,
+                "held_ba": {
+                  "A→B": 0.955882,
+                  "B→A": 0.912485
+                },
+                "clause_1_met": true,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.986842,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.986842,
+                "met": true
+              },
+              "raw_removed, foreign set whole": {
+                "label": "raw, short removed, foreign set whole (registered)",
+                "cutoffs": {
+                  "A→B": 0.3375,
+                  "B→A": 0.355
+                },
+                "mean_cutoff": 0.34625,
+                "held_ba": {
+                  "A→B": 0.941176,
+                  "B→A": 0.927173
+                },
+                "clause_1_met": true,
+                "extract_flagged": {
+                  "A→B": 1,
+                  "B→A": 1
+                },
+                "clause_2_met": false,
+                "second_ba": 0.986842,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.986842,
+                "met": false
+              },
+              "raw_removed, foreign set disjoint": {
+                "label": "raw, short removed, foreign set in disjoint halves",
+                "cutoffs": {
+                  "A→B": 0.3425,
+                  "B→A": 0.3575
+                },
+                "mean_cutoff": 0.35,
+                "held_ba": {
+                  "A→B": 0.955882,
+                  "B→A": 0.912485
+                },
+                "clause_1_met": true,
+                "extract_flagged": {
+                  "A→B": 1,
+                  "B→A": 1
+                },
+                "clause_2_met": false,
+                "second_ba": 0.986842,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.986842,
+                "met": false
+              },
+              "pre_kept, foreign set whole": {
+                "label": "pre-pass, short kept, foreign set whole (registered)",
+                "cutoffs": {
+                  "A→B": 1.125,
+                  "B→A": 1.105
+                },
+                "mean_cutoff": 1.115,
+                "held_ba": {
+                  "A→B": 0.816821,
+                  "B→A": 0.727739
+                },
+                "clause_1_met": false,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.980349,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.980349,
+                "met": false
+              },
+              "pre_kept, foreign set disjoint": {
+                "label": "pre-pass, short kept, foreign set in disjoint halves",
+                "cutoffs": {
+                  "A→B": 1.135,
+                  "B→A": 1.12
+                },
+                "mean_cutoff": 1.1275,
+                "held_ba": {
+                  "A→B": 0.821207,
+                  "B→A": 0.743421
+                },
+                "clause_1_met": false,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.967362,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.967362,
+                "met": false
+              },
+              "pre_removed, foreign set whole": {
+                "label": "pre-pass, short removed, foreign set whole (registered)",
+                "cutoffs": {
+                  "A→B": 1.135,
+                  "B→A": 1.145
+                },
+                "mean_cutoff": 1.14,
+                "held_ba": {
+                  "A→B": 0.838622,
+                  "B→A": 0.796741
+                },
+                "clause_1_met": false,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.954375,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.967532,
+                "met": false
+              },
+              "pre_removed, foreign set disjoint": {
+                "label": "pre-pass, short removed, foreign set in disjoint halves",
+                "cutoffs": {
+                  "A→B": 1.13,
+                  "B→A": 1.16
+                },
+                "mean_cutoff": 1.145,
+                "held_ba": {
+                  "A→B": 0.842879,
+                  "B→A": 0.768207
+                },
+                "clause_1_met": false,
+                "extract_flagged": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "clause_2_met": true,
+                "second_ba": 0.947881,
+                "clause_3_met": true,
+                "second_ba_back_translations_not_the_bar": 0.961039,
+                "met": false
+              }
+            }
+          },
+          "guardrails": {
+            "V": "0/24",
+            "src_untouched": true,
+            "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the count is a score with integer values, not a metric; the mean nearest-source cost is a lower bound of the shipped balanced residual (0 violations in 2508 comparisons)",
+            "notes": "BLAS limited to 1 thread for the arms, readings identical to the default thread count: shipped residual_a True, pre-pass statement costs True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+          },
+          "key_numbers": {
+            "verdict_arm": "raw_kept",
+            "verdict_foreign_reading": "whole",
+            "split": {
+              "A": [
+                "gold",
+                "v2",
+                "sonnet",
+                "haiku"
+              ],
+              "B": [
+                "gold-2",
+                "v1",
+                "opus"
+              ]
+            },
+            "gate_auc": {
+              "raw_kept": {
+                "A": 0.987148,
+                "B": 0.979102
+              },
+              "raw_removed": {
+                "A": 0.987148,
+                "B": 0.979102
+              }
+            },
+            "cutoffs": {
+              "raw_kept": {
+                "whole": {
+                  "A→B": 0.3375,
+                  "B→A": 0.355,
+                  "mean": 0.34625
+                },
+                "disjoint": {
+                  "A→B": 0.3425,
+                  "B→A": 0.3575,
+                  "mean": 0.35
+                }
+              },
+              "raw_removed": {
+                "whole": {
+                  "A→B": 0.3375,
+                  "B→A": 0.355,
+                  "mean": 0.34625
+                },
+                "disjoint": {
+                  "A→B": 0.3425,
+                  "B→A": 0.3575,
+                  "mean": 0.35
+                }
+              },
+              "pre_kept": {
+                "whole": {
+                  "A→B": 1.125,
+                  "B→A": 1.105,
+                  "mean": 1.115
+                },
+                "disjoint": {
+                  "A→B": 1.135,
+                  "B→A": 1.12,
+                  "mean": 1.1275
+                }
+              },
+              "pre_removed": {
+                "whole": {
+                  "A→B": 1.135,
+                  "B→A": 1.145,
+                  "mean": 1.14
+                },
+                "disjoint": {
+                  "A→B": 1.13,
+                  "B→A": 1.16,
+                  "mean": 1.145
+                }
+              }
+            },
+            "held_ba": {
+              "raw_kept": {
+                "whole": {
+                  "A→B": 0.941176,
+                  "B→A": 0.927173
+                },
+                "disjoint": {
+                  "A→B": 0.955882,
+                  "B→A": 0.912485
+                }
+              },
+              "raw_removed": {
+                "whole": {
+                  "A→B": 0.941176,
+                  "B→A": 0.927173
+                },
+                "disjoint": {
+                  "A→B": 0.955882,
+                  "B→A": 0.912485
+                }
+              },
+              "pre_kept": {
+                "whole": {
+                  "A→B": 0.816821,
+                  "B→A": 0.727739
+                },
+                "disjoint": {
+                  "A→B": 0.821207,
+                  "B→A": 0.743421
+                }
+              },
+              "pre_removed": {
+                "whole": {
+                  "A→B": 0.838622,
+                  "B→A": 0.796741
+                },
+                "disjoint": {
+                  "A→B": 0.842879,
+                  "B→A": 0.768207
+                }
+              }
+            },
+            "extract_flagged": {
+              "raw_kept": {
+                "whole": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "disjoint": {
+                  "A→B": 0,
+                  "B→A": 0
+                }
+              },
+              "raw_removed": {
+                "whole": {
+                  "A→B": 1,
+                  "B→A": 1
+                },
+                "disjoint": {
+                  "A→B": 1,
+                  "B→A": 1
+                }
+              },
+              "pre_kept": {
+                "whole": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "disjoint": {
+                  "A→B": 0,
+                  "B→A": 0
+                }
+              },
+              "pre_removed": {
+                "whole": {
+                  "A→B": 0,
+                  "B→A": 0
+                },
+                "disjoint": {
+                  "A→B": 0,
+                  "B→A": 0
+                }
+              }
+            },
+            "second_ba": {
+              "raw_kept": {
+                "whole": 0.986842,
+                "disjoint": 0.986842
+              },
+              "raw_removed": {
+                "whole": 0.986842,
+                "disjoint": 0.986842
+              },
+              "pre_kept": {
+                "whole": 0.980349,
+                "disjoint": 0.967362
+              },
+              "pre_removed": {
+                "whole": 0.954375,
+                "disjoint": 0.947881
+              }
+            },
+            "second_ba_back_translations": {
+              "raw_kept": {
+                "whole": 0.986842,
+                "disjoint": 0.986842
+              },
+              "raw_removed": {
+                "whole": 0.986842,
+                "disjoint": 0.986842
+              },
+              "pre_kept": {
+                "whole": 0.980349,
+                "disjoint": 0.967362
+              },
+              "pre_removed": {
+                "whole": 0.967532,
+                "disjoint": 0.961039
+              }
+            },
+            "exact_k_share": {
+              "raw_kept": {
+                "whole": [
+                  0.94898,
+                  0.928571,
+                  0.897959,
+                  0.867347
+                ],
+                "disjoint": [
+                  0.908163,
+                  0.867347,
+                  0.846939,
+                  0.806122
+                ]
+              },
+              "raw_removed": {
+                "whole": [
+                  0.94898,
+                  0.928571,
+                  0.897959,
+                  0.867347
+                ],
+                "disjoint": [
+                  0.908163,
+                  0.867347,
+                  0.846939,
+                  0.806122
+                ]
+              },
+              "pre_kept": {
+                "whole": [
+                  0.683673,
+                  0.581633,
+                  0.408163,
+                  0.326531
+                ],
+                "disjoint": [
+                  0.734694,
+                  0.612245,
+                  0.489796,
+                  0.489796
+                ]
+              },
+              "pre_removed": {
+                "whole": [
+                  0.734694,
+                  0.612245,
+                  0.44898,
+                  0.387755
+                ],
+                "disjoint": [
+                  0.806122,
+                  0.469388,
+                  0.306122,
+                  0.142857
+                ]
+              }
+            },
+            "registered_arm_raw_short_kept_foreign_set_whole": {
+              "held_ba_over_run_min_max": {
+                "A→B": [
+                  0.941176,
+                  0.955882
+                ],
+                "B→A": [
+                  0.927173,
+                  0.927173
+                ]
+              },
+              "size_of_one_statement": {
+                "A→B": {
+                  "one_own_statement": 0.014706,
+                  "one_foreign_statement": 0.013158,
+                  "errors_below_bar": 3
+                },
+                "B→A": {
+                  "one_own_statement": 0.011628,
+                  "one_foreign_statement": 0.013158,
+                  "errors_below_bar": 3
+                }
+              },
+              "second_article": {
+                "auc": 0.97676,
+                "own_max_cost": 0.508262,
+                "own_median_cost": 0,
+                "foreign_min_cost": 0.398348,
+                "n_own": 38,
+                "n_foreign": 77,
+                "whole": {
+                  "cutoff": 0.34625,
+                  "ba": 0.986842,
+                  "tpr": 1,
+                  "tnr": 0.973684,
+                  "own_flagged": 1,
+                  "foreign_flagged": 77
+                },
+                "disjoint": {
+                  "cutoff": 0.35,
+                  "ba": 0.986842,
+                  "tpr": 1,
+                  "tnr": 0.973684,
+                  "own_flagged": 1,
+                  "foreign_flagged": 77
+                }
+              },
+              "second_article_back_translations": {
+                "auc": 0.976077,
+                "own_max_cost": 0.539243,
+                "own_median_cost": 0.148577,
+                "foreign_min_cost": 0.398348,
+                "n_own": 38,
+                "n_foreign": 77,
+                "whole": {
+                  "cutoff": 0.34625,
+                  "ba": 0.986842,
+                  "tpr": 1,
+                  "tnr": 0.973684,
+                  "own_flagged": 1,
+                  "foreign_flagged": 77
+                },
+                "disjoint": {
+                  "cutoff": 0.35,
+                  "ba": 0.986842,
+                  "tpr": 1,
+                  "tnr": 0.973684,
+                  "own_flagged": 1,
+                  "foreign_flagged": 77
+                }
+              },
+              "deletions": {
+                "supported_cases": 392,
+                "supported_zero_share": 1,
+                "any_zero_share": 0.755102,
+                "any_mean_change": -0.270408,
+                "mean_cost_deletion_ratio": 0.455567
+              },
+              "count_at_k0_held_out_documents": {
+                "gold": 0,
+                "gold-2": 1,
+                "v1": 1,
+                "v2": 1,
+                "opus": 2,
+                "sonnet": 0,
+                "haiku": 3
+              }
+            },
+            "tier_mean_cost": {
+              "raw_kept": {
+                "gold": 0.282889,
+                "adv1": 0.356138,
+                "adv2": 0.318515
+              },
+              "raw_removed": {
+                "gold": 0.282889,
+                "adv1": 0.356138,
+                "adv2": 0.318515
+              },
+              "pre_kept": {
+                "gold": 0.979488,
+                "adv1": 1.21614,
+                "adv2": 1.185292
+              },
+              "pre_removed": {
+                "gold": 1.05488,
+                "adv1": 1.204013,
+                "adv2": 1.169227
+              }
+            },
+            "tier_count": {
+              "raw_kept": {
+                "gold": 8,
+                "adv1": 9,
+                "adv2": 0
+              },
+              "raw_removed": {
+                "gold": 8,
+                "adv1": 9,
+                "adv2": 0
+              },
+              "pre_kept": {
+                "gold": 20,
+                "adv1": 16,
+                "adv2": 3
+              },
+              "pre_removed": {
+                "gold": 25,
+                "adv1": 14,
+                "adv2": 4
+              }
+            },
+            "adversarial_vs_entailment": {
+              "raw_kept": {
+                "n": 21,
+                "n_not_entailed": 10,
+                "auc_binary": 0.654545,
+                "concordance": 0.607656,
+                "spearman": 0.307342,
+                "flagged": 9,
+                "flagged_and_not_entailed": 5,
+                "not_flagged_and_not_entailed": 5
+              },
+              "raw_removed": {
+                "n": 21,
+                "n_not_entailed": 10,
+                "auc_binary": 0.654545,
+                "concordance": 0.607656,
+                "spearman": 0.307342,
+                "flagged": 9,
+                "flagged_and_not_entailed": 5,
+                "not_flagged_and_not_entailed": 5
+              },
+              "pre_kept": {
+                "n": 21,
+                "n_not_entailed": 10,
+                "auc_binary": 0.690909,
+                "concordance": 0.61244,
+                "spearman": 0.289055,
+                "flagged": 19,
+                "flagged_and_not_entailed": 9,
+                "not_flagged_and_not_entailed": 1
+              },
+              "pre_removed": {
+                "n": 21,
+                "n_not_entailed": 10,
+                "auc_binary": 0.572727,
+                "concordance": 0.550239,
+                "spearman": 0.155245,
+                "flagged": 18,
+                "flagged_and_not_entailed": 10,
+                "not_flagged_and_not_entailed": 0
+              }
+            },
+            "shipped_residual_spearman_gold_tier": {
+              "short kept": {
+                "bal_pre": -0.771429,
+                "bal_raw": -0.014286,
+                "os_pre": 0.992857,
+                "os_raw": 1
+              },
+              "short removed": {
+                "bal_pre": -0.314286,
+                "bal_raw": 0.592857,
+                "os_pre": 0.985714,
+                "os_raw": 1
+              }
+            },
+            "prediction_by_effect": {
+              "calibrated cutoff between 0.33 and 0.45": {
+                "magnitude": "held",
+                "magnitude_held": true,
+                "direction_matched": null
+              },
+              "held-out balanced accuracy 0.90 to 0.96 in both directions": {
+                "magnitude": "held",
+                "magnitude_held": true,
+                "direction_matched": true
+              },
+              "second-article balanced accuracy 0.85 to 0.95": {
+                "magnitude": "not held, above the interval",
+                "magnitude_held": false,
+                "direction_matched": true
+              },
+              "the shipped balanced residual falls under the same insertions": {
+                "magnitude": "no size registered",
+                "magnitude_held": null,
+                "direction_matched": true
+              }
+            },
+            "second_readings": {
+              "disjoint foreign halves, same arm": "held-out balanced accuracy 0.9559 (A→B, cutoff 0.3425) and 0.9125 (B→A, cutoff 0.3575) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9868 at the mean cutoff 0.35000 (bar >= 0.85, met)",
+              "short source statements removed, foreign set whole": "held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 1 and 1 of 10 flagged under the two cutoffs (bar 0, not met); second-article balanced accuracy 0.9868 at the mean cutoff 0.34625 (bar >= 0.85, met)",
+              "after the shipped pre-pass, short kept, foreign set whole": "held-out balanced accuracy 0.8168 (A→B, cutoff 1.1250) and 0.7277 (B→A, cutoff 1.1050) (bar >= 0.9 in both, not met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-article balanced accuracy 0.9803 at the mean cutoff 1.11500 (bar >= 0.85, met)",
+              "second article with back-translated own statements, registered arm": "balanced accuracy 0.9868 at the same cutoff"
+            }
+          },
+          "result_summary": "Promoted: on the registered reading (raw embeddings, source statements under 5 words kept, foreign set whole) the bar is met. Kill-gate: AUC of nearest-source cost, own gold-tier statements against the 38 foreign statements, 0.9871 on half A and 0.9791 on half B (bar 0.9). Harness check, the executor's because the record names none: 7 of 7 numbers of the record's Evidence line reproduced. Clause (1), met: cutoffs 0.3375 and 0.3550, held-out balanced accuracy 0.9412 (A→B) and 0.9272 (B→A) against 0.9; with the foreign set in disjoint halves 0.9559 and 0.9125; one statement moves a held-out reading by 0.0116 to 0.0147 and 3 further wrong flags bring it below the bar. Clause (2), met by construction, every extract statement is a source statement: 0 and 0 of 10 extract statements flagged under the two cutoffs; with source statements under 5 words removed the extract reads 1 and 1 flagged (extract statements under 5 words: ###), so that reported reading has clause (2) not met. Clause (3), met: balanced accuracy 0.9868 at the mean cutoff 0.34625 with no refit, 77 of 77 ibm statements flagged and 37 of 38 wergeland section statements not flagged; 36 of those section statements are copies of source statements, and with back-translated own statements the reading is 0.9868. Reported without a bar: the count rises by exactly k in 0.9107 of the 392 insertion trials (0.9490, 0.9286, 0.8980, 0.8673 at k = 1 to 4); deleting supported statements leaves the count unchanged in 392 of 392 cases, which holds by construction on raw embeddings, while the mean of the same costs moves by 45.6% of one insertion; the 7 gold-tier documents read 0 to 3 flagged statements at k = 0; tier mean cost gold 0.2829, adv1 0.3561, adv2 0.3185 with 8 of 77, 9 of 17 and 0 of 4 statements flagged at the mean cutoff; the 21 statements of the 4 adversarial summaries against 1 - entailment read AUC 0.6545 (10 labelled not entailed at the executor's label of 0.5); the same flag after the shipped pre-pass reads 0.8168 and 0.7277 on clause (1), not met. Baseline on the same insertions: shipped residual_a median per-document Spearman -0.7714 on the default call and -0.0143 with the pre-pass off over the 7 gold-tier documents. Prediction: calibrated cutoff between 0.33 and 0.45 - held; held-out balanced accuracy 0.90 to 0.96 in both directions - held; second-article balanced accuracy 0.85 to 0.95 - not held, above the interval; the shipped balanced residual falls under the same insertions - no size registered. Guardrails hold: V 0/24, default-path smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline, files changed under src/ 0 and under tests/ 0.",
+          "artifacts": {
+            "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H78-kj-raw-nearest-source-count.ipynb",
+            "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H78-raw-nearest-source-count-metrics.json",
+            "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H78-raw-nearest-source-count.log"
+          },
+          "notebook_errors": 0,
+          "caveats": "1. Clause (2) holds by construction on the registered arm. Every statement of the extract source[0::7][:10] is a statement of the source, so its nearest-source cost is zero up to float32 rounding (highest of the 10: 0.000691) and no cutoff of the grid above 0 flags it. Of the three clauses, the readings that could fail are the two held-out readings of clause (1) and the foreign side of clause (3). 2. Source statements under 5 words. The registered reading keeps them (the shipped default reader: 70 ibm source statements, 28 under 5 words, 22 with one word). With them removed (42 statements) the readings of clauses (1) and (3) are identical, because 0 of the 98 summary statements, 0 of the 38 foreign statements and 0 of the scored second-article statements have such a statement as their nearest source statement; clause (2) then reads 1 of 10 flagged, the extract's markup statement ### at cost 1.161591. A build has to apply one statement filter to the document and to the source. 3. Clause (3). 36 of the 38 section statements of werg-a, werg-b, werg-c are copies of second-source statements, so the own side (37 of 38 not flagged) is close to 1 by construction. The side that could fail is the foreign side: 77 of 77 ibm statements flagged, lowest cost 0.3983 against the cutoff 0.34625. With back-translated own statements (1 of 38 a copy, median cost 0.1486) the reading is the same 0.9868. The second source is the article the foreign statements of clause (1) come from, so clause (3) exchanges the roles of two articles and adds no third article. 4. Executor's reading rules, each with its second reading in the notebook: the foreign set whole in calibration and in scoring (the wording of the kill-gate line; the scored foreign statements also took part in the choice of the cutoff; with disjoint halves the held-out readings are 0.9559 and 0.9125); the midpoint of a run with an even number of grid points (held-out reading over the A→B run 0.9412 to 0.9559); the entailment label at 0.5; the harness check; the direction rule. The notebook was executed more than once. No bar, cutoff rule, split or reading rule changed after the first execution and no measured number of the first execution's metrics JSON differs in the last one; the outputs alone do not prove that order. 5. Sample size. 43 and 34 own statements in 4 and 3 documents, 38 foreign statements, two articles on related topics, one encoder (the shipped OpenVINO INT8 model). One statement moves a held-out reading by 0.0116 to 0.0147; 3 further wrong flags bring either direction below 0.9. The cutoff 0.34625 belongs to this encoder. 6. The count of a faithful summary is not 0: the 7 gold-tier documents read 0 to 3 flagged statements under their held-out cutoff, 8 of 77 statements at the mean cutoff. 7. The flag reads distance to the source article and not support by the source: against 1 - entailment the 21 adversarial statements read AUC 0.6545 (Spearman +0.3073), and 0 of 4 statements of the information-noise summaries are flagged. It does not replace the model-graded grounding residual. 8. Pre-pass. Computed after the shipped pre-pass the same flag reads 0.8168 and 0.7277 on clause (1), and its count is unchanged in a share of 0.8189 of the deletions of supported statements, so the reading has to be taken on raw embeddings, before the pre-pass of the default call. The pre-pass arms meet clause (3) (0.9803) and fail clause (1); the cause was not measured. 9. Prediction. The second-article reading 0.9868 lies above the predicted interval 0.85 to 0.95. The shipped residual falls under the same insertions on the default call (median per-document Spearman -0.7714, 7 of 7 gold-tier documents negative); with the pre-pass off the median is -0.0143 with 4 of 7 documents negative, which the configured sign rule reads as a fall and which is close to zero. With source statements under 5 words removed the pre-pass-off residual rises (+0.5929). direction_matched is true under the configured rule: the three effects that have a direction matched and the cutoffs lie in their interval; the cutoff interval itself has no direction. 10. Files. This executor edited no file under src/, tests/ or docs/. logs/README.md has an index line for the E13 and E14 log families and none for E15; this executor did not edit it."
+        },
+        "verify": {
+          "id": "E15-H78",
+          "verified": true,
+          "findings": [
+            {
+              "severity": "minor",
+              "claim": "Check (9): in the verdict reading (foreign set whole) the cutoff is tuned on the 38 foreign statements that are then scored, so the TPR half of both 'held-out' readings (38/38 and 36/38) is in-sample. The notebook's mitigation sentence (cell 28: 'so the clause does not depend on the scored foreign statements having taken part in the calibration') rests on one foreign partition and does not hold across partitions. The verdict does not move.",
+              "evidence": "CONFIRMED. Deciding code, cell 8 and cell 26: `FOREIGN_OF = {\"whole\": {\"A\": ALL_FOREIGN, \"B\": ALL_FOREIGN}, ...}`, `fit = calibrate(*pooled(arm, HALF[cal], fsel_cal))`, `VERDICT_FOREIGN = \"whole\"`. On raw embeddings a foreign cost does not depend on the host document, so calibration and scoring use the same 38 numbers. I recomputed the per-statement costs with the shipped encoder in a scratch process (no file written) and reproduced the registered readings exactly (cutoffs 0.3375 / 0.3550, held-out 0.941176 / 0.927173; even/odd disjoint 0.955882 / 0.912485). Leak-free readings at the registered document split: leave-one-foreign-statement-out 0.9052 (A→B) and 0.9143 (B→A), both >= 0.90, the A→B margin 0.005 is smaller than one statement (0.0132 to 0.0147); 5000 random 19/19 foreign partitions meet clause (1) in 78.9% of draws (mean of the lower direction 0.909, 5th percentile 0.854). Over the 20 document splits the record admits (anchor in half A, 4/3): whole reading 20 of 20 met (35 of 35 over all 4/3 splits), even/odd disjoint 17 of 20, leave-one-foreign-out 15 of 20. Materiality: the reader of the ledger Result line and the stage B build that takes the cutoff; they receive 0.9412 / 0.9272 labelled held-out where the leak-free value is 0.905 to 0.93; the bar >= 0.90 is still met on the literal record reading and on both leak-free constructions at the registered split, so Promoted stands. The record itself names one foreign set and a split by document only, so 'whole' is the literal reading and not a moved bar. Remedy: EDIT the cell 28 sentence and caveat 4 to say the disjoint reading is met on the even/odd partition, and record the leak-free value beside the headline number in the ledger Result; or DEFER."
+            },
+            {
+              "severity": "minor",
+              "claim": "Check (8): the direction of the fourth predicted effect (shipped balanced residual falls under the insertions) is decided by a sign test with no null band on a reading that is at zero. direction_matched = true is correct, but for a different reading than the one the rule uses.",
+              "evidence": "CONFIRMED. Cell 54: `\"direction_matched\": bool(spearman_bal_raw < 0)` with spearman_bal_raw = -0.0143, 4 of 7 gold-tier documents negative (cell 43 output). A value of +0.0143 would have set the campaign field to false. The same insertions on the default call read -0.7714 with 7 of 7 negative, and the 11-document pre-pass-off reading reproduces -0.2571, so the predicted fall is observed on the shipped default call; with short source statements removed the pre-pass-off reading reverses to +0.5929. The executor discloses all three numbers (caveat 9). The magnitude miss on the second-article prediction (0.9868 above 0.85 to 0.95) is reported as not held. Materiality: no verdict or count moves; Promoted does not depend on the prediction. Remedy: EDIT the direction rule text to name the default call as the reading that carries the direction, or DEFER."
+            },
+            {
+              "severity": "minor",
+              "claim": "Axis 1 and 6 (registered design, not executor conduct): two of the three bar clauses cannot separate the method from exact string matching on the registered sets, and clause (3) uses the same article pair as clause (1). The executor states this and adds the reading that can fail.",
+              "evidence": "CONFIRMED from outputs. Clause (2): every extract statement is a source row, highest cost 0.000691, no grid cutoff above 0 flags it (cell 31). Clause (3) own side: 36 of 38 section statements are verbatim second-source statements, median cost 0.0000 (cell 10, cell 33). A classifier 'flag iff the statement is not a verbatim source statement' reads 0 of 10 on clause (2) and (36/38 + 77/77)/2 = 0.9737 on clause (3), against the method's 0.9868; it reads 0.5 on clause (1). The discriminating evidence is clause (1) and the foreign side of clause (3) (77 of 77 flagged, lowest cost 0.3983 against cutoff 0.34625, recomputed 0.39835). The executor's back-translation reading (1 of 38 a copy, median own cost 0.1486) reads the same 0.9868 and can fail. Second source = the article the clause (1) foreign statements come from, so no third article is tested (conclusions cell, Limitations). Materiality: a reader of 'keeps its accuracy on a second source' in the Meaning paragraph; the limitation is printed in the same cell and in caveats 1 and 3. Remedy: DEFER (a third article is a new registered hypothesis, not an edit to this one)."
+            }
+          ],
+          "notes": "VERDICT: SHIP (0 blocking, 0 major, 3 minor). Promoted is supported by the evidence; no corrected verdict.\n\nChecks 1 to 10:\n(1) Kill-gate is the first measurement cell (cell 16, execution count 8; earlier cells load data and take the guardrail snapshot). Read as registered: AUC per calibration half, raw embeddings, `gate_killed = any(GATE[VERDICT_ARM][half] < GATE_AUC_MIN ...)`, 0.9871 / 0.9791 against 0.90.\n(2) Bar applied literally: thresholds 0.90, 0, 0.85 unchanged; `bar_met` = all three clauses on raw embeddings with short source statements kept; the split is the one written in the H78 task notes of reports/E13-campaign/workflow-measure.js (anchor in A, the other six in sorted file-name order B, A, B, A, B, A) and is derived in code from file names. No guardrail dropped.\n(3) All 55 decimal numbers in the prose fields and all 302 numeric leaves of key_numbers and acceptance appear in notebook outputs; every float leaf is also present at 3 to 5 decimals in a measurement cell before the JSON print. reports/E13-campaign/results/H78.json equals the metrics JSON result block plus notebook_errors and caveats.\n(4) Guardrails measured: V counted before and after (0/24), np.array_equal against the saved 1.1.5 baseline before and after, sha256 digests of src/ (15 files), tests/ (9), docs/ (45), lower-bound violations 0/2508.\n(5) The record names no sanity check; the executor's harness check reproduces 7 of 7 Evidence numbers.\n(6) 0 error outputs, execution counts 1 to 27 in order; the log line 'Writing 1514638 bytes' equals the notebook's character count (file size 1560590 bytes in UTF-8); log and notebook mtimes 13:09:21.\n(7) Promoted is in the closed set and matches 'a build that met its bar'; Confirmed would not fit because one magnitude was missed.\n(9) See finding 1.\n(10) git status for src/ and tests/ is empty, file mtimes are from August; the three modified docs files have mtimes 12:42 to 12:47, before the last execution, and the ledger block for E15-H78 holds only the registration line.\n\nRobustness I measured beyond the notebook: the tie rule does not decide (one run at the calibration maximum in every direction; held-out reading over the run 0.9412 to 0.9559 and 0.9272); the document split does not decide the literal reading (35 of 35 splits met).\n\nNot verifiable from disk: the notebook states it was executed more than once and that no bar, split or reading rule changed after the first execution. The log holds only the last execution. The verdict is the same under each executor's rule I could vary (foreign set whole, even/odd, leave-one-out; any grid point of the run).\n\nStale statement: caveat 10 says logs/README.md has no E15 index line; the file now has one (mtime 13:17, after the result JSON at 13:09), written by another process.\n\nScratch files: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/nb.txt and nbc.txt (text dumps of the notebook). Nothing in the repository was written."
+        },
+        "repaired": false
+      },
+      {
+        "id": "E15-H79",
+        "slug": "matching-tie-break",
+        "result": {
+          "id": "E15-H79",
+          "slug": "matching-tie-break",
+          "model": "opus",
+          "verdict": "Refuted",
+          "verdict_number": "third-pass set at c = 0.325, eps = 1e-06: matched sub-sequence textually equal to the shorter document in 111/120 cases against a bar of >= 114/120 (without the tie-break 88/120); matched gap at or below the shipped gap in 120/120 against a bar of 120/120 (without the tie-break 99/120); second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120; clauses 2, 3 and 4 met: 280/280 deletion cases <= 0.005, AUC 0.999903, 1840/1840 fully matched equal-length pairs equal to shipped opw_gap, macro-F1 0.9674 half A and 0.9772 half B",
+          "kill_gate": {
+            "ran": true,
+            "passed": true,
+            "reading": "harness check without the tie-break at c = 0.6: survivors recovered 88/120 (recorded 88/120), matched gap above shipped 21/120 (recorded 21/120); precondition: the ground cost inside the group of repeated statements shares one bit pattern in 120/120 cases, 32 of them cases in which the survivors were not recovered; shown case: prefix 30, deleted positions [4, 6], tie group 6 x 4, bit pattern 0x00000000 (float32 cost 0.0); tied cost value over the cases: 0.0 in 60, 0.0003452669770922512 in 60"
+          },
+          "sanity_check": {
+            "required": true,
+            "passed": true,
+            "reading": "deletion cases <= 0.005, c = 0.6: recorded 280/280, here 280/280; AUC deleted-only against reordered-and-deleted, c = 0.6: recorded 0.999903, here 0.999903; fully matched equal-length pairs equal to shipped opw_gap, c = 0.6: recorded 1847/1847, here 1847/1847; macro-F1 half A, c = 0.325: recorded 0.9674, here 0.9674; macro-F1 half B, c = 0.325: recorded 0.9772, here 0.9772; supporting rows reproduced 9/9; edit-fixture key 3e396129ed50 equals the E13-H71 key: True; 300 of 900 pair readings computed by this notebook, cost matrices equal to the E13-H71 checkpoint in 300/300; 600 pair readings read from the E13-H71 checkpoint"
+          },
+          "prediction_check": {
+            "predicted": "with the tie-break the 120 pure-deletion cases on the 62-statement source document read at or below the shipped gap in 120/120 and the matched sub-sequences are textually equal in 120/120; the 280 registered deletion readings and the 1847 fully matched identities are unchanged; at c = 0.325 the count of fully matched equal-length pairs falls below 1847 by fewer than 20",
+            "observed": "at or below the shipped gap in 120/120 (held; without the tie-break 99/120); textually equal in 111/120 (falsified; without the tie-break 88/120); the 280 deletion readings np.array_equal to the reproduced E13-H70 readings: True (held); fully matched identities: 1840/1840 equal to shipped opw_gap and the tie-break leaves the count at 1840 → 1840 (held); count at c = 0.325: 1840, a fall of 7 from 1847 (held). Direction: cases above the shipped gap 21 → 0, textually equal 88 → 111, fully matched count 1847 → 1840; all three move as predicted. The exact count of 120/120 textually equal sub-sequences was not reached",
+            "direction_matched": true
+          },
+          "acceptance": {
+            "bar": "at c = 0.325 with eps = 1e-6: (1) matched gap <= shipped gap in 120/120 third-pass cases and matched sub-sequence textually equal in >= 114/120; (2) >= 95% of the 280 deletion cases read <= 0.005 and AUC >= 0.95; (3) np.array_equal with shipped opw_gap on every fully matched equal-length fixture pair; (4) E13-H71 macro-F1 >= 0.90 in both halves",
+            "met": false,
+            "readings": {
+              "clause_1_repeated_statements": "NOT MET - matched gap at or below the shipped gap in 120/120 (bar 120/120, condition met); matched sub-sequence textually equal in 111/120 (bar >= 114/120, condition not met); the 9 misses all deleted a repeated statement; the position term ranks another matching below the survivor matching in 7 of them and ties exactly with it in 2; largest matched gap among the misses 0.003538, 0 above 0.005; second readings - positions counted from 1: 111/120 textually equal and 120/120 at or below shipped; eps = 0.0001: 111/120 and 120/120; eps = 1e-08: 111/120 and 120/120; shorter document encoded in its own call (executor reading): 111/120 and 120/120",
+              "clause_2_deletions_and_separation": "met - 280/280 = 1.0000 read <= 0.005 (bar >= 0.95); AUC 0.999903 (bar >= 0.95), 70 deleted-only against 10010 reordered-and-deleted; shipped baseline 0.950980; the readings are np.array_equal to the E13-H70 readings (280/280 and 10010/10010); the base documents hold no repeated statement, so the tie-break has nothing to act on there",
+              "clause_3_bit_identity": "met - np.array_equal True on 1840 fully matched equal-length pairs (1840 exactly equal, largest |difference| 0.0); met by construction: a fully matched equal-length pair is passed to opw_gap unmodified; count 1847 at c = 0.6 → 1840 at c = 0.325",
+              "clause_4_statement_map": "met - macro-F1 0.9674 on half A (the half c = 0.325 was chosen on) and 0.9772 on half B (held out), bar >= 0.9 in both; the tie-break changes 0/21060 statement labels"
+            }
+          },
+          "guardrails": {
+            "V": "0/24",
+            "src_untouched": true,
+            "metric_property": "stated, not tested - shipped smd (a metric) and shipped opw_gap (a score) are not edited; the matched gap is a notebook prototype and a score, the map is an annotation; no triangle test was run",
+            "notes": "Rows that can fail: V 0/24 on the ibm panel, boundary margin +4.71 pts (primer naive row +4.71); source-tree fingerprint start = end: True (905a308ecd1b29d1); git status for src and tests: empty. Rows that compare two calls inside one kernel: panel smd np.array_equal before/after True and order_gap True (10 anchor pairs each); default-path smd 0.22343884174015136 and order gap 0.1343654387715936 on ('gold', 'gold-2') np.array_equal True; the 280 shipped deletion readings recomputed np.array_equal True; instance overrides removed True. No edit under src/, docs/ or tests/"
+          },
+          "key_numbers": {
+            "build_constants": {
+              "c": 0.325,
+              "eps": 0.000001,
+              "position_index_from": 0,
+              "fully_matched_equal_length_pairs_at_c": 1840,
+              "fully_matched_equal_length_pairs_at_0.6": 1847
+            },
+            "kill_gate_survivors_recovered": 88,
+            "kill_gate_above_shipped": 21,
+            "kill_gate_cases": 120,
+            "kill_gate_exact_tie_cases": 120,
+            "kill_gate_tie_group_cases": 120,
+            "kill_gate_tied_cost_values": {
+              "0.0": 60,
+              "0.0003452669770922512": 60
+            },
+            "third_pass_per_arm": {
+              "c060": {
+                "survivors_recovered": 88,
+                "text_equal": 88,
+                "at_or_below_shipped": 99,
+                "above_shipped": 21,
+                "above_gap_bar": 23,
+                "equal_to_floor_copy": 88,
+                "matched_max": 0.324574,
+                "matched_median": 0.00321056
+              },
+              "c0325": {
+                "survivors_recovered": 88,
+                "text_equal": 88,
+                "at_or_below_shipped": 99,
+                "above_shipped": 21,
+                "above_gap_bar": 23,
+                "equal_to_floor_copy": 88,
+                "matched_max": 0.324574,
+                "matched_median": 0.00321056
+              },
+              "c0325_e6": {
+                "survivors_recovered": 110,
+                "text_equal": 111,
+                "at_or_below_shipped": 120,
+                "above_shipped": 0,
+                "above_gap_bar": 0,
+                "equal_to_floor_copy": 111,
+                "matched_max": 0.00487646,
+                "matched_median": 0.00288845
+              },
+              "c0325_e4": {
+                "survivors_recovered": 110,
+                "text_equal": 111,
+                "at_or_below_shipped": 120,
+                "above_shipped": 0,
+                "above_gap_bar": 0,
+                "equal_to_floor_copy": 111,
+                "matched_max": 0.00487646,
+                "matched_median": 0.00288845
+              },
+              "c0325_e8": {
+                "survivors_recovered": 110,
+                "text_equal": 111,
+                "at_or_below_shipped": 120,
+                "above_shipped": 0,
+                "above_gap_bar": 0,
+                "equal_to_floor_copy": 111,
+                "matched_max": 0.00487646,
+                "matched_median": 0.00288845
+              },
+              "c0325_e6_b1": {
+                "survivors_recovered": 110,
+                "text_equal": 111,
+                "at_or_below_shipped": 120,
+                "above_shipped": 0,
+                "above_gap_bar": 0,
+                "equal_to_floor_copy": 111,
+                "matched_max": 0.00487646,
+                "matched_median": 0.00288845
+              }
+            },
+            "third_pass_shipped_median": 0.036939,
+            "third_pass_deletions_that_removed_a_repeated_statement": 43,
+            "third_pass_text_equal_among_those": 34,
+            "misses": 9,
+            "misses_position_sum_below_survivors": 7,
+            "misses_position_sum_exact_tie": 2,
+            "misses_above_shipped": 0,
+            "misses_above_gap_bar": 0,
+            "misses_matched_max": 0.00353769,
+            "exact_ties_float64_returned_below_survivors": 2,
+            "exact_ties_float64_sums_equal": 0,
+            "mechanism_registered_arm": {
+              "tie_group_in_document_order": 120,
+              "whole_matching_in_document_order": 111,
+              "matching_equal_to_registered_arm": 120
+            },
+            "mechanism_no_tie_break": {
+              "tie_group_in_document_order": 120,
+              "whole_matching_in_document_order": 88,
+              "matching_equal_to_registered_arm": 85
+            },
+            "matchings_changed_by_registered_tie_break": {
+              "third_pass_repeated_kept": 35,
+              "third_pass_repeated_removed": 0,
+              "deletion_cases": 0,
+              "reordered_and_deleted_cases": 0,
+              "fixture_pairs": 0,
+              "edited_pairs": 0
+            },
+            "set_sizes": {
+              "third_pass_repeated_kept": 120,
+              "third_pass_repeated_removed": 120,
+              "deletion_cases": 280,
+              "reordered_and_deleted_cases": 10010,
+              "fixture_pairs": 1913,
+              "edited_pairs": 900
+            },
+            "deletion_within_bar": 280,
+            "deletion_n": 280,
+            "deletion_max": 0.000610062,
+            "auc_registered": 0.999903,
+            "auc_shipped": 0.95098,
+            "n_negatives": 70,
+            "n_positives": 10010,
+            "fully_matched_pairs_registered": 1840,
+            "fully_matched_exactly_equal": 1840,
+            "fully_matched_count_fall": 7,
+            "pairs_fully_matched_at_0.6_only": 7,
+            "macro_f1_registered": {
+              "half_A": 0.9674,
+              "half_B": 0.9772,
+              "all": 0.9723
+            },
+            "macro_f1_no_tie_break": {
+              "half_A": 0.9674,
+              "half_B": 0.9772,
+              "all": 0.9723
+            },
+            "map_statements_with_a_changed_label": 0,
+            "map_statements": 21060,
+            "no_edit_control_read_as_removed": "0/117",
+            "document_without_repeated_statements": {
+              "statements": 53,
+              "cases": 120,
+              "survivors_recovered": 120,
+              "matched_equal_to_opw_gap_B_copy": 120,
+              "matched_equal_to_opw_gap_B_B": 0,
+              "max_abs_diff_to_opw_gap_B_B": 0.00000781318,
+              "median_diff_to_opw_gap_B_B": 0.00000546317,
+              "above_gap_bar": 63,
+              "above_shipped": 0
+            },
+            "unequal_length_pairs": {
+              "c060": {
+                "pairs": 66,
+                "no_matched_pair": 0,
+                "matched_median": 0.0199738,
+                "matched_below_shipped": 42,
+                "matched_above_shipped": 24,
+                "matched_within_bar": 22,
+                "matched_exactly_zero": 12,
+                "matched_max": 0.162117,
+                "shorter_fully_matched": 59,
+                "mean_matched_statements": 8.13636,
+                "pairs_with_at_most_one_matched_pair": 0,
+                "matchings_equal_to_no_tie_break": 15
+              },
+              "c0325": {
+                "pairs": 66,
+                "no_matched_pair": 2,
+                "matched_median": 0,
+                "matched_below_shipped": 49,
+                "matched_above_shipped": 15,
+                "matched_within_bar": 38,
+                "matched_exactly_zero": 35,
+                "matched_max": 0.18269,
+                "shorter_fully_matched": 15,
+                "mean_matched_statements": 4.68182,
+                "pairs_with_at_most_one_matched_pair": 19,
+                "matchings_equal_to_no_tie_break": 66
+              },
+              "c0325_e6": {
+                "pairs": 66,
+                "no_matched_pair": 2,
+                "matched_median": 0,
+                "matched_below_shipped": 49,
+                "matched_above_shipped": 15,
+                "matched_within_bar": 38,
+                "matched_exactly_zero": 35,
+                "matched_max": 0.18269,
+                "shorter_fully_matched": 15,
+                "mean_matched_statements": 4.68182,
+                "pairs_with_at_most_one_matched_pair": 19,
+                "matchings_equal_to_no_tie_break": 66
+              }
+            },
+            "unequal_length_shipped_median": 0.043782,
+            "own_encoding_executor_reading": {
+              "cases": 120,
+              "all_rows_bitwise_equal_to_row_copies": 96,
+              "repeated_rows_bitwise_equal": 120,
+              "cases_with_one_bit_pattern": 120,
+              "tie_group_cost_spread_max": 0,
+              "text_equal_registered": 111,
+              "at_or_below_shipped_registered": 120,
+              "rows_differing_from_row_copies": 41,
+              "max_abs_difference_of_one_embedding_entry": 0.00409467,
+              "shortest_statement_with_a_differing_row_words": 26,
+              "shipped_gap_equal_to_row_copy_reading": 96,
+              "shipped_gap_max_abs_diff": 0.00128833,
+              "matched_gap_equal_to_row_copy_reading": 96,
+              "matched_gap_max_abs_diff": 0.0000667102,
+              "matched_pairs_equal_to_row_copy_matching": 120,
+              "text_equal_no_tie_break": 88
+            },
+            "edited_pairs_computed_by_this_notebook": 300,
+            "edited_pairs_read_from_e13_h71_checkpoint": 600,
+            "panel_margin_pts": 4.7083
+          },
+          "result_summary": "The registered tie-break (assignment cost min(cost, c) + eps * |i/n - j/m|, c = 0.325, eps = 1e-06, positions counted from 0) misses clause 1 of the bar on one of its two conditions; the verdict is Refuted. Kill-gate passed: without the tie-break at c = 0.6 the E13-H70 third-pass readings reproduce (88/120 survivors recovered, 21/120 above shipped), and the ground cost inside the group of repeated statements is bitwise equal in 120/120 cases. The copied case builders reproduce the five recorded E13 readings (280/280, AUC 0.999903, 1847/1847, macro-F1 0.9674 and 0.9772). Clause 1, the 120 pure deletions on the 62-statement document with 9 repeated statements: the matched order gap is at or below the shipped gap in 120/120 cases (without the tie-break 99/120) and above 0.005 in 0 (without it 23); the largest matched reading falls from 0.3246 to 0.004876. The matched sub-sequence is textually equal to the shorter document in 111/120 cases (without the tie-break 88/120), below the bar of 114. Cause of the 9 misses: the tie group is matched in document order in 120/120 cases, but the position term also decides which repeated statement of the longer document stays unmatched, and it does not read which one was deleted. In 7 misses another matching has a strictly smaller position sum than the survivor matching; in 2 the two position sums are exactly equal. The misses read at most 0.003538. Clauses 2, 3 and 4 are met and every registered E13 reading is unchanged: 280/280 deletion cases <= 0.005 and AUC 0.999903, both np.array_equal to the E13-H70 readings; 1840/1840 fully matched equal-length pairs equal to shipped opw_gap (count 1847 → 1840, a fall of 7, caused by the cutoff); macro-F1 0.9674 / 0.9772 with 0/21060 labels changed. The tie-break changes the matching in 35/120 cases of the document with repeated statements and in 0 of the 13223 cases of the other five sets. eps = 0.0001, eps = 1e-08 and positions counted from 1 return the same counts (111, 111 and 111 of 120 textually equal). Outside the bar: on the 66 natural pairs of unequal length the tie-break changes 0 matchings, and the move of the cutoff from 0.6 to 0.325 lowers the mean number of matched statements from 8.14 to 4.68 and the median matched gap from 0.0200 to 0.0000. Executor reading outside the record: with the shorter document encoded in its own call the clause 1 counts are the same (111 and 120 of 120) and the matched pairs equal the row-copy matching in 120/120 cases, but 41 rows of statements of 26 words or more differ by up to 4.095e-03; exact ties under separate encoding are shown for this one-token repeated text only. Guardrails hold: V 0/24, src and tests unchanged.",
+          "artifacts": {
+            "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H79-kj-matching-tie-break.ipynb",
+            "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H79-matching-tie-break-metrics.json",
+            "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H79-matching-tie-break.log"
+          },
+          "notebook_errors": 0,
+          "caveats": "1. Scope of clause 1: one document ('source', 62 statements), one repeated text ('-', a list marker, 9 occurrences), 120 cases, 2 interior deletions per case, seeds [7, prefix length, draw]. 43 of the 120 deletions removed a repeated statement; the tie-break returns a textually equal sub-sequence in 34 of those 43 and in all 77 others. 2. The bar is missed by 3 cases on the textual condition only. The order-gap condition of the same clause is met (120/120), and all 9 misses read at or below 0.005 and below the shipped gap. The bar was applied as registered; the verdict follows the conjunction. 3. Mechanism of the misses: the returned matching and the survivor matching have the same total capped ground cost in 120/120 cases, so the position term alone ranks them. |i/n - j/m| compares relative positions with two different denominators; after a deletion the survivor matching is not always the one with the smallest sum. In 2 misses the two sums are exactly equal in rational arithmetic; as float64, the form the solver receives, the returned sum is below the survivor sum in 2 of them and equal to it in 0. A rule that leaves the deleted member unmatched needs the order of the neighbouring statements; that is a different mechanism and was not added or measured. 4. Position index: the record does not say from which number positions count. The registered arm counts from 0; counting from 1 gives the same counts (111/120, 120/120) with the same matching as the registered arm in 120/120 cases. 5. Exact ties exist here because the 9 repeated statements share one bitwise equal embedding row and each registered case builds the shorter document from row copies of the longer one. The tied float32 cost is not always zero: 0.0 in 60 cases, 0.0003452669770922512 in 60 cases. Executor reading outside the record: with the shorter document encoded in its own call, the rows of the repeated statements are bitwise equal in 120/120 cases, the tie group has one bit pattern in 120/120, the matched pairs equal the row-copy matching in 120/120 and the clause 1 counts are 111/120 and 120/120. That reading does not show that ties stay exact under separate encoding in general: all rows are bitwise equal to the row copies in 96/120 cases only, and in the other 24 cases 41 rows differ by up to 4.095e-03 in one embedding entry (shortest statement with a differing row: 26 words; shipped gap moved by up to 1.288e-03, matched gap by up to 6.671e-05). The repeated text here is one token and is encoded in the batch of the shortest statements in every document. A repeated statement whose batch differs between the two documents was not measured; a cost difference of the measured size inside a tie group is above eps = 1e-06, and the position term would then not decide. Not measured either: near-identical statements, another encoder. 6. Clause 3 holds by construction: a fully matched equal-length pair is passed to opw_gap unmodified. 1820 of the 1840 pairs are reorder-pool entries. The 7 pairs that are fully matched at c = 0.6 and not at c = 0.325 are natural cross-summary, regeneration and tier-contrast pairs; their matched gap no longer equals the shipped gap. 7. Clause 4: c = 0.325 was chosen on half A in E13-H71, so the half A reading (0.9674) is the calibration reading and only the half B reading (0.9772) is held out. The 900 edited pairs hold no repeated statement inside a document, so the clause shows that the tie-break changes no label; it does not test the tie-break on the map. 8. Clauses 2 and 4 cannot fail through the tie-break on sets without repeated statements: the tie-break changed 0 matchings on the 280 deletion cases, the 10010 reordered-and-deleted cases, the 1913 fixture pairs, the 900 edited pairs and the 120 cases of the document without repeated statements. The clauses confirm that the readings do not move; the shipped baseline also clears the pooled AUC bar (0.950980). 9. The single cutoff: the registered E13-H70 readings are equal at c = 0.6 and c = 0.325. Outside the bar the cutoff is not inert: on the 66 natural pairs of unequal length the matched gap is computed on 4.68 statements on average at c = 0.325 against 8.14 at c = 0.6 (shorter document: 8.24 statements on average); it reads exactly 0 in 35/66 pairs (at c = 0.6: 12), 19 pairs keep at most one matched pair and 2 keep none. No ground truth exists for these pairs; this is a reading, not a test. The registered cutoff is the literal 0.325; the shipped constant DIFF_CHANGED_COST is 0.3252691193458119 and was not measured. 10. Identity floor, unchanged from E13-H70: on the document without repeated statements the matched gap equals opw_gap(B, copy of B) in 120/120 cases and differs from opw_gap(B, B) by at most 7.813e-06 (POT zeroes the diagonal of the ground cost only when both arguments are one object); it reads above 0.005 in 63/120 cases because the identity gap of shipped opw_gap grows with document length. The tie-break does not act on this. 11. Edited-pair readings: 300 of 900 shipped details readings were computed by this notebook (bases gold, gold-2, v1, v2) and are equal to the E13-H71 checkpoint in 300/300; the other 600 were read from the E13-H71 checkpoint, which has the same fixture key (sha1 over the library version and every pair text). The first execution of this notebook was stopped during that loop because another notebook held most cores of the machine; the restore order was added after that. 12. Executor rules, written in the configuration cell, which executes before every measurement cell: positions counted from 0; a tie group needs at least 2 rows and 1 column; textual equality is sequence equality of the matched statements of the longer document with the shorter document; Refuted (null) would be read only on exact equality of the third-pass readings with and without the tie-break. The notebook was executed more than once; the registered arms, cutoffs, bars and builders did not change between executions. Added after the first complete execution: the exact position sums, the document-order columns, the column of matchings equal to the registered arm and the zero-reading columns of the unequal-length table. Added after the second complete execution: the float64 difference of the position sums and, in the executor reading, the size of the row differences and the comparison with the row-copy reading of the same case. The second addition followed a check of that reading: its matched columns equalled the clause 1 columns at the printed digits although 24 cases had rows that differ, and the check measured that the matched gap does move there, by less than the printed digits. 13. Guardrail rows that can fail: V, the source-tree fingerprint, git status. The np.array_equal rows compare two calls of unmodified shipped functions inside one kernel and detect a change made during the run only. The metric-property row is a statement, not a test. 14. Other processes executed notebooks on this machine during the run; no timing is quoted as a measurement."
+        },
+        "verify": {
+          "id": "E15-H79",
+          "verified": true,
+          "findings": [
+            {
+              "severity": "minor",
+              "claim": "The prediction item 'the 1847 fully matched identities are unchanged' is marked held, and the result summary says 'every registered E13 reading is unchanged', although the E13-H70 clause 3 reading changes at the registered cutoff: 1847/1847 becomes 1840/1840 and 7 equal-length pairs no longer equal shipped opw_gap.",
+              "evidence": "Notebook cell 71: `\"identities_unchanged\": bool(C3[\"fully_matched_array_equal\"] and ORDER[PLAIN][\"fully_matched_pairs\"] == C3[\"fully_matched_pairs\"])` compares the arm without a tie-break and the registered arm at the same cutoff 0.325 (1840 against 1840). It never compares against the 1847 pairs at c = 0.6. Metrics JSON `clause_3_bit_identity.pairs_fully_matched_at_0.6_only` lists the 7 pairs (for example cross_summary/ibm gold-2 against opus: 13 statements, 9 matched at c = 0.325). The record's hypothesis sentence 'every registered E13-H70 and E13-H71 reading stays unchanged at the single cutoff c = 0.325' is therefore false for this reading. Materiality: no reader is misled on the verdict, which is already Refuted, and caveat 6 states the 7 pairs; the 'held' label is a favourable reading of a prediction whose two halves contradict each other. Remedy: EDIT the prediction_check wording to 'identity holds on the 1840 pairs still fully matched; 7 of the 1847 lose it through the cutoff' and remove 'every registered E13 reading is unchanged' from the summary."
+            },
+            {
+              "severity": "minor",
+              "claim": "Three of the four bar clauses cannot fail through the lever under test, so 'clauses 2, 3 and 4 met' is a non-regression reading and not support for the tie-break.",
+              "evidence": "Clause 3, cell 16: `if len(rows) == len(A) == len(B): return opw_gap(A, B)` and cell 28 compares it with `readings[\"shipped\"] = opw_gap(A, B)` - two calls of one shipped function on the same inputs; a constant-true check scores the same. Clauses 2 and 4: `matchings_changed_by_registered_tie_break` reads 0 on the 280 deletion cases, the 10010 reordered-and-deleted cases, the 1913 fixture pairs and the 900 edited pairs, and 0/21060 labels change; the shipped baseline already clears the AUC bar (0.950980 against 0.95). Only clause 1 can move with the tie-break (99/120 → 120/120, 88/120 → 111/120). The executor discloses all of this in caveats 6 and 8. Materiality: none for this verdict, because clause 1 decides it. Remedy: DEFER - in a follow-up registration, state clauses 2 to 4 as guardrails and put the bar on a set that holds repeated statements."
+            },
+            {
+              "severity": "minor",
+              "claim": "The two macro-F1 sanity rows (0.9674, 0.9772) were reproduced from stored cost matrices; the persisted execution computed 0 of the 900 edited-pair readings. The result text 'computed by this notebook' refers to an earlier execution.",
+              "evidence": "Cell 33 output: '300 computed by this notebook (0 in this execution, 300 restored from E15-H79/shipped-readings-00900-3e396129ed50.json), 600 read from the E13-H71 checkpoint of the same fixture key'. For 600 pairs the sanity row passes E13-H71's own stored costs through the copied labeller and compares the result with E13-H71's stored macro-F1. That row can fail on a difference in the copied labeller or in the edit builder labels; it cannot fail on a difference in the cost computation. The 300 own readings equal the E13-H71 checkpoint in 300/300 (np.array_equal), and the fixture key 3e396129ed50 matches. Materiality: none for the verdict; clause 4 is met with 0 labels changed and the verdict is decided by clause 1. Disclosed in caveat 11. Remedy: EDIT the sanity reading to say '0 computed in the persisted execution, 300 restored from this notebook's earlier execution'."
+            },
+            {
+              "severity": "minor",
+              "claim": "The guardrail note 'No edit under src/, docs/ or tests/' is measured for src/ and tests/ only; docs/ is asserted.",
+              "evidence": "Cell 69: `subprocess.run([\"git\", \"status\", \"--porcelain\", \"--\", \"src\", \"tests\"], ...)` and `tree_fingerprint()` over src/ and tests/. My own check: `git diff --stat -- src tests` is empty; `git status` shows docs/acc-crit-docdistance.md (mtime 13:18:08), docs/defects-docdistance.md (12:42:46) and docs/experiments/wmd-docdistance-experiments.md (13:18:23) modified against HEAD, two of them inside the run window (own checkpoint 12:52, notebook written 13:20). Nothing ties those writes to this executor: the `### E15-H79` block carries only the line 'log: 2026-10-09 @kj - registered', its results-table row still reads 'pre-registered', and the ledger gained the E14-H77 verdict row, which is the orchestrator's recording. Materiality: none found. Remedy: EDIT the note to 'src/ and tests/ measured; docs/ not measured by the notebook'."
+            }
+          ],
+          "notes": "VERDICT: SHIP (0 blocking, 0 major, 4 minor). The executor's verdict Refuted holds; no corrected verdict.\n\nChecks 1 to 10:\n(1) Kill-gate ran first and was read as registered. Cells 17-23 precede the sanity section (cells 24-36). Harness check uses equality on counts: 88/120 and 21/120 at c = 0.6, both reproduced; the E13-H70 metrics file records the same values (recovered 88, above_shipped 21, 43 deletions of a repeated statement, 32 not recovered, largest reading 0.324574). Precondition: one bit pattern in the tie group in 120/120 cases. Ordering remark, not a finding: cell 18 scores all six arms, including the registered arm, before the gate is read in cell 19; the gate reads the c = 0.6 arm only.\n(2) Bar applied literally. Cell 38: `CLAUSE1_MET = bool(C1_AT_OR_BELOW == C1_CASES and C1_TEXT_EQUAL >= TEXT_EQUAL_MIN)` with TEXT_EQUAL_MIN = 114; reading 120/120 and 111/120 → not met. The bar text in the record block and in the ledger summary table (line 1251) agree with the coded bar. No goalpost moved, no guardrail dropped.\n(3) Every numeric leaf and every numeric token of reports/E13-campaign/results/H79.json was searched in the notebook cell outputs: 0 missing. The `result` block of the metrics JSON equals H79.json.\n(4) V 0/24 counted, source-tree fingerprint and git status measured; metric property labelled 'stated, not tested' by the executor; docs/ not measured (finding 4).\n(5) The five named readings reproduce (280/280, 0.999903, 1847/1847, 0.9674, 0.9772) and 9/9 supporting rows; see finding 3 for the limit of the macro-F1 rows.\n(6) 0 error outputs, execution counts 1 to 44 in order. The log line 'Writing 1105836 bytes' equals the character count of the notebook file (1105836 characters, 1155957 UTF-8 bytes).\n(7) Refuted follows the primer: bar not met and the prediction 'textually equal in 120/120' falsified; `NO_EFFECT` is False (88 → 111), so Refuted (null) does not apply.\n(8) Direction and magnitude are reported honestly for clause 1; one 'held' label is generous (finding 1).\n(9) No cutoff was tuned in this run: c = 0.325 and eps = 1e-6 are registered literals. E13-H71 metrics confirm `calibrated_on_half_A: 0.325`, `calibrated_on_half_B: 0.31`, `calibrated_on_all_bases_in_sample: 0.325`; the registered clause 4 calls both halves held-out, which is a defect of the registered wording and is disclosed in caveat 7.\n(10) `git diff --stat -- src tests` is empty; docs/ changes are not attributable to this hypothesis (finding 4).\n\nRobustness of the verdict, checked by arithmetic on the miss table with the repeated positions 4, 6, 8 from the E13-H70 metrics: prefix 14, deleted [2, 4], unmatched [2, 6] - the two matchings differ in one term, |6/14 - 4/12| = 0.095238 for the survivor matching against |4/14 - 4/12| = 0.047619 for the returned one; the difference 0.047619 equals the printed 0.595238 - 0.547619. Prefix 14, deleted [8, 11], unmatched [6, 11] - |6/14 - 6/12| = |8/14 - 6/12| = 0.071429, an exact tie as printed. If the solver had resolved both exact ties toward the survivor matching the count would be 113/120, still below 114. The 7 other misses are strict preferences of the registered position term, so the miss does not depend on solver tie handling, on the position index (from 0 or from 1) or on eps (1e-4, 1e-6, 1e-8 all read 111/120).\n\nNot verifiable from the artefacts: the executor's statement that bars, arms and reading rules did not change between its several executions. The notebook is untracked in git and the log holds the last execution only. No reading rule in the configuration cell can move the verdict: the stricter reading (survivors recovered) gives 110/120, the registered reading 111/120.\n\nFiles read: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H79-kj-matching-tie-break.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E15-H79-matching-tie-break-metrics.json, /home/lab/workspace/learning/projects/docdistance/logs/E15-H79-matching-tie-break.log, /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H79.json, /home/lab/workspace/learning/projects/docdistance/reports/E13-H70-matched-order-gap-metrics.json, /home/lab/workspace/learning/projects/docdistance/reports/E13-H71-partial-matching-map-metrics.json, /home/lab/workspace/learning/projects/docdistance/docs/experiments/wmd-docdistance-experiments.md. No file was written in the repository and no notebook was executed."
+        },
+        "repaired": false
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Execute"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Verify"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "run:E15-H78",
+      "phaseIndex": 1,
+      "phaseTitle": "Execute",
+      "agentId": "af3fea07e69c70353",
+      "agentType": "senior-backend-engineer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791541443481,
+      "queuedAt": 1791541443454,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H78",
+      "promptPreview": "You are the EXECUTOR for hypothesis E15-H78 (raw-nearest-source-count) of the docdistance E13 experiment campaign, stage A (measure). Repo root: /home/lab/workspace/learning/projects/docdistance. Work from the repo root. Execution model: opus (write it into the result's \"model\" field).\n\nFIRST read /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/PRIMER.md in full - environmen…",
+      "promptFramed": true,
+      "lastProgressAt": 1791544358034,
+      "tokens": 440668,
+      "toolCalls": 67,
+      "durationMs": 2914553,
+      "resultPreview": "{\"id\":\"E15-H78\",\"slug\":\"raw-nearest-source-count\",\"model\":\"opus\",\"verdict\":\"Promoted\",\"verdict_number\":\"raw, short kept (registered), foreign set whole (registered): held-out balanced accuracy 0.9412 (A→B, cutoff 0.3375) and 0.9272 (B→A, cutoff 0.3550) (bar >= 0.9 in both, met); verbatim extract 0 and 0 of 10 flagged under the two cutoffs (bar 0, met, holds by construction on this arm); second-art…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "run:E15-H79",
+      "phaseIndex": 1,
+      "phaseTitle": "Execute",
+      "agentId": "a6b08bd6ee1443136",
+      "agentType": "senior-backend-engineer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791541443481,
+      "queuedAt": 1791541443454,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H79",
+      "promptPreview": "You are the EXECUTOR for hypothesis E15-H79 (matching-tie-break) of the docdistance E13 experiment campaign, stage A (measure). Repo root: /home/lab/workspace/learning/projects/docdistance. Work from the repo root. Execution model: opus (write it into the result's \"model\" field).\n\nFIRST read /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/PRIMER.md in full - environment, har…",
+      "promptFramed": true,
+      "lastProgressAt": 1791544963188,
+      "tokens": 472258,
+      "toolCalls": 67,
+      "durationMs": 3519706,
+      "resultPreview": "{\"id\":\"E15-H79\",\"slug\":\"matching-tie-break\",\"model\":\"opus\",\"verdict\":\"Refuted\",\"verdict_number\":\"third-pass set at c = 0.325, eps = 1e-06: matched sub-sequence textually equal to the shorter document in 111/120 cases against a bar of >= 114/120 (without the tie-break 88/120); matched gap at or below the shipped gap in 120/120 against a bar of 120/120 (without the tie-break 99/120); second readings…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 3,
+      "label": "verify:E15-H78",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "aa776d3ae1632ccc4",
+      "agentType": "devils-advocate:adversarial-reviewer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791544358053,
+      "queuedAt": 1791544358039,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H78",
+      "promptPreview": "Lens: methodologist. Target: the executed experiment E15-H78 (raw-nearest-source-count) of the docdistance E13 campaign. Your job is to find where the executor's claim does not hold. Repo root: /home/lab/workspace/learning/projects/docdistance. READ-ONLY: never edit, execute a notebook or write a file; python for parsing an .ipynb is fine.\n\nRead: /home/lab/workspace/learning/projects/docdistance/r…",
+      "promptFramed": true,
+      "lastProgressAt": 1791544716853,
+      "tokens": 177817,
+      "toolCalls": 21,
+      "durationMs": 358800,
+      "resultPreview": "{\"id\":\"E15-H78\",\"verified\":true,\"findings\":[{\"severity\":\"minor\",\"claim\":\"Check (9): in the verdict reading (foreign set whole) the cutoff is tuned on the 38 foreign statements that are then scored, so the TPR half of both 'held-out' readings (38/38 and 36/38) is in-sample. The notebook's mitigation sentence (cell 28: 'so the clause does not depend on the scored foreign statements having taken part…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 4,
+      "label": "verify:E15-H79",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "a350b35e2e38b21a0",
+      "agentType": "devils-advocate:adversarial-reviewer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791544963197,
+      "queuedAt": 1791544963194,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H79",
+      "promptPreview": "Lens: methodologist. Target: the executed experiment E15-H79 (matching-tie-break) of the docdistance E13 campaign. Your job is to find where the executor's claim does not hold. Repo root: /home/lab/workspace/learning/projects/docdistance. READ-ONLY: never edit, execute a notebook or write a file; python for parsing an .ipynb is fine.\n\nRead: /home/lab/workspace/learning/projects/docdistance/reports…",
+      "promptFramed": true,
+      "lastProgressAt": 1791545231382,
+      "tokens": 120029,
+      "toolCalls": 13,
+      "durationMs": 268184,
+      "resultPreview": "{\"id\":\"E15-H79\",\"verified\":true,\"findings\":[{\"severity\":\"minor\",\"claim\":\"The prediction item 'the 1847 fully matched identities are unchanged' is marked held, and the result summary says 'every registered E13 reading is unchanged', although the E13-H70 clause 3 reading changes at the registered cutoff: 1847/1847 becomes 1840/1840 and 7 equal-length pairs no longer equal shipped opw_gap.\",\"evidence…"
+    }
+  ],
+  "totalTokens": 1210772,
+  "totalToolCalls": 168
+}

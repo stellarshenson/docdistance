@@ -1,0 +1,8 @@
+{
+ "id": "E16-H81",
+ "slug": "autodetected-reader-default",
+ "registered_at_utc": "2026-10-10T02:52:16Z",
+ "block_sha256": "3aa9754af4b7523d7fe59eacea07ebc951a7ccd6fe6f7200dcddd96296712248",
+ "block_lines": 12,
+ "note": "sha256 of the ledger block from its heading to its last line, taken after hypothesis-tools register and before the build of the lever and before any distance was computed"
+}

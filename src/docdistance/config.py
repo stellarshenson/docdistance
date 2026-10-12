@@ -37,6 +37,7 @@ logger.debug(f"PROJ_ROOT path is: {PROJ_ROOT}")
 
 # segmenter (wtpsplit SaT) and the mmBERT statement encoders, by backend
 SAT_MODEL = "sat-3l-sm"
+SAT_TOKENIZER = "facebookAI/xlm-roberta-base"  # the Hub name wtpsplit loads the SaT tokenizer by
 MMBERT_TORCH_MODEL = "jhu-clsp/mmBERT-base"
 MMBERT_OPENVINO_LOCAL = MODELS_DIR / "02-mmbert-openvino-int8"
 MMBERT_OPENVINO_HF = "stellars/mmBERT-base-openvino-int8"

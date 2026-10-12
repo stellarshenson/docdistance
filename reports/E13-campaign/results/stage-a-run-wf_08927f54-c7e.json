@@ -1,0 +1,288 @@
+{
+  "summary": "Stage A of the E13 campaign: execute the six pre-registered hypotheses (E13-H70 to H74 transport overflow, E14-H75 centering attribution), one opus executor per notebook, methodologist verify plus one repair round",
+  "agentCount": 2,
+  "logs": [
+    "stage A: 1 executors in parallel on opus",
+    "E15-H80: Promoted (at c = 0.325 and eps = 1e-6 the lever flags 0 statements in 280/280 order-preserving deletion cases (conjunction baseline: at least one flag in 246/280 cases, 678 kept + 472 removed statements); lever flags np.array_equal to the conjunction flags on 1680/1680 verbatim permutations; on reworded reorders the lever keeps 13675/13675 = 1.000000 of the conjunction-flagged true relocations over 10 bases (bar 0.98); fixtures insertion 0 of 6, swap 2 of 2, reversal 12 of 12, text shrinkage 0 of 12. Second readings outside the bar: the registered sets hold documents of 11 to 14 statements with 0 repeated statements; single transpositions at 20 and 40 statements equal on 183/190 and 765/780; a document with repeated statements flagged in 4/120 deletion cases; clause-3 retention 0.9894 at c = 0.32 and 0.9769 at c = 0.3) - verified=true"
+  ],
+  "result": {
+    "results": [
+      {
+        "id": "E15-H80",
+        "slug": "moved-on-matched-pairs",
+        "result": {
+          "id": "E15-H80",
+          "slug": "moved-on-matched-pairs",
+          "model": "opus",
+          "verdict": "Promoted",
+          "verdict_number": "at c = 0.325 and eps = 1e-6 the lever flags 0 statements in 280/280 order-preserving deletion cases (conjunction baseline: at least one flag in 246/280 cases, 678 kept + 472 removed statements); lever flags np.array_equal to the conjunction flags on 1680/1680 verbatim permutations; on reworded reorders the lever keeps 13675/13675 = 1.000000 of the conjunction-flagged true relocations over 10 bases (bar 0.98); fixtures insertion 0 of 6, swap 2 of 2, reversal 12 of 12, text shrinkage 0 of 12. Second readings outside the bar: the registered sets hold documents of 11 to 14 statements with 0 repeated statements; single transpositions at 20 and 40 statements equal on 183/190 and 765/780; a document with repeated statements flagged in 4/120 deletion cases; clause-3 retention 0.9894 at c = 0.32 and 0.9769 at c = 0.3",
+          "kill_gate": {
+            "ran": true,
+            "passed": true,
+            "reading": "E12-H61 conjunction on the 280 order-preserving deletion cases of E13-H70: at least one statement flagged in 246/280 cases (87.9%; the gate needs 1 case), 678 of 2772 kept and 472 of 700 removed statements; per deletion depth k = 1 to 4: 43, 64, 69 and 70 of 70 cases. DEF-TRANS-13 reproduces on real documents"
+          },
+          "sanity_check": {
+            "required": true,
+            "passed": true,
+            "reading": "E12-H61 pool reading reproduced with the E12-H61 builders and ground-truth rule: 1680 permutations with k != 0, 13675 truly relocated statements, 13675 flagged by the shipped flag, 0 lost under the conjunction (record: 13675, 0); the conjunction arm of the notebook (record field moved AND displacement != 0) is np.array_equal to the compiled E12-H61 conjunction on 1680/1680 permutations and 6/6 fixtures. Deletion set of E13-H70 rebuilt with its code and seeds: 280 cases, 280/280 at or below 0.005 under the matched order gap at c = 0.6 (the cutoff E13-H70 registered) and 280/280 at c = 0.325; 5/5 compared values equal to the saved E13-H70 metrics at 6 significant digits; the 5 copied functions occur verbatim in the E13-H70 notebook"
+          },
+          "prediction_check": {
+            "predicted": "on the 280 order-preserving deletion cases the conjunction flags at least 1 statement in at least 10% of the cases and the lever flags 0 statements in 280/280; flags equal on 1680/1680 verbatim permutations; on reworded reorders the lever keeps 99% to 100% of the true relocations the conjunction flags; the four E12-H61 fixtures read insertion 0/6, swap 2/2, reversal 12/12, shrinkage 0/12",
+            "observed": "conjunction flags at least 1 statement in 246/280 = 0.8786 of the cases (lower bound 0.1); lever flags 0 statements in 280/280; flags equal on 1680/1680; lever keeps 13675/13675 = 1.000000; fixtures insertion 0 of 6, swap 2 of 2, reversal 12 of 12 on both reversal fixtures, text shrinkage 0 of 12. Each of the five parts is read against a number the record states and each held. The effect that has a direction matched: false flags on order-preserving deletions fall from 246/280 cases under the conjunction to 0/280 under the lever. The other parts are size claims without a direction (equality on 1680/1680, the retention interval 99% to 100%, the fixture counts) and each held at its registered number. On the reworded reorders the lever's flag array equals the conjunction's on 1680/1680 pairs, so the retention part does not separate the two arms",
+            "direction_matched": true
+          },
+          "acceptance": {
+            "bar": "PASS iff, at c = 0.325 and eps = 1e-6: (1) on the 280 order-preserving deletion cases of E13-H70 the lever flags 0 statements, kept or removed, in 280/280 cases; (2) on every permutation of the verbatim reorder pool (1680, all fully matched) the lever's flags are np.array_equal to the conjunction's flags; (3) on reworded reorders the lever flags at least 98% of the truly relocated statements that the conjunction flags, pooled over the 10 bases; (4) the E12-H61 fixtures read insertion 0 of 6, swap 2 of 2, reversal 12 of 12 and the 12 to 8 text shrinkage 0 of 12",
+            "met": true,
+            "readings": {
+              "clause_1_deletions": "lever: 0/2772 kept and 0/700 removed statements flagged, 280/280 cases with 0 flags; shipped 274/280 cases (1149 kept, 526 removed); conjunction 246/280 (678 kept, 472 removed); conjunction AND matched 202/280 (678 kept, 0 removed); lever with no tie-break 0/280. Met by construction once the matching is exact: survivors are byte-identical, the 10 base documents hold 0 repeated statements, and the matching pairs every survivor with its own copy in 280/280 cases",
+              "clause_2_verbatim_pool": "per-permutation np.array_equal of the lever flag array and the conjunction flag array: 1680/1680; fully matched 1680/1680; matching equal to the exact-plan alignment 1680/1680; every arm flags 13675/13675 true relocations and 0/7157 in-place statements. Scope: 11 to 14 statements, one rank step at least 1/14 = 0.0714 and above the tolerance 0.05",
+              "clause_3_reworded_reorders": "13675/13675 = 1.000000 (bar >= 0.98), pooled over 10/10 bases, none left out by the alignment check; smallest per-base retention 1.0000; 0/7157 false fires for every arm; fully matched 1680/1680; lever flag array equal to the conjunction's on 1680/1680 pairs. All 124 true reworded pairs cost below the cutoff (largest 0.322901), so the clause does not exercise the one case in which the lever can lose a flag",
+              "clause_4_fixtures": "lever: insertion 0 of 6, swap 2 of 2, reversal 12 of 12 (orthogonal) and 12 of 12 (real text), text shrinkage 0 of 12 (0 of 8 kept, 0 of 4 removed), orthogonal shrinkage 0 of 12. Conjunction: text shrinkage 2 of 12 (2 of 4 removed), worked example 4 of 6 against the lever's 2 of 6. The record does not name which E12-H61 reversal fixture it means; the clause requires both"
+            }
+          },
+          "guardrails": {
+            "V": "0/24",
+            "src_untouched": true,
+            "metric_property": "measured on shipped smd with no tolerance: 0 violations of 990 ordered triples of the 11 ibm panel documents, smallest margin 0.177149. The moved flag is a per-statement annotation computed in the notebook outside the shipped builder; it is neither a distance nor a metric, and no distance, plan or detail field is rewritten",
+            "notes": "Rows that can fail: V 0/24 on the ibm panel with boundary margin +4.71 pts, equal to the primer naive row; triangle inequality 0 of 990 with no tolerance; sha256 over src/**/*.py and tests/**/*.py unchanged between the guardrail-baseline cell and the guardrail cell (src be7e159f81c53284, tests 00ea6c7799307adb); git status src/ tests/ clean. Row that compares two calls inside one kernel: the shipped details of (gold, gold-2) rebuilt byte-identical (8503 bytes). No edit under src/, docs/ or tests/. One line of logs/README.md was extended to name the E15-H<n>-<slug>.log family"
+          },
+          "key_numbers": {
+            "c": 0.325,
+            "eps": 0.000001,
+            "moved_tolerance": 0.05,
+            "deletion_cases": 280,
+            "kill_gate_cases_with_conjunction_flag": 246,
+            "kill_gate_share": 0.878571,
+            "deletion_flags_per_arm": {
+              "shipped": {
+                "flagged_kept": 1149,
+                "flagged_removed": 526,
+                "cases_with_flag": 274
+              },
+              "conjunction": {
+                "flagged_kept": 678,
+                "flagged_removed": 472,
+                "cases_with_flag": 246
+              },
+              "conjunction_and_matched": {
+                "flagged_kept": 678,
+                "flagged_removed": 0,
+                "cases_with_flag": 202
+              },
+              "lever": {
+                "flagged_kept": 0,
+                "flagged_removed": 0,
+                "cases_with_flag": 0
+              },
+              "lever_no_tiebreak": {
+                "flagged_kept": 0,
+                "flagged_removed": 0,
+                "cases_with_flag": 0
+              }
+            },
+            "kept_statements": 2772,
+            "removed_statements": 700,
+            "pool_permutations": 1680,
+            "pool_equality_count_lever": 1680,
+            "pool_true_relocations": 13675,
+            "reworded_retention": 1,
+            "reworded_retention_numerator": 13675,
+            "reworded_retention_denominator": 13675,
+            "reworded_false_fires_lever": 0,
+            "true_reworded_pairs": 124,
+            "true_pair_cost_max": 0.322901,
+            "true_pair_cost_margin_below_cutoff": 0.0020995,
+            "ladder_cases": 11277,
+            "ladder_true_relocations": 83778,
+            "ladder_precision_recall": {
+              "shipped": [
+                0.725819,
+                0.930089
+              ],
+              "conjunction": [
+                0.762363,
+                0.877904
+              ],
+              "conjunction_and_matched": [
+                0.930635,
+                0.877904
+              ],
+              "lever": [
+                1,
+                1
+              ],
+              "lever_no_tiebreak": [
+                1,
+                1
+              ]
+            },
+            "tied_deletion_cases": 259,
+            "tied_deletion_share": 0.925,
+            "tied_deletion_cases_exact_equality": 245,
+            "cases_where_tie_resolution_changes_flags": {
+              "shipped": 221,
+              "conjunction": 257,
+              "lever": 0
+            },
+            "cutoff_pass_retention": {
+              "0.25": 0.891773,
+              "0.28": 0.956782,
+              "0.3": 0.976892,
+              "0.32": 0.989397,
+              "0.325": 1,
+              "0.35": 1,
+              "0.45": 1,
+              "0.6": 1
+            },
+            "cutoff_pass_false_fires": {
+              "0.25": 789,
+              "0.28": 336,
+              "0.3": 176,
+              "0.32": 112,
+              "0.325": 0
+            },
+            "reworded_survivors_cases_with_flag": {
+              "shipped": 277,
+              "conjunction": 250,
+              "conjunction_and_matched": 205,
+              "lever": 0,
+              "lever_no_tiebreak": 0
+            },
+            "long_document_repeated_kept_cases_with_flag": {
+              "conjunction": 108,
+              "lever": 4,
+              "lever_no_tiebreak": 31,
+              "cases": 120
+            },
+            "long_document_repeated_removed_cases_with_flag": {
+              "conjunction": 108,
+              "lever": 0,
+              "lever_no_tiebreak": 0,
+              "cases": 120
+            },
+            "long_document_survivors_recovered": {
+              "tie_break": 110,
+              "no_tie_break": 88,
+              "cases": 120
+            },
+            "single_transpositions_equal": {
+              "14": "91/91",
+              "20": "183/190",
+              "40": "765/780"
+            },
+            "statements_only_conjunction_flags": {
+              "20": 14,
+              "40": 30
+            },
+            "own_encoding_deletion_cases": {
+              "cases": 280,
+              "rows_bitwise_equal": 259,
+              "max_abs_row_diff": 0.00686408,
+              "flag_array_equal_to_row_copy_reading_per_arm": 280,
+              "conjunction_cases_with_flag": 246,
+              "lever_cases_with_flag": 0
+            },
+            "own_encoding_permutations": {
+              "pairs": 120,
+              "rows_bitwise_equal": 120,
+              "lever_equals_conjunction": 120
+            },
+            "triangle_min_margin": 0.177149
+          },
+          "result_summary": "Promoted within the scope of the registered sets. The defect of DEF-TRANS-13 reproduces on real documents: on the 280 order-preserving deletion cases the E12-H61 conjunction flags 678 kept and 472 removed statements in 246 cases, and in 257 of the 280 cases its flag array changes with the choice among plan entries that are equal within 1e-12 (259 cases hold such a tie). The lever, moved read on the one-to-one matched pairs at c = 0.325 with eps = 1e-6, flags 0 statements in 280/280 cases, is flag for flag equal to the conjunction on 1680/1680 verbatim permutations, keeps 13675/13675 conjunction-flagged true relocations on the reworded reorders with 0 false fires, and reads the four fixtures as registered. Without a bar: on 11277 reordered-and-deleted cases the lever reads precision 1.0000 and recall 1.0000 against conjunction 0.7624 and 0.8779. Five executor passes outside the record mark the limits. Reworded survivors: lever 0/280 cases, conjunction 250/280. Long document without repeated statements: lever 0/120. Long document with 9 repeated statements: lever 4/120 cases with the registered tie-break, 31/120 without it. Single transpositions at 20 and 40 statements: flag arrays equal on 183/190 and 765/780, because the shipped norm j/n - i/n and the lever's shift/n are different float forms at a rank step of exactly 5% of the length. Cutoff: the largest true reworded pair costs 0.322901, 0.002099 below the cutoff; at c = 0.32 retention is 0.9894 with 112 false fires and at c = 0.3 it is 0.9769, below the bar. With document B encoded in its own call, every arm's flag array equals its row-copy reading in 280/280 deletion cases (rows bitwise equal in 259/280, largest entry difference 6.864e-03)",
+          "artifacts": {
+            "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H80-kj-moved-on-matched-pairs.ipynb",
+            "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E15-H80-moved-on-matched-pairs-metrics.json",
+            "log": "/home/lab/workspace/learning/projects/docdistance/logs/E15-H80-moved-on-matched-pairs.log"
+          },
+          "notebook_errors": 0,
+          "caveats": "Scope: the registered sets hold documents of 11 to 14 statements with 0 repeated statements, one encoder (OpenVINO INT8) and one paraphrase method (opus-mt back-translation). Clause 1 holds by construction on that set (byte-identical survivors, unique zero-cost assignment); the readings that are not by construction are the executor passes on reworded survivors (0/280) and on documents encoded in separate calls (flag arrays equal to the row-copy reading in 280/280 deletion cases; the 120 sampled permutations return bitwise equal rows in 120/120, so that part repeats the row-copy input). The ladder reading (precision and recall 1.0000) also holds by construction: the matching pairs every survivor with its own copy in 11277/11277 cases and the cases hold 9 to 12 matched pairs. Clause 2 does not transfer to every length: on single transpositions of the fixture document source the flag arrays are equal on 91/91 at 14 statements, 183/190 at 20 and 765/780 at 40; in the differing cases the conjunction flags 14 and 30 statements that the lever does not, and the lever flags none that the conjunction does not. Clause 3 does not separate the lever from the baseline: 0 of the 124 true reworded pairs cost at or above the cutoff and the largest is 0.002099 below it; the evidence line of the record cites the same 124 pairs for the cutoff; with 1 pair above (c = 0.32) retention is 0.9894 with 112 false fires, with 2 pairs above (c = 0.3) it is 0.9769. Repeated statements: on the fixture document source (9 statements with the text '-') the lever with the registered tie-break flags statements in 4/120 order-preserving deletion cases, all at prefix length 14; in 2 of them the positional term of the wrong matching equals that of the true matching and in 2 it is smaller. Executor rules where the record is open: the deletion set is verified at c = 0.6, the cutoff E13-H70 registered, with c = 0.325 beside it; clause 4 requires both E12-H61 reversal fixtures; a ~bt document is used when it names its base, has the same statement count, equals the stored .bt.json and every statement and its reword are mutual cheapest partners (10/10 bases pass); a plan row is tied when its two largest entries differ by at most 1e-12 (245/280 cases under exact float equality). The tie-resolution reading enumerates the argmax choices of the measured plan, not other optimal plans. The notebook places the harness check before the kill-gate, as the record orders it; the primer lists the kill-gate section first. In the two copied loops the container names REORDER and STATEMENTS replace the names of the origin notebooks; the copied functions are verbatim. The notebook was executed more than once while it was built; the outputs are those of the last execution and every verdict threshold is a number the record or the campaign primer states. The long document of the executor passes is the fixture document source, whose 62 statements include markup fragments; it is one document and no bar is registered for it. Not measured: insertions and substitutions on real documents beyond the E12-H61 fixtures, pairs with statements without a counterpart on both sides"
+        },
+        "verify": {
+          "id": "E15-H80",
+          "verified": true,
+          "findings": [
+            {
+              "severity": "minor",
+              "claim": "Clause 3 is scored on data that includes the calibration data of its cutoff, and its outcome was fixed before the run. The verdict does not move. The fault is in the registered record, not in the execution, and the executor disclosed it.",
+              "evidence": "Verdict-deciding expression, notebook cell 33: `CLAUSE3_MET = bool(RETENTION >= RETENTION_BAR and not LEFT_OUT_BASES)`, pooled over all 10 bases. Cutoff provenance, /home/lab/workspace/learning/projects/docdistance/reports/E13-H71-partial-matching-map-metrics.json: `config.half_A = [gold, v1, opus, haiku, werg-b]`, `held_out[\"A → B\"].cutoff = 0.325`, true paraphrase pair p100 of half A = 0.3229. The pair that sets the margin (haiku, 0.322901, cell 32 output, 0.002099 below c) is a calibration pair, and 0.325 is the first point of the E13-H71 grid (step 0.005) above it. The E15-H80 Evidence field already states 'all 124 true reworded pairs cost at most 0.322901'. Effective sample: the 13675 statements are functions of 124 pair costs in 10 assignment problems; cell 51 output shows 1 pair at or above the cutoff (c = 0.32) removes 145 flags and adds 112 false fires where the conjunction has 0, and 2 pairs (c = 0.30) read 0.9769, below the bar. Why the verdict stands: the 5 bases outside the calibration half (gold-2, v2, sonnet, werg-a, werg-c) each read retention 1.0000 in the cell 33 per-base table. Materiality: nobody is harmed by the label; a stage B reader who takes clause 3 as evidence for reworded text outside this fixture is. Remedy: DEFER - a held-out measurement of clause 3 on paraphrases outside the fixture; no change to c. The executor lists this under 'Deferred to the build'."
+            },
+            {
+              "severity": "minor",
+              "claim": "Clauses 1, 2 and 4 cannot fail on the registered sets unless the implementation is wrong, and the regimes that can separate the lever from a trivial rule lie outside the bar. The executor's own passes there contradict the universal wording of the Hypothesis field. The verdict label stands because the bar is restricted to the registered sets.",
+              "evidence": "Cell 26: `CLAUSE1_MET = bool(len(del_rows) == N_DELETION_CASES and LEVER_CLEAN_CASES == N_DELETION_CASES)`. B is `A[case[\"keep\"]]` (byte-identical rows), cell 10 output reads 0 repeated statements in the 10 bases, so the zero-cost assignment is unique and every shift is 0; output 'survivors recovered by the matching: 280/280'. Cell 30: `CLAUSE2_MET = bool(len(pool_eq_rows) == N_POOL_PERMUTATIONS and POOL_EQUAL[\"lever\"] == N_POOL_PERMUTATIONS)`; the output table shows all five arms, the shipped flag included, equal to the conjunction on 1680/1680 with 13675/13675 and 0/7157, so the pool separates no arm; one rank step is at least 1/14 = 0.0714, above the tolerance. Trivial rule with the same score on all four clauses: flag a statement when its verbatim copy holds a different rank among the copies. The ladder reading (lever precision and recall 1.0000 against conjunction 0.7624 and 0.8779, cell 43) uses rank among survivors as ground truth, which is the lever's own definition. Outside the bar: lever flags in 4/120 deletion cases with repeated statements (cell 57 output), flag arrays equal on 183/190 and 765/780 at 20 and 40 statements (cell 61 output). These contradict 'will flag no statement on order-preserving deletions' and 'equal the E12-H61 conjunction flag for flag on every fully matched equal-length pair'. Materiality: no regression against the baseline in these passes (lever 4/120 against conjunction 108/120), so no user is harmed. Remedy: EDIT - the recorded verdict text carries the scope '11 to 14 statements, 0 repeated statements' instead of the Hypothesis wording; DEFER the two regimes to stage B acceptance criteria. The executor states the by-construction readings in caveats and in the conclusions cell."
+            },
+            {
+              "severity": "minor",
+              "claim": "The lever as coded carries one conjunct that the registered Lever field does not state. It changed no flag on any registered set. The result JSON does not name it.",
+              "evidence": "Cell 14: `raw = matched & (shift != 0) & (np.abs(shift / max(len(rows), 1)) > MOVED_TOLERANCE)` then `return {\"flags\": raw & ~no_counterpart, ...}`. Registered Lever: 'matched AND matched_displacement != 0 AND abs(matched_displacement / n_matched) > MOVED_TOLERANCE'. Inert on the bar: outputs of cells 26, 30 and 33 each print 'statements the no_counterpart rule switched off in the lever: 0', and the metrics file holds `no_counterpart_rule_acted: 0`. The notebook header and metrics `lever.definition` state the conjunct; the string 'no_counterpart' does not occur in /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H80.json. Materiality: none for the verdict; stage B needs to know which definition was measured. Remedy: EDIT - one sentence in the result caveats."
+            }
+          ],
+          "notes": "VERDICT: SHIP. Promoted stands; no blocking or major finding; no corrected verdict.\n\nThe prompt named no purpose, input universe or primary path as separate fields. I rated materiality against the registered E15-H80 record and the ten listed checks.\n\nChecks:\n(1) The harness check ran before the kill-gate (cells 18 to 22, then cell 24). The record orders it that way ('Harness check first'); the primer lists the kill-gate first; the executor disclosed this. Gate read as registered: `KILL_GATE_PASSED = bool(KILL_CASES_WITH_FLAG >= KILL_GATE_MIN_CASES)`, 246/280.\n(2) Bar applied literally at c = 0.325 and eps = 1e-6; all thresholds are record constants (cell 8). Clause 4 requires both reversal fixtures, which is stricter than the record.\n(3) All 253 numeric tokens of the result JSON occur in notebook outputs; the printed metrics block equals the metrics file after JSON parsing.\n(4) Guardrails measured in cell 69: V 0/24 counted, 0 of 990 triangle violations, sha256 of src and tests equal before and after, git status clean. My own `git status --short src tests` is empty.\n(5) Sanity check reproduced: 1680, 13675, 0 lost; 5/5 values equal to the saved E13-H70 metrics.\n(6) 0 error outputs, execution counts 1 to 40 contiguous; the log reports 1255064 written, which equals the character count of the notebook file (1305314 bytes); notebook and log share the modification time 13:26:47.\n(7) Promoted matches the primer semantics for a lever that met its bar.\n(8) The prediction check is honest; it states that the retention part does not separate the arms.\n(9) The executor tuned no threshold; the cutoff sweep is outside the verdict. Provenance issue in finding 1.\n(10) No H80 result text in docs/; the three docs files were modified at 13:28 to 13:31, after the result file (13:27:29), and the ledger block for E15-H80 holds only the registration line. The executor extended one line of logs/README.md, which the primer does not forbid.\n\nNot rated as findings, both unreached in this run: cell 71 maps a guardrail breach with the bar met to 'Refuted' (`elif BAR_MET and GUARDRAILS_HELD: ... else: VERDICT = \"Refuted\"`); `SANITY_PASSED` adds two executor conditions (arm consistency, deletion set at c = 0.6) to the registered harness reading.\n\nWhat the method got right: record constants hard-coded before measurement; conjunction arm verified flag for flag against the compiled E12-H61 builder; copied functions checked verbatim against the origin notebooks; five passes outside the bar that exercise the regimes the bar cannot reach, reported with their misses.\n\nFiles: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E15-H80-kj-moved-on-matched-pairs.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E15-H80-moved-on-matched-pairs-metrics.json, /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H80.json, /home/lab/workspace/learning/projects/docdistance/logs/E15-H80-moved-on-matched-pairs.log"
+        },
+        "repaired": false
+      }
+    ]
+  },
+  "workflowProgress": [
+    {
+      "type": "workflow_phase",
+      "index": 1,
+      "title": "Execute"
+    },
+    {
+      "type": "workflow_phase",
+      "index": 2,
+      "title": "Verify"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 1,
+      "label": "run:E15-H80",
+      "phaseIndex": 1,
+      "phaseTitle": "Execute",
+      "agentId": "a507076199b68f017",
+      "agentType": "senior-backend-engineer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791542635428,
+      "queuedAt": 1791542635392,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H80",
+      "promptPreview": "You are the EXECUTOR for hypothesis E15-H80 (moved-on-matched-pairs) of the docdistance E13 experiment campaign, stage A (measure). Repo root: /home/lab/workspace/learning/projects/docdistance. Work from the repo root. Execution model: opus (write it into the result's \"model\" field).\n\nFIRST read /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/PRIMER.md in full - environment,…",
+      "promptFramed": true,
+      "lastProgressAt": 1791545293559,
+      "tokens": 480736,
+      "toolCalls": 93,
+      "durationMs": 2658131,
+      "resultPreview": "{\"id\":\"E15-H80\",\"slug\":\"moved-on-matched-pairs\",\"model\":\"opus\",\"verdict\":\"Promoted\",\"verdict_number\":\"at c = 0.325 and eps = 1e-6 the lever flags 0 statements in 280/280 order-preserving deletion cases (conjunction baseline: at least one flag in 246/280 cases, 678 kept + 472 removed statements); lever flags np.array_equal to the conjunction flags on 1680/1680 verbatim permutations; on reworded reo…"
+    },
+    {
+      "type": "workflow_agent",
+      "index": 2,
+      "label": "verify:E15-H80",
+      "phaseIndex": 2,
+      "phaseTitle": "Verify",
+      "agentId": "a56c757b8dc2c0bc7",
+      "agentType": "devils-advocate:adversarial-reviewer",
+      "model": "claude-opus-5-5",
+      "state": "done",
+      "startedAt": 1791545293580,
+      "queuedAt": 1791545293562,
+      "attempt": 1,
+      "lastToolName": "StructuredOutput",
+      "lastToolSummary": "E15-H80",
+      "promptPreview": "Lens: methodologist. Target: the executed experiment E15-H80 (moved-on-matched-pairs) of the docdistance E13 campaign. Your job is to find where the executor's claim does not hold. Repo root: /home/lab/workspace/learning/projects/docdistance. READ-ONLY: never edit, execute a notebook or write a file; python for parsing an .ipynb is fine.\n\nRead: /home/lab/workspace/learning/projects/docdistance/rep…",
+      "promptFramed": true,
+      "lastProgressAt": 1791545811138,
+      "tokens": 185274,
+      "toolCalls": 23,
+      "durationMs": 517558,
+      "resultPreview": "{\"id\":\"E15-H80\",\"verified\":true,\"findings\":[{\"severity\":\"minor\",\"claim\":\"Clause 3 is scored on data that includes the calibration data of its cutoff, and its outcome was fixed before the run. The verdict does not move. The fault is in the registered record, not in the execution, and the executor disclosed it.\",\"evidence\":\"Verdict-deciding expression, notebook cell 33: `CLAUSE3_MET = bool(RETENTION…"
+    }
+  ],
+  "totalTokens": 666010,
+  "totalToolCalls": 116
+}

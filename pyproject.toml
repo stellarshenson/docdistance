@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "docdistance"
-version = "1.1.5"
+version = "1.1.32"
 description = "Project that uses theory of From Word Embeddings To Document Distances / Optimal Transport to give meaningful distance from one document to another, useful if building agentic projects that convert or extract information from one document to another using frontier models but without the ability to calculate KL divergence from logits"
 authors = [
     { name = "Stellars Henson \u003ckonrad.jelen+github@gmail.com\u003e" },
 ]
 license = "MIT"
 readme = "README.md"
-requires-python = "~=3.13.0"
+requires-python = ">=3.12,<3.15"
 keywords = [
     "optimal-transport",
     "word-movers-distance",
@@ -24,7 +24,9 @@ keywords = [
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Text Processing :: Linguistic",
@@ -40,6 +42,8 @@ dependencies = [
     "python-dotenv",
     "numpy",
     "pot",
+    "scipy",
+    "huggingface_hub",
     "transformers",
     "wtpsplit",
     "openvino",

@@ -1,0 +1,2 @@
+- 2026-10-10T00:34:48Z @kj acc-crit-structure-diff.md b28cf2c5 sha256:b24a38668de3490f37a223d374c2b4a554300aa2f6f18e60059413030cb3b775: legacy checklist without ids: one open line is ticked and pointed at the criterion that covers it
+- 2026-10-10T00:34:48Z @kj acc-crit-transport-map.md 646d0813 sha256:6e9ba04075e8cbbca30dfb37959aec74b711d5b1fcf1eab23a321903c4542680: legacy checklist without ids: one open line is ticked and pointed at the criterion that covers it

@@ -56,7 +56,7 @@ Optional interpretable output that separates content drift from rearrangement be
   - log: 2026-07-01 tested, regression `test_build_structural_details_duplicate_content_edit_does_not_leak_displacement` (v1.1.2)
 - [x] **Edge: unequal counts (aggregate)** - `n_a != n_b` handled; `order_gap` / `structure_closeness` are well-defined (the OT handles unbalanced marginals)
   - log: 2026-07-01 tested (v1.1.2)
-- [ ] **Edge: unequal counts (per-statement, real drop)** - when `n_a != n_b` because a statement is genuinely dropped, the alignment is non-bijective and `structure_displacement`'s rank transform is ill-defined; documented as a limitation, not solved (aggregate `order_gap` unaffected)
+- [x] **Edge: unequal counts (per-statement, real drop)** - when `n_a != n_b` because a statement is genuinely dropped, the alignment is non-bijective and `structure_displacement`'s rank transform is ill-defined; documented as a limitation, not solved (aggregate `order_gap` unaffected) - covered since 2026-10-10 by `ACC-MAP-60` in `../acc-crit-docdistance.md`: `matched_displacement` is the rank shift among the matched statements and `null` for a statement without a match
   - log: 2026-07-01 open limitation, no false passing test asserted
 - [x] **Docs** - README (Structure distance section, Which-distance pointer, Documentation list), `docs/solution/wmd-structure-distance-sota.md` (Status / Functions / Limitations / FAQ), api-reference, cli-reference, this acc-crit
   - log: 2026-07-01 documentation sweep (v1.1.2)

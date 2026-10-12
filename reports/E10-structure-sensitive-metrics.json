@@ -28,21 +28,21 @@
       "spearman": 1.0,
       "top_bin_rising": true,
       "collapses": false,
-      "shift_value": 0.00046591414372716846,
+      "shift_value": 0.00046610409882212107,
       "shift_pass": true,
       "shift_note": "OPW is index-intrinsic; absolute shift is invisible to it",
       "paraphrase_p95": 0.003849326238335704,
-      "paraphrase_median": 0.001917496362569493,
+      "paraphrase_median": 0.001917874091891536,
       "content_pass": true,
       "triangle_viol": 0.16,
       "diffuse_median": 0.04539805289685564,
       "per_bin_mean": [
-        0.03119015438200163,
-        0.15745128574521472,
-        0.2732513804703679,
-        0.3326343216233281,
-        0.3716529663228523,
-        0.41161899713183997
+        0.031190750532885093,
+        0.15743856964432187,
+        0.2732167719745235,
+        0.3325930373895272,
+        0.37160301610335755,
+        0.4115538603234779
       ],
       "opw_defaults": {
         "lambda1": 50.0,
@@ -59,7 +59,7 @@
       "collapses": false,
       "shift_value": 0.0,
       "shift_pass": true,
-      "paraphrase_p95": 0.2892857142857141,
+      "paraphrase_p95": 0.3116269841269841,
       "paraphrase_median": 0.046031746031746035,
       "content_pass": false,
       "triangle_viol_eqlen": 0.0,
@@ -117,18 +117,18 @@
       "shift_value": 0.0,
       "shift_pass": true,
       "paraphrase_p95": 6.533806831437267,
-      "paraphrase_median": 5.741796844565643,
+      "paraphrase_median": 5.74170546974942,
       "content_pass": false,
       "triangle_viol": 0.0,
       "diffuse_median": 3.9610811473528953,
       "gamma": 0.1,
       "per_bin_mean": [
-        0.4326045552394001,
-        1.88536191649929,
-        3.0874598274179963,
-        3.7339171850467383,
-        4.220336698423402,
-        4.812519713049387
+        0.4327003898010136,
+        1.8852469124415805,
+        3.0870858171152546,
+        3.7334238670475477,
+        4.219847564641667,
+        4.811962447389047
       ]
     }
   },
@@ -167,7 +167,7 @@
       "combined_property": true,
       "triangle_zero": true,
       "beats_E08_H44_on_combined": true,
-      "headline": "shift 0 vs paraphrase p95 0.289 (PASS); Spearman 1.00, top bin rises (PASS); paraphrase median 0.046 (FAIL); triangle 0"
+      "headline": "shift 0 vs paraphrase p95 0.312 (PASS); Spearman 1.00, top bin rises (PASS); paraphrase median 0.046 (FAIL); triangle 0"
     },
     "E10-H57": {
       "verdict": "Inconclusive",
@@ -220,17 +220,17 @@
       "sigma": 1.0
     },
     "paraphrase_target_cos": 0.875,
-    "paraphrase_realized_cos": 0.8749153696000576,
+    "paraphrase_realized_cos": 0.8749155290424824,
     "paraphrase_draws_per_base": 8,
     "codebook_threshold": 0.6,
     "lam_baseline": 0.25,
     "mono_bar": 0.9,
     "content_frac": 0.1,
-    "device": "NVIDIA RTX PRO 6000 Blackwell Max-Q Workstation Edition",
+    "device": "NVIDIA RTX PRO 4000 Blackwell",
     "baselines": {
       "posaug_combined_property": false,
       "posaug_shift_value": 0.10284987071751776,
-      "posaug_shift_norm": 0.4595721855176844,
+      "posaug_shift_norm": 0.45960483172293476,
       "posaug_scramble_spearman": 1.0,
       "naive_combined_property": true,
       "naive_shift_value": 0.0,

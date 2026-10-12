@@ -1,0 +1,70 @@
+{
+ "allow": "moved,n_moved",
+ "packages": [
+  {
+   "key": "review-followup",
+   "title": "the defect and the confirmed items that review run wf_366ba93d-451 handed to the orchestrator",
+   "items": [
+    "DEF-DEPS-17",
+    "ACC-TRANS-84"
+   ],
+   "files": [
+    "src/docdistance/config.py",
+    "src/docdistance/bootstrap.py",
+    "src/docdistance/encoders.py",
+    "src/docdistance/distance.py",
+    "src/docdistance/cli.py",
+    "tests/test_bootstrap.py",
+    "tests/test_e2e.py",
+    "tests/test_segmentation.py",
+    "tests/test_cli.py",
+    "docs/aws-deployment-reference.md",
+    "docs/cli-reference.md",
+    "docs/api-reference.md",
+    "README.md",
+    "CHANGELOG.md",
+    "docs/solution/wmd-docdistance-solution-sota.md",
+    "docs/solution/wmd-structure-distance-sota.md",
+    "docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+    "notebooks/05-kj-source-conditioned-distance.ipynb",
+    "reports/E13-campaign/checks/"
+   ],
+   "brief": "Read reports/E13-campaign/review-followup-brief.md in full. It lists one defect (G1, DEF-DEPS-17) and five entries (G2 to G6); each was confirmed against the tree at version 1.1.18. Apply every entry. Read `git diff HEAD --stat -- src tests` first: the tree holds the uncommitted build of the campaign. In `notes` report one line per entry G1 to G6: done or not done, and the test or the lines that changed. The item ACC-TRANS-84 is met by G2. No network request at any step: run every real-model step with HF_HUB_OFFLINE=1.",
+   "verify_note": "the brief of this package is reports/E13-campaign/review-followup-brief.md. Check every entry G1 to G6 against the tree: applied as written, or reported as not applied with a reason that holds. For G1 run the real-model test yourself and confirm by your own means that it fails without the two source edits (work on a copy of the tree under the session scratchpad, never revert files in the repository). For G5 run the script and compare its three readings with the ledger values. An entry applied beyond what it says is a finding. No network request: HF_HUB_OFFLINE=1 for every real-model step.",
+   "grounded": true
+  },
+  {
+   "key": "input-format",
+   "title": "HTML reader, format detector and the option input_format (user request of 2026-10-10)",
+   "items": [
+    "ACC-SEGM-85",
+    "ACC-SEGM-86",
+    "ACC-SEGM-87",
+    "ACC-CLI-88",
+    "ACC-SEGM-89",
+    "ACC-SEGM-90",
+    "ACC-SEGM-91",
+    "ACC-SEGM-92"
+   ],
+   "files": [
+    "src/docdistance/encoders.py",
+    "src/docdistance/pipeline.py",
+    "src/docdistance/cli.py",
+    "src/docdistance/__init__.py",
+    "tests/test_segmentation.py",
+    "tests/test_pipeline.py",
+    "tests/test_cli.py",
+    "tests/test_e2e.py",
+    "tests/test_sections.py",
+    "README.md",
+    "docs/cli-reference.md",
+    "docs/api-reference.md",
+    ".claude/skills/docdistance/SKILL.md",
+    "CHANGELOG.md"
+   ],
+   "brief": "Read reports/E13-campaign/input-format-brief.md in full: design, tests, documents, gates. The default reader does not change in this package; the default of the new option is plain. The package review-followup was built before this one in the same tree. In `notes` report the detector constants you ended with and any boundary case that forced a change.",
+   "verify_note": "the brief of this package is reports/E13-campaign/input-format-brief.md. Check each criterion against the code and by running the tests. Try to break `detect_format` and `html_to_markdown` with inputs of your own: malformed and nested HTML, markdown with inline HTML and with HTML blocks, an HTML fragment without html and body tags, a table cell that holds a pipe, entities, a document of 1 MB. Check that a call without input_format and without markdown is unchanged (the baseline line) and that the memo key separates the values. A design element the brief does not ask for is a finding.",
+   "grounded": true
+  }
+ ]
+}

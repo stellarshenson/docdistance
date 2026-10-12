@@ -1,0 +1,1260 @@
+{
+ "results": [
+  {
+   "id": "E13-H70",
+   "slug": "matched-order-gap",
+   "result": {
+    "id": "E13-H70",
+    "slug": "matched-order-gap",
+    "model": "opus",
+    "verdict": "Promoted",
+    "verdict_number": "280/280 order-preserving deletion cases read <= 0.005 under the matched order gap at c = 0.6 (median at k=2 0.134041 → 9.671e-05); deleted-only against reordered-and-deleted AUC 0.999903; 1847/1847 fully matched equal-length fixture pairs exactly equal to shipped opw_gap; the registered sets hold documents of 11 to 14 statements with 0 repeated statements",
+    "kill_gate": {
+     "ran": true,
+     "passed": true,
+     "reading": "max opw_gap(B, B) over the 10 base documents 8.583e-04 (haiku), 17.17% of the ceiling 0.005; smallest 1.616e-04 (gold); with the second argument passed as a copy the max is 8.602e-04. The gate covers documents of 11 to 14 statements. Outside the gate (third pass, fixture document source with its 9 repeated statements removed) opw_gap(P, P) reads 2.562e-03 at 20 statements, 5.182e-03 at 30 and 6.786e-03 at 53"
+    },
+    "sanity_check": {
+     "required": true,
+     "passed": true,
+     "reading": "280 E12-H62 deletion cases rebuilt with the E12-H62 code and seed; shipped median at k=2 0.134041 against the saved 0.134041 (|dev| 1.3e-07, tolerance 0.0005, an executor value); largest |dev| over the 12 saved median / min / max values 4.9e-07; 280/280 shipped readings above 0.005"
+    },
+    "prediction_check": {
+     "predicted": "deletion cases fall from median 0.134 (k=2) to at or below 0.005; reordered-and-deleted cases stay near their reorder rung",
+     "observed": "median at k=2 0.134041 → 9.671e-05; matched medians after the k=2 deletion 0.20454 / 0.30459 / 0.37089 / 0.40532 / 0.42541 at rungs 2 to 6 against reorder-only medians 0.15524 / 0.25920 / 0.34850 / 0.40234 / 0.42441 (ratio 1.318 at rung 2 falling to 1.002 at rung 6); rungs retained: 5/5 under the executor rule (matched median strictly between the reorder-only medians of the adjacent rungs), 4/5 under the nearest-median rule; control: the executor rule applied to the shipped medians after the deletion retains 3/5. The deletion half has a direction the record defines and it matched; the rung half is a size claim for which the record defines no rule, so direction_matched rests on the deletion half",
+     "direction_matched": true
+    },
+    "acceptance": {
+     "bar": "PASS iff >= 95% of the 280 order-preserving deletion cases read <= 0.005 AND deleted-only against reordered-and-deleted cases (swap level at or above the E11 rung-2 level, k=2 deletions) separate at AUC >= 0.95 AND the value is bit-identical (np.array_equal) to shipped opw_gap on every fully matched equal-length pair of the structure fixture",
+     "met": true,
+     "readings": {
+      "clause_1_deletions": "280/280 = 1.0000 read <= 0.005 (bar >= 0.95); largest matched reading 6.101e-04; the matching recovered exactly the surviving statements in 280/280 cases; the 10 base documents hold 0 repeated statements, so the zero-cost assignment is unique and this count has one possible value on the registered set; met by construction once the matching is exact, because the survivors are byte-identical",
+      "clause_2_separation": "AUC 0.999903 (bar >= 0.95), 70 deleted-only (k=2) against 10010 reordered-and-deleted (rung >= 2, k=2); shipped baseline 0.950980, which also clears the bar; rung 2 positives only: shipped 0.818067, matched 0.999490",
+      "clause_3_bit_identity": "np.array_equal True on 1847 eligible pairs (1913 fixture pairs, 1847 of equal length, all 1847 fully matched at c = 0.6); 1847/1847 exactly equal, largest |difference| 0.0; met by construction: the prototype passes a fully matched equal-length pair to opw_gap unmodified; the 66 pairs of unequal length are outside the clause"
+     }
+    },
+    "guardrails": {
+     "V": "0/24",
+     "src_untouched": true,
+     "metric_property": "stated, not tested - shipped opw_gap is a score (E11 triangle-violation rate 0.15) and is not edited; the matched gap is a notebook prototype and a score; no triangle test was run on it",
+     "notes": "Rows that can fail: V 0/24 on the ibm panel, boundary margin +4.71 pts, equal to the primer naive row; sha256 over src/**/*.py and tests/**/*.py unchanged between the first and the last cell (src be7e159f81c53284, tests 00ea6c7799307adb); git status src/ tests/ clean. Rows that compare two calls inside one kernel: default-path smd 0.22343884174015136 and order gap 0.1343654387715936 on (gold, gold-2) np.array_equal True; the 280 shipped deletion readings recomputed np.array_equal True. No edit under src/, docs/ or tests/"
+    },
+    "key_numbers": {
+     "kill_gate_max_identity_gap": 0.000858319,
+     "kill_gate_bar": 0.005,
+     "kill_gate_n_statements_min": 11,
+     "kill_gate_n_statements_max": 14,
+     "repeated_statements_in_base_documents": 0,
+     "shipped_median_k2": 0.134041,
+     "matched_median_k2": 9.67076e-05,
+     "deletion_within_bar": 280,
+     "deletion_n": 280,
+     "deletion_share": 1,
+     "matched_max_deletion": 0.000610062,
+     "matched_median_per_k": {
+      "1": 0.000205635,
+      "2": 9.67076e-05,
+      "3": 3.62672e-05,
+      "4": 9.2663e-06
+     },
+     "shipped_median_per_k": {
+      "1": 0.0716454,
+      "2": 0.134041,
+      "3": 0.121486,
+      "4": 0.155277
+     },
+     "matching_recovered_survivors": 280,
+     "auc_matched": 0.999903,
+     "auc_shipped": 0.95098,
+     "auc_matched_excluding_order_kept": 1,
+     "auc_rung2_matched": 0.99949,
+     "auc_rung2_shipped": 0.818067,
+     "n_negatives": 70,
+     "n_positives": 10010,
+     "unique_permutations": 1611,
+     "order_kept_positives": 1,
+     "largest_deleted_only_matched": 0.000363191,
+     "smallest_positive_not_order_kept_matched": 0.0507527,
+     "fixture_pairs": 1913,
+     "eligible_pairs": 1847,
+     "exactly_equal_pairs": 1847,
+     "exactly_equal_without_full_match_branch": 1837,
+     "max_abs_diff_without_full_match_branch": 2.10843e-06,
+     "rungs_tested": 5,
+     "rungs_retained_executor_rule": 5,
+     "rungs_retained_nearest_median_rule": 4,
+     "rungs_retained_shipped_medians_executor_rule": 3,
+     "matched_over_reorder_only_ratio_per_rung": {
+      "2": 1.31759,
+      "3": 1.17512,
+      "4": 1.06425,
+      "5": 1.00739,
+      "6": 1.00234
+     },
+     "spearman_matched_vs_reorder_only": 0.805787,
+     "sensitivity_inert_on_registered_sets": true,
+     "sensitivity_eligible_pairs_per_cutoff": {
+      "0.35": 1840,
+      "0.45": 1845,
+      "0.6": 1847
+     },
+     "sensitivity_auc_per_cutoff": {
+      "0.35": 0.999903,
+      "0.45": 0.999903,
+      "0.6": 0.999903
+     },
+     "second_pass_reworded_within_bar_per_cutoff": {
+      "0.35": 280,
+      "0.45": 280,
+      "0.6": 280
+     },
+     "second_pass_reworded_matched_median": 0.000218496,
+     "second_pass_reworded_matched_max": 0.00175157,
+     "second_pass_reworded_shipped_within_bar": 0,
+     "second_pass_reworded_shipped_median": 0.0763866,
+     "second_pass_true_pair_cost_max": 0.322901,
+     "second_pass_equal_length_paraphrase_gap_max": 0.00241448,
+     "third_pass_document_statements": 62,
+     "third_pass_repeated_statements": 9,
+     "third_pass_statements_after_removal": 53,
+     "third_pass_cases_per_arm": 120,
+     "third_pass_kept_survivors_recovered": 88,
+     "third_pass_kept_deletions_that_removed_a_repeated_statement": 43,
+     "third_pass_kept_not_recovered_among_those": 32,
+     "third_pass_kept_not_recovered_among_the_others": 0,
+     "third_pass_kept_matched_above_bar": 23,
+     "third_pass_kept_matched_above_bar_with_survivors_recovered": 0,
+     "third_pass_kept_matched_above_shipped": 21,
+     "third_pass_kept_matched_max": 0.324574,
+     "third_pass_kept_shipped_at_matched_max": 0.0586776,
+     "third_pass_removed_survivors_recovered": 120,
+     "third_pass_removed_matched_equal_to_identity_gap": 120,
+     "third_pass_removed_matched_above_bar": 63,
+     "third_pass_removed_matched_above_bar_per_length": {
+      "14": 0,
+      "20": 0,
+      "30": 3,
+      "40": 20,
+      "50": 20,
+      "53": 20
+     },
+     "third_pass_removed_matched_above_shipped": 0,
+     "third_pass_removed_matched_max": 0.0070473,
+     "third_pass_removed_shipped_median": 0.0412867,
+     "third_pass_removed_matched_median": 0.00531817,
+     "third_pass_identity_gap_per_length_kept": {
+      "14": 0.000135925,
+      "20": 0.00127942,
+      "30": 0.00235827,
+      "40": 0.00333976,
+      "50": 0.00438926,
+      "62": 0.00460675
+     },
+     "third_pass_identity_gap_per_length_removed": {
+      "14": 0.000666722,
+      "20": 0.00256189,
+      "30": 0.00518178,
+      "40": 0.00616366,
+      "50": 0.00663546,
+      "53": 0.00678594
+     },
+     "third_pass_removed_smallest_prefix_with_identity_gap_above_bar": 30,
+     "unequal_length_pairs": 66,
+     "unequal_length_matched_below_shipped": 42,
+     "unequal_length_matched_above_shipped": 24,
+     "unequal_length_shipped_median": 0.043782,
+     "unequal_length_matched_median": 0.0199738,
+     "unequal_length_matched_within_bar": 22,
+     "unequal_length_matched_max": 0.162117,
+     "unequal_length_shorter_fully_matched": 59,
+     "panel_margin_pts": 4.7083
+    },
+    "result_summary": "The matched order gap (shipped opw_gap over the one-to-one matched statement pairs, unit-capacity assignment on min(cost, c), c = 0.6) meets all three clauses of the registered bar: the verdict is Promoted. The verdict holds for the scope of the registered sets, documents of 11 to 14 statements with 0 repeated statements. Kill-gate passed: the identity order gap is at most 8.583e-04 on the 10 base documents. The harness reproduced the E12-H62 shipped median 0.134041 at k=2 on the rebuilt 280 cases. Clause 1: 280/280 order-preserving deletion cases read <= 0.005, largest reading 6.101e-04, median at k=2 0.134041 → 9.671e-05. Clause 2: 70 deleted-only against 10010 reordered-and-deleted cases separate at AUC 0.999903 (shipped baseline 0.950980). Clause 3: 1847/1847 fully matched equal-length fixture pairs equal shipped opw_gap exactly. Clauses 1 and 3 are met by construction on the registered sets and the shipped baseline also clears clause 2; clause 1 is the only clause on which lever and baseline differ (280/280 matched readings at or below 0.005, 280/280 shipped readings above it). Reorder rungs after a k=2 deletion: 5/5 retained under the executor rule, 4/5 under the nearest-median rule. Two limits were measured outside the bar, on the 62-statement fixture document source (k=2 interior deletions on prefixes, 120 cases per arm). Limit 1, repeated statements: the document holds 9 statements with the text '-', the matching is not unique, it recovers the survivors in 88/120 cases, and the matched gap reads above 0.005 in 23/120 cases and above the shipped gap in 21/120 (largest 0.3246 against shipped 0.0587). Limit 2, document length: with the 9 repeated statements removed the matching recovers the survivors in 120/120 cases and the matched gap is above the shipped gap in 0/120, but it reads above 0.005 in 63/120, because the identity floor opw_gap(P, P) of shipped opw_gap is 5.182e-03 at 30 statements and 6.786e-03 at 53. Guardrails hold: V 0/24, src and tests unchanged. A build needs a held-out measurement on documents with repeated statements and on documents above 14 statements; a tie-break rule for the matching and a length-dependent ceiling are new mechanisms and were not added.",
+    "artifacts": {
+     "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H70-kj-matched-order-gap.ipynb",
+     "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H70-matched-order-gap-metrics.json",
+     "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H70-matched-order-gap.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "1. Scope. The registered bar is read on the 10 base documents: 11 to 14 statements each, 0 repeated statements. The verdict Promoted follows from the literal bar on those sets and does not extend beyond them. 2. Repeated statements (verifier finding 1, reproduced in the third pass of the notebook, outside the bar). The fixture document source holds 62 statements, 9 of them the text '-'. Identical statements give the assignment cost ties, so the matching is not unique. 43 of 120 deletions removed a repeated statement; the matching did not recover the survivors in 32 of those 43 and in 0 of the other 77. The matched gap reads above 0.005 in 23/120 cases and above the shipped gap in 21/120; largest reading 0.3246 against shipped 0.0587 (prefix 30). The clause 1 control 'matching recovered the survivors in 280/280 cases' has one possible value on the registered sets. Deferred to the build: a held-out measurement of the deletion clause on documents with repeated statements, as an acceptance criterion. A tie-break rule inside the matching is a new mechanism; it was not added and is the adjudicator's decision. Statements that are near-identical but not byte-identical were not measured. 3. Document length (verifier finding 5, extended in the third pass). The kill-gate was read as registered and covers documents of 11 to 14 statements. The identity floor of shipped opw_gap grows with length. On source with the repeated statements kept, opw_gap(P, P) reads 1.279e-03 at 20 statements, 2.358e-03 at 30, 3.340e-03 at 40, 4.389e-03 at 50 and 4.607e-03 at 62. With the 9 repeated statements removed (53 statements) it reads 2.562e-03 at 20, 5.182e-03 at 30, 6.164e-03 at 40 and 6.786e-03 at 53: above the ceiling 0.005 from 30 statements. In that arm the matching recovers the survivors in 120/120 cases, the matched gap equals the identity gap of the shortened document in 120/120, it is above the shipped gap in 0/120 (shipped median 0.04129, matched median 5.318e-03), and it is above 0.005 in 63/120 (0, 0, 3, 20, 20, 20 of 20 at prefix lengths 14, 20, 30, 40, 50, 53). From 30 statements in that arm no reading built on opw_gap can meet the ceiling. This is one document. A length-dependent ceiling would be a new mechanism and was not added. Deferred to the build: a held-out measurement on documents above 14 statements. 4. The cutoff c is inert in this experiment: at 0.35, 0.45 and 0.6 the per-case readings are exactly equal on the 280 deletion cases, on the 10010 positives and on the 280 reworded cases of the second pass (all 124 true pairs cost at most 0.322901; in a pure deletion the removed statements stay unmatched because the shorter document has no free statement). The run gives no evidence for or against the value 0.6; a set with statements lacking a counterpart on both sides (substitution, two-sided insertion) would be needed. 5. Clause 1 holds by construction once the matching is correct: the registered survivors are byte-identical, so the matched gap is the identity order gap of the shortened document. 6. The shipped baseline also clears the pooled AUC bar of clause 2 (0.950980); the lever is separated from the baseline by clause 1 and by the per-rung AUC (rung 2: 0.818067 → 0.999490). 7. Clause 3 holds by construction of the prototype: a fully matched equal-length pair is passed to opw_gap unmodified. Without that branch 1837/1847 are equal; the 10 identity pairs differ by at most 2.108e-06 because POT zeroes the ground-cost diagonal only when both arguments are the same object. A build needs this branch. 1820 of the 1847 eligible pairs are reorder-pool entries. 8. The rule for 'near its reorder rung' is not in the record. The executor wrote two rules; the repository does not prove that either was chosen before the readings were seen, because the notebook was executed more than once. Executor rule (matched median strictly between the reorder-only medians of the adjacent rungs): 5/5 rungs. Nearest-median rule: 4/5 rungs (the rung-3 matched median 0.30459 is nearer to the rung-4 reorder-only median 0.34850 than to its own 0.25920). The executor rule is wide; applied to the shipped medians after the deletion it retains 3/5. The matched median after a deletion is above the reorder-only median by a factor of 1.318 at rung 2 (1.002 at rung 6). The prediction is not a clause of the bar. direction_matched is true on the deletion half, whose direction the record defines; the rung half is a size claim with no record-defined rule. 9. Other executor readings of the record: rung 2 or above = normalized footrule displacement >= 0.166667, the lower edge of the second of the 6 equal-width E11 bins; positive class = the 7 k=2 deletion plans applied to positions of the reordered document, over 1611 unique permutations of the 1820 pool entries; the section-swap family enters clause 3 as 10 identity pairs; the sanity tolerance 0.0005 is an executor value with the same standing as the rung rules. 10. 1 of 10010 positives has its survivors in original order after the deletion and reads 1.737e-05; the low reading is correct for that case. 11. The 66 fixture pairs of unequal length are outside the bar (verifier finding 4). The matched gap reads below the shipped gap in 42 pairs and above it in 24; the median moves from 0.0438 to 0.0200; 22 pairs read <= 0.005 against 0 under the shipped gap; largest matched reading 0.1621; every statement of the shorter document is matched in 59/66 pairs. No ground truth exists for these pairs: this is a reading, not a test, and it needs a ground truth before the matched gap is used for a structural verdict on such pairs. 12. The second pass (reworded survivors), the third pass (repeated statements and length) and the table of unequal-length pairs are executor additions outside the registered bar. None of them enters the verdict. 13. Not measured: insertions, substitutions, rewords that cost more than the cutoff, a triangle test of the matched gap. 14. Guardrail rows that can fail: V, the sha256 comparison of src and tests, git status. The two default-path rows compare two calls of the unmodified shipped functions inside one kernel and detect a change made during the run only. The metric-property row is a statement, not a test (verifier finding 6). 15. Other processes executed notebooks on this machine during the run; no timing is quoted. Against the pre-repair metrics JSON, every registered reading is unchanged: the only differences are the renamed rung keys, the metric-property text and the added blocks."
+   },
+   "verify": {
+    "id": "E13-H70",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "CONFIRMED, axis 6 (criterion exercised). All three clauses are met by a matcher that pairs byte-identical statements only. The cost-based assignment among non-identical statements and the cutoff c = 0.6 are not exercised by the registered sets, so the verdict Promoted carries no measurement of c.",
+      "evidence": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H70-kj-matched-order-gap.ipynb cell 44 output: per-case readings at c = 0.35, 0.45, 0.6 are np.array_equal on the 280 deletion cases and the 10010 positives. Cell 22: `CLAUSE1_MET = bool(DEL_SHARE >= DELETION_SHARE_BAR)`, recovered 280/280 with 0 repeated statements, so each clause 1 reading is the identity order gap of a shortened base document (max 6.101e-04), a value the kill-gate already bounds (max 8.602e-04 with the second argument copied). Clause 1 has no reachable failing outcome once the gate passes. The executor discloses this (caveats 4 and 5). Materiality: no user is harmed by the notebook; the risk is stage B, where /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/README.md step 4 fills build-args.json with 'the measured cutoff'. Moves no verdict: the bar is applied literally. Remedy: DEFER - the build criterion states that c = 0.6 is unmeasured and requires a held-out set with unmatched statements on both sides before the cutoff is treated as calibrated."
+     },
+     {
+      "severity": "minor",
+      "claim": "CONFIRMED, axis 1 (falsifiability). Clause 3 compares a call with itself, and it depends on a pass-through branch that the registered method does not name.",
+      "evidence": "Cell 20: `if len(rows) == len(A) == len(B): return opw_gap(A, B), len(rows)`; cell 33 reference: `\"shipped\": opw_gap(A, B)`; cell 34: `BIT_IDENTICAL = bool(np.array_equal(eligible_df[REG].to_numpy(), eligible_df[\"shipped\"].to_numpy()))`. On every eligible pair both sides are the same call on the same objects. Without the branch the notebook reads 1837/1847 (largest difference 2.108e-06), so np.array_equal would be False. The 10 differing pairs are the same-object identity pairs that the executor itself enumerated for the section_swap family; with those pairs excluded the clause holds without the branch, so both consistent readings meet the clause. The branch changes no clause 1 or clause 2 reading (those pairs have unequal length). Disclosed in caveat 7. Moves no verdict. Remedy: record the branch as a build requirement with a test that fails on the always-indexed form."
+     },
+     {
+      "severity": "minor",
+      "claim": "CONFIRMED, axis 4 (control adequacy). The pooled AUC of clause 2 does not separate the lever from the baseline, and for the lever it is determined by earlier results.",
+      "evidence": "Cell 28 output: shipped AUC 0.950980 against the bar 0.95, matched 0.999903; `CLAUSE2_MET = bool(AUC_MATCHED >= AUC_BAR)`. With byte-identical survivors the matched reading of a positive is shipped opw_gap on an equal-length reordered pair (E11 ladder) and the reading of a negative is the identity floor (kill-gate). Only the 1 order-kept positive of 10010 can fall below a negative. The per-rung rows do separate lever and baseline (rung 2: 0.818067 against 0.999490). Disclosed in caveat 6. The executor reading 'rung 2 or above = displacement >= 1/6' agrees with E11 (N_BINS = 6, `(disp >= lo) & (disp < hi)`) and with the ledger use of 'rung-2' in E12-H59; I recomputed 1430 unique permutations x 7 plans = 10010. Moves no verdict."
+     },
+     {
+      "severity": "minor",
+      "claim": "CONFIRMED, axis 3 (pre-registration). The rung half of the prediction is scored by two rules written after the record, and the notebook was executed more than once. The stricter rule fails at rung 3.",
+      "evidence": "Cell 40: `retained_under_executor_rule` accepts any matched median strictly between the reorder-only medians of the two adjacent rungs, which allows a shift of almost one full rung; result 5/5. Nearest-median rule: 4/5 (rung 3 matched median 0.30459 is nearer to the rung 4 median 0.34850 than to its own 0.25920). Matched over reorder-only ratio 1.318 at rung 2 and 1.175 at rung 3. The control on the shipped medians retains 3/5, so the wide rule can fail. direction_matched = true rests on the deletion half (0.134041 → 9.671e-05), which the record defines. Disclosed in caveat 8. The label is Promoted, not Confirmed, so the label does not depend on the prediction. Remedy: the ledger entry records the rung half as 4/5 under the stricter rule with the 17.5% to 31.8% excess at rungs 2 and 3, not as held."
+     },
+     {
+      "severity": "minor",
+      "claim": "CONFIRMED, axis 4. The V guardrail is measured but cannot respond to the lever, and the notebook hash does not cover docs/.",
+      "evidence": "Cell 58: `V = int(sum(1 for g in gold_labels for a in adv_labels if panel_dist[g] >= panel_dist[a]))` with `panel_dist` from shipped `smd`; the matched order gap never enters smd, so V moves only if the environment or src/ changes. The result lists V under 'rows that can fail' without that qualification. `GUARD_FOLDERS = (\"src\", \"tests\")` hashes .py files only. I checked the rest by git: src/, tests/ and data/ are clean; docs/acc-crit-docdistance.md adds ACC-GEOM-44 to 46 (E14-H77, stamped 2026-10-09T09:39:18Z @kj); the ledger diff for E13-H70 is the registration block and the lock, with no Result or Verdict line; docs/defects-docdistance.md was last written 2026-10-07. None of these edits belongs to this hypothesis. Moves no verdict."
+     },
+     {
+      "severity": "minor",
+      "claim": "SUSPECTED, unverifiable statement. Caveat 15 says every registered reading is unchanged against the pre-repair metrics JSON.",
+      "evidence": "No pre-repair copy of /home/lab/workspace/learning/projects/docdistance/reports/E13-H70-matched-order-gap-metrics.json exists on disk, so the statement cannot be checked. It decides no clause. Remedy: remove the sentence from the recorded result or keep the pre-repair file beside the result."
+     }
+    ],
+    "notes": "VERDICT: SHIP. Promoted stands as a literal reading of the registered bar; no corrected verdict.\n\nThe 10 checks:\n1. Kill-gate: ran at execution count 7, before the sanity check (9-10) and the lever (11 onward). `KILL_GATE_PASSED = bool(KILL_GATE_MAX <= GAP_BAR)` on opw_gap(B, B) over the 10 base documents, max 8.583e-04. Read as registered.\n2. Bar: applied literally. Clause 1 280/280 against 95%, clause 2 AUC 0.999903 against 0.95, clause 3 np.array_equal True on 1847 pairs, cutoff c = NO_COUNTERPART_COST = 0.6, matching by linear_sum_assignment on min(cost, c) with pairs at cost >= c dropped. No goalpost moved, no guardrail dropped.\n3. Numbers: every value in key_numbers appears in notebook outputs; the JSON block printed by the last cell equals the metrics file on every key (file size 21230 bytes, as printed).\n4. Guardrails: V counted (0/24, margin +4.71), sha256 of src and tests compared before and after, git status read, default path compared with np.array_equal. The metric-property row is a statement, and the result says so.\n5. Sanity check: the deletion builder matches E12-H62 cell 18 (same function, same seed [SEED, base index, k, rep]); shipped median at k=2 0.134041 against the saved 0.134041; the 12 saved values agree within 4.9e-07 (the saved values are rounded to 6 decimals).\n6. Errors and log: 0 error outputs, execution counts 1 to 35 in sequence. The log reports 955340 written; the notebook holds 955340 characters (986664 bytes in UTF-8).\n7. Label: Promoted is in the closed set and matches 'a toggle or build that met its bar'.\n8. Prediction: the deletion half held; the rung half is reported under two rules with the weaker outcome shown (finding 4).\n9. Thresholds: 0.005, 0.95, 95% and c = 0.6 come from the record; the rung boundary 1/6 comes from E11. The sanity tolerance 0.0005 and the two rung rules are executor values and decide no clause.\n10. Tree: src/, tests/ and data/ are clean; the docs/ and ledger edits are orchestrator entries unrelated to an H70 result.\n\nFor the adjudicator, outside the verdict: the registered sets hold documents of 11 to 14 statements with no repeated statement. The executor's third pass, on the 62-statement fixture document, reads the matched gap above the shipped gap in 21 of 120 cases when repeated statements are present (largest 0.3246 against 0.0587), and reads the identity floor of shipped opw_gap above 0.005 from 30 statements once they are removed. Documents of that kind are inside the product's input universe, so the stage B criterion for this lever needs the two held-out measurements the executor names. This does not change the label under the primer's rules.\n\nI did not re-run any computation; every check above is from the saved notebook outputs, the metrics JSON, the log, the fixture files and git."
+   },
+   "repaired": true
+  },
+  {
+   "id": "E13-H71",
+   "slug": "partial-matching-map",
+   "result": {
+    "id": "E13-H71",
+    "slug": "partial-matching-map",
+    "model": "opus",
+    "verdict": "Promoted",
+    "verdict_number": "A → B: held-out macro-F1 0.9772 against 0.3130 for the shipped flags (gain +0.6642) at c = 0.3250; B → A: held-out macro-F1 0.9457 against 0.3266 for the shipped flags (gain +0.6191) at c = 0.3100",
+    "kill_gate": {
+     "ran": true,
+     "passed": true,
+     "reading": "calibration half A: best balanced accuracy 0.9915 for any cutoff in (0.2978, 0.2990], n = 59 statements; calibration half B: best balanced accuracy 0.9914 for any cutoff in (0.2621, 0.2672], n = 58 statements; gate threshold 0.9"
+    },
+    "sanity_check": {
+     "required": true,
+     "passed": true,
+     "reading": "10 of 10 base documents align one-to-one with their back-translation (equal length, identity optimal under the shipped ground cost and under a lexical cost, exact re-segmentation); excluded: none; the first list element is an H1 title line on 7 of 10 files and was dropped there"
+    },
+    "prediction_check": {
+     "predicted": "removed / added F1 >= 0.9 against <= 0.3 for the shipped flags; the cutoff lands between 0.348 and 0.6",
+     "observed": "partial matching removed / added F1 minimum over the two directions 0.9441 / 0.9030 (held); shipped flags removed / added F1 maximum 0.0000 / 0.0392 (held); calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6) (falsified)",
+     "direction_matched": true
+    },
+    "acceptance": {
+     "bar": "held-out macro-F1 over {kept, removed, added} >= 0.9 AND >= +0.3 above the shipped-flag baseline on the same labels, c chosen on the calibration split only, both directions",
+     "met": true,
+     "readings": {
+      "A → B": {
+       "cutoff": 0.325,
+       "macro_f1_partial_matching": 0.9772,
+       "macro_f1_shipped_flags": 0.313,
+       "gain": 0.6642,
+       "met": true
+      },
+      "B → A": {
+       "cutoff": 0.31,
+       "macro_f1_partial_matching": 0.9457,
+       "macro_f1_shipped_flags": 0.3266,
+       "gain": 0.6191,
+       "met": true
+      }
+     }
+    },
+    "guardrails": {
+     "V": "0/24",
+     "src_untouched": true,
+     "metric_property": "untouched - the map is an annotation read from the shipped cost matrix, not a distance; smd np.array_equal before/after: True, order_gap np.array_equal before/after: True (10 anchor pairs each)",
+     "notes": "source-tree fingerprint start = end: True; git status for src and tests: empty; instance overrides (embed_statements wrapper, pinned segmenter) removed after the loop: True"
+    },
+    "key_numbers": {
+     "n_pairs_scored": 900,
+     "n_pairs_built": 900,
+     "n_pairs_segmentation_pinned": 37,
+     "cutoff_half_A": 0.325,
+     "cutoff_half_B": 0.31,
+     "cutoff_all_bases_in_sample": 0.325,
+     "gate_balanced_accuracy_half_A": 0.9915,
+     "gate_balanced_accuracy_half_B": 0.9914,
+     "true_pair_cost_max": 0.3229,
+     "nearest_non_counterpart_cost_min": 0.2672,
+     "held_out": {
+      "A → B": {
+       "cutoff": 0.325,
+       "calibration_macro_f1": 0.9674,
+       "calibration_cutoff_range_at_or_above_bar": [
+        0.28,
+        0.44
+       ],
+       "n_pairs": 450,
+       "n_statements": 10440,
+       "gain": 0.6642,
+       "partial_matching": {
+        "macro_f1": 0.9772,
+        "f1": {
+         "kept": 0.9959,
+         "removed": 0.9831,
+         "added": 0.9525
+        },
+        "precision": {
+         "kept": 0.9938,
+         "removed": 1,
+         "added": 0.969
+        },
+        "recall": {
+         "kept": 0.9981,
+         "removed": 0.9667,
+         "added": 0.9367
+        }
+       },
+       "shipped_flags": {
+        "macro_f1": 0.313,
+        "f1": {
+         "kept": 0.939,
+         "removed": 0,
+         "added": 0
+        },
+        "precision": {
+         "kept": 0.8851,
+         "removed": 0,
+         "added": 0
+        },
+        "recall": {
+         "kept": 1,
+         "removed": 0,
+         "added": 0
+        }
+       }
+      },
+      "B → A": {
+       "cutoff": 0.31,
+       "calibration_macro_f1": 0.979,
+       "calibration_cutoff_range_at_or_above_bar": [
+        0.24,
+        0.455
+       ],
+       "n_pairs": 450,
+       "n_statements": 10620,
+       "gain": 0.6191,
+       "partial_matching": {
+        "macro_f1": 0.9457,
+        "f1": {
+         "kept": 0.9901,
+         "removed": 0.9441,
+         "added": 0.903
+        },
+        "precision": {
+         "kept": 0.9918,
+         "removed": 0.9318,
+         "added": 0.8912
+        },
+        "recall": {
+         "kept": 0.9884,
+         "removed": 0.9567,
+         "added": 0.915
+        }
+       },
+       "shipped_flags": {
+        "macro_f1": 0.3266,
+        "f1": {
+         "kept": 0.9407,
+         "removed": 0,
+         "added": 0.0392
+        },
+        "precision": {
+         "kept": 0.888,
+         "removed": 0,
+         "added": 1
+        },
+        "recall": {
+         "kept": 1,
+         "removed": 0,
+         "added": 0.02
+        }
+       }
+      }
+     },
+     "cutoff_range_both_halves_at_or_above_bar": [
+      0.28,
+      0.44
+     ],
+     "macro_f1_at_fixed_cutoffs": {
+      "0.280": {
+       "half_A": 0.9087,
+       "half_B": 0.9593,
+       "all": 0.9333
+      },
+      "0.300": {
+       "half_A": 0.947,
+       "half_B": 0.9593,
+       "all": 0.9531
+      },
+      "0.310": {
+       "half_A": 0.9457,
+       "half_B": 0.979,
+       "all": 0.9621
+      },
+      "0.325": {
+       "half_A": 0.9674,
+       "half_B": 0.9772,
+       "all": 0.9723
+      },
+      "0.350": {
+       "half_A": 0.9538,
+       "half_B": 0.9665,
+       "all": 0.9602
+      },
+      "0.400": {
+       "half_A": 0.9287,
+       "half_B": 0.9441,
+       "all": 0.9364
+      },
+      "0.440": {
+       "half_A": 0.9027,
+       "half_B": 0.9167,
+       "all": 0.9098
+      },
+      "0.500": {
+       "half_A": 0.8691,
+       "half_B": 0.8492,
+       "all": 0.8593
+      },
+      "0.600": {
+       "half_A": 0.7828,
+       "half_B": 0.7713,
+       "all": 0.7771
+      }
+     },
+     "per_base_macro_f1_partial_matching_min": 0.8686,
+     "per_base_macro_f1_partial_matching_max": 1,
+     "kept_counterpart_partial_matching": "9244/9330 = 0.9908",
+     "kept_counterpart_shipped_heaviest_target": "9286/9330 = 0.9953",
+     "removed_statements_above_shipped_cut": "0/1200 = 0.0000",
+     "added_statements_above_shipped_cut": "12/1200 = 0.0100",
+     "shipped_targets_per_statement": {
+      "deletion": 1.7179,
+      "insertion": 2.0598,
+      "replacement": 1
+     },
+     "no_edit_control_read_as_removed": "1/117 = 0.0085",
+     "replacement_pair_below_applied_cutoff": {
+      "sibling summary": "16/248 = 0.0645",
+      "other article or section": "0/352 = 0.0000"
+     },
+     "secondary_macro_f1": {
+      "population cutoff, half A → half B": {
+       "cutoff": 0.2984,
+       "partial_matching": 0.9593,
+       "shipped_flags": 0.313
+      },
+      "population cutoff, half B → half A": {
+       "cutoff": 0.2647,
+       "partial_matching": 0.8461,
+       "shipped_flags": 0.3266
+      },
+      "shipped segmentation only, half A → half B": {
+       "cutoff": 0.325,
+       "partial_matching": 0.9773,
+       "shipped_flags": 0.3132
+      },
+      "shipped segmentation only, half B → half A": {
+       "cutoff": 0.31,
+       "partial_matching": 0.9467,
+       "shipped_flags": 0.3278
+      },
+      "article split, ibm → wergeland": {
+       "cutoff": 0.325,
+       "partial_matching": 1,
+       "shipped_flags": 0.3295
+      },
+      "article split, wergeland → ibm": {
+       "cutoff": 0.295,
+       "partial_matching": 0.9185,
+       "shipped_flags": 0.3156
+      },
+      "in-sample, all bases → all bases": {
+       "cutoff": 0.325,
+       "partial_matching": 0.9723,
+       "shipped_flags": 0.3199
+      }
+     }
+    },
+    "result_summary": "Promoted. Held-out macro-F1 of the unit-capacity partial matching is 0.9772 (c = 0.3250 chosen on half A, scored on half B) and 0.9457 (c = 0.3100 chosen on half B, scored on half A), against 0.3130 and 0.3266 for the shipped flags on the same labels (gain +0.6642 and +0.6191). Bar met: True. Minimum removed / added F1 over the two directions: 0.9441 / 0.9030 for the partial matching, maximum 0.0000 / 0.0392 for the shipped flags. Kept statements pointed at their true counterpart: 9244/9330 = 0.9908 against 9286/9330 = 0.9953 for the shipped heaviest target. Calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6): outside. No-edit control (unedited base against its back-translation): 1/117 = 0.0085 statements read as removed. Per scored base document the macro-F1 runs from 0.8686 (haiku) to 1.0000. Every cutoff in [0.280, 0.440] keeps both halves at or above 0.9. Fixture: 900 edited pairs over 10 base documents.",
+    "artifacts": {
+     "notebook": "notebooks/experiments/E13-H71-kj-partial-matching-map.ipynb",
+     "metrics_json": "reports/E13-H71-partial-matching-map-metrics.json",
+     "log": "logs/E13-H71-partial-matching-map.log",
+     "checkpoint": "data/interim/E13-H71/shipped-readings-00900-3e396129ed50.json"
+    },
+    "notebook_errors": 0,
+    "caveats": "Synthetic edits on 10 base documents, 7 of which summarise the same ibm article, so each half holds parallel summaries of the other half's content: the split is held out by document, not by article (the article-split rows are a secondary reading); each direction scores 5 documents, so the pooled reading depends on the document mix. Paraphrases are opus-mt back-translations, a mild rewording, and the calibrated cutoff sits at the top of that pair-cost population: a stronger rewording, another encoder or the anisotropy pre-pass moves it (the E12-H60 matched maximum 0.348 already lies above both calibrated cutoffs). One encoder (mmBERT OpenVINO INT8, raw embeddings). A replacement whose donor is a sibling summary can restate the removed statement, so the construction label (removed plus added) is debatable there. The H1 title line is dropped from the 7 ibm documents; donors come from the same half; 37 of 900 pairs needed the statement units pinned because SaT split a statement differently inside the edited text (a reduced trial of 180 pairs showed this before the registered run, and pinning was chosen over excluding those pairs; the split, the donor rule, the calibration rule, the grid and the class definitions did not change after the trial; the rows on the unmodified segmentation alone are a secondary reading). The record does not fix the number of draws, the donor rule or the calibration rule; they were fixed in the configuration cell before the registered run. The notebook was executed more than once: reporting tables (fixed-cutoff readings, per-base error columns, population percentiles) were added after the first registered execution, and every measured value of that first execution's metrics file is unchanged in the final execution, which computed all pairs again from an empty checkpoint."
+   },
+   "verify": {
+    "id": "E13-H71",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The Promoted verdict depends on a calibration objective that the registered record does not fix. Of the two objectives the notebook computes, one fails the bar in one direction.",
+      "evidence": "MATERIALITY: a stage B build that reads the cutoff from the kill-gate balanced-accuracy interval would ship a cutoff that fails; nobody is harmed if it reads the calibrated cutoff. Notebook /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H71-kj-partial-matching-map.ipynb cell 22: `calibrated_cutoff(curve)` = midpoint of the longest run at the maximum calibration macro-F1 (c = 0.3250 / 0.3100, held-out 0.9772 / 0.9457). Cell 23 secondary row 'population cutoff, half B → half A': c = 0.2647, macro-F1 0.8461 < 0.90. The record says only 'c chosen on the calibration split only'. The executor discloses this in the caveats and the conclusions cell. The statement that the rule was fixed before the registered run cannot be checked: the notebook is untracked in git and was executed more than once. Maximising the scored metric on the calibration half is the conventional reading, so the bar was not moved. REMEDY: DEFER - the orchestrator records the calibration rule beside the verdict in the ledger."
+     },
+     {
+      "severity": "minor",
+      "claim": "The second clause of the bar (gain >= +0.30 over the shipped flags) cannot fail once the first clause holds, because the shipped-flag baseline equals the always-kept classifier.",
+      "evidence": "MATERIALITY: none - the verdict is carried by the >= 0.90 clause alone, which could fail. Recomputed from /home/lab/workspace/learning/projects/docdistance/data/interim/E13-H71/shipped-readings-00900-3e396129ed50.json: an always-kept labeller scores macro-F1 0.3130 on half B and 0.3134 on half A; the shipped flags score 0.3130 and 0.3266. Any score >= 0.90 gives a gain >= 0.57. The floor was known at registration (E12-H60: no_counterpart fired on 0 of 579). This is a property of the registered record, not an executor deviation. The first clause is a real test: plain assignment without a cutoff scores 0.7611 / 0.7582, the curve reads 0.8691 / 0.8492 at c = 0.500. REMEDY: DEFER."
+     },
+     {
+      "severity": "minor",
+      "claim": "300 of the 900 pairs (deletion and insertion with identical kept statements) score 1.0 at every cutoff by construction. The back-translated arm alone still meets the bar, by 0.0095 in one direction.",
+      "evidence": "MATERIALITY: none for the verdict - the registered fixture is 'each with and without paraphrase', pooled. Cell 26 output: deletion-identical 0 errors over 3210 statements, insertion-identical 0 over 3810. My recomputation at the calibrated cutoffs: back-translated arm only A → B 0.9676, B → A 0.9095; identical arm 0.9868 / 0.9843. The notebook prints error counts per condition but no macro-F1 per arm. Narrower slice, not part of the bar: ibm bases with sibling-summary donors only, back-translated arm, 0.9279 (69 pairs) and 0.8564 (114 pairs). REMEDY: DEFER - the result could carry the per-arm macro-F1."
+     },
+     {
+      "severity": "minor",
+      "claim": "The held-out reading holds on the registered split and on most other 5/5 splits, not on all of them.",
+      "evidence": "MATERIALITY: none for the verdict - the split is the alternation through the fixture's own order, asserted in cell 10 (`assert list(HALF['A']) == BASE_DOCS[0::2]`), so it was not chosen from results. Re-splitting the 900 existing pairs over all 126 5/5 partitions (approximate: donor pools stay those of the original halves) gives 6 partitions with one direction below 0.90, minimum 0.8510 at a calibrated cutoff 0.2675 scored on a half that holds haiku. Leave-one-base-out inside each scored half stays between 0.9322 and 0.9858. Each of the 5 draws alone passes both directions (minimum 0.9344), so the number of draws, which the record leaves open, did not decide the verdict. The result caveat already says the pooled reading depends on the document mix. REMEDY: DEFER."
+     },
+     {
+      "severity": "minor",
+      "claim": "The sanity check executes before the kill-gate, which differs from the order in the campaign primer.",
+      "evidence": "MATERIALITY: none. Cell 12 (execution count 6) is the alignment check, cell 14 (execution count 7) the kill-gate. /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/PRIMER.md orders 'kill-gate section first → harness sanity check'. The gate populations are read through the paraphrase alignment and the record says 'alignment verified in the notebook before use'. No registered-experiment output precedes the gate: the fixture build, the 900 shipped calls and the scoring are all inside `if GATE_PASSED`. The gate is read as registered: true pair cost against nearest non-counterpart cost, best balanced accuracy 0.9915 (half A, n = 59) and 0.9914 (half B, n = 58) against 0.90, both calibration halves required. REMEDY: none needed."
+     },
+     {
+      "severity": "minor",
+      "claim": "The result JSON on disk is not identical to the result block the notebook wrote: one caveat sentence and one artifact key were added by hand, and the added sentence makes a claim with no artefact behind it.",
+      "evidence": "MATERIALITY: none for any number. Diff of `result` in /home/lab/workspace/learning/projects/docdistance/reports/E13-H71-partial-matching-map-metrics.json against /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H71.json: only `artifacts.checkpoint` and the final caveat sentence ('The notebook was executed more than once ... every measured value of that first execution's metrics file is unchanged') differ. The first execution's metrics file and log were overwritten, so that sentence cannot be checked. All 211 numeric tokens of the result appear in notebook outputs, and my recomputation from the checkpoint reproduces 0.3250 / 0.3100, 0.9772 / 0.9457, 0.3130 / 0.3266 and both gains. REMEDY: DEFER."
+     }
+    ],
+    "notes": "VERDICT: SHIP. No blocking or major finding; the Promoted verdict is supported and needs no correction.\n\nChecks, in the order asked:\n(1) Kill-gate: ran before any registered-experiment computation and was read as registered; only the sanity check precedes it (minor order deviation from the primer).\n(2) Bar: applied literally in cell 32 - `r['proposed']['macro_f1'] >= 0.90 and r['delta'] >= 0.30` per direction, `BAR_MET = all(...)`. Requiring both directions is stricter than 'both directions reported'. No guardrail dropped. The verdict ladder has branches for Blocked, Killed-at-gate, Promoted, Refuted (null) and Refuted.\n(3) Numbers: all 211 numeric tokens of the result are present in notebook outputs; the headline numbers reproduce independently from the checkpoint cost matrices and rebuilt construction labels.\n(4) Guardrails: measured - V counted from the re-read ibm panel (0/24, gold maximum 0.2907 below adversarial minimum 0.3573), `np.array_equal` on smd and order_gap before and after, sha256 fingerprint of src/ and tests/ at start and end, `git status --porcelain -- src tests` empty. I confirmed the empty git status myself.\n(5) Sanity check: required and reproduced - 10 of 10 bases aligned on five readings, including identity-optimal under a lexical cost that does not use the encoder, so the check could have failed.\n(6) Execution: 0 error outputs, execution counts 1 to 20 in sequence. The log line 'Writing 691227 bytes' equals the character count of the notebook on disk (691227 characters, 731988 UTF-8 bytes). Notebook, metrics file and checkpoint timestamps agree (09:48 UTC), and the output states 900 pairs computed, 0 restored.\n(7) Label: Promoted is in the closed set and matches 'a toggle or build that met its bar'. Confirmed would be wrong because one part of the prediction failed.\n(8) Prediction: reported honestly - both F1 parts held (0.9441 / 0.9030 minimum; shipped 0.0000 / 0.0392 maximum), the cutoff band (0.348, 0.6) is reported as falsified (0.3250, 0.3100). `direction_matched: true` covers the F1 parts only and the result says so.\n(9) Cutoff: chosen on the calibration half only (`held_out(pairs_of(HALF_BASES[calibration]), pairs_of(HALF_BASES[scored]))`); donors come from the same half, so no scored-half text enters a calibration pair. In-sample readings (fixed-cutoff table, all-bases cutoff, tolerant range) are labelled as such and are not used by the bar.\n(10) Scope: nothing under src/ or tests/ is modified. The uncommitted changes under docs/ are the orchestrator's: the ledger diff holds the H71 registration and a lock stamped 09:39:23Z with no Result or Verdict line for H71, the acceptance-criteria additions are E14-H77 items stamped 09:39:18Z, and the defects file was last written on 2026-10-07.\n\nWhat the method got right: split fixed by a neutral rule and asserted in code; per-edit seeded generator shared by both paraphrase arms; the stricter article-level split reported as a secondary reading and also above the bar (1.0000 and 0.9185); the unsupported mechanism claim (kept statements keep their counterpart: 0.9908 against 0.9953 for the shipped heaviest target) is stated as unsupported; the weakest base (haiku 0.8686) and the failing alternative cutoff (0.8461) are reported.\n\nScratch files are under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad (recompute.py, per_rep.py, h71_out.txt). No file in the repository was written."
+   },
+   "repaired": false
+  },
+  {
+   "id": "E13-H72",
+   "slug": "capped-ground-cost",
+   "result": {
+    "id": "E13-H72",
+    "slug": "capped-ground-cost",
+    "model": "opus",
+    "verdict": "Killed-at-gate",
+    "verdict_number": "kill-gate share 30.0% (172/574 cross-article insertions with a cheapest cost to the host above 0.6); the record requires >= 50%",
+    "kill_gate": {
+     "ran": true,
+     "passed": false,
+     "reading": "172/574 = 30.0% of cross-article insertions have a cheapest cost to the host document above 0.6; the record requires at least 50%. By direction: 70/364 = 19.2% (ibm host, wergeland statement), 102/210 = 48.6% (wergeland host, ibm statement). Readings without a bar: 22/420 = 5.2% on inserted statements of 5+ words, 150/154 = 97.4% on inserted statements under 5 words, 186/574 = 32.4% with the ibm hosts segmented on the shipped path, 48/122 = 39.3% of unique statements above 0.6 in at least one host. The reading uses the shipped cost_matrix and no transport solve, and it is the first measurement of the notebook."
+    },
+    "sanity_check": {
+     "required": true,
+     "passed": true,
+     "reading": "naive row on OpenVINO INT8: V 0/24 (exact), margin +4.708 against +4.71 (-0.04%), d' 4.684 against 4.68 (+0.09%), tolerance 5%; also measured R 1.670 and DR 0.0873; default-path smd and order_gap equal the saved 1.1.5 baseline on 55 pairs by np.array_equal"
+    },
+    "prediction_check": {
+     "predicted": "ibm panel: max |delta smd| about 0.003, V 0/24; cross-article insertions: coefficient of variation of the per-insertion increment falls by more than 50%",
+     "observed": "Measured after the kill-gate, so these readings do not decide the verdict. ibm panel at c=0.60: max |delta smd| 0.0025 over the 55 pairs (0.0006 on the 10 anchor pairs, 8/55 pairs changed), V 0/24. Insertions, registered pooled reading: CV 0.3957 → 0.1189, a fall of 0.6995 (70.0%). The fall is produced by inserted statements under 5 words (markup tokens, heading lines, pieces of a provenance comment): on the 420 insertions of statements with 5+ words the CV goes 0.1328 → 0.1121, a fall of 0.1557 (15.6%), and 0.2655 (26.6%) with the host-length factor removed. Direction matched on both parts; the magnitude above 50% holds on the registered pool and does not hold for inserted sentences.",
+     "direction_matched": true
+    },
+    "acceptance": {
+     "bar": "PASS iff V = 0/24 AND boundary margin >= +4.61 closeness pts AND triangle violations 0/495 AND the coefficient of variation of the smd increment per inserted cross-article statement falls >= 50% against shipped (registered arm c = 0.6). The kill-gate is decided before the bar: it was not passed, so the verdict is Killed-at-gate and the bar readings below are on record without deciding it.",
+     "met": true,
+     "readings": {
+      "status": "the four conditions were measured after the kill-gate was not passed; all four hold on the registered reading; they do not decide the verdict",
+      "V": "0/24 (required 0/24)",
+      "margin_pts": "+4.708 (required >= +4.61)",
+      "triangle_violations": "0/495 (required 0/495), smallest slack 0.177",
+      "cv_fall": "0.6995 (required >= 0.50): pooled CV 0.3957 shipped, 0.1189 at c=0.60, over 574 insertions",
+      "cv_fall_statements_of_5plus_words_no_bar": "0.1557: CV 0.1328 shipped, 0.1121 at c=0.60, over 420 insertions",
+      "cv_fall_unbarred_arms": "c=0.45: 0.7886, c=0.75: 0.5194"
+     }
+    },
+    "guardrails": {
+     "V": "0/24",
+     "src_untouched": true,
+     "metric_property": "shipped distance untouched: no edit under src/, default-path smd and order_gap on 55 pairs equal before and after by np.array_equal and equal to the saved 1.1.5 baseline. Capped distance, which exists only in the notebook wrapper: identity max d(A, A) 0.0e+00 over 11 documents, symmetry max |d(A, B) - d(B, A)| 2.2e-16 over 55 pairs, triangle violations 0/495",
+     "notes": "src/ byte hash equal before and after the run (a5932434475fda56); git status of src/ and tests/ empty; smd_capped at cap = inf equals shipped smd on 55 pairs by np.array_equal. V counted on the registered arm c=0.60 and on the shipped arm, both 0/24."
+    },
+    "key_numbers": {
+     "kill_gate_share_above_0.6": 0.2997,
+     "kill_gate_n_above": 172,
+     "n_insertions": 574,
+     "kill_gate_share_by_reading": {
+      "ibm host, wergeland statement": "70/364 = 19.2%",
+      "wergeland host, ibm statement": "102/210 = 48.6%",
+      "all insertions (the gate reading)": "172/574 = 30.0%",
+      "statements of 5+ words (no bar)": "22/420 = 5.2%",
+      "statements under 5 words (no bar)": "150/154 = 97.4%",
+      "ibm hosts segmented on the shipped path (no bar)": "186/574 = 32.4%",
+      "unique statements, above in at least one host (no bar)": "48/122 = 39.3%"
+     },
+     "kill_gate_median_cheapest_cost": 0.489,
+     "sanity_margin_pts": 4.708,
+     "sanity_dprime": 4.684,
+     "sanity_V": "0/24",
+     "capped_V": "0/24",
+     "capped_margin_pts": 4.708,
+     "capped_dprime": 4.695,
+     "capped_max_abs_delta_smd_55_pairs": 0.0025,
+     "capped_max_abs_delta_smd_anchor_pairs": 0.0006,
+     "capped_pairs_changed": "8/55",
+     "shipped_plan_max_arc": 0.5918,
+     "triangle_violations": "0/495",
+     "triangle_min_slack": 0.177,
+     "cv_shipped_pooled": 0.3957,
+     "cv_capped_pooled": 0.1189,
+     "cv_fall_pooled_registered": 0.6995,
+     "cv_of_host_length_term": 0.0847,
+     "cv_by_reading": {
+      "pooled, all insertions (registered)": {
+       "shipped": 0.3957,
+       "c=0.45": 0.0836,
+       "c=0.60": 0.1189,
+       "c=0.75": 0.1902
+      },
+      "ibm host, wergeland statement": {
+       "shipped": 0.324,
+       "c=0.45": 0.0759,
+       "c=0.60": 0.1052,
+       "c=0.75": 0.1711
+      },
+      "wergeland host, ibm statement": {
+       "shipped": 0.4363,
+       "c=0.45": 0.0933,
+       "c=0.60": 0.1396,
+       "c=0.75": 0.2156
+      },
+      "pooled, increment x (n + 1)": {
+       "shipped": 0.3899,
+       "c=0.45": 0.0093,
+       "c=0.60": 0.0871,
+       "c=0.75": 0.1733
+      },
+      "pooled, statements of 5+ words": {
+       "shipped": 0.1328,
+       "c=0.45": 0.0824,
+       "c=0.60": 0.1121,
+       "c=0.75": 0.1327
+      },
+      "statements of 5+ words, increment x (n + 1)": {
+       "shipped": 0.1062,
+       "c=0.45": 0.0105,
+       "c=0.60": 0.078,
+       "c=0.75": 0.106
+      },
+      "pooled, statements under 5 words": {
+       "shipped": 0.1974,
+       "c=0.45": 0.087,
+       "c=0.60": 0.0872,
+       "c=0.75": 0.088
+      },
+      "median of the 10 per-host CVs": {
+       "shipped": 0.3162,
+       "c=0.45": 0.0041,
+       "c=0.60": 0.0745,
+       "c=0.75": 0.1563
+      }
+     },
+     "cv_host_length_alone_by_reading": {
+      "pooled, all insertions (registered)": 0.0847,
+      "ibm host, wergeland statement": 0.0769,
+      "wergeland host, ibm statement": 0.095,
+      "pooled, increment x (n + 1)": 0,
+      "pooled, statements of 5+ words": 0.0834,
+      "statements of 5+ words, increment x (n + 1)": 0,
+      "pooled, statements under 5 words": 0.0879,
+      "median of the 10 per-host CVs": 0
+     },
+     "cv_fall_to_host_length_alone_by_reading": {
+      "pooled, all insertions (registered)": 0.786,
+      "ibm host, wergeland statement": 0.7625,
+      "wergeland host, ibm statement": 0.7823,
+      "pooled, increment x (n + 1)": 1,
+      "pooled, statements of 5+ words": 0.3721,
+      "statements of 5+ words, increment x (n + 1)": 1,
+      "pooled, statements under 5 words": 0.5545,
+      "median of the 10 per-host CVs": 1
+     },
+     "mean_cost_to_host_statements": {
+      "statements under 5 words": {
+       "shipped": 1.097,
+       "c=0.60": 0.603
+      },
+      "statements of 5+ words": {
+       "shipped": 0.544,
+       "c=0.60": 0.53
+      }
+     },
+     "cv_fall_by_reading_at_registered_arm": {
+      "pooled, all insertions (registered)": 0.6995,
+      "ibm host, wergeland statement": 0.6752,
+      "wergeland host, ibm statement": 0.6801,
+      "pooled, increment x (n + 1)": 0.7767,
+      "pooled, statements of 5+ words": 0.1557,
+      "statements of 5+ words, increment x (n + 1)": 0.2655,
+      "pooled, statements under 5 words": 0.5581,
+      "median of the 10 per-host CVs": 0.7644
+     },
+     "cv_fall_pooled_by_arm": {
+      "c=0.45": 0.7886,
+      "c=0.60": 0.6995,
+      "c=0.75": 0.5194
+     },
+     "std_fall_pooled_registered": 0.7613,
+     "insertions_changed_by_cap": "511/574"
+    },
+    "result_summary": "Killed-at-gate. 172 of 574 cross-article insertions (30.0%) have a cheapest cost to the host document above 0.6, and the record requires at least 50%. No convention measured brings the reading to 50% (19.2% and 48.6% by direction, 5.2% on statements of 5+ words, 32.4% with shipped-path ibm hosts, 39.3% per unique statement). The sanity check passed (V 0/24, margin +4.708, d' 4.684). The readings taken after the gate do not decide the verdict: at c=0.60 the ibm panel keeps V 0/24 and margin +4.708 with max |delta smd| 0.0025 and 0/495 triangle violations, and the pooled CV of the increment falls 0.3957 → 0.1189 (70.0%). That fall is produced by inserted statements under 5 words, which the shipped default segmentation returns for the markdown sources (10 of 52 wergeland statements, 28 of 70 ibm statements): their mean cost to the host statements is 1.097 and the cap sets it to 0.603, while statements of 5+ words have 0.544 and 0.53. On statements of 5+ words the CV falls 15.6% (26.6% with the host-length factor removed). The increment SMD(B, B + s) equals the mean cost from the inserted statement to all n host statements divided by n + 1 (closed form checked on all 574 insertions), so the cap changes 511/574 increments while the gate, which takes the cheapest arc, counts 172.",
+    "artifacts": {
+     "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H72-kj-capped-ground-cost.ipynb",
+     "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H72-capped-ground-cost-metrics.json",
+     "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H72-capped-ground-cost.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "Conventions fixed in the configuration cell before scoring, where the record leaves a choice: hosts are the 10 base documents of the structure fixture (each of the 7 ibm bases is stored there with its markdown title line as statement 0); inserted statements are every statement the shipped default segmentation returns for the other article's source file (52 wergeland, 70 ibm), markup fragments included; the increment is SMD(B, B + s); the registered CV reading pools all 574 insertions; the 5-word split is a convention of this notebook, not a registered quantity. The kill-gate and the bar measure different arcs: the gate takes the cheapest arc, the increment averages all arcs to the host. acceptance.met is true because the four bar conditions hold as written on the registered reading; the verdict follows the kill-gate, which is decided first. The host-length factor 1/(n + 1) alone has a CV of 0.0847 that no cap changes; on statements of 5+ words a cap leaving only that factor would give a fall of 0.3721, below the bar. One pair of articles, both about artificial intelligence; hosts of 11 to 14 statements. No timing is reported. git status also lists modified E01 to E12 notebooks and reports; this executor did not write them. It wrote four campaign files (the notebook, the metrics JSON, the log, this result) and three git-ignored agent-memory notes under .claude/agent-memory/senior-backend-engineer/."
+   },
+   "verify": {
+    "id": "E13-H72",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "acceptance.met is true while the verdict is Killed-at-gate, because the registered kill-gate and the registered bar measure different quantities. The gate's stated reason (below 50% the cap rarely applies) is contradicted by the run: the cap changes 511/574 increments. The label is still correct under the contract.",
+      "evidence": "Notebook cell 37: `if not GATE_PASSED: VERDICT = \"Killed-at-gate\"` is evaluated before `elif BAR_MET: VERDICT = \"Promoted\"`; cell 14: `GATE_PASSED = bool(GATE_SHARE >= GATE_MIN_SHARE)` with share 172/574 = 0.2997. The gate reads `C[:, j].min()` (cheapest arc); the increment is the mean over all arcs divided by n + 1 (closed form against the solver, max difference 1.2e-08, cell 29 output). Bar table in cell 37 output: V 0/24, margin 4.708, triangle 0/495, cv_fall 0.6995, all True. The executor disclosed this in caveats and in the conclusions cell. Materiality: nobody is harmed - the primer says a fired gate ends the run with Killed-at-gate, and promotion in the campaign reads the verdict label (README step 4), not acceptance.met. Remedy: DEFER - no notebook change; when the orchestrator records the verdict in the ledger, state that the kill is the literal gate reading and that the 70.0% CV fall is 15.6% on statements of 5+ words, so acceptance.met = true is not read as support for the hypothesis."
+     },
+     {
+      "severity": "minor",
+      "claim": "The 5-word split is described as a convention fixed before scoring. One executed run cannot show that, and the same cell prints the list of short texts, so the cutoff is likely informed by the data. No gate or bar depends on it, and the executor's secondary claim is not sensitive to the cutoff from 3 words upward.",
+      "evidence": "Config cell 8: `MIN_WORDS = 5  # unbarred reading`. My in-memory recomputation with the closed form (shipped cost_matrix, same fixture, no file written) gives the CV fall at c = 0.6 on statements of at least k words: k=2 0.516 (n=487), k=3 0.403 (n=454), k=4 0.221 (n=430), k=5 and k=6 0.155 (n=420), k=8 0.124 (n=400), k=10 0.100 (n=364). The statement in prediction_check that the magnitude above 50% does not hold for inserted sentences is true for every cutoff from 3 words upward and false only at k=2. Materiality: none - the reading is labelled no bar and does not decide the verdict. Remedy: DEFER; if the orchestrator quotes the 15.6% figure, quote the cutoff range with it."
+     },
+     {
+      "severity": "minor",
+      "claim": "The caveat that each of the 7 ibm bases is stored in the structure fixture with its markdown title line as statement 0 is true but incomplete: for 2 of the 7 hosts the fixture differs from the shipped segmentation by one further statement.",
+      "evidence": "Notebook cell 12 output: host opus 13 statements against panel opus 11; host sonnet 11 against panel sonnet 9; the other five hosts differ by 1. My recomputation: for opus and sonnet the fixture holds the title line plus two statements that are not in the shipped segmentation of the summary file (one shipped statement is stored as two). Materiality: none - the executor measured the gate with the ibm hosts on the shipped path as well (186/574 = 32.4%, cell 14 output), which is also below 50%. Remedy: none required; EDIT the caveat wording if the result JSON is rewritten for another reason."
+     },
+     {
+      "severity": "minor",
+      "claim": "result_summary says no convention measured brings the kill-gate reading to 50%. Two readings printed by the notebook are at or above 50%; neither is a pooled gate convention, so the verdict is not affected.",
+      "evidence": "Cell 30 output, per-host table: werg-b 50.0% (35/70). Cell 14 output: statements under 5 words 150/154 = 97.4%. The five pooled or directional conventions the summary lists are all below 50% (19.2%, 48.6%, 5.2%, 32.4%, 39.3%). My recomputation shows the pooled share stays below 50% when the cost threshold is lowered: 45.3% above 0.50, 37.1% above 0.55, 30.0% above 0.60, 25.8% above 0.65. Materiality: none - the registered gate is the pooled share. Remedy: none required; wording only."
+     }
+    ],
+    "notes": "VERDICT: SHIP. Killed-at-gate is supported by the evidence; no corrected verdict.\n\nChecks, in the order given:\n(1) Kill-gate ran first and as registered. The gate cell is execution count 8, after embedding and before the first transport solve (execution count 10). It reads `cheapest > 0.6` per insertion and requires share >= 0.50. I recomputed it independently in memory from the shipped cost_matrix: 172/574, 70/364 by ibm host, 102/210 by wergeland host - identical to the notebook.\n(2) Bar applied literally: V == 0, margin >= 4.61, triangle 0 of 495, CV fall >= 0.50 at c = 0.6; constants in cell 8 match the ledger record. No goalpost moved, no guardrail dropped.\n(3) Every number in the result appears in notebook outputs; key_numbers equals metrics.result_numbers exactly (dict comparison True); metrics file is 23250 bytes as the notebook printed.\n(4) Guardrails measured: V counted, src hash before/after in the notebook, np.array_equal against the saved 1.1.5 baseline. I recomputed the src/ hash: a5932434475fda56, equal. `git status -- src tests` is empty.\n(5) Sanity check reproduced: V 0/24, margin +4.708 (-0.04%), d' 4.684 (+0.09%).\n(6) 0 error outputs, execution counts 1 to 22 in sequence. The log line `Writing 667007 bytes` equals the character count of the notebook on disk (667007 characters, 682847 bytes because of multi-byte characters); log and notebook modification times differ by 2 ms.\n(7) Label is in the closed set and matches the primer (a failed precondition is Killed-at-gate).\n(8) Prediction check is honest: direction matched, magnitude met on the registered pool, and the executor states that it comes from fragment statements.\n(9) No bar or gate threshold was tuned. The only data-informed cutoff is the unbarred 5-word split (finding 2).\n(10) Nothing under src/ or tests/ changed. docs/defects-docdistance.md was last modified 2026-10-07. The ledger was modified at 11:27:26, 12 seconds after the notebook finished, in the same millisecond as PRIMER.md and workflow-measure.js; the ledger text says E14-H76 was registered on 2026-10-09 after E14-H75 returned, which accounts for that edit. The ledger diff against HEAD has 0 removed lines and the E13-H72 block holds only the registration log line with status pre-registered. I cannot prove from git which process wrote the ledger, because the whole E13 registration is uncommitted.\n\nOne inconsistency outside the executor's control: the note for H72 in workflow-measure.js line 22 says `Sanity check first`, and the primer says kill-gate first. The notebook followed the primer. Both orders give the same verdict because the sanity check passed.\n\nThe executor wrote three git-ignored notes under .claude/agent-memory/senior-backend-engineer/ (confirmed ignored by .gitignore line 221) and disclosed them.\n\nFiles: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H72-kj-capped-ground-cost.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E13-H72-capped-ground-cost-metrics.json, /home/lab/workspace/learning/projects/docdistance/logs/E13-H72-capped-ground-cost.log, /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H72.json."
+   },
+   "repaired": false
+  },
+  {
+   "id": "E13-H73",
+   "slug": "nearest-source-residual",
+   "result": {
+    "id": "E13-H73",
+    "slug": "nearest-source-residual",
+    "model": "opus",
+    "verdict": "Refuted",
+    "verdict_number": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading)",
+    "kill_gate": {
+     "ran": true,
+     "passed": true,
+     "reading": "statement-level AUC of nearest-source cost, own vs foreign, one-sided, pre-pass on: 0.7889 (fail); one-sided, pre-pass off: 0.9670 (pass) (bar >= 0.9; 98 own x 38 foreign = 3724 pairs). The record names no pre-pass setting for the gate; the notebook's rule kills only when both settings read below the bar; settings that pass: one-sided, pre-pass off"
+    },
+    "sanity_check": {
+     "required": true,
+     "passed": true,
+     "reading": "DEF-TRANS-8 on source[0::7][:10], shipped compute_source_conditioned, pre-pass on: residual_a 0.958 (registered 0.958), closeness_a 0.322 (registered 0.322); pre-pass off: residual_a 0.517, closeness_a 0.634"
+    },
+    "prediction_check": {
+     "predicted": "verbatim extract 0.322 → >= 0.99; Spearman(insertion dose, residual) >= 0.95; deletions move it by under 10% of one insertion",
+     "observed": "one-sided, pre-pass off (kill-gate AUC 0.9670): deletion ratio 34.1% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 1.0000 (bar >= 0.95, met under the per-trajectory reading; 0.9492 under the pooled-points reading) | one-sided, pre-pass on (kill-gate AUC 0.7889): deletion ratio 310.4% (bar <= 10%, not met); verbatim-extract closeness 0.9999 (bar >= 0.99, met); median per-document Spearman 0.9643 (bar >= 0.95, met under the per-trajectory reading; 0.8674 under the pooled-points reading) | direction on the verdict arm: (i) matched; (ii) matched; (iii) not defined by the record; one-sided, pre-pass off: median |delta| under deletions 0.005211 against 0.005043 for balanced (shipped), pre-pass off, not below the baseline | direction matched on all three predicted effects: False; the registered magnitude of all three held: False",
+     "direction_matched": false
+    },
+    "acceptance": {
+     "bar": "PASS iff verbatim-extract closeness >= 0.99 AND median per-document Spearman(k foreign insertions, residual) >= 0.95 over k in 0..4 AND median |delta residual| under k in 1..4 deletions <= 10% of the mean one-insertion effect",
+     "met": false,
+     "readings": {
+      "os_pre": {
+       "label": "one-sided, pre-pass on",
+       "verbatim_closeness": 0.999892,
+       "median_per_document_spearman": 0.964286,
+       "median_spearman_pooled_points_not_the_bar_rule": 0.867383,
+       "deletion_ratio": 3.103977,
+       "met": false
+      },
+      "os_raw": {
+       "label": "one-sided, pre-pass off",
+       "verbatim_closeness": 0.999917,
+       "median_per_document_spearman": 1,
+       "median_spearman_pooled_points_not_the_bar_rule": 0.949202,
+       "deletion_ratio": 0.340866,
+       "met": false
+      },
+      "bal_pre": {
+       "label": "balanced (shipped default), pre-pass on",
+       "verbatim_closeness": 0.322442,
+       "median_per_document_spearman": -0.842857,
+       "median_spearman_pooled_points_not_the_bar_rule": -0.75896,
+       "deletion_ratio": null,
+       "met": false
+      },
+      "bal_raw": {
+       "label": "balanced (shipped), pre-pass off",
+       "verbatim_closeness": 0.634268,
+       "median_per_document_spearman": -0.257143,
+       "median_spearman_pooled_points_not_the_bar_rule": -0.325271,
+       "deletion_ratio": null,
+       "met": false
+      }
+     }
+    },
+    "guardrails": {
+     "V": "0/24",
+     "src_untouched": true,
+     "metric_property": "untouched: shipped smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline; the one-sided residual is a score and a lower bound of the balanced residual (0 violations in 1166 scored documents), not a metric",
+     "notes": "pre-pass replica equals the shipped residual_a exactly on 1166/1166 scored documents; BLAS limited to 1 thread for the arms, readings identical to the default thread count: balanced True, one-sided True; files changed during the run: src/ 0, tests/ 0, docs/ 0 (this notebook writes only the metrics JSON under reports/)"
+    },
+    "key_numbers": {
+     "verdict_arm": "os_raw",
+     "gate_auc": {
+      "os_pre": 0.788937,
+      "os_raw": 0.966971
+     },
+     "def_trans_8": {
+      "residual_a": 0.958211,
+      "closeness_a": 0.322442
+     },
+     "verbatim_closeness": {
+      "os_pre": 0.999892,
+      "os_raw": 0.999917,
+      "bal_pre": 0.322442,
+      "bal_raw": 0.634268
+     },
+     "median_per_document_spearman": {
+      "os_pre": 0.964286,
+      "os_raw": 1,
+      "bal_pre": -0.842857,
+      "bal_raw": -0.257143
+     },
+     "median_spearman_pooled_points": {
+      "os_pre": 0.867383,
+      "os_raw": 0.949202,
+      "bal_pre": -0.75896,
+      "bal_raw": -0.325271
+     },
+     "pooled_points_spearman_ceiling": 0.98382,
+     "deletion_ratio": {
+      "os_pre": 3.103977,
+      "os_raw": 0.340866,
+      "bal_pre": null,
+      "bal_raw": null
+     },
+     "deletion_ratio_k1_only": {
+      "os_pre": 1.762462,
+      "os_raw": 0.231179,
+      "bal_pre": null,
+      "bal_raw": null
+     },
+     "deletion_ratio_matched_documents": {
+      "os_pre": 2.051242,
+      "os_raw": 0.439435,
+      "bal_pre": null,
+      "bal_raw": null
+     },
+     "p90_abs_delta_deletion": {
+      "os_pre": 0.063941,
+      "os_raw": 0.015233,
+      "bal_pre": 0.041843,
+      "bal_raw": 0.014021
+     },
+     "direction_by_effect": {
+      "verbatim extract 0.322 → >= 0.99": true,
+      "Spearman(insertion dose, residual) >= 0.95": true,
+      "deletions move it by under 10% of one insertion": null
+     },
+     "one_insertion_effect": {
+      "os_pre": 0.007492,
+      "os_raw": 0.015286,
+      "bal_pre": -0.013275,
+      "bal_raw": -0.00441
+     },
+     "median_abs_delta_deletion": {
+      "os_pre": 0.023256,
+      "os_raw": 0.005211,
+      "bal_pre": 0.015477,
+      "bal_raw": 0.005043
+     },
+     "mean_signed_delta_deletion": {
+      "os_pre": -0.006297,
+      "os_raw": -0.000112,
+      "bal_pre": 0.017885,
+      "bal_raw": 0.006223
+     },
+     "mean_signed_delta_share": {
+      "os_pre": -0.840411,
+      "os_raw": -0.007299,
+      "bal_pre": null,
+      "bal_raw": null
+     },
+     "min_per_document_spearman": {
+      "os_pre": -0.478571,
+      "os_raw": 0.921429,
+      "bal_pre": -0.971429,
+      "bal_raw": -1
+     },
+     "tier_mean": {
+      "os_pre": {
+       "gold": 0.979488,
+       "adv1": 1.21614,
+       "adv2": 1.185292
+      },
+      "os_raw": {
+       "gold": 0.282889,
+       "adv1": 0.356138,
+       "adv2": 0.318515
+      },
+      "bal_pre": {
+       "gold": 1.231843,
+       "adv1": 1.377749,
+       "adv2": 1.386734
+      },
+      "bal_raw": {
+       "gold": 0.702585,
+       "adv1": 0.770721,
+       "adv2": 0.758664
+      }
+     },
+     "spearman_vs_model_graded_documents": {
+      "os_pre": 0.363636,
+      "os_raw": 0.418182,
+      "bal_pre": 0.154545,
+      "bal_raw": 0.318182
+     }
+    },
+    "result_summary": "Refuted: the registered bar joins three conditions with AND and the deletion condition is not met. Kill-gate (statement-level AUC of nearest-source cost, 98 own statements against 38 wergeland statements, ibm source, bar 0.9): 0.9670 with the anisotropy pre-pass off and 0.7889 with it on. The record names no pre-pass setting for the gate. Under the notebook's rule (killed only when both settings fail) the gate passes on the raw embeddings and the verdict is read on the one-sided residual with the pre-pass off; read on the default call (pre-pass on) the outcome is Killed-at-gate. Sanity check: DEF-TRANS-8 reproduced on source[0::7][:10] with the shipped default pre-pass (residual_a 0.958, closeness_a 0.322); each copied statement keeps 0.142857 = n/m of its mass on its own copy. Condition (i) met by construction: verbatim-extract closeness 0.9999 in both one-sided arms, against 0.3224 (balanced, pre-pass on) and 0.6343 (balanced, pre-pass off); a copied statement has nearest-source cost zero in any residual with the source marginal released, so this condition cannot fail for the lever. Condition (ii) met under the per-trajectory reading (mean over 14 seeds of the 5-dose Spearman): median per-document Spearman 1.0000 (pre-pass off) and 0.9643 (pre-pass on); under the pooled-points reading the same doses read 0.9492 and 0.8674, below the 0.95 bar (a perfectly ordered response reads 0.9838 there). On the same doses the shipped balanced residual reads -0.2571 and -0.8429, so it falls when foreign statements are added. Condition (iii) not met: the median |residual change| under 1 to 4 deletions is 34.1% of one insertion with the pre-pass off and 310.4% with it on, against a bar of 10%; one deletion only reads 23.1%, the same 10 documents in numerator and denominator read 43.9%. The one-sided residual does not move less under deletions than the balanced baseline on the same doses: median |change| 0.005211 against 0.005043 (pre-pass off) and 0.023256 against 0.015477 (pre-pass on). Prediction: the registered size held on (i) and (ii) and was falsified on (iii); the direction matched on (i) and (ii) and is not defined by the record on (iii), so direction_matched is false. With the pre-pass off the mean signed change under deletions is -0.7% of one insertion; the balanced residual rises under deletions (+0.00622 pre-pass off, +0.01789 pre-pass on). The per-case movement comes from the spread of the per-statement costs (0.0532) against the gap to the foreign costs (0.1197). No bar: tier means of the one-sided residual with the pre-pass off are gold 0.2829, adv1 0.3561, adv2 0.3185; Spearman against the model-graded residual is +0.4182 over the 11 documents and +0.6340 over the 98 statements. Guardrails hold: V 0/24, default-path smd, order_gap and source-conditioned outputs bit-identical before and after and equal to the saved 1.1.5 baseline, no file changed under src/ or tests/.",
+    "artifacts": {
+     "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H73-kj-nearest-source-residual.ipynb",
+     "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H73-nearest-source-residual-metrics.json",
+     "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H73-nearest-source-residual.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "1. Gate rule. The record does not say which pre-pass setting the kill-gate reads. The notebook's rule: the run is killed only when both settings read below 0.9, and the verdict is read on a setting that passes. Read on the default call alone (pre-pass on, AUC 0.7889) the outcome is Killed-at-gate. Neither reading promotes the lever. The choice between the two rules is the orchestrator's. 2. Default call. compute_source_conditioned applies the pre-pass by default. Inside that call the one-sided residual reads AUC 0.7889 against 0.9670 on raw embeddings, a deletion ratio of 310.4%, and a dose-response of -0.4786 on the one-statement document adv2-a. A DEF-TRANS-8 fix computed after the default pre-pass would read these numbers. Which pre-pass step causes the loss (mean subtraction or component removal) was not decomposed. 3. Condition (i) holds by construction: the nearest source statement of a copied statement is the statement itself, so its cost is zero up to float32 rounding. Of the three bar conditions, one could have failed and was met: (ii), under the configured reading rule. An extract that paraphrases the source was not measured; a later record for this lever needs one for condition (i) to be a test. 4. Reading rules. Three rules are the executor's because the record leaves them open: the gate over two pre-pass settings, the per-document Spearman, the foreign set. The notebook was executed more than once, so its outputs do not prove that each rule was written before the first numbers were seen. Per-document Spearman: mean over 14 seeds of the Spearman of each 5-dose trajectory; the record does not mention seeds, and with all 70 points of a document pooled the medians are 0.9492 (pre-pass off) and 0.8674 (on), below the bar. Foreign set: wergeland statements of 5 words or more with the HTML provenance comment of the fixture file removed, 38 statements; with the 6 heading fragments included the gate AUCs are 0.9260 and 0.7270. 5. Direction rule. Written in the repair round, after the readings were known: closeness above the balanced baseline for (i), median per-document Spearman above zero for (ii), no direction reading for (iii) because the record registers a size for the deletion effect and nothing else. It replaces a 100% threshold on the deletion ratio that the record does not contain. This changed direction_matched from true to false. No measured number differs between the previous execution and this one. 6. Fixture size: one source article, one foreign article on a related topic, 11 summaries of which two have 1 and 3 statements; adv2-a has no deletion dose (532 deletion cases, 616 inserted documents). The mean one-insertion effect in the denominator of condition (iii) includes adv2-a. 7. Pre-pass pool: the pre-pass arms use the pool of compute_source_conditioned(X, X, S), the call shape of the DEF-TRANS-8 reproduction. In a call with two different documents the pre-pass pools both, so the residual of one document depends on the other. 8. BLAS was limited to 1 thread for the arms; the readings are identical (np.array_equal) to the default thread count on the 12 checked documents. 9. docs/ is written by other campaign processes while executors run, so the docs/ reading is reported and is not part of the hold condition; in this execution 0 files under docs/ changed. This notebook writes only the metrics JSON."
+   },
+   "verify": {
+    "id": "E13-H73",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "`kill_gate.passed: true` holds only under the executor's rule that the gate fires when both pre-pass settings fail. The arm the configuration lists first as the default call (pre-pass on) reads AUC 0.7889 and fails the 0.90 gate. MATERIALITY: none for promotion - both readings end without a promotion; only the ledger label (Refuted or Killed-at-gate) differs.",
+      "evidence": "Notebook cell 17: `gate_killed = not any(GATE[arm][\"passed\"] for arm in ONE_SIDED)` and `VERDICT_ARM = next((arm for arm in VERDICT_ARM_ORDER if GATE[arm][\"passed\"]), None)` with `VERDICT_ARM_ORDER = (\"os_pre\", \"os_raw\")`. Output table: pre-pass on 0.7889 fail, pre-pass off 0.9670 pass, 3724 pairs. The record's gate line names no pre-pass setting and its method line registers both settings; the record's formula `cost_matrix(X, S).min(1)` applied to the embeddings unchanged is the pre-pass-off arm, which passes. I therefore keep `Refuted`. The executor states the alternative outcome in caveat 1 and in the conclusions cell. REMEDY (EDIT, orchestrator): record the per-arm gate outcome beside the verdict in the ledger, for example 'Refuted on raw embeddings; pre-pass-on arm failed the gate at 0.7889'."
+     },
+     {
+      "severity": "minor",
+      "claim": "Bar condition (ii) discriminates less than the kill-gate, so the statement in caveat 3 and in the conclusions that (ii) 'could have failed and was met' counts it as more evidence than it is. The verdict rests on condition (iii) alone. MATERIALITY: none - (iii) is a test that could have passed, it failed at 34.1% against 10%, and the verdict does not change.",
+      "evidence": "Cell 27 output: the pre-pass-on arm fails the gate (AUC 0.7889) and still meets (ii) at median per-document Spearman 0.9643 >= 0.95. For the one-sided residual an appended statement f changes the mean by (c_f - r)/(n+1), positive whenever c_f > r; gate table: foreign costs 0.4172 +/- 0.0384, document residuals 0.2571 to 0.3603 (cell 34 table). The insertion response on the verdict arm is therefore the same own-versus-foreign separation the gate already measured. Condition (i) cannot fail (executor states this). REMEDY: DEFER - a design property of the registered bar, not an executor error; a later record for this lever needs an insertion condition the gate does not imply."
+     },
+     {
+      "severity": "minor",
+      "claim": "Caveat 5 asserts 'No measured number differs between the previous execution and this one'. No artefact on disk supports or contradicts it. MATERIALITY: none - no bar reading depends on it.",
+      "evidence": "The notebook, metrics JSON and result JSON are untracked files with one copy each; logs/E13-H73-nearest-source-residual.log holds one execution (3 lines, 11:48:22); no earlier copy exists to compare. The final execution is internally consistent: execution counts 1..22 in order, 0 error outputs, metrics JSON on disk equals the payload printed by cell 43. REMEDY (EDIT, orchestrator): do not carry that sentence into the ledger."
+     }
+    ],
+    "notes": "VERDICT: SHIP. `Refuted` stands; no corrected verdict.\n\nChecks, in the order asked:\n(1) Kill-gate ran first among measurements (execution counts 8-10, before the sanity check at 11 and the doses at 12-14). Threshold 0.90 unchanged. Read per pre-pass setting; see finding 1.\n(2) Bar applied literally, thresholds 0.99 / 0.95 / 0.10 unchanged (cell 30: `ratio is not None and ratio <= BAR_DELETION_RATIO`, `BAR[arm][\"met\"] = all(...)`). Condition (iii) fails under all three denominators printed: 34.1%, 23.1% (k = 1 only), 43.9% (same 10 documents). The per-document Spearman rule (mean over 14 seeds of the 5-dose Spearman) is the executor's; the pooled reading 0.9492 is printed beside it and the verdict does not depend on it. Verdict ladder in cell 41 has every branch: Killed-at-gate, Blocked, Promoted, Refuted (null), Refuted.\n(3) All 111 numeric tokens of the result JSON, and every number in result_summary and caveats, appear in notebook outputs. The `result` block inside the metrics JSON equals reports/E13-campaign/results/H73.json except absolute artefact paths and the three fields the executor adds (result_summary, notebook_errors, caveats). I re-derived from the printed tables: deletion ratios 0.3409 and 3.104, k = 1 ratios, both medians of the per-document Spearman, closeness 1 - r/sqrt(2), tier means, the four document-level Spearman values against the model-graded residual, 532 deletion cases, 1166 scored documents.\n(4) Guardrails measured: V counted before and after from shipped `smd`; `np.array_equal` before/after and against the saved 1.1.5 baseline; sha256 digests of src/ (0/15), tests/ (0/9), docs/ (0/45); replica equality 1166/1166; lower bound 0/1166 violations.\n(5) Sanity check reproduced: residual_a 0.958211, closeness_a 0.322442 against registered 0.958 / 0.322.\n(6) 0 error outputs. The log line 'Writing 1114487 bytes' equals the notebook's character count (1114487; 1142790 bytes on disk because of multi-byte characters); notebook and log mtimes are 11:48:22.\n(7) Label is in the closed set. Not `Refuted (null)`: verbatim closeness differs from the balanced baseline by 0.37.\n(8) Prediction check: magnitude held on (i) and (ii), falsified on (iii); `direction_matched: false`. The direction rule was rewritten in the repair round after the readings were known, which the executor states; the result is false under that rule and also under a comparison with the balanced baseline (0.005211 against 0.005043, not flatter).\n(9) No threshold tuned on scored data that changes a side of a bar: the 5-word foreign filter leaves each arm on the same side (0.9260 / 0.7270 with all 44 fragments); NULL_TOL 0.01 does not decide the label.\n(10) `git status -- src tests` is empty. docs/ shows three modified files with mtimes 2026-10-07 13:04, 2026-10-09 11:39:23 and 11:40:43, all before the final execution started at 11:47:46; the H73 content in those diffs is the registered block, its lock line and summary rows marked 'pre-registered', with no verdict text. JOURNAL.md and logs/README.md carry no H73 text.\n\nOutside the scope of check 10: the executor wrote `.claude/agent-memory/senior-backend-engineer/project-stage-a-executor-defined-thresholds.md` and its MEMORY.md index at 11:50.\n\nDisclosure: the task said to write no file. I wrote one text dump of the notebook's cells and outputs to the session scratchpad under /tmp, outside the repository, before reading it. I did not execute the notebook, import docdistance, or modify anything in the repository.\n\nRelevant paths: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H73-kj-nearest-source-residual.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E13-H73-nearest-source-residual-metrics.json, /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H73.json, /home/lab/workspace/learning/projects/docdistance/logs/E13-H73-nearest-source-residual.log"
+   },
+   "repaired": true
+  },
+  {
+   "id": "E13-H74",
+   "slug": "order-kernel-reach",
+   "result": {
+    "id": "E13-H74",
+    "slug": "order-kernel-reach",
+    "model": "opus",
+    "verdict": "Refuted",
+    "verdict_number": "median order gap grows +190.5% between displacement 60 and 200 (0.14324 → 0.41615, shuffled arm, N = 300, 5 seeds); the bar allows a change <= 5% and registers Refuted at growth >= 20%",
+    "kill_gate": {
+     "ran": true,
+     "passed": true,
+     "reading": "K rebuilt with a line-for-line replica of the kernel lines of _opw_plan for N = M = 300 and the shipped constants (lambda1 50.0, lambda2 0.1, sigma 1.0): entries at |i - j| = 60 non-zero 0 of 480 at zero ground cost and 0 of 38400 over the 80 ground-cost matrices of the experiment. Shifted log K at offset 60 reads -919.23 at zero ground cost and at most -899.23 for every ground cost <= 2.0; np.exp(-745.14) = 0.0. Widest offset holding a non-zero entry: 54 at zero ground cost, 53 with the measured ground costs. The premise holds, the gate did not fire"
+    },
+    "sanity_check": {
+     "required": false,
+     "passed": true,
+     "reading": "the record and the notes name no sanity check. Harness checks run in its place: replica plan == shipped opw_plan on all 80 ground-cost matrices (np.array_equal True); the row-group split adds up to the shipped opw_gap exactly on every one of the 80 solves; every block move verified as a permutation that shifts the block by d and the d passed-over statements by -10; the naive panel row is reproduced (margin +4.71 pts, d' 4.68, R 1.670, DR 0.0873)"
+    },
+    "prediction_check": {
+     "predicted": "growth >= 20% from 5 to 50 positions, within 5% from 60 to 200",
+     "observed": "shuffled arm: +286.6% from 5 to 50 (0.03228 → 0.12482) and +190.5% from 60 to 200 (0.14324 → 0.41615); document-order arm: +315.1% and +188.7% (0.14584 → 0.42098); 10 of 10 sequences grow >= 20% from 60 to 200. The growth clause held, the saturation clause is falsified",
+     "direction_matched": false
+    },
+    "acceptance": {
+     "bar": "Confirmed iff, on sequences of >= 300 statements, the median order gap grows >= 20% between displacement 5 and 50 AND changes <= 5% between 60 and 200 (one block of 10 statements moved); Refuted if it still grows >= 20% between 60 and 200",
+     "met": false,
+     "readings": {
+      "primary_arm": "shuffled",
+      "sequence_length": 300,
+      "seeds_per_arm": 5,
+      "shuffled_median_gap_by_displacement": {
+       "0": 0.00655,
+       "5": 0.03228,
+       "10": 0.04706,
+       "20": 0.06501,
+       "50": 0.12482,
+       "60": 0.14324,
+       "100": 0.2211,
+       "200": 0.41615
+      },
+      "document_order_median_gap_by_displacement": {
+       "0": 0.00995,
+       "5": 0.03064,
+       "10": 0.04447,
+       "20": 0.06727,
+       "50": 0.12718,
+       "60": 0.14584,
+       "100": 0.22064,
+       "200": 0.42098
+      },
+      "shuffled_growth_5_to_50_pct": 286.6,
+      "shuffled_change_60_to_200_pct": 190.5,
+      "shuffled_change_60_to_200_pct_per_seed": [
+       193.1,
+       190.7,
+       183,
+       178.8,
+       192.8
+      ],
+      "document_order_growth_5_to_50_pct": 315.1,
+      "document_order_change_60_to_200_pct": 188.7,
+      "document_order_change_60_to_200_pct_per_seed": [
+       185.5,
+       186.8,
+       166,
+       188.7,
+       177.6
+      ],
+      "near_growth_clause_met": true,
+      "far_flat_clause_met": false,
+      "refutation_clause_met": true,
+      "control_agrees": true,
+      "sequences_growing_60_to_200": "10/10"
+     }
+    },
+    "guardrails": {
+     "V": "0/24",
+     "src_untouched": true,
+     "metric_property": "unchanged - no code changed; smd exact metric, opw_gap a score (not a metric)",
+     "notes": "V counted on the ibm panel through the shipped DocDistance.embed and smd: 0/24, panel row margin +4.71 pts, d' 4.68, R 1.670, DR 0.0873, equal to the primer's naive row. Default-path smd 0.22648980232576527 and order_gap 0.14508837947471193 on (gold, gold-2) and the 10 panel distances are equal before and after by np.array_equal and by byte compare. The sha256 of the src/, tests/ and docs/ trees is unchanged (src f0e13add3de29ff3, tests 00ea6c7799307adb, docs 46241ace1c95a621) and git status src tests is clean. The kernel replica and the block moves live inside the notebook; no shipped file was edited"
+    },
+    "key_numbers": {
+     "pool_unique_statements": 372,
+     "length_600_feasible": false,
+     "kernel_nonzero_entries_at_offset_60": 0,
+     "kernel_widest_nonzero_offset_zero_cost": 54,
+     "kernel_widest_nonzero_offset_measured": 53,
+     "shuffled_gap_median_d5": 0.03228,
+     "shuffled_gap_median_d50": 0.12482,
+     "shuffled_gap_median_d60": 0.14324,
+     "shuffled_gap_median_d200": 0.41615,
+     "shuffled_growth_5_to_50_pct": 286.6,
+     "shuffled_change_60_to_200_pct": 190.5,
+     "document_order_growth_5_to_50_pct": 315.1,
+     "document_order_change_60_to_200_pct": 188.7,
+     "linear_fit_shuffled": {
+      "slope": 0.5833,
+      "intercept": 0.0063,
+      "r2": 0.999
+     },
+     "linear_fit_document_order": {
+      "slope": 0.5717,
+      "intercept": 0.0081,
+      "r2": 0.9912
+     },
+     "block_rows_cost_d10_shuffled": 0.02023,
+     "block_rows_cost_d200_shuffled": 0.02027,
+     "block_rows_change_pct_shuffled": {
+      "change_5_to_50": 31.12,
+      "change_10_to_200": 0.19,
+      "change_60_to_200": 0.01
+     },
+     "passed_over_rows_cost_d60_shuffled": 0.11992,
+     "passed_over_rows_cost_d200_shuffled": 0.39295,
+     "passed_over_share_of_growth_60_to_200_pct": {
+      "shuffled": 100,
+      "document-order": 101.3
+     },
+     "own_statement_mass_block_rows_d5_shuffled": 0.1227,
+     "own_statement_mass_block_rows_max_d_ge_10": 0.000258,
+     "position_penalty_by_offset": {
+      "5": 0.6389,
+      "7": 1.2522,
+      "8": 1.6355,
+      "10": 2.5555,
+      "54": 74.4692
+     },
+     "largest_pooled_ground_cost": 1.3356,
+     "cost_reach_positions": 7,
+     "float64_support_edge_positions": 54,
+     "structure_closeness_shuffled_median_d50": 0.9117,
+     "structure_closeness_shuffled_median_d60": 0.8987,
+     "structure_closeness_shuffled_median_d200": 0.7057,
+     "unmoved_pair_gap_median_shuffled": 0.00655,
+     "unmoved_pair_gap_median_document_order": 0.00995
+    },
+    "result_summary": "Refuted. The kernel premise holds: every entry of K at |i - j| = 60 is exactly 0.0 for N = M = 300 and the widest non-zero offset is 54. The predicted saturation of the order gap does not occur: on 300-statement sequences with one block of 10 moved, the median shipped opw_gap grows +286.6% from displacement 5 to 50 and +190.5% from 60 to 200 in the shuffled arm, +315.1% and +188.7% in the document-order control, and 10 of 10 sequences grow >= 20% from 60 to 200. The row-group split of the shipped coupling shows why: a block moved by d positions shifts the d statements it passes over by 10 positions each, and the gap is linear in the d + 10 displaced statements (slope 0.5833 per displaced fraction, intercept 0.0063, R^2 0.999 in the shuffled arm). The 10 block rows cost 0.02023 at d = 10 and 0.02027 at d = 200 (+0.19%), so the block's own cost is constant from 10 positions on, well below the 54-position float64 support; the growth from 60 to 200 comes from the passed-over rows (0.11992 → 0.39295). The coupling stops matching a displaced statement to itself below 10 positions (own-statement mass 0.1227 at d = 5, at most 0.000258 from d = 10) because the kernel's position cost pen(8) = 1.6355 already exceeds the largest pooled ground cost 1.3356. The float64 underflow exists and is not the limit that shapes the reading",
+    "artifacts": {
+     "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H74-kj-order-kernel-reach.ipynb",
+     "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E13-H74-order-kernel-reach-metrics.json",
+     "log": "/home/lab/workspace/learning/projects/docdistance/logs/E13-H74-order-kernel-reach.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "The registered 600-statement length was not run: the registered pool holds 372 unique statements. A single moved block cannot be displaced without shifting the d statements it passes over, so the registered design varies the count of displaced statements together with the distance; the bar is on the order gap and was applied literally. The numeric pattern of the prediction does appear on the block rows alone (+31.12% from 5 to 50, +0.01% from 60 to 200), with the constant part starting at 10 positions and not at 54, so that component does not support the float64 mechanism either. One block start per sequence, drawn from positions 0 to 90, forward moves only. Sequences are concatenations of pooled statements and short documents, not one long authored document, and A_moved holds the same statements as A (smd at most 0.000302), so a pair that also differs in content is not measured. The displacement at which the position cost exceeds the ground cost depends on the encoder's ground-cost scale (largest pooled ground cost 1.3356). The unmoved pair opw_gap(A, A) reads a median 0.00655 (shuffled) and 0.00995 (document order), not 0. Readings outside the registered grid (the d = 0 row, the row-group split, the structure_closeness column, the linear fit and the position-cost table) enter no bar. Two observations for the orchestrator, outside this hypothesis: structure_closeness of the shuffled median reads 0.9117 at d = 50 and 0.8987 at d = 60, below STRUCTURE_THRESHOLD 0.9; other notebooks under notebooks/experiments were re-executed by another process during this run and show as modified in git status, none by this executor. No timing is quoted"
+   },
+   "verify": {
+    "id": "E13-H74",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The causal sentence in result_summary states a displacement threshold that the run did not measure. It says the coupling stops matching a displaced statement to itself 'because the kernel's position cost pen(8) = 1.6355 already exceeds the largest pooled ground cost 1.3356', and the notebook conclusions say 'for a statement displaced by 8 positions or more, opw_gap does not grow with the distance moved'. The value 8 is an analytic sufficient bound, not a reading.",
+      "evidence": "Notebook cell 24: `COST_REACH = max(delta for delta, pen in PENALTY.items() if pen <= POOL_COST_MAX)` compares pen against the LARGEST pooled ground cost, while the measured mean adjacent ground cost is 0.5512 to 0.6464 (cell 12) and pen(5) = 0.6389. The registered grid holds no displacement between 5 and 10, and at d = 5 the block rows already place only 0.1227 of their mass on their own statement. The measured statement is: own-statement mass 0.1227 at d = 5 and at most 2.58e-04 at d = 10. Materiality: no bar reads this number and the caveats say readings outside the registered grid enter no bar, so no verdict or count moves. Remedy (EDIT, wording only, for the orchestrator's record): state the threshold as 'between 5 and 10 positions (measured), at most 8 by the position-cost bound'."
+     },
+     {
+      "severity": "minor",
+      "claim": "The registered design changes the count of displaced statements together with the distance, so the Refuted label covers the registered prediction (the gap of one moved block is flat from 60 to 200) and does not cover the opposite reading 'the order gap responds to distance beyond 54 positions'. The ledger index row for this id reads 'order kernel stops responding beyond about 54 positions'; a Refuted beside that title can be read as 'the kernel keeps responding to distance', which the data contradict.",
+      "evidence": "Cell 12 `move_block` shifts d passed-over statements by 10 each; cell 24 output: block rows 0.02023 at d = 10 and 0.02027 at d = 200, passed-over rows carry 100.0% (shuffled) and 101.3% (document-order) of the 60 → 200 growth. Independent check by this reviewer with the shipped `opw_gap` on 300 synthetic unit vectors (mean pair cost 0.600, no encoder, no file written): one moved block reproduces the executor's pattern, +282.0% from 5 to 50 and +195.1% from 60 to 200 (0.1425 → 0.4204); exchanging two blocks of 10, which holds the displaced count at 20, reads 0.04367 at d = 10, 0.04392 at d = 60, 0.04377 at d = 200 (-0.3% from 60 to 200). The executor's caveats already state the confound and the block-rows reading, and the bar was applied literally as the primer requires, so the verdict stands. Materiality: affects only how the ledger entry is worded. Remedy (EDIT, ledger note by the orchestrator): record beside the verdict that the gap of a displaced statement is constant from about 10 positions and that the 60 → 200 growth is the count of passed-over statements."
+     },
+     {
+      "severity": "minor",
+      "claim": "The record does not name which arm carries the bar; the executor designated the shuffled arm as primary in the notebook (`primary = BAR[ARMS[0]]`). The ladder in cell 22 also holds a label outside the closed vocabulary (`\"neither branch\"`, for a change between 5% and 20%).",
+      "evidence": "Cell 22: `REFUTED = bool(KILL_GATE_PASSED and primary[\"far_change\"] >= BAR_FAR_REFUTE)`; `VERDICT = (\"Killed-at-gate\" if not KILL_GATE_PASSED else \"Confirmed\" if CONFIRMED else \"Refuted\" if REFUTED else \"neither branch\")`. Both arms give the same branch (+190.5% shuffled, +188.7% document-order, 10 of 10 sequences between +166.0% and +193.1%), so the arm choice moves no verdict, and the out-of-vocabulary branch was not reached. Materiality: none on this run. Remedy: DEFER."
+     }
+    ],
+    "notes": "VERDICT: SHIP. Refuted is supported; no blocking or major finding.\n\nChecks 1-10:\n(1) Kill-gate ran first among the measuring cells (cell 16, execution count 8; experiment cell 18, count 9) and was read as registered: `KILL_GATE_PASSED = GATE_NONZERO_ZERO_COST == 0 and GATE_NONZERO_MEASURED == 0`, 0 of 480 and 0 of 38400 non-zero entries at offset 60. The gate reads a replica of distance.py:159-167, verified by `np.array_equal` against the shipped `opw_plan` on 80 matrices. I recomputed by hand: log K at offset 60 = -900 - 19.23 = -919.23, at offset 54 = -729 - 15.69 = -744.69; both match.\n(2) Bar applied literally: constants 0.20 / 0.05 / 0.20 at displacements (5, 50) and (60, 200), median of 5 seeds, N = 300, block of 10. I recomputed the four medians and both ratios from the per-seed table: 0.41615 / 0.14324 = 2.905 (+190.5%), 0.42098 / 0.14584 = 2.887 (+188.7%). The 600 length is conditional in the record (\"if the pool allows\"); the pool holds 372 unique statements.\n(3) All 78 numbers in reports/E13-campaign/results/H74.json appear verbatim in the notebook outputs (scripted check, 0 missing).\n(4) Guardrails measured: V counted 0/24 on the panel, panel row reproduced, byte compare of smd and order_gap, sha256 of src/tests/docs before and after, git status src tests clean (confirmed by me).\n(5) The record names no sanity check; required = false is correct.\n(6) 0 error outputs, execution counts 1 to 15 in order. The log line \"Writing 392622 bytes\" equals the notebook's character count; the file is 411391 bytes in UTF-8 because of the table-border characters. Log and notebook mtimes are both 11:21:03.\n(7) Refuted is in the closed set and fits its semantics: bar not met, saturation clause falsified, registered refutation clause met.\n(8) Prediction check reports both clauses with magnitudes and direction_matched = false.\n(9) No cutoff was tuned: bar constants come from the record; COST_REACH and the linear fit enter no bar.\n(10) src/ and tests/ are clean. docs/ shows as modified in git, but the ledger mtime is 11:01:33 and the defects file is dated 2026-10-07, both before the notebook write at 11:21:03; the in-run docs tree hash is unchanged; the E13-H74 ledger block holds only the \"registered\" log line; acc-crit is unmodified.\n\nMethod points that hold: the test could have returned Confirmed (the refutation boolean depends on a measured ratio), the document-order control has range and agrees, and my synthetic reproduction with the shipped `opw_gap` gives the same branch.\n\nFiles: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E13-H74-kj-order-kernel-reach.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E13-H74-order-kernel-reach-metrics.json, /home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/results/H74.json, /home/lab/workspace/learning/projects/docdistance/logs/E13-H74-order-kernel-reach.log, /home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py (lines 145-173, 206-225)."
+   },
+   "repaired": false
+  },
+  {
+   "id": "E14-H75",
+   "slug": "centering-attribution-transfer",
+   "result": {
+    "id": "E14-H75",
+    "slug": "centering-attribution-transfer",
+    "model": "opus",
+    "verdict": "Confirmed",
+    "verdict_number": "arm a (center + renorm) recovers 102.8% of the full-composition margin gain on the second fixture (+39.99 of +38.90 pts, margin +15.84 → +55.83) at V 0/12; arm b (projection isolate) recovers -3.6%",
+    "kill_gate": {
+     "ran": true,
+     "passed": true,
+     "reading": "76 Wergeland statements: pooled mean norm 0.9476 (kill below 0.15); full-composition margin gain +38.90 pts over naive (+15.84 → +54.74; kill below +1.0)"
+    },
+    "sanity_check": {
+     "required": true,
+     "passed": true,
+     "reading": "E12-H64 ibm rows on OpenVINO INT8, tolerance 5%: naive +4.7083 (registered +4.71, 0.04% off), arm a +19.9526 (+19.95, 0.01% off), full composition +19.4144 (+19.41, 0.02% off), V 0/24 on every row; difference to the E12-H64 full-precision margins 0.00e+00, 0.00e+00 and 2.13e-14 pts; 98 ibm statements"
+    },
+    "prediction_check": {
+     "predicted": "pooled mean norm above 0.9; cos(uncentered PC1, mean direction) at least 0.999; arm a recovers at least 90% of the full-composition margin gain; arm b between -15% and +15%; V 0/12 in arms a and c",
+     "observed": "pooled mean norm 0.9476; cos 0.999999; arm a 102.8%; arm b -3.6%; V 0/12 and 0/12 - 5/5 clauses held",
+     "direction_matched": true
+    },
+    "acceptance": {
+     "bar": "attribution reproduces iff exactly one arm reaches >= 60% of the full-composition margin gain at V = 0/12, that arm is (a), and arm b stays below 30%; guardrails: raw embeddings byte-identical after every arm, default-path smd and order_gap bit-identical, unit norms and cost = sqrt(2 - 2cos) to 1e-6 in every arm",
+     "met": true,
+     "readings": {
+      "full_composition_margin_gain_pts": 38.895448571237914,
+      "arm_a_recovery": 1.0282160712771629,
+      "arm_b_recovery": -0.0356395102759393,
+      "arm_a_V": 0,
+      "arm_b_V": 0,
+      "arm_c_V": 0,
+      "arms_reaching_bar": 1,
+      "arm_reaching_bar": "a center+renorm",
+      "arm_b_below_30pct": true
+     }
+    },
+    "guardrails": {
+     "V": "0/24 on the ibm sanity rows (all four ibm geometries); 0/12 on all four second-fixture geometries",
+     "src_untouched": true,
+     "metric_property": "holds in all 8 scored geometries: unit norms to 2.4e-07 at most, cost = sqrt(2 - 2cos) to 5.2e-08 at most in float64 on exact-unit copies, triangle slack +1.2e-15 at most; the same identity read on the float32 arrays is 4.8e-04 to 7.7e-04 in every geometry, the shipped naive one included",
+     "notes": "raw embeddings byte-identical after each arm and at the end (76 and 98 statements); default-path smd and order_gap bit-identical before and after the arms on 15 second-fixture pairs and 55 ibm pairs, and the 55 ibm pairs equal the bd0002e baseline 55/55 and 55/55; git status reports no modification under src/ and tests/; docs/ shows the orchestrator's two modified files, this run wrote nothing there"
+    },
+    "key_numbers": {
+     "pooled_mean_norm": 0.9475964903831482,
+     "naive_margin_pts": 15.840281221945318,
+     "arm_c_margin_pts": 54.73572979318323,
+     "full_composition_margin_gain_pts": 38.895448571237914,
+     "n_statements": 76,
+     "n_documents": 6,
+     "ibm_naive_margin_pts": 4.708317407970153,
+     "ibm_arm_a_margin_pts": 19.952554955749292,
+     "ibm_arm_b_margin_pts": 4.044454232474026,
+     "ibm_arm_c_margin_pts": 19.414396463424644,
+     "ibm_arm_a_recovery": 1.0365942880012633,
+     "ibm_arm_b_recovery": -0.04514209212345421,
+     "ibm_sanity_max_rel_delta": 0.00035723822289747506,
+     "naive_V": 0,
+     "naive_dprime": 16.97988870838797,
+     "arm_a_margin_pts": 55.8332065424265,
+     "arm_a_V": 0,
+     "arm_a_dprime": 35.88973585875125,
+     "arm_b_margin_pts": 14.454066482903416,
+     "arm_b_V": 0,
+     "arm_b_dprime": 16.41734142118946,
+     "arm_c_V": 0,
+     "arm_c_dprime": 34.70953241254488,
+     "arm_a_gain_pts": 39.992925320481184,
+     "arm_b_gain_pts": -1.3862147390419022,
+     "arm_a_recovery": 1.0282160712771629,
+     "arm_b_recovery": -0.0356395102759393,
+     "arm_a_minus_arm_c_margin_pts": 1.0974767492432704,
+     "ibm_arm_a_minus_arm_c_margin_pts": 0.5381584923246479,
+     "cos_uncentered_pc1_mean": 0.9999988079071045,
+     "cos_centered_pc1_mean": 0.05586512014269829,
+     "singular_value_1_uncentered": 8.262309074401855,
+     "singular_value_2_uncentered": 0.8486492037773132,
+     "singular_value_1_centered": 0.8498095273971558,
+     "ibm_pooled_mean_norm": 0.9538519382476807,
+     "ibm_cos_uncentered_pc1_mean": 0.9999992251396179,
+     "clipped_pairs_total": 0,
+     "arm_a_recovery_unclipped": 1.0282160712771629,
+     "arm_b_recovery_unclipped": -0.035639510275939534,
+     "conditioned_max_abs_closeness_diff": 0.07255897216500196,
+     "conditioned_max_abs_closeness_diff_pts": 7.255897216500196,
+     "conditioned_max_abs_d_sel_diff": 0.4081399717544146,
+     "conditioned_max_abs_residual_diff": 0.10261388250759773,
+     "conditioned_d_sel_ratio_min": 0.32966285646236315,
+     "conditioned_d_sel_ratio_max": 0.4933822994128228,
+     "conditioned_d_sel_order_preserved": true
+    },
+    "result_summary": "The E12-H64 attribution reproduces on a fixture with no ibm document. On the three Wergeland sections and their back-translation paraphrases (76 pooled statements, 3 positives, 12 negatives) the margin reads naive +15.84, arm a +55.83, arm b +14.45, full composition +54.74 closeness points, V 0/12 in all four. Centering plus re-L2-normalisation recovers 102.8% of the full-composition gain and the projection isolate -3.6% (ibm: 103.7% and -4.5%). cos(uncentered PC1, mean direction) is 0.999999 and no closeness is clipped (0/15 pairs). Conditioned-path reading, no bar: with the pre-pass replaced by arm a on the three ibm grounded triples the largest absolute closeness difference to the shipped pre-pass is 0.072559 (7.26 closeness points, adv2-b in gold|adv2-b) and d_sel is 0.330 to 0.493 times the shipped value with the order of the triples preserved, so arm a and the shipped pre-pass are not interchangeable on that path.",
+    "artifacts": {
+     "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E14-H75-kj-centering-attribution-transfer.ipynb",
+     "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E14-H75-centering-attribution-transfer-metrics.json",
+     "log": "/home/lab/workspace/learning/projects/docdistance/logs/E14-H75-centering-attribution-transfer.log"
+    },
+    "notebook_errors": 0,
+    "caveats": "(1) The record registers 1e-6 for cost = sqrt(2 - 2cos) without naming the arithmetic; the notebook declared the E12-H64 reading (float64, exact-unit copies) before measuring, and it holds at 5.2e-08. Read on the float32 arrays the identity is off by 4.8e-04 to 7.7e-04 in every geometry, the shipped naive one included, so no arm causes it. (2) The 12 negative entries are 9 distinct document pairs because each base-against-base pair is scored once per anchor; margin and V do not depend on it, d' does. (3) One article: the sections share a subject, the positives are machine back-translations (naive closeness 0.8781 to 0.9071), only three positives exist, and the estimation pool is the scored pool as registered. (4) The conditioned-path reading covers three triples and one source and has no bar; it needed only the pre-pass built outside compute_source_conditioned with the internal one switched off (verified bit for bit against the shipped pre-pass and the saved baseline), so both closeness and d_sel are reported; grd_a and grd_b take statement texts, the pre-pass cannot reach them, and they were not recomputed. (5) The E12-H64 full-precision comparison rows are copied from the output of its registered run of 2026-09-01: another process rewrote the E12-H64 notebook and metrics file at 11:09 on 2026-10-09, in the same minutes as E07, E08 and other E12 notebooks and metrics files; this executor wrote none of them. (6) Autoreload is off in the notebook so that one fixed copy of the shipped code is scored."
+   },
+   "verify": {
+    "id": "E14-H75",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The registered margin statistic depends on distance scale, so a scalar rescale of the naive distances passes the 60% clause of the bar without any change to the geometry. The verdict does not move, because the scale-free reading keeps the same direction.",
+      "evidence": "Independent re-encode in a scratch script (shipped OpenVINO INT8 encoder, same six documents) reproduced the notebook: naive +15.840281, arm a +55.833207, arm b +14.454066, arm c +54.735730, recoveries +102.82% and -3.56%, V 0/12 in all four. Null arm: every naive SMD multiplied by 1/sqrt(1 - 0.947596^2) = 3.1302, ordering of all 15 pairs unchanged, 0/15 clipped, margin +49.58, recovery 86.75%. That clears `RECOVERY_W[n] >= BAR_RECOVERY` (cell 38) and misses only the registered prediction clause of 90%. Per-pair distance ratio arm a / naive is 2.917 to 3.347, so arm a is close to a uniform dilation. Scale-free reading (smallest negative distance / largest positive distance): naive 2.300, arm a 2.571, arm b 2.186, arm c 2.483, so arm a is still the only isolate that improves on naive and arm b is below naive. Materiality: none for the Confirmed verdict; it affects how the +38.90 point gain is quoted downstream (ACC-GEOM-21). Remedy: DEFER, or one sentence in the ledger result stating that about 87% of the gain is uniform dilation of distances."
+     },
+     {
+      "severity": "minor",
+      "claim": "The V clause of the bar and of the prediction was not exercised on this fixture: V is 0/12 in every geometry, the naive one and arm b included.",
+      "evidence": "Cell 24 output: naive 0/12 with margin +15.84, positives at closeness 0.8781 to 0.9071 (machine back-translations), negatives at 0.6902 to 0.7197. The smallest negative distance is 2.30 times the largest positive distance in the naive geometry, so an arm would have to change relative distances by more than that factor to produce one violation. `SCORE_W[n][\"V\"] == 0` in `REACHING` (cell 38) is true for all four geometries, so it cannot separate arms here. The executor's caveat 3 states the positives are back-translations and only three exist. Materiality: none for the verdict, which is decided by the recovery clauses. Remedy: DEFER; a fixture with looser positives is a separate registration."
+     },
+     {
+      "severity": "minor",
+      "claim": "Two of the three metric-property reads cannot fail: the float64 cost identity on exact-unit copies and the triangle check. The guardrail rests on the unit-norm read alone, which is measured on the stored arrays and passed.",
+      "evidence": "Cell 16 `metric_property`: `P64 = P64 / np.linalg.norm(P64, axis=1, keepdims=True)` then `cost_matrix(P64, P64)` against `sqrt(2 - 2 * P64 @ P64.T)`. `cost_matrix` is `ot.dist(X, Y, metric=\"euclidean\")` (src/docdistance/distance.py:43-45), and Euclidean distance on exactly unit rows equals sqrt(2 - 2cos) for any input. Scratch test: a random 76 x 768 matrix with row norms 0.1 to 10 passes the same read at 4.21e-08 with triangle slack 0. The read that can fail is `norm_dev <= NORM_TOL` on the float32 arrays: 1.2e-07 to 2.4e-07 against 1e-6 in all 8 geometries. The reading is not a goalpost move: the committed E12-H64 notebook (HEAD, lines 455-462 of its metric cell) uses the identical float64 exact-unit read and reports the float32 figure separately as a band of 4.8e-04 to 7.7e-04, and the ledger's E12-H64 result line quotes 5.2e-08, the number the registered 1e-6 tolerance was set against. The executor disclosed both readings in the config cell, the Limits section and caveat 1. Materiality: none; unit norm plus a Euclidean cost gives the metric property. Remedy: DEFER."
+     },
+     {
+      "severity": "minor",
+      "claim": "The verdict ladder has no branch for a met bar with a missed prediction clause. The branch was not needed in this run.",
+      "evidence": "Cell 40: `elif ATTRIBUTION_REPRODUCES: VERDICT = \"Confirmed\"`; `PRED_CLAUSES_HELD` is not read. The primer defines Confirmed as prediction held and bar met. Observed 5/5 clauses held (cell 36 output), so the data did not land in the uncovered region. E12-H64 was recorded Confirmed with one point band missed, so the campaign precedent is the same. Materiality: none for this verdict. Remedy: DEFER."
+     }
+    ],
+    "notes": "VERDICT: SHIP. The Confirmed verdict stands: 0 blocking, 0 major, 4 minor findings.\n\nResults of the ten checks:\n1. Kill-gate ran first (execution count 12, before the sanity check at 13-14 and the experiment at 15) and was coded as registered: `MEAN_NORM_W >= 0.15` and `FULL_GAIN_W >= 1.0`; readings 0.9476 and +38.90.\n2. The bar was applied literally: `REACHING == [ARM_A] and RECOVERY_W[ARM_B] < 0.30`, with `>= 0.60` and `V == 0`. Counting only the two isolate arms matches the committed E12-H64 code (`n != \"c full shipped\"`). No guardrail was dropped.\n3. Every numeric token in the result JSON appears in the notebook outputs (programmatic scan, 0 missing). `key_numbers` equals `result_key_numbers` in the metrics JSON.\n4. Guardrails were measured: byte comparison of raw embeddings, hex comparison of default-path smd and order_gap, 55/55 ibm pairs against the bd0002e baseline file dated 2026-10-07. The before-against-after comparison on the 15 second-fixture pairs runs inside one process and has no external baseline.\n5. Sanity check reproduced: +4.7083, +19.9526, +19.4144 against +4.71, +19.95, +19.41, V 0/24. The hard-coded E12-H64 comparison constants match the committed E12-H64 metrics file at HEAD.\n6. 0 error outputs; execution counts 1 to 23 consecutive; the log reports 518353 written, equal to the notebook's character count; the metrics file is 22337 bytes as the notebook printed.\n7. Confirmed is in the closed set and matches its primer definition.\n8. Prediction check is honest: 5/5 one-sided clauses held on the printed numbers.\n9. No threshold was tuned: all cutoffs are the registered ones and are declared in the configuration cell.\n10. `git status` shows no entry under src/ or tests/. The ledger was last written at 11:01:33 and the journal at 11:03:00, both before the run finished at 11:24:00; the E14-H75 ledger block carries only the `registered` log line. docs/defects-docdistance.md is dated 2026-10-07 and docs/acc-crit-docdistance.md 2026-09-02.\n\nTwo items for the adjudicator that are not defects of this run:\n- ACC-GEOM-21 changes the conditioned-path pre-pass, and this hypothesis measured the attribution on the symmetric panels. On the three conditioned-path triples the executor's own reading shows arm a reducing the gold-minus-adversarial closeness gap from +0.0893 to +0.0619 and from +0.0895 to +0.0571 (31% and 36% smaller), with d_sel at 0.330 to 0.493 times the shipped value. The executor reported this and stated the two pre-passes are not interchangeable there. Confirmed covers the attribution only.\n- A separate process re-executed 14 notebooks (E07 to E12) and rewrote their metrics files between 11:05:06 and 11:14:20, E12-H64 at 11:09:51. The E14-H75 notebook writes one file, its own metrics JSON, so nothing ties that batch to this run. Its origin is not established from the evidence I have.\n\nGeneralisation limit, already in the executor's caveat 3: two fixtures, both articles about AI, three positives.\n\nScratch script used for the re-derivation: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/recheck.py. Nothing in the repository was written."
+   },
+   "repaired": false
+  }
+ ]
+}

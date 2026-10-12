@@ -1,0 +1,170 @@
+{
+ "packages": [
+  {
+   "key": "repairs",
+   "result": {
+    "package": "repairs",
+    "status": "done",
+    "items": [
+     {
+      "id": "DEF-DEPS-14",
+      "met": true,
+      "evidence": "tests/test_e2e.py::test_offline_load_of_cached_models_works_with_the_hub_unreachable: a child process without HF_HUB_OFFLINE, proxies on the closed port 127.0.0.1:9, huggingface_hub imported before docdistance, prints SHAPE (2, 768); on the saved 1.1.12 source the same test FAILED with ModelsNotInstalled (not skipped). tests/test_e2e.py::test_every_model_constructor_reads_the_hub_inside_the_offline_scope (7 constructors, stub libraries) and ::test_hub_offline_sets_the_flag_requests_read_and_puts_it_back pass; 12 mutations of the mechanism killed. `CI=true .venv/bin/python reports/E13-campaign/checks/offline-load/count_requests.py` on 1.1.13: 4 loads, 1 embed, 1 source-conditioned call, 0 connections opened, flag False after the loads; on the 1.1.12 source: 4 loads raise ModelsNotInstalled, 6 connections."
+     },
+     {
+      "id": "DEF-SEGM-15",
+      "met": true,
+      "evidence": "tests/test_segmentation.py::test_split_markdown_drops_marker_only_lines (the repro lines '## Key findings', '-', prose, '###', '---', '* * *' return 3 statements; 11 marker forms each dropped and each ending the paragraph), ::test_split_markdown_keeps_lines_that_are_not_marker_only, ::test_markdown_reader_does_not_warn_about_marker_statements (changed: 4 statements, no warning); the first and the third FAILED on the 1.1.12 source; 9 mutations killed. Real models on 1.1.13 (logs/E13-repairs-markdown-reader.log): ibm source markdown=True 48 statements, 0 without a letter or digit; default reader 70 statements, 21 such, unchanged; sha256 of `docdistance distance-semantic --pairs data/interim/E12-H67/allpairs-55.tsv --markdown` = 62d98b6b3fb6b7cbf588ab89980c702670bfa65a4b919a60ff7f1f993a5e5ba5, equal to the recorded arm."
+     },
+     {
+      "id": "ACC-TRANS-83",
+      "met": true,
+      "evidence": "Docstring of partial_matching (src/docdistance/distance.py:372) states: deterministic, copies ranked by position, the tie condition (abs convex but not strictly convex; every tied copy shifts the same way by more than the spacing of the copies), the example and the E15-H79 limit 111 of 120. I reproduced the example: 16 one-hot statements, copies at 8 and 9, statements 11, 13, 14 deleted return the pairs [8, 9], [9, 8]; position sum 0.2451923076923077 for both pairings; two calls return the same pairs. Existing test tests/test_structure.py::test_partial_matching_is_deterministic_among_equal_cost_pairs passes (its docstring now names ACC-TRANS-83). No docstring-text test was added."
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py",
+     "/home/lab/workspace/learning/projects/docdistance/src/docdistance/__init__.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_distance.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_structure.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_segmentation.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_pipeline.py",
+     "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+     "/home/lab/workspace/learning/projects/docdistance/docs/api-reference.md",
+     "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md",
+     "/home/lab/workspace/learning/projects/docdistance/logs/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/batch-memos/measure.py",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/batch-memos/guardrail_memo_on.py",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/detail-map/verify_build.py",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/detail-map/ref.json.gz",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/detail-map/verify_source_map.py",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/detail-map/ref_source_map.json",
+     "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/offline-load/count_requests.py",
+     "/home/lab/workspace/learning/projects/docdistance/pyproject.toml",
+     "/home/lab/workspace/learning/projects/docdistance/uv.lock",
+     "/home/lab/workspace/learning/projects/docdistance/logs/env-install.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/refactor-test.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-guardrail.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-markdown-reader.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-verify-build.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-verify-source-map.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-count-requests.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-repairs-guardrail-memo-on.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-batch-memos-overhead-arms.log",
+     "/home/lab/workspace/learning/projects/docdistance/logs/E13-batch-memos-semantic-6-rows.log",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/project-offline-flag-set-after-hub-import.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/feedback-evidence-scripts-in-the-repository.md",
+     "/home/lab/workspace/learning/projects/docdistance/.claude/agent-memory/senior-backend-engineer/MEMORY.md"
+    ],
+    "tests_added": [
+     "tests/test_e2e.py::test_offline_load_of_cached_models_works_with_the_hub_unreachable",
+     "tests/test_e2e.py::test_hub_offline_sets_the_flag_requests_read_and_puts_it_back",
+     "tests/test_e2e.py::test_every_model_constructor_reads_the_hub_inside_the_offline_scope (7 cases)",
+     "tests/test_segmentation.py::test_split_markdown_drops_marker_only_lines",
+     "tests/test_segmentation.py::test_split_markdown_keeps_lines_that_are_not_marker_only",
+     "tests/test_segmentation.py::test_marker_warning_names_the_file_of_a_file_document",
+     "tests/test_distance.py::test_exact_solver_cap_is_never_below_the_pot_default",
+     "tests/test_distance.py::test_solver_not_optimal_is_exported_from_the_package_root",
+     "tests/test_distance.py::test_unsupported_count_leaves_out_a_statement_exactly_at_the_cutoff",
+     "tests/test_structure.py::test_partial_matching_leaves_out_a_pair_exactly_at_the_cutoff",
+     "tests/test_pipeline.py::test_source_conditioned_call_logs_no_pool_warning (2 cases)",
+     "tests/test_pipeline.py::test_memo_key_is_taken_before_the_file_is_read"
+    ],
+    "make_test": "269 passed, 1 skipped",
+    "make_lint": "clean",
+    "baseline_verify": "0 difference(s)",
+    "out_of_scope_needs": [
+     "src/docdistance/bootstrap.py line 203: `os.environ.pop(\"HF_HUB_OFFLINE\", None)` runs after `_require_models_extra()` has imported the Hub library, so it has no effect on the library. I measured it: with HF_HUB_OFFLINE=1 preset, `huggingface_hub.constants.is_offline_mode()` is True after the pop, so `HF_HUB_OFFLINE=1 docdistance init` stays offline. Same root cause as DEF-DEPS-14, opposite direction. The edit: set `huggingface_hub.constants.HF_HUB_OFFLINE = False` there. File not owned, not changed.",
+     "docs/aws-deployment-reference.md line 31 says 'the loaders set `HF_HUB_OFFLINE=1` after init'. From 1.1.13 no docdistance code sets that variable: each constructor sets the flag of the Hub library for the duration of its load and puts the earlier value back. File not owned.",
+     "docs/solution/wmd-source-conditioned-docdistance-solution-sota.md lines 126 and 130 (Implementation section) still say the grounding axis is 'not yet folded into the library' and name wiring `D_grd` as the next step. R7 names the bullet at line 110 only, so I corrected that bullet and left these two lines. They contradict the corrected bullet.",
+     "docs/defects-docdistance.md, DEF-SEGM-15 and the brief word D2 as 'a bare list marker'. The build drops a bare bullet (`-`, `*`, `+`) and keeps a bare numbered marker (`1.`, `42.`) as prose: a line that holds only '42.' can be the last word of a wrapped paragraph, and the marker warning does not count it either (it holds a digit). A test pins this. Decision for the orchestrator: amend the defect text or order the numbered marker dropped as well.",
+     "reports/E13-campaign/PRIMER.md and review-args.json name `moved` as the only registered exception to the additive policy. D2 is a second one: with `--markdown`, the statements, and so every number, of a document that holds marker-only lines change. The ibm fixtures hold none. I amended the intro of the Unreleased section of CHANGELOG.md and line 143 of docs/api-reference.md accordingly.",
+     "reports/E13-campaign/checks/batch-memos/measure.py: the phases `wrt`, `oneshot`, `cli-counts`, `disjoint-reversed` and the 55-row `semantic` run were not run from the repository copy (`wrt` takes about 50 minutes on this host). The repeat of ACC-CLI-31 and ACC-CLI-40 at a load below 8 is still open. The script writes about 4.5 MB to `checks/batch-memos/out/` per run; I removed what my runs wrote. An ignore entry for that folder is an edit of .gitignore, outside this package.",
+     "pyproject.toml: `huggingface_hub` is imported directly by encoders.py and bootstrap.py (before this package as well) and is installed only as a dependency of transformers. Declare it if every direct import must be declared."
+    ],
+    "notes": "Version after `make install` (run once): 1.1.13. `make test` (269 passed, 1 skipped, 25.81 s), `make lint` and the guardrail ran after the last source write (02:01:07). Guardrail result line: `verify: 55 pairs, 3 grounded, 0 difference(s)`, exit 0; the last output line is a DeprecationWarning of swig. Host load 31 to 40 during all runs: no timing here is a measurement.\n\nChecks on the tests: on a copy of the 1.1.12 source the changed test files read 14 failed, 197 passed (D1 9, D2 2, R15 2, R16 1). The tests of R8, R9, R10, R12 and R13 pass there by design. 35 mutations on a scratch copy of the final source: 35 killed, 0 survived, 0 not applied.\n\nD1 done - `encoders._hub_offline` (encoders.py:97) sets `huggingface_hub.constants.HF_HUB_OFFLINE` for the duration of a load and puts the earlier value back; the 7 constructors wrap their Hub readers in it; `_resolve_ov_dir` lost its `offline` argument. The flag is restored so that `docdistance init` in the same process stays online without an edit of bootstrap.py. Tests: the three test_e2e tests listed. The closed-port test detects the defect through the segmenter only: on 1.1.12 the three OpenVINO loaders load on the closed port because `snapshot_download` falls back to the cache; the stub test covers every constructor.\nD2 done - encoders.py:179-182 and :226; tests in test_segmentation.py; default reader unchanged. A bare numbered marker stays prose (see out_of_scope_needs).\nR1 done - `_exact_ot` docstring (distance.py:117) and the docstring of the raise test. Measured: 12 x 9 at 1 iteration returns 58% of the mass at 0.687 against 1.223; 3000 x 3000 at the default cap returns a feasible coupling at 0.661948 against 0.661777.\nR2 done - `_emd_iter_cap` docstring (distance.py:105): 'up to 138000'; need per arc exactly 1 at n x 1 (500, 2000 and 150000 x 1: optimal at n iterations, not at n - 1). I changed '0.55 at 60000 x 2' to '0.55 to 0.65': a second generator read 0.650.\nR3 done - `partial_matching` docstring (distance.py:372); the position term is unchanged.\nR4 done - comment above `ANISOTROPY_MIN_POOL` (distance.py:70-79): six measured pool sizes, torch fp32 encoder, 6 summaries read 0.9652 and 88.8%, no pool between 54 and 71 statements measured. The docstring of `compute_distance` still says 'the smallest pool'; R4 names the comment only.\nR5 done - cli.py:353-355 and :489-491.\nR6 done - docs/solution/wmd-docdistance-solution-sota.md lines 71 and 80.\nR7 done - docs/solution/wmd-source-conditioned-docdistance-solution-sota.md line 110.\nR8 done - test_distance.py::test_exact_solver_cap_is_never_below_the_pot_default; it also asserts that `EMD_MIN_ITER` equals the default of `ot.emd`.\nR9 done - test_structure.py::test_partial_matching_leaves_out_a_pair_exactly_at_the_cutoff and test_distance.py::test_unsupported_count_leaves_out_a_statement_exactly_at_the_cutoff; each sets the cutoff to a measured cost bit for bit, then one float32 step away.\nR10 done - `diff[\"summary\"][\"n_moved\"] == 0` inside the 20-statement loop of test_moved_tolerance_reads_the_rank_step_over_the_matched_count (2 rank displacements, 0 moved).\nR11 done - the three `rounding` lines removed from the same test; the number stays in its docstring.\nR12 done - test_pipeline.py::test_source_conditioned_call_logs_no_pool_warning, both calls.\nR13 done - test_pipeline.py::test_memo_key_is_taken_before_the_file_is_read.\nR14 done - reproduced: on a copy without the block, `import openvino` alone printed CHILD in 3 of 3 runs; the tree printed one MARKER and no CHILD. The test script now imports `openvino` and loads no model (2.2 s against 9.7 to 9.9 s). I added no `timeout`: the brief does not ask for it.\nR15 done - pipeline.py:319-339: the line starts with `<path>: ` when `os.path.isfile(doc)`; tests test_segmentation.py::test_marker_warning_names_the_file_of_a_file_document and the changed test_marker_warning_is_logged_on_a_memo_hit.\nR16 done - `__init__.py` lines 7 and 46; docs/api-reference.md line 65; test in test_distance.py.\nR17 done - copied `batch-memos/measure.py`, `batch-memos/guardrail_memo_on.py`, `detail-map/verify_source_map.py` with `ref_source_map.json` (22 KB) and `detail-map/verify_build.py`; `README.md` with one line per script. The reference data of verify_build.py was 1021 KB (ref.json 238 KB, ref_emb.npz 783 KB). I did not copy the embeddings: I changed the script so that both modes encode with the encoder of the package they run on, and stored ref.json compressed (ref.json.gz, 22 KB). This goes beyond a copy; the literal rule would leave the script out. Runs from the repository root on 1.1.13: verify_build build - six fixtures byte-identical without the flags, 1680 permutations, 13675 relocated, lost 0, false fires 0, V 0/24; verify_source_map build - True; guardrail_memo_on - 0 differences; measure.py `overhead arms` - 9 of 9 arms identical, 9 of 9 JSONL digests equal to the 1.1.11 run; `semantic` on 6 rows - exit 0. I added `offline-load/count_requests.py`, the script behind the D1 reading.\nR18 done - logs/README.md line 45; line 46 is a second new family, `E13-repairs-<check>.log`, the logs of this package's checks.\n\nCHANGELOG.md: D1 and D2 under Fixed, R16 on the `SolverNotOptimal` line. README.md, docs/cli-reference.md and SKILL.md hold no sentence that D1, D2, R15 or R16 makes false; they are unchanged."
+   },
+   "verify": {
+    "package": "repairs",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The offline scope `_hub_offline` changes a process-wide flag without a lock. When two loads overlap on two threads, the second load runs online after the first one ends, and the flag stays True after both end. MATERIALITY: no document or docstring promises use from several threads and `DocDistance` keeps per-instance state, so I rate it minor (outside the stated use). It is no regression of the load against 1.1.12, where every load was online. The new side effect is the flag left True for the host process, which contradicts the docstring sentence 'The value the flag had is put back afterwards' and the CHANGELOG sentence that `docdistance init` in the same process still reaches the Hub.",
+      "evidence": "Scratch script (two threads, order forced with threading.Event, no model loaded): flag at start False; thread B inside `_hub_offline(True)` after thread A left its scope reads `constants.is_offline_mode()` = False; after both scopes ended `constants.HF_HUB_OFFLINE` = True. No test covers two overlapping scopes. REMEDY: NEW MECHANISM (a lock or a depth counter around the flag) or DEFER with one docstring sentence that the scope is not safe for overlapping loads. Decision for the orchestrator.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+      "line": 97
+     },
+     {
+      "severity": "minor",
+      "claim": "JUDGEMENT. The only D1 test that drives the real Hub, transformers and wtpsplit code runs only on a machine with the models installed. In CI it is skipped after it started two child processes, so in CI the D1 claim rests on a stub attribute and on `constants.is_offline_mode()`. `transformers` has no version bound and `huggingface_hub` is imported directly but not declared in pyproject.toml. A Hub release that reads the flag in another place leaves CI green. The test also asserts that the load succeeds, not that no request is sent: the zero-connection reading exists only in the check script outside the suite.",
+      "evidence": "`make test` here: test_offline_load_of_cached_models_works_with_the_hub_unreachable PASSED, 13.41 s of a 29.90 s suite at host load 35. The skip rule at line 714 skips whenever both child runs fail, so a failure that is not about the offline flag is reported as 'the models are not installed'. Installed versions: huggingface_hub 1.16.1 reads the flag per request at utils/_http.py:223; transformers 5.0.0. I did not test an earlier Hub version (no install allowed). `reports/E13-campaign/checks/offline-load/count_requests.py` run by me: 4 loads, embed shape (2, 768), 0 connections, flag False after the loads. REMEDY: DEFER; a lower bound for `huggingface_hub` belongs in pyproject.toml, which is outside this package (the implementer reported the missing declaration).",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_e2e.py",
+      "line": 714
+     },
+     {
+      "severity": "minor",
+      "claim": "D2 is applied narrower than the brief words it, and sibling marker-only lines are still returned as statements with `markdown=True` while the marker warning is silent in that mode. The brief says 'a bare list marker'; a bare numbered marker ('1.', '42.') is kept as prose. The implementer reported this with a reason that holds (a wrapped paragraph can end in '42.') and a test pins it. MATERIALITY: the forms the defect names ('-', '###', '---', '* * *') are all dropped, so the item is met; the rest is outside the brief.",
+      "evidence": "Probe of `split_markdown` on the working tree: 'Title\\n===\\nBody text.' returns ['Title', '===', 'Body text.']; a bare '>' line, '- [ ]', '#######' and '=====' each come back as a statement without a letter or a digit. '---' under a title is dropped and '===' under a title is kept. REMEDY: DEFER. The orchestrator amends the text of DEF-SEGM-15 or orders the further forms; I propose no additional pattern for single inputs.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/encoders.py",
+      "line": 179
+     },
+     {
+      "severity": "minor",
+      "claim": "R7 is applied to one bullet only. Two lines of the same file, which is in the package list, still state what R7 calls false: the grounding axis is 'not yet folded into the library' and 'Next - wire the H11 relevance-gated D_grd ... into the library'. They contradict the corrected bullet. The implementer reported the two lines and did not correct them.",
+      "evidence": "Lines 126 and 130 of the file read as quoted; the corrected bullet at line 110 says `distance_wrt_source` returns `grd_a`, `grd_b` and `d_grd`. REMEDY: EDIT the two lines to agree with line 110.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/docs/solution/wmd-source-conditioned-docdistance-solution-sota.md",
+      "line": 126
+     },
+     {
+      "severity": "minor",
+      "claim": "R17 is applied beyond its rule. The reference data of `verify_build.py` is above the 200 KB limit, where R17 says the script is left out and reported. The implementer rewrote the script instead and stored the reference compressed. The implementer reported this deviation.",
+      "evidence": "`ref.json.gz` holds 238,427 bytes uncompressed (22,225 compressed). `diff` against the scratchpad original: 57 changed lines; `ref_emb.npz` is no longer used and the reading 'build encoder reproduces the saved embeddings (np.array_equal)' is replaced by 'build segmenter returns the statements of the 1.1.5 run'. `logs/E13-repairs-verify-build.log` shows the repository copy ran with exit 0. `offline-load/count_requests.py` is a script R17 does not list; D1 evidence rests on it. No scratchpad path is left under `checks/`. REMEDY: decision for the orchestrator - accept the rewrite or remove the script and its reference file.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/checks/detail-map/verify_build.py",
+      "line": 1
+     },
+     {
+      "severity": "minor",
+      "claim": "The numbers that R1 and R2 put into the docstrings of `_exact_ot` and `_emd_iter_cap` come from a script that exists only in the session scratchpad (`scratchpad/repairs/r1_r2.py`), the condition R17 was written to end. R2 is also applied beyond its text: '0.55 at 60000 x 2' became '0.55 to 0.65', which R2 does not name (reported by the implementer).",
+      "evidence": "`reports/E13-campaign/checks/` holds no copy of `r1_r2.py`. I reproduced one reading: `ot.emd` on n x 1 with n = 500 and n = 2000 warns at numItermax n - 1 and not at n (POT 0.9.6.post1). I did not rerun the 3000 x 3000 and 60000 x 2 readings. REMEDY: EDIT - copy `r1_r2.py` under `checks/` with one README line, or DEFER.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/distance.py",
+      "line": 105
+     },
+     {
+      "severity": "minor",
+      "claim": "JUDGEMENT (taste). The R8 test asserts more than the floor: it also requires `EMD_MIN_ITER` to equal the default `numItermax` of `ot.emd`, read with `inspect.signature`. `pot` has no version bound, so a POT release with another default fails the suite on unchanged source. The assertion does pin the docstring claim 'never below POT's default', so it guards a stated property.",
+      "evidence": "`assert d._emd_iter_cap(12, 9) == d.EMD_MIN_ITER == pot_default`. My mutation `return n * m` fails this test (1 failed, 11 passed), so the floor itself is pinned as R8 asks. REMEDY: none required; decision whether the dependency default belongs in the unit suite.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/tests/test_distance.py",
+      "line": 117
+     }
+    ],
+    "gates": {
+     "make_test": "269 passed, 1 skipped in 29.90s (exit 0; the skipped test is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in S3; the D1 closed-port test PASSED)",
+     "make_lint": "18 files already formatted; All checks passed! (exit 0). `uvx ruff@0.16.2 check --target-version py312`: All checks passed!",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) (exit 0; the last output line is the swig DeprecationWarning)"
+    },
+    "items_not_met": [],
+    "notes": "VERDICT: SHIP (7 minor findings, 0 major, 0 blocking). Version 1.1.13; I did not run `make install`; `git status --short`, pyproject.toml and uv.lock are byte-identical before and after my runs. Host load 31 to 41 during all runs, so no timing here is a measurement.\n\nMethod: I isolated the delta of this package with the implementer's copy of the 1.1.12 tree (`scratchpad/repairs/before`, taken 01:23, `encoders.py` byte-equal to the copy of the earlier packages) and ran the current tests against it with PYTHONPATH.\n\nD1 reproduction, run by me (no HF_HUB_OFFLINE, proxies on 127.0.0.1:9): current tree prints SHAPE (2, 768) with and without `import huggingface_hub` first; 1.1.12 raises ModelsNotInstalled in both cases; 1.1.12 with HF_HUB_OFFLINE=1 preset prints SHAPE (2, 768). `count_requests.py` on the current tree: 0 connections.\nD2 checks, run by me: ibm source with markdown=True 48 statements, 0 without a letter or digit; default reader 70 and 21, unchanged; sha256 of `distance-semantic --pairs data/interim/E12-H67/allpairs-55.tsv --markdown` = 62d98b6b3fb6b7cbf588ab89980c702670bfa65a4b919a60ff7f1f993a5e5ba5, 55 lines, equal to the recorded arm.\nACC-TRANS-83: the docstring states determinism, ranking by position, the tie condition, the example and 111 of 120. I reproduced the example: pairs [8, 9] and [9, 8], two calls equal. The existing tie-break test fails with `MATCH_POSITION_EPS = 0.0`. No docstring-text test exists; the brief settles that the item is met by R3 with the existing test, and I agree a test of docstring text would return no confidence.\n\nTests against the unchanged tree: the five changed test files on 1.1.12 read 14 failed, 197 passed (D1 9, D2 2, R15 2, R16 1), as claimed. R8, R9, R10, R12, R13 pass on 1.1.12 by design (they add tests for existing behaviour), so I ran 8 mutations of my own on a scratch copy of the current source: R8 floor removed, R9 `<=`, R9 `>=`, R10 n_moved from rank displacements, R13 key after the read, D1 `SaT()` outside the scope, D2 bare bullet dropped without ending the paragraph, R15 `isinstance(doc, Path)`: 8 killed, 0 survived. The implementer's log lists 35 killed; I did not rerun R12 and R14 mutations and rely on that log for them.\n\nEntry by entry: D1, D2, R1 to R6, R8 to R16, R18 applied as written (R4 numbers checked against reports/E12-H65-cmr-pool-crossover-metrics.json: pools 2, 3, 4, 6, 8, 11; 0.9834 and 93.3% at 71.3 statements; 0.9652 and 88.8% at 53.9; torch fp32. R6 pool statements checked against the `all_but_the_top` call sites). R7 applied to one bullet (finding). R17 applied beyond its rule (finding). R2 changed one number R2 does not name (finding). logs/README.md carries a second new line for the family `E13-repairs-<check>.log`, which the project rule for new log families supports.\n\nAdditive policy: baseline 0 differences; D2 changes the statements of `--markdown` for documents with marker-only lines, which the brief orders and CHANGELOG.md and docs/api-reference.md line 143 now state. Files outside the package list written in the package window: pyproject.toml, uv.lock, egg-info (from `make install`), logs/*.log (ignored by git) and three files under `.claude/agent-memory/senior-backend-engineer/` (ignored by git, the implementer listed them). `.claude/JOURNAL.md` (01:20:06), the criteria and defects trackers (01:17) were written before the implementer's first write (01:34) and the ledger on 10-09. HEAD is still bd0002e, no new tag, no stash, nothing staged. No new quantity was added, so check (5) has no object; `_exact_ot` no longer calls the capped result a bound.\n\nFor the orchestrator, confirmed and outside this package: nothing in `src/` sets the HF_HUB_OFFLINE variable any more, so `bootstrap.py:203` (`os.environ.pop`) has no effect on the library, and `docs/aws-deployment-reference.md:31` ('the loaders set HF_HUB_OFFLINE=1 after init') is false from 1.1.13. One sentence of the implementer's notes is inexact: `docdistance.json` on this host maps all three OpenVINO models to local snapshot directories, so `_resolve_ov_dir` returns before `snapshot_download`; the 1.1.12 OpenVINO loads on the closed port are not explained by a fallback of `snapshot_download`. This changes no result.\n\nWhat the suite gets right: the stub test records the flag at every Hub-reaching call of all 7 constructors and fails per constructor; the two cutoff tests set the cutoff to a measured cost bit for bit and one float32 step away; the memo-key test rewrites the file between read and store with a size change, so it does not depend on the timestamp step of the file system; the R14 change removes about 8 seconds of model load from a test whose signal comes from the import alone."
+   },
+   "repaired": false
+  }
+ ],
+ "final": {
+  "package": "final-gate",
+  "verified": true,
+  "findings": [],
+  "gates": {
+   "make_lint": "clean, exit 0. Last line: `All checks passed!` (`uvx ruff@0.16.2 check`); the format step before it printed `18 files already formatted`. Separate run `uvx ruff@0.16.2 check --target-version py312`: exit 0, last line `All checks passed!`",
+   "make_test": "green, exit 0. Last line: `269 passed, 1 skipped in 36.11s` (coverage TOTAL 94%). The 1 skip is `tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir`, an opt-in test that reads real S3",
+   "baseline_verify": "0 difference(s), exit 0. Result line: `verify: 55 pairs, 3 grounded, 0 difference(s)`. The literal last line of combined stdout and stderr is a warning printed after it: `<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute`"
+  },
+  "items_not_met": [],
+  "notes": "All five commands ran from /home/lab/workspace/learning/projects/docdistance and every gate is green.\n\nScope: the prompt supplied no bar (purpose, input universe, primary path), so I ran the listed gates only and did not audit the test suite. The empty findings list means no gate failed; it is not a statement about suite quality.\n\n`git status --short`: 91 lines (68 modified, 23 untracked), last line `?? reports/E15-H80-moved-on-matched-pairs-metrics.json`. The output was identical before and after the gates. The only file the gates wrote in the repo is `.coverage`, which is gitignored.\n\nNo commit happened: `git log -1 --oneline` → `bd0002e chore: refresh uv.lock`, committed 2026-09-17, and it is the newest reflog entry. `main` is 0 commits ahead of and 0 behind `origin/main`.\n\nNo tag happened: `git tag --points-at HEAD` is empty. The repository holds one tag, `CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5`, created 2026-08-31 on d6ee033.\n\nVersion: `grep -n '^version' pyproject.toml` → `7:version = \"1.1.13\"`. HEAD holds 1.1.5, so the working tree carries 8 patch increments, which the primer (/home/lab/workspace/learning/projects/docdistance/reports/E13-campaign/PRIMER.md) expects from `make install`. The installed package metadata also reads 1.1.13, so the gates ran on the current build.\n\nTwo checks beyond the listed commands:\n- The baseline file `reports/E13-campaign/baseline/default-path.json.gz` has modification time 2026-10-07 13:04, the stage A verification date in the primer, so the build stage did not recapture it.\n- The local CPython 3.12.13 parsed all 18 files under `src/docdistance` and `tests` with 0 syntax errors, which agrees with the ruff py312 check.\n\nThe tests ran on Python 3.14.8 only. Load average was 32-36 during the run, so the 36.11 s test time is not a timing measurement."
+ }
+}

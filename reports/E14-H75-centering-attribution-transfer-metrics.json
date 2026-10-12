@@ -1,0 +1,647 @@
+{
+  "id": "E14-H75",
+  "slug": "centering-attribution-transfer",
+  "kill_gate": {
+    "pooled_mean_norm": 0.9475964903831482,
+    "min_pooled_mean_norm": 0.15,
+    "norm_reading_passed": true,
+    "naive_margin_pts": 15.840281221945318,
+    "full_composition_margin_pts": 54.73572979318323,
+    "full_composition_margin_gain_pts": 38.895448571237914,
+    "min_full_composition_margin_gain_pts": 1.0,
+    "gain_reading_passed": true,
+    "passed": true,
+    "pooled_statements": 76,
+    "max_unit_norm_dev_raw": 1.1920928955078125e-07
+  },
+  "sanity_check": {
+    "tolerance_relative": 0.05,
+    "rows": {
+      "naive": {
+        "registered_margin_pts": 4.71,
+        "observed_margin_pts": 4.708317407970153,
+        "rel_delta": 0.00035723822289747506,
+        "within_tolerance": true,
+        "V": 0,
+        "abs_diff_vs_h64_full_precision": 0.0
+      },
+      "a center+renorm": {
+        "registered_margin_pts": 19.95,
+        "observed_margin_pts": 19.952554955749292,
+        "rel_delta": 0.00012806795735804445,
+        "within_tolerance": true,
+        "V": 0,
+        "abs_diff_vs_h64_full_precision": 0.0
+      },
+      "c full shipped": {
+        "registered_margin_pts": 19.41,
+        "observed_margin_pts": 19.414396463424644,
+        "rel_delta": 0.00022650507082144674,
+        "within_tolerance": true,
+        "V": 0,
+        "abs_diff_vs_h64_full_precision": 2.1316282072803006e-14
+      }
+    },
+    "max_rel_delta": 0.00035723822289747506,
+    "V_zero_on_registered_rows": true,
+    "passed": true,
+    "ibm_statements": 98,
+    "ibm_statements_e12_h64": 98,
+    "ibm_arms": {
+      "naive": {
+        "V": 0,
+        "margin_pts": 4.708317407970153,
+        "dprime": 4.683998012459891,
+        "R": 1.669675503342983,
+        "DR": 0.08728241853520123
+      },
+      "a center+renorm": {
+        "V": 0,
+        "margin_pts": 19.952554955749292,
+        "dprime": 7.384320592704303,
+        "R": 1.6144572921410338,
+        "DR": 0.27121554432516853
+      },
+      "b project-only": {
+        "V": 0,
+        "margin_pts": 4.044454232474026,
+        "dprime": 6.320730269476042,
+        "R": 1.474373037631897,
+        "DR": 0.05878107419066151
+      },
+      "c full shipped": {
+        "V": 0,
+        "margin_pts": 19.414396463424644,
+        "dprime": 7.310049184864304,
+        "R": 1.4754817113727643,
+        "DR": 0.22533667125962628
+      }
+    },
+    "ibm_recovery": {
+      "a center+renorm": 1.0365942880012633,
+      "b project-only": -0.04514209212345421,
+      "c full shipped": 1.0
+    },
+    "ibm_full_composition_margin_gain_pts": 14.706079055454492,
+    "ibm_arm_b_abs_diff_vs_h64_full_precision": 0.0,
+    "baseline_smd_equal_before_arms": "55/55",
+    "baseline_order_gap_equal_before_arms": "55/55"
+  },
+  "second_fixture": {
+    "documents": [
+      "werg-a",
+      "werg-b",
+      "werg-c",
+      "werg-a~bt",
+      "werg-b~bt",
+      "werg-c~bt"
+    ],
+    "statements_by_doc": {
+      "werg-a": 11,
+      "werg-b": 13,
+      "werg-c": 14,
+      "werg-a~bt": 11,
+      "werg-b~bt": 13,
+      "werg-c~bt": 14
+    },
+    "pooled_statements": 76,
+    "articles_in_pool": [
+      "wergeland"
+    ],
+    "encoder": "mmBERT OpenVINO INT8 (CPU)",
+    "docdistance_version": "1.1.5",
+    "arms": {
+      "naive": {
+        "pos": {
+          "werg-a|werg-a~bt": 0.13851599192077463,
+          "werg-b|werg-b~bt": 0.1723743774569952,
+          "werg-c|werg-c~bt": 0.13139689554061207
+        },
+        "neg": {
+          "werg-a|werg-b": 0.4262179892796737,
+          "werg-a|werg-b~bt": 0.43816614192682546,
+          "werg-a|werg-c": 0.39638978281578463,
+          "werg-a|werg-c~bt": 0.40011642563652683,
+          "werg-b|werg-a": 0.4262179892796736,
+          "werg-b|werg-a~bt": 0.4300045106377635,
+          "werg-b|werg-c": 0.41541274808920353,
+          "werg-b|werg-c~bt": 0.41318052499503877,
+          "werg-c|werg-a": 0.3963897828157846,
+          "werg-c|werg-a~bt": 0.4041256275656934,
+          "werg-c|werg-b": 0.4154127480892033,
+          "werg-c|werg-b~bt": 0.4252203110155167
+        },
+        "V": 0,
+        "V_by_anchor": {
+          "werg-a": 0,
+          "werg-b": 0,
+          "werg-c": 0
+        },
+        "min_pos_closeness": 0.8781129087973492,
+        "max_neg_closeness": 0.719710096577896,
+        "margin_pts": 15.840281221945318,
+        "dprime": 16.97988870838797,
+        "R": 2.818787119648891,
+        "DR": 0.1082187162267307
+      },
+      "a center+renorm": {
+        "pos": {
+          "werg-a|werg-a~bt": 0.46366298740560363,
+          "werg-b|werg-b~bt": 0.5027358360015429,
+          "werg-c|werg-c~bt": 0.4315701127052307
+        },
+        "neg": {
+          "werg-a|werg-b": 1.3341812562275601,
+          "werg-a|werg-b~bt": 1.3347446835124408,
+          "werg-a|werg-c": 1.30702632278591,
+          "werg-a|werg-c~bt": 1.3223983722847776,
+          "werg-b|werg-a": 1.3341812729001878,
+          "werg-b|werg-a~bt": 1.3370289394071884,
+          "werg-b|werg-c": 1.3003646279429342,
+          "werg-b|werg-c~bt": 1.2929179936974913,
+          "werg-c|werg-a": 1.30702632278591,
+          "werg-c|werg-a~bt": 1.3229856692351303,
+          "werg-c|werg-b": 1.300364629252926,
+          "werg-c|werg-b~bt": 1.2923366152323208
+        },
+        "V": 0,
+        "V_by_anchor": {
+          "werg-a": 0,
+          "werg-b": 0,
+          "werg-c": 0
+        },
+        "min_pos_closeness": 0.644512081217821,
+        "max_neg_closeness": 0.08618001579355594,
+        "margin_pts": 55.8332065424265,
+        "dprime": 35.88973585875125,
+        "R": 2.822944826864851,
+        "DR": 0.34036022934504956
+      },
+      "b project-only": {
+        "pos": {
+          "werg-a|werg-a~bt": 0.13870078460736707,
+          "werg-b|werg-b~bt": 0.17232644844513675,
+          "werg-c|werg-c~bt": 0.1308420555932181
+        },
+        "neg": {
+          "werg-a|werg-b": 0.39706614530169887,
+          "werg-a|werg-b~bt": 0.4079926447434859,
+          "werg-a|werg-c": 0.3767378169607806,
+          "werg-a|werg-c~bt": 0.37847003998694484,
+          "werg-b|werg-a": 0.3970661453016988,
+          "werg-b|werg-a~bt": 0.3982025503695428,
+          "werg-b|werg-c": 0.4025393337993831,
+          "werg-b|werg-c~bt": 0.3994261522541989,
+          "werg-c|werg-a": 0.3767378169607806,
+          "werg-c|werg-a~bt": 0.3871564021358242,
+          "werg-c|werg-b": 0.40253933379938306,
+          "werg-c|werg-b~bt": 0.4104463857608836
+        },
+        "V": 0,
+        "V_by_anchor": {
+          "werg-a": 0,
+          "werg-b": 0,
+          "werg-c": 0
+        },
+        "min_pos_closeness": 0.8781467997266499,
+        "max_neg_closeness": 0.7336061348976157,
+        "margin_pts": 14.454066482903416,
+        "dprime": 16.41734142118946,
+        "R": 2.6786093133361533,
+        "DR": 0.09974579806709619
+      },
+      "c full shipped": {
+        "pos": {
+          "werg-a|werg-a~bt": 0.48912423171780334,
+          "werg-b|werg-b~bt": 0.5219083634706645,
+          "werg-c|werg-c~bt": 0.4423134816544396
+        },
+        "neg": {
+          "werg-a|werg-b": 1.3078260463434501,
+          "werg-a|werg-b~bt": 1.3096241334101537,
+          "werg-a|werg-c": 1.2959884776697528,
+          "werg-a|werg-c~bt": 1.3061228262913689,
+          "werg-b|werg-a": 1.30782604634345,
+          "werg-b|werg-a~bt": 1.3022632257088083,
+          "werg-b|werg-c": 1.3091925146815542,
+          "werg-b|werg-c~bt": 1.3034131598996592,
+          "werg-c|werg-a": 1.2959884776697526,
+          "werg-c|werg-a~bt": 1.3238025632771575,
+          "werg-c|werg-b": 1.3091925048566126,
+          "werg-c|werg-b~bt": 1.2982948979178628
+        },
+        "V": 0,
+        "V_by_anchor": {
+          "werg-a": 0,
+          "werg-b": 0,
+          "werg-c": 0
+        },
+        "min_pos_closeness": 0.6309550570319198,
+        "max_neg_closeness": 0.08359775910008749,
+        "margin_pts": 54.73572979318323,
+        "dprime": 34.70953241254488,
+        "R": 2.6954238779982114,
+        "DR": 0.32892748027753876
+      }
+    },
+    "recovery": {
+      "a center+renorm": 1.0282160712771629,
+      "b project-only": -0.0356395102759393,
+      "c full shipped": 1.0
+    },
+    "full_composition_margin_gain_pts": 38.895448571237914,
+    "arm_c_equals_kill_gate_reading": true,
+    "negative_entries": 12,
+    "distinct_negative_pairs": 9,
+    "arm_a_minus_arm_c_margin_pts": 1.0974767492432704,
+    "ibm_arm_a_minus_arm_c_margin_pts": 0.5381584923246479
+  },
+  "diagnostic": {
+    "second_fixture": {
+      "pooled_mean_norm": 0.9475964903831482,
+      "cos_uncentered_pc1_mean": 0.9999988079071045,
+      "cos_centered_pc1_mean": 0.05586512014269829,
+      "singular_values_uncentered_top3": [
+        8.262309074401855,
+        0.8486492037773132,
+        0.8054889440536499
+      ],
+      "singular_values_centered_top3": [
+        0.8498095273971558,
+        0.8091480731964111,
+        0.7549771666526794
+      ]
+    },
+    "ibm": {
+      "pooled_mean_norm": 0.9538519382476807,
+      "cos_uncentered_pc1_mean": 0.9999992251396179,
+      "cos_centered_pc1_mean": 0.021381409838795662,
+      "singular_values_uncentered_top3": [
+        9.444049835205078,
+        1.514784336090088,
+        0.9423373341560364
+      ],
+      "singular_values_centered_top3": [
+        1.5151348114013672,
+        0.9447194337844849,
+        0.8329139351844788
+      ]
+    }
+  },
+  "closeness_saturation": {
+    "smd_max": 1.4142135623730951,
+    "by_geometry": {
+      "naive": {
+        "clipped_pairs": [],
+        "margin_negative": "werg-c|werg-a",
+        "margin_negative_distance": 0.3963897828157846,
+        "margin_positive": "werg-b|werg-b~bt",
+        "margin_positive_distance": 0.1723743774569952,
+        "max_distance": 0.43816614192682546,
+        "margin_unclipped_pts": 15.840281221945322
+      },
+      "a center+renorm": {
+        "clipped_pairs": [],
+        "margin_negative": "werg-c|werg-b~bt",
+        "margin_negative_distance": 1.2923366152323208,
+        "margin_positive": "werg-b|werg-b~bt",
+        "margin_positive_distance": 0.5027358360015429,
+        "max_distance": 1.3370289394071884,
+        "margin_unclipped_pts": 55.8332065424265
+      },
+      "b project-only": {
+        "clipped_pairs": [],
+        "margin_negative": "werg-a|werg-c",
+        "margin_negative_distance": 0.3767378169607806,
+        "margin_positive": "werg-b|werg-b~bt",
+        "margin_positive_distance": 0.17232644844513675,
+        "max_distance": 0.4104463857608836,
+        "margin_unclipped_pts": 14.45406648290341
+      },
+      "c full shipped": {
+        "clipped_pairs": [],
+        "margin_negative": "werg-c|werg-a",
+        "margin_negative_distance": 1.2959884776697526,
+        "margin_positive": "werg-b|werg-b~bt",
+        "margin_positive_distance": 0.5219083634706645,
+        "max_distance": 1.3238025632771575,
+        "margin_unclipped_pts": 54.73572979318323
+      }
+    },
+    "recovery_unclipped": {
+      "a center+renorm": 1.0282160712771629,
+      "b project-only": -0.035639510275939534,
+      "c full shipped": 1.0
+    }
+  },
+  "conditioned_path": {
+    "triples": {
+      "gold|v1": {
+        "shipped": {
+          "d_sel": 0.3101637043342098,
+          "residual_a": 1.2348743702684128,
+          "residual_b": 1.2199396620323129,
+          "closeness_a": 0.12681195886973784,
+          "closeness_b": 0.13737239233852672
+        },
+        "arm_a": {
+          "d_sel": 0.13211468667674703,
+          "residual_a": 1.196268105081149,
+          "residual_b": 1.1881865453797498,
+          "closeness_a": 0.1541107107799382,
+          "closeness_b": 0.15982523644736146
+        },
+        "abs_diff": {
+          "d_sel": 0.17804901765746278,
+          "residual_a": 0.038606265187263844,
+          "residual_b": 0.031753116652563085,
+          "closeness_a": 0.02729875191020037,
+          "closeness_b": 0.022452844108834746
+        },
+        "shipped_equals_baseline": true,
+        "replacement_route_equals_shipped": true,
+        "n_statements_source": 70,
+        "d_sel_ratio_arm_a_over_shipped": 0.4259514728209135,
+        "closeness_gap_shipped": -0.010560433468788877,
+        "closeness_gap_arm_a": -0.005714525667423254
+      },
+      "gold|adv1-a": {
+        "shipped": {
+          "d_sel": 0.8056172756723156,
+          "residual_a": 1.2298479552779882,
+          "residual_b": 1.3561949968338007,
+          "closeness_a": 0.13036617099452474,
+          "closeness_b": 0.041025321127551195
+        },
+        "arm_a": {
+          "d_sel": 0.397477303917901,
+          "residual_a": 1.1856958453144342,
+          "residual_b": 1.2732379572732104,
+          "closeness_a": 0.16158642735344797,
+          "closeness_b": 0.09968480634800536
+        },
+        "abs_diff": {
+          "d_sel": 0.4081399717544146,
+          "residual_a": 0.04415210996355401,
+          "residual_b": 0.0829570395605903,
+          "closeness_a": 0.031220256358923226,
+          "closeness_b": 0.058659485220454166
+        },
+        "shipped_equals_baseline": true,
+        "replacement_route_equals_shipped": true,
+        "n_statements_source": 70,
+        "d_sel_ratio_arm_a_over_shipped": 0.4933822994128228,
+        "closeness_gap_shipped": 0.08934084986697355,
+        "closeness_gap_arm_a": 0.06190162100544261
+      },
+      "gold|adv2-b": {
+        "shipped": {
+          "d_sel": 0.41382946040332397,
+          "residual_a": 1.2327527889183594,
+          "residual_b": 1.3593647860345384,
+          "closeness_a": 0.1283121434291995,
+          "closeness_b": 0.038783941688777746
+        },
+        "arm_a": {
+          "d_sel": 0.13642420200483818,
+          "residual_a": 1.1759413463728767,
+          "residual_b": 1.2567509035269406,
+          "closeness_a": 0.1684838997021002,
+          "closeness_b": 0.1113429138537797
+        },
+        "abs_diff": {
+          "d_sel": 0.2774052583984858,
+          "residual_a": 0.05681144254548265,
+          "residual_b": 0.10261388250759773,
+          "closeness_a": 0.040171756272900705,
+          "closeness_b": 0.07255897216500196
+        },
+        "shipped_equals_baseline": true,
+        "replacement_route_equals_shipped": true,
+        "n_statements_source": 70,
+        "d_sel_ratio_arm_a_over_shipped": 0.32966285646236315,
+        "closeness_gap_shipped": 0.08952820174042175,
+        "closeness_gap_arm_a": 0.0571409858483205
+      }
+    },
+    "max_abs_closeness_diff": 0.07255897216500196,
+    "max_abs_closeness_diff_pts": 7.255897216500196,
+    "max_abs_closeness_diff_at": "gold|adv2-b closeness_b",
+    "max_abs_d_sel_diff": 0.4081399717544146,
+    "max_abs_residual_diff": 0.10261388250759773,
+    "arm_a_residuals_at_or_above_sqrt2": 0,
+    "shipped_equals_baseline": true,
+    "replacement_route_equals_shipped": true,
+    "d_sel_order_shipped": [
+      "gold|v1",
+      "gold|adv2-b",
+      "gold|adv1-a"
+    ],
+    "d_sel_order_arm_a": [
+      "gold|v1",
+      "gold|adv2-b",
+      "gold|adv1-a"
+    ],
+    "d_sel_order_preserved": true,
+    "d_sel_ratio_arm_a_over_shipped_min": 0.32966285646236315,
+    "d_sel_ratio_arm_a_over_shipped_max": 0.4933822994128228
+  },
+  "guardrails": {
+    "V_second_fixture": {
+      "naive": "0/12",
+      "a center+renorm": "0/12",
+      "b project-only": "0/12",
+      "c full shipped": "0/12"
+    },
+    "V_ibm": {
+      "naive": "0/24",
+      "a center+renorm": "0/24",
+      "b project-only": "0/24",
+      "c full shipped": "0/24"
+    },
+    "V_ibm_sanity_rows_zero": true,
+    "raw_embeddings_byte_identical_second_fixture": true,
+    "raw_embeddings_byte_identical_after_each_arm": {
+      "a center+renorm": true,
+      "b project-only": true,
+      "c full shipped": true
+    },
+    "raw_embeddings_byte_identical_ibm": true,
+    "default_path_second_fixture_before_equals_after": true,
+    "default_path_second_fixture_pairs": 15,
+    "default_path_ibm_before_equals_after": true,
+    "default_path_ibm_smd_equal_to_baseline": "55/55",
+    "default_path_ibm_order_gap_equal_to_baseline": "55/55",
+    "default_path_bit_identical": true,
+    "metric_property": {
+      "second fixture - naive": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_float64": 3.942476676500724e-08,
+        "max_cost_identity_dev_float32": 0.000578785941898844,
+        "max_triangle_slack": 1.1657341758564144e-15,
+        "holds": true
+      },
+      "second fixture - a center+renorm": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_float64": 4.9421560620597e-08,
+        "max_cost_identity_dev_float32": 0.0005731807857241402,
+        "max_triangle_slack": 2.220446049250313e-16,
+        "holds": true
+      },
+      "second fixture - b project-only": {
+        "max_unit_norm_dev": 1.7881393432617188e-07,
+        "max_cost_identity_dev_float64": 5.1619136559035694e-08,
+        "max_cost_identity_dev_float32": 0.0007673912899668824,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      },
+      "second fixture - c full shipped": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_float64": 4.470348358154297e-08,
+        "max_cost_identity_dev_float32": 0.0005902399004761494,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      },
+      "ibm - naive": {
+        "max_unit_norm_dev": 1.7881393432617188e-07,
+        "max_cost_identity_dev_float64": 4.470348358154297e-08,
+        "max_cost_identity_dev_float32": 0.0005732607196626611,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      },
+      "ibm - a center+renorm": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_float64": 4.712160915387242e-08,
+        "max_cost_identity_dev_float32": 0.0006228589026947017,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      },
+      "ibm - b project-only": {
+        "max_unit_norm_dev": 2.384185791015625e-07,
+        "max_cost_identity_dev_float64": 5.1619136559035694e-08,
+        "max_cost_identity_dev_float32": 0.0007720404537394643,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      },
+      "ibm - c full shipped": {
+        "max_unit_norm_dev": 1.1920928955078125e-07,
+        "max_cost_identity_dev_float64": 4.470348358154297e-08,
+        "max_cost_identity_dev_float32": 0.0004847462784967071,
+        "max_triangle_slack": 0.0,
+        "holds": true
+      }
+    },
+    "metric_property_holds": true,
+    "cost_identity_float32_within_1e-6": {
+      "second fixture - naive": false,
+      "second fixture - a center+renorm": false,
+      "second fixture - b project-only": false,
+      "second fixture - c full shipped": false,
+      "ibm - naive": false,
+      "ibm - a center+renorm": false,
+      "ibm - b project-only": false,
+      "ibm - c full shipped": false
+    },
+    "git_status_src_tests": "",
+    "src_tests_untouched": true,
+    "git_status_docs": "M docs/defects-docdistance.md\n M docs/experiments/wmd-docdistance-experiments.md",
+    "all_hold": true
+  },
+  "prediction_check": {
+    "clauses": {
+      "pooled mean norm": {
+        "predicted": "> 0.9",
+        "observed": "0.9476",
+        "held": true
+      },
+      "cos(uncentered PC1, mean direction)": {
+        "predicted": ">= 0.999",
+        "observed": "0.999999",
+        "held": true
+      },
+      "arm a recovery": {
+        "predicted": ">= 90%",
+        "observed": "102.8%",
+        "held": true
+      },
+      "arm b recovery": {
+        "predicted": "-15% .. +15%",
+        "observed": "-3.6%",
+        "held": true
+      },
+      "V in arms a and c": {
+        "predicted": "0/12 and 0/12",
+        "observed": "0/12 and 0/12",
+        "held": true
+      }
+    },
+    "clauses_held": "5/5",
+    "direction_held": true
+  },
+  "acceptance": {
+    "bar": "exactly one isolate arm >= 60% of the full-composition margin gain at V 0/12, that arm is a, arm b < 30%; guardrails hold",
+    "met": true,
+    "attribution_reproduces": true,
+    "guardrails_hold": true,
+    "readings": {
+      "full_composition_margin_gain_pts": 38.895448571237914,
+      "arm_a_recovery": 1.0282160712771629,
+      "arm_b_recovery": -0.0356395102759393,
+      "arm_a_V": 0,
+      "arm_b_V": 0,
+      "arm_c_V": 0,
+      "arms_reaching_bar": 1,
+      "arm_reaching_bar": "a center+renorm",
+      "arm_b_below_30pct": true
+    }
+  },
+  "verdict": "Confirmed",
+  "result_key_numbers": {
+    "pooled_mean_norm": 0.9475964903831482,
+    "naive_margin_pts": 15.840281221945318,
+    "arm_c_margin_pts": 54.73572979318323,
+    "full_composition_margin_gain_pts": 38.895448571237914,
+    "n_statements": 76,
+    "n_documents": 6,
+    "ibm_naive_margin_pts": 4.708317407970153,
+    "ibm_arm_a_margin_pts": 19.952554955749292,
+    "ibm_arm_b_margin_pts": 4.044454232474026,
+    "ibm_arm_c_margin_pts": 19.414396463424644,
+    "ibm_arm_a_recovery": 1.0365942880012633,
+    "ibm_arm_b_recovery": -0.04514209212345421,
+    "ibm_sanity_max_rel_delta": 0.00035723822289747506,
+    "naive_V": 0,
+    "naive_dprime": 16.97988870838797,
+    "arm_a_margin_pts": 55.8332065424265,
+    "arm_a_V": 0,
+    "arm_a_dprime": 35.88973585875125,
+    "arm_b_margin_pts": 14.454066482903416,
+    "arm_b_V": 0,
+    "arm_b_dprime": 16.41734142118946,
+    "arm_c_V": 0,
+    "arm_c_dprime": 34.70953241254488,
+    "arm_a_gain_pts": 39.992925320481184,
+    "arm_b_gain_pts": -1.3862147390419022,
+    "arm_a_recovery": 1.0282160712771629,
+    "arm_b_recovery": -0.0356395102759393,
+    "arm_a_minus_arm_c_margin_pts": 1.0974767492432704,
+    "ibm_arm_a_minus_arm_c_margin_pts": 0.5381584923246479,
+    "cos_uncentered_pc1_mean": 0.9999988079071045,
+    "cos_centered_pc1_mean": 0.05586512014269829,
+    "singular_value_1_uncentered": 8.262309074401855,
+    "singular_value_2_uncentered": 0.8486492037773132,
+    "singular_value_1_centered": 0.8498095273971558,
+    "ibm_pooled_mean_norm": 0.9538519382476807,
+    "ibm_cos_uncentered_pc1_mean": 0.9999992251396179,
+    "clipped_pairs_total": 0,
+    "arm_a_recovery_unclipped": 1.0282160712771629,
+    "arm_b_recovery_unclipped": -0.035639510275939534,
+    "conditioned_max_abs_closeness_diff": 0.07255897216500196,
+    "conditioned_max_abs_closeness_diff_pts": 7.255897216500196,
+    "conditioned_max_abs_d_sel_diff": 0.4081399717544146,
+    "conditioned_max_abs_residual_diff": 0.10261388250759773,
+    "conditioned_d_sel_ratio_min": 0.32966285646236315,
+    "conditioned_d_sel_ratio_max": 0.4933822994128228,
+    "conditioned_d_sel_order_preserved": true
+  }
+}

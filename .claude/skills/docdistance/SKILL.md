@@ -7,7 +7,7 @@ description: Install and run the docdistance library (PyPI `docdistance`, CLI `d
 
 Distance between two documents, grounded in word/statement embeddings (Word Mover's Distance / Optimal Transport). Two axes: content (meaning) and structure (order). Per-statement diff localizes what changed.
 
-Package `docdistance` on PyPI. Import `docdistance`. CLI `docdistance`. Python 3.13 only.
+Package `docdistance` on PyPI. Import `docdistance`. CLI `docdistance`. Python 3.12 to 3.14; releases up to 1.1.5 install on 3.13 only.
 
 ## Preflight - check install, upgrade if stale
 
@@ -22,7 +22,7 @@ pip install -U docdistance          # inside a uv project: uv pip install -U doc
 
 - `-U` covers both cases - fresh install and upgrade - so one command is enough after the check
 - pulling models from S3 later → `pip install -U 'docdistance[s3]'`
-- python 3.13 required (`requires-python ~=3.13`); on other pythons install fails - use a 3.13 venv
+- python 3.12, 3.13 or 3.14 required (`requires-python >=3.12,<3.15`); releases up to 1.1.5 require 3.13 (`~=3.13`) and fail to install on other pythons
 
 ## Provision models once - required before any distance
 
@@ -50,19 +50,26 @@ docdistance distance-wrt-source A B --source S   # source-conditioned d(A,B|S) -
 
 Machine-readable, for an agent to parse:
 
-- `--json` → full result dict (`smd`/`closeness`/`verdict`, or `order_gap`/`structure_closeness`/`verdict`)
+- `--json` → full result dict (`smd`/`closeness`/`verdict`, or `order_gap`/`structure_closeness`/`verdict` + `matched_order_gap`/`n_matched`)
 - `--result-only` → one bare number, pipe it straight
 - errors in `--json`/`--result-only` mode still write a one-line JSON `{error, message}` object to stdout (exit 1) - parse stdout, never treat empty as success
 - `--details-json FILE` → per-statement interpretable diff; the header is self-describing: `generator`, `version`, `closeness` + `closeness_definition`, every threshold in force (`thresholds`), a `summary` aggregate block (cost bands, `n_changed`, `n_no_counterpart`, top changed) and a per-`sections` table
-  - on `distance-semantic`: `flows` per source statement with matched targets and `cost`, plus `changed` (cheapest-match cost above `changed_cost`), `identical` (normalised-text equality), `no_counterpart` (removed content - cheapest match above `no_counterpart_cost`), `section` heading path; a `targets` array gives the B-side view (`best_source_index`, `min_incoming_cost`, `total_incoming_weight`) → added content reads directly
-  - on `distance-structural`: per statement `displacement_norm` (length-normalised, null without counterpart), `moved` (|displacement_norm| above `moved_tolerance`), ground `cost`, `semantic_target_index` + `targets_differ` (true → moved-and-reworded), `section`/`target_section`
-- read both details to tell a reword (`changed`) from a pure rearrangement (`moved`); removed content is `no_counterpart` on the source side, added content is a target with a high `min_incoming_cost`
+  - on `distance-semantic`: `flows` per source statement with matched targets and `cost`, plus `changed` (cheapest-match cost above `changed_cost`), `identical` (normalised-text equality), `no_counterpart` (removed content - cheapest match above `no_counterpart_cost`), `section` heading path; a `targets` array gives the B-side view (`best_source_index`, `min_incoming_cost`, `total_incoming_weight`) → added content reads directly; one-to-one matching (ground cost below `match_cutoff` 0.325): `match_index` + `match_status` `kept`/`removed` per flow, `match_source_index` + `match_status` `kept`/`added` per target, `n_kept`/`n_removed`/`n_added` in `summary`
+  - on `distance-structural`: per statement `displacement_norm` (length-normalised, null without counterpart), `matched_displacement` (rank shift among matched statements, null without a match), `moved` (matched AND `matched_displacement` != 0 AND |matched_displacement / n_matched| above `moved_tolerance` AND NOT `no_counterpart`), ground `cost`, `semantic_target_index` + `targets_differ` (true → moved-and-reworded), `section`/`target_section`
+- read both details to tell a reword (`changed`) from a pure rearrangement (`moved`); removed content is `match_status` `removed` on a flow (`no_counterpart` only above cost 0.6), added content is `match_status` `added` on a target
+- structural verdict fires on deletions that keep the order (`order_gap` rises with a statement-count difference) → read `matched_order_gap` (`--json`), the order gap over the `n_matched` statements both documents hold: at or below 0.005 on such a deletion for documents of 11 to 14 statements; the verdict reads `order_gap` only
+- `distance-wrt-source --json`: `n_unsupported_a`/`n_unsupported_b` → statements whose nearest source statement costs more than 0.34625 (embedding distance, not entailment); `residual_a`/`closeness_a` are the transport cost to the whole source, not the unsupported share; `--source-map-json` records carry `nearest_source_index`, `nearest_source_cost`, `unsupported`
 
 Batch and input options:
 
-- `--pairs FILE` (`distance-semantic` and `distance-structural` only) → TSV `a<TAB>b[<TAB>id]`: one model load for the whole sweep, one JSONL line per pair to stdout; `--details-json` takes a directory or a `{pair}` template
+- `--pairs FILE` (all three distance commands; on `distance-wrt-source` every pair against the one `--source`) → TSV `a<TAB>b[<TAB>id]`: one model load for the whole sweep, one JSONL line per pair to stdout; `--details-json` (`--source-map-json` on `distance-wrt-source`) takes a directory or a `{pair}` template; a file that recurs across rows is encoded once (memo of 64 files, raw text not kept)
 - `--home PATH` → name the init home explicitly instead of relying on cwd / `DOCDISTANCE_HOME` discovery
-- `--markdown` → structure-aware segmentation: each table row, heading, list item and fenced-code line becomes one statement (markup stripped for embedding, raw line reported); default feeds the whole body to the prose splitter and fragments tables
+- `--markdown` → structure-aware segmentation of every document: each table row, heading, list item and fenced-code line becomes one statement (markup stripped for embedding, raw line reported); equals `--input-format markdown`
+- `--input-format auto|plain|markdown|html` → reader of every document; default `auto` → per document from the file extension, any letter case, content not read: `.md`/`.markdown` → `markdown`, `.html`/`.htm` → `html`, every other file, a file without extension and raw text → `plain`
+  - explicit `plain`, `markdown` or `html` → that reader for every document; `--markdown` beside `plain`, `html` or a given `auto` exits 2
+  - numbers for `.md`/`.markdown`/`.html`/`.htm` files can differ from 1.1.5, which read every document as `plain` → pass `--input-format plain` / `input_format="plain"` for the 1.1.5 numbers
+  - `html` → converted to markdown lines, then the markdown reader: `h1`-`h6` → `#` lines, `li` → `- ` line in a `ul`, numbered line in an `ol` (`1. `, `2. `, from 1 in each `ol`; nested: two spaces per level), `tr` → `| cell | cell |` row of its `td`/`th` texts, `pre` → fenced block, `p`/`div`/`blockquote`/`section`/`article`/`dt`/`dd`/`figcaption`/`caption`/`header`/`footer`/`main`/`nav`/`aside`/`address`/`form`/`figure`/`details`/`summary` and loose text → paragraph on one line, whitespace collapsed, `br` → the only line break inside a paragraph, `hr` → paragraph end, `script`/`style`/`template`/`noscript`/`svg`/`title`/comments/byte order mark dropped, every other tag (`head` among them) → its text only; the `h1` of an HTML file is dropped like a markdown `# ` title
+  - HTML document vs its markdown conversion → `docdistance distance-semantic page.html page.md`; the statements of an HTML file do not depend on how its source text is wrapped
 - `--min-words N` / `--skip-table-fragments` → drop fragments before encoding; `n_dropped` + `drop_rules` appear in detail headers and machine JSON; filtering renormalises the transport marginals, so the SMD legitimately changes
 
 ## Use it - Python
@@ -80,7 +87,8 @@ res, order   = dd.structural_distance_with_details("a.md", "b.md")   # (Structur
 
 - set `DOCDISTANCE_HOME` (env) to the init home before import, else calls raise "not initialized"
 - args accept a path or a raw string
-- both `*_with_details` take `markdown=`, `min_words=`, `skip_table_fragments=` - same semantics as the CLI flags; `semantic_distance_with_details` additionally takes `changed_cost=` (recompute the `changed` flag against your own band); details dicts match the `--details-json` schema above
+- both `*_with_details` take `markdown=`, `input_format=`, `min_words=`, `skip_table_fragments=` - same semantics as the CLI flags, and so do the one-shot functions and the other `DocDistance` scoring methods; `semantic_distance_with_details` additionally takes `changed_cost=` (recompute the `changed` flag against your own band); details dicts match the `--details-json` schema above
+- sweeps over many pairs → `DocDistance(memo_size=64)`: a document file that recurs across calls is segmented and encoded once; default `0` keeps nothing
 
 ## Why - the agentic use
 
@@ -91,7 +99,8 @@ res, order   = dd.structural_distance_with_details("a.md", "b.md")   # (Structur
 
 - preflight then `init` before first use; distance needs `docdistance.json` reachable via `DOCDISTANCE_HOME`, cwd or `--home`; on a miss the error names the searched path
 - a mistyped file path is scored as its literal text (exit 0, plausible number) - a stderr warning flags it, check stderr when a path argument is involved
-- detail-file fields and batch/segmentation flags above need the release after 1.1.4; the preflight `-U` upgrade covers it
-- python 3.13 only
+- detail-file fields and batch/segmentation flags above need the release after 1.1.4; the matching fields (`match_*`, `matched_*`, `n_unsupported_*`), `--pairs` on `distance-wrt-source`, `memo_size=` and `--input-format` / `input_format=` need the release after 1.1.5; the preflight `-U` upgrade covers it
+- `plain` reader keeps bare markdown markers (`-`, `###`) as statements and logs a stderr warning with their count → pass `--markdown` or `--min-words`; under the default `auto` that concerns raw text and files that are not `.md`/`.markdown`/`.html`/`.htm`
+- python 3.12 to 3.14; releases up to 1.1.5 are 3.13 only
 - `openvino` backend is CPU, portable, no GPU; `--gpu` / `--backend torch` are opt-in
 - `distance-wrt-source` needs the `wmd-wrt-source` mode provisioned and is slower (reranker × NLI)

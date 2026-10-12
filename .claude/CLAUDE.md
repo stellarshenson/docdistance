@@ -28,7 +28,7 @@ pipelines that operate through frontier models, where token-level logits are una
 divergence cannot be computed directly - WMD provides an embedding-grounded distance instead.
 
 **Technology Stack**:
-- Python 3.13, `uv` environment manager, environment name `docdistance`
+- Python 3.14 in the `uv` environment (the package supports 3.12 to 3.14), environment name `docdistance`
 - Package layout under `src/docdistance/` (config, dataset, features, modeling, plots)
 - `typer` CLI, `loguru` logging, `tqdm` progress, `python-dotenv` for secrets
 - `ruff` for linting and formatting, `pytest` for tests

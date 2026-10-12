@@ -1,0 +1,269 @@
+{
+  "id": "E13-H71",
+  "slug": "partial-matching-map",
+  "model": "opus",
+  "verdict": "Promoted",
+  "verdict_number": "A → B: held-out macro-F1 0.9772 against 0.3130 for the shipped flags (gain +0.6642) at c = 0.3250; B → A: held-out macro-F1 0.9457 against 0.3266 for the shipped flags (gain +0.6191) at c = 0.3100",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "calibration half A: best balanced accuracy 0.9915 for any cutoff in (0.2978, 0.2990], n = 59 statements; calibration half B: best balanced accuracy 0.9914 for any cutoff in (0.2621, 0.2672], n = 58 statements; gate threshold 0.9"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "10 of 10 base documents align one-to-one with their back-translation (equal length, identity optimal under the shipped ground cost and under a lexical cost, exact re-segmentation); excluded: none; the first list element is an H1 title line on 7 of 10 files and was dropped there"
+  },
+  "prediction_check": {
+    "predicted": "removed / added F1 >= 0.9 against <= 0.3 for the shipped flags; the cutoff lands between 0.348 and 0.6",
+    "observed": "partial matching removed / added F1 minimum over the two directions 0.9441 / 0.9030 (held); shipped flags removed / added F1 maximum 0.0000 / 0.0392 (held); calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6) (falsified)",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "held-out macro-F1 over {kept, removed, added} >= 0.9 AND >= +0.3 above the shipped-flag baseline on the same labels, c chosen on the calibration split only, both directions",
+    "met": true,
+    "readings": {
+      "A → B": {
+        "cutoff": 0.325,
+        "macro_f1_partial_matching": 0.9772,
+        "macro_f1_shipped_flags": 0.313,
+        "gain": 0.6642,
+        "met": true
+      },
+      "B → A": {
+        "cutoff": 0.31,
+        "macro_f1_partial_matching": 0.9457,
+        "macro_f1_shipped_flags": 0.3266,
+        "gain": 0.6191,
+        "met": true
+      }
+    }
+  },
+  "guardrails": {
+    "V": "0/24",
+    "src_untouched": true,
+    "metric_property": "untouched - the map is an annotation read from the shipped cost matrix, not a distance; smd np.array_equal before/after: True, order_gap np.array_equal before/after: True (10 anchor pairs each)",
+    "notes": "source-tree fingerprint start = end: True; git status for src and tests: empty; instance overrides (embed_statements wrapper, pinned segmenter) removed after the loop: True"
+  },
+  "key_numbers": {
+    "n_pairs_scored": 900,
+    "n_pairs_built": 900,
+    "n_pairs_segmentation_pinned": 37,
+    "cutoff_half_A": 0.325,
+    "cutoff_half_B": 0.31,
+    "cutoff_all_bases_in_sample": 0.325,
+    "gate_balanced_accuracy_half_A": 0.9915,
+    "gate_balanced_accuracy_half_B": 0.9914,
+    "true_pair_cost_max": 0.3229,
+    "nearest_non_counterpart_cost_min": 0.2672,
+    "held_out": {
+      "A → B": {
+        "cutoff": 0.325,
+        "calibration_macro_f1": 0.9674,
+        "calibration_cutoff_range_at_or_above_bar": [
+          0.28,
+          0.44
+        ],
+        "n_pairs": 450,
+        "n_statements": 10440,
+        "gain": 0.6642,
+        "partial_matching": {
+          "macro_f1": 0.9772,
+          "f1": {
+            "kept": 0.9959,
+            "removed": 0.9831,
+            "added": 0.9525
+          },
+          "precision": {
+            "kept": 0.9938,
+            "removed": 1.0,
+            "added": 0.969
+          },
+          "recall": {
+            "kept": 0.9981,
+            "removed": 0.9667,
+            "added": 0.9367
+          }
+        },
+        "shipped_flags": {
+          "macro_f1": 0.313,
+          "f1": {
+            "kept": 0.939,
+            "removed": 0.0,
+            "added": 0.0
+          },
+          "precision": {
+            "kept": 0.8851,
+            "removed": 0.0,
+            "added": 0.0
+          },
+          "recall": {
+            "kept": 1.0,
+            "removed": 0.0,
+            "added": 0.0
+          }
+        }
+      },
+      "B → A": {
+        "cutoff": 0.31,
+        "calibration_macro_f1": 0.979,
+        "calibration_cutoff_range_at_or_above_bar": [
+          0.24,
+          0.455
+        ],
+        "n_pairs": 450,
+        "n_statements": 10620,
+        "gain": 0.6191,
+        "partial_matching": {
+          "macro_f1": 0.9457,
+          "f1": {
+            "kept": 0.9901,
+            "removed": 0.9441,
+            "added": 0.903
+          },
+          "precision": {
+            "kept": 0.9918,
+            "removed": 0.9318,
+            "added": 0.8912
+          },
+          "recall": {
+            "kept": 0.9884,
+            "removed": 0.9567,
+            "added": 0.915
+          }
+        },
+        "shipped_flags": {
+          "macro_f1": 0.3266,
+          "f1": {
+            "kept": 0.9407,
+            "removed": 0.0,
+            "added": 0.0392
+          },
+          "precision": {
+            "kept": 0.888,
+            "removed": 0.0,
+            "added": 1.0
+          },
+          "recall": {
+            "kept": 1.0,
+            "removed": 0.0,
+            "added": 0.02
+          }
+        }
+      }
+    },
+    "cutoff_range_both_halves_at_or_above_bar": [
+      0.28,
+      0.44
+    ],
+    "macro_f1_at_fixed_cutoffs": {
+      "0.280": {
+        "half_A": 0.9087,
+        "half_B": 0.9593,
+        "all": 0.9333
+      },
+      "0.300": {
+        "half_A": 0.947,
+        "half_B": 0.9593,
+        "all": 0.9531
+      },
+      "0.310": {
+        "half_A": 0.9457,
+        "half_B": 0.979,
+        "all": 0.9621
+      },
+      "0.325": {
+        "half_A": 0.9674,
+        "half_B": 0.9772,
+        "all": 0.9723
+      },
+      "0.350": {
+        "half_A": 0.9538,
+        "half_B": 0.9665,
+        "all": 0.9602
+      },
+      "0.400": {
+        "half_A": 0.9287,
+        "half_B": 0.9441,
+        "all": 0.9364
+      },
+      "0.440": {
+        "half_A": 0.9027,
+        "half_B": 0.9167,
+        "all": 0.9098
+      },
+      "0.500": {
+        "half_A": 0.8691,
+        "half_B": 0.8492,
+        "all": 0.8593
+      },
+      "0.600": {
+        "half_A": 0.7828,
+        "half_B": 0.7713,
+        "all": 0.7771
+      }
+    },
+    "per_base_macro_f1_partial_matching_min": 0.8686,
+    "per_base_macro_f1_partial_matching_max": 1.0,
+    "kept_counterpart_partial_matching": "9244/9330 = 0.9908",
+    "kept_counterpart_shipped_heaviest_target": "9286/9330 = 0.9953",
+    "removed_statements_above_shipped_cut": "0/1200 = 0.0000",
+    "added_statements_above_shipped_cut": "12/1200 = 0.0100",
+    "shipped_targets_per_statement": {
+      "deletion": 1.7179,
+      "insertion": 2.0598,
+      "replacement": 1.0
+    },
+    "no_edit_control_read_as_removed": "1/117 = 0.0085",
+    "replacement_pair_below_applied_cutoff": {
+      "sibling summary": "16/248 = 0.0645",
+      "other article or section": "0/352 = 0.0000"
+    },
+    "secondary_macro_f1": {
+      "population cutoff, half A → half B": {
+        "cutoff": 0.2984,
+        "partial_matching": 0.9593,
+        "shipped_flags": 0.313
+      },
+      "population cutoff, half B → half A": {
+        "cutoff": 0.2647,
+        "partial_matching": 0.8461,
+        "shipped_flags": 0.3266
+      },
+      "shipped segmentation only, half A → half B": {
+        "cutoff": 0.325,
+        "partial_matching": 0.9773,
+        "shipped_flags": 0.3132
+      },
+      "shipped segmentation only, half B → half A": {
+        "cutoff": 0.31,
+        "partial_matching": 0.9467,
+        "shipped_flags": 0.3278
+      },
+      "article split, ibm → wergeland": {
+        "cutoff": 0.325,
+        "partial_matching": 1.0,
+        "shipped_flags": 0.3295
+      },
+      "article split, wergeland → ibm": {
+        "cutoff": 0.295,
+        "partial_matching": 0.9185,
+        "shipped_flags": 0.3156
+      },
+      "in-sample, all bases → all bases": {
+        "cutoff": 0.325,
+        "partial_matching": 0.9723,
+        "shipped_flags": 0.3199
+      }
+    }
+  },
+  "result_summary": "Promoted. Held-out macro-F1 of the unit-capacity partial matching is 0.9772 (c = 0.3250 chosen on half A, scored on half B) and 0.9457 (c = 0.3100 chosen on half B, scored on half A), against 0.3130 and 0.3266 for the shipped flags on the same labels (gain +0.6642 and +0.6191). Bar met: True. Minimum removed / added F1 over the two directions: 0.9441 / 0.9030 for the partial matching, maximum 0.0000 / 0.0392 for the shipped flags. Kept statements pointed at their true counterpart: 9244/9330 = 0.9908 against 9286/9330 = 0.9953 for the shipped heaviest target. Calibrated cutoffs 0.3250 and 0.3100 against the predicted band (0.348, 0.6): outside. No-edit control (unedited base against its back-translation): 1/117 = 0.0085 statements read as removed. Per scored base document the macro-F1 runs from 0.8686 (haiku) to 1.0000. Every cutoff in [0.280, 0.440] keeps both halves at or above 0.9. Fixture: 900 edited pairs over 10 base documents.",
+  "artifacts": {
+    "notebook": "notebooks/experiments/E13-H71-kj-partial-matching-map.ipynb",
+    "metrics_json": "reports/E13-H71-partial-matching-map-metrics.json",
+    "log": "logs/E13-H71-partial-matching-map.log",
+    "checkpoint": "data/interim/E13-H71/shipped-readings-00900-3e396129ed50.json"
+  },
+  "notebook_errors": 0,
+  "caveats": "Synthetic edits on 10 base documents, 7 of which summarise the same ibm article, so each half holds parallel summaries of the other half's content: the split is held out by document, not by article (the article-split rows are a secondary reading); each direction scores 5 documents, so the pooled reading depends on the document mix. Paraphrases are opus-mt back-translations, a mild rewording, and the calibrated cutoff sits at the top of that pair-cost population: a stronger rewording, another encoder or the anisotropy pre-pass moves it (the E12-H60 matched maximum 0.348 already lies above both calibrated cutoffs). One encoder (mmBERT OpenVINO INT8, raw embeddings). A replacement whose donor is a sibling summary can restate the removed statement, so the construction label (removed plus added) is debatable there. The H1 title line is dropped from the 7 ibm documents; donors come from the same half; 37 of 900 pairs needed the statement units pinned because SaT split a statement differently inside the edited text (a reduced trial of 180 pairs showed this before the registered run, and pinning was chosen over excluding those pairs; the split, the donor rule, the calibration rule, the grid and the class definitions did not change after the trial; the rows on the unmodified segmentation alone are a secondary reading). The record does not fix the number of draws, the donor rule or the calibration rule; they were fixed in the configuration cell before the registered run. The notebook was executed more than once: reporting tables (fixed-cutoff readings, per-base error columns, population percentiles) were added after the first registered execution, and every measured value of that first execution's metrics file is unchanged in the final execution, which computed all pairs again from an empty checkpoint."
+}

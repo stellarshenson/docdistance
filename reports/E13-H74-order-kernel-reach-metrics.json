@@ -1,0 +1,604 @@
+{
+  "id": "E13-H74",
+  "slug": "order-kernel-reach",
+  "encoder": "openvino INT8 mmBERT (CPU)",
+  "docdistance_version": "1.1.5",
+  "pot_version": "0.9.6.post1",
+  "seed": 42,
+  "constants": {
+    "lambda1": 50.0,
+    "lambda2": 0.1,
+    "sigma": 1.0
+  },
+  "pool": {
+    "documents": [
+      {
+        "document": "01-statements.parquet",
+        "statements": 163,
+        "unique_added": 158
+      },
+      {
+        "document": "ibm source article",
+        "statements": 70,
+        "unique_added": 52
+      },
+      {
+        "document": "wergeland source article",
+        "statements": 52,
+        "unique_added": 50
+      },
+      {
+        "document": "summary gold",
+        "statements": 11,
+        "unique_added": 11
+      },
+      {
+        "document": "summary gold-2",
+        "statements": 13,
+        "unique_added": 13
+      },
+      {
+        "document": "summary v1",
+        "statements": 12,
+        "unique_added": 12
+      },
+      {
+        "document": "summary v2",
+        "statements": 12,
+        "unique_added": 11
+      },
+      {
+        "document": "summary opus",
+        "statements": 13,
+        "unique_added": 13
+      },
+      {
+        "document": "summary sonnet",
+        "statements": 11,
+        "unique_added": 11
+      },
+      {
+        "document": "summary haiku",
+        "statements": 14,
+        "unique_added": 14
+      },
+      {
+        "document": "summary adv1-a",
+        "statements": 10,
+        "unique_added": 10
+      },
+      {
+        "document": "summary adv1-b",
+        "statements": 10,
+        "unique_added": 9
+      },
+      {
+        "document": "summary adv2-a",
+        "statements": 2,
+        "unique_added": 2
+      },
+      {
+        "document": "summary adv2-b",
+        "statements": 4,
+        "unique_added": 4
+      },
+      {
+        "document": "summary werg-a",
+        "statements": 11,
+        "unique_added": 0
+      },
+      {
+        "document": "summary werg-b",
+        "statements": 13,
+        "unique_added": 2
+      },
+      {
+        "document": "summary werg-c",
+        "statements": 14,
+        "unique_added": 0
+      }
+    ],
+    "unique_statements": 372,
+    "largest_ground_cost": 1.335648,
+    "length_run": 300,
+    "length_600_feasible": false,
+    "structure_threshold": 0.9
+  },
+  "kill_gate": {
+    "kernel": "K of _opw_plan, N = M = 300, shipped constants",
+    "offset": 60,
+    "entries_per_kernel": 480,
+    "nonzero_at_offset_zero_cost": 0,
+    "nonzero_at_offset_measured": 0,
+    "measured_kernels": 80,
+    "shifted_log_k_at_offset_zero_cost": -919.23,
+    "shifted_log_k_at_offset_measured_max": -919.23,
+    "shifted_log_k_at_offset_upper_bound": -899.23,
+    "log_smallest_positive_float64": -744.44,
+    "widest_nonzero_offset_zero_cost": 54,
+    "widest_nonzero_offset_measured": 53,
+    "passed": true
+  },
+  "harness": {
+    "replica_plan_equals_shipped_plan": true,
+    "ground_cost_matrices_checked": 80,
+    "row_group_split_equals_shipped_gap": true,
+    "block_moves_verified": true
+  },
+  "sweep": {
+    "block": 10,
+    "displacements": [
+      5,
+      10,
+      20,
+      50,
+      60,
+      100,
+      200
+    ],
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "solves": 80,
+    "smd_largest": 0.000302,
+    "arms": {
+      "shuffled": {
+        "block_start_per_seed": [
+          29,
+          14,
+          58,
+          48,
+          48
+        ],
+        "adjacent_ground_cost_per_seed": [
+          0.6195,
+          0.6464,
+          0.6277,
+          0.6197,
+          0.6456
+        ],
+        "gap_per_seed": {
+          "0": [
+            0.00655,
+            0.00585,
+            0.00663,
+            0.00694,
+            0.00616
+          ],
+          "5": [
+            0.03385,
+            0.03072,
+            0.03228,
+            0.03229,
+            0.02981
+          ],
+          "10": [
+            0.04861,
+            0.04706,
+            0.04669,
+            0.0471,
+            0.04086
+          ],
+          "20": [
+            0.06838,
+            0.06501,
+            0.06386,
+            0.06726,
+            0.06145
+          ],
+          "50": [
+            0.12537,
+            0.12338,
+            0.12482,
+            0.12512,
+            0.12048
+          ],
+          "60": [
+            0.142,
+            0.14548,
+            0.1454,
+            0.14324,
+            0.14215
+          ],
+          "100": [
+            0.21933,
+            0.22269,
+            0.22578,
+            0.2211,
+            0.22091
+          ],
+          "200": [
+            0.41615,
+            0.42295,
+            0.41153,
+            0.39928,
+            0.41617
+          ]
+        },
+        "gap_median": {
+          "0": 0.00655,
+          "5": 0.03228,
+          "10": 0.04706,
+          "20": 0.06501,
+          "50": 0.12482,
+          "60": 0.14324,
+          "100": 0.2211,
+          "200": 0.41615
+        },
+        "structure_closeness_of_median": {
+          "0": 0.9954,
+          "5": 0.9772,
+          "10": 0.9667,
+          "20": 0.954,
+          "50": 0.9117,
+          "60": 0.8987,
+          "100": 0.8437,
+          "200": 0.7057
+        },
+        "shipped_verdict_of_median": {
+          "0": "similar",
+          "5": "similar",
+          "10": "similar",
+          "20": "similar",
+          "50": "similar",
+          "60": "not similar",
+          "100": "not similar",
+          "200": "not similar"
+        }
+      },
+      "document-order": {
+        "block_start_per_seed": [
+          46,
+          90,
+          21,
+          24,
+          55
+        ],
+        "adjacent_ground_cost_per_seed": [
+          0.5881,
+          0.5736,
+          0.5512,
+          0.5977,
+          0.5697
+        ],
+        "gap_per_seed": {
+          "0": [
+            0.00935,
+            0.00995,
+            0.01141,
+            0.00922,
+            0.01051
+          ],
+          "5": [
+            0.03671,
+            0.03336,
+            0.02989,
+            0.02984,
+            0.03064
+          ],
+          "10": [
+            0.05186,
+            0.04447,
+            0.04026,
+            0.04368,
+            0.05162
+          ],
+          "20": [
+            0.06912,
+            0.06727,
+            0.06361,
+            0.06648,
+            0.06816
+          ],
+          "50": [
+            0.13305,
+            0.12966,
+            0.12262,
+            0.11984,
+            0.12718
+          ],
+          "60": [
+            0.1511,
+            0.1496,
+            0.13894,
+            0.14584,
+            0.14201
+          ],
+          "100": [
+            0.22176,
+            0.22064,
+            0.18925,
+            0.22337,
+            0.2031
+          ],
+          "200": [
+            0.43134,
+            0.42908,
+            0.3696,
+            0.42098,
+            0.39425
+          ]
+        },
+        "gap_median": {
+          "0": 0.00995,
+          "5": 0.03064,
+          "10": 0.04447,
+          "20": 0.06727,
+          "50": 0.12718,
+          "60": 0.14584,
+          "100": 0.22064,
+          "200": 0.42098
+        },
+        "structure_closeness_of_median": {
+          "0": 0.993,
+          "5": 0.9783,
+          "10": 0.9686,
+          "20": 0.9524,
+          "50": 0.9101,
+          "60": 0.8969,
+          "100": 0.844,
+          "200": 0.7023
+        },
+        "shipped_verdict_of_median": {
+          "0": "similar",
+          "5": "similar",
+          "10": "similar",
+          "20": "similar",
+          "50": "similar",
+          "60": "not similar",
+          "100": "not similar",
+          "200": "not similar"
+        }
+      }
+    }
+  },
+  "acceptance": {
+    "bar": "Confirmed iff the median order gap grows >= 20% between displacement 5 and 50 AND changes <= 5% between 60 and 200; Refuted if it still grows >= 20% between 60 and 200",
+    "primary_arm": "shuffled",
+    "readings": {
+      "shuffled": {
+        "growth_5_to_50_pct": 286.6,
+        "change_60_to_200_pct": 190.5,
+        "growth_5_to_50_pct_per_seed": [
+          270.4,
+          301.7,
+          286.6,
+          287.5,
+          304.1
+        ],
+        "change_60_to_200_pct_per_seed": [
+          193.1,
+          190.7,
+          183.0,
+          178.8,
+          192.8
+        ]
+      },
+      "document-order": {
+        "growth_5_to_50_pct": 315.1,
+        "change_60_to_200_pct": 188.7,
+        "growth_5_to_50_pct_per_seed": [
+          262.4,
+          288.6,
+          310.2,
+          301.6,
+          315.1
+        ],
+        "change_60_to_200_pct_per_seed": [
+          185.5,
+          186.8,
+          166.0,
+          188.7,
+          177.6
+        ]
+      }
+    },
+    "near_growth_met": true,
+    "far_flat_met": false,
+    "confirmed": false,
+    "refuted": true,
+    "control_agrees": true,
+    "sequences_growing_60_to_200": "10/10",
+    "verdict": "Refuted"
+  },
+  "mechanism": {
+    "row_group_medians": {
+      "shuffled": {
+        "5": {
+          "displaced_statements": 15,
+          "block_rows": 0.01546,
+          "passed_over_rows": 0.00962,
+          "untouched_rows": 0.00692,
+          "own_statement_mass_block_rows": 0.1227,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5039
+        },
+        "10": {
+          "displaced_statements": 20,
+          "block_rows": 0.02023,
+          "passed_over_rows": 0.02031,
+          "untouched_rows": 0.00695,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.6015
+        },
+        "20": {
+          "displaced_statements": 30,
+          "block_rows": 0.02026,
+          "passed_over_rows": 0.03888,
+          "untouched_rows": 0.00659,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5952
+        },
+        "50": {
+          "displaced_statements": 60,
+          "block_rows": 0.02026,
+          "passed_over_rows": 0.09863,
+          "untouched_rows": 0.0061,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5945
+        },
+        "60": {
+          "displaced_statements": 70,
+          "block_rows": 0.02026,
+          "passed_over_rows": 0.11992,
+          "untouched_rows": 0.00572,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5895
+        },
+        "100": {
+          "displaced_statements": 110,
+          "block_rows": 0.02027,
+          "passed_over_rows": 0.19822,
+          "untouched_rows": 0.00465,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5913
+        },
+        "200": {
+          "displaced_statements": 210,
+          "block_rows": 0.02027,
+          "passed_over_rows": 0.39295,
+          "untouched_rows": 0.00256,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5913
+        }
+      },
+      "document-order": {
+        "5": {
+          "displaced_statements": 15,
+          "block_rows": 0.01339,
+          "passed_over_rows": 0.00844,
+          "untouched_rows": 0.00997,
+          "own_statement_mass_block_rows": 0.1092,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.4197
+        },
+        "10": {
+          "displaced_statements": 20,
+          "block_rows": 0.01756,
+          "passed_over_rows": 0.0176,
+          "untouched_rows": 0.00972,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5257
+        },
+        "20": {
+          "displaced_statements": 30,
+          "block_rows": 0.01758,
+          "passed_over_rows": 0.03879,
+          "untouched_rows": 0.00926,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5832
+        },
+        "50": {
+          "displaced_statements": 60,
+          "block_rows": 0.0176,
+          "passed_over_rows": 0.09882,
+          "untouched_rows": 0.00881,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5913
+        },
+        "60": {
+          "displaced_statements": 70,
+          "block_rows": 0.0176,
+          "passed_over_rows": 0.12082,
+          "untouched_rows": 0.00869,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5932
+        },
+        "100": {
+          "displaced_statements": 110,
+          "block_rows": 0.0176,
+          "passed_over_rows": 0.19373,
+          "untouched_rows": 0.00683,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5818
+        },
+        "200": {
+          "displaced_statements": 210,
+          "block_rows": 0.0176,
+          "passed_over_rows": 0.39949,
+          "untouched_rows": 0.00418,
+          "own_statement_mass_block_rows": 0.0,
+          "own_statement_mass_passed_over_rows": 0.0,
+          "cost_per_displaced_statement": 0.5958
+        }
+      }
+    },
+    "block_rows_change_pct": {
+      "shuffled": {
+        "change_5_to_50": 31.12,
+        "change_10_to_200": 0.19,
+        "change_60_to_200": 0.01
+      },
+      "document-order": {
+        "change_5_to_50": 31.48,
+        "change_10_to_200": 0.22,
+        "change_60_to_200": 0.0
+      }
+    },
+    "passed_over_share_of_growth_60_to_200_pct": {
+      "shuffled": 100.0,
+      "document-order": 101.3
+    },
+    "own_statement_mass_block_rows_max_d_ge_10": 0.000258,
+    "own_statement_mass_passed_over_rows_max": 1.1e-05,
+    "linear_fit_gap_vs_displaced_fraction": {
+      "shuffled": {
+        "slope": 0.5833,
+        "intercept": 0.0063,
+        "r2": 0.999
+      },
+      "document-order": {
+        "slope": 0.5717,
+        "intercept": 0.0081,
+        "r2": 0.9912
+      }
+    },
+    "position_penalty": {
+      "1": 0.0256,
+      "2": 0.1022,
+      "5": 0.6389,
+      "7": 1.2522,
+      "8": 1.6355,
+      "10": 2.5555,
+      "54": 74.4692,
+      "55": 77.2509,
+      "60": 91.9231
+    },
+    "cost_reach_positions": 7,
+    "float64_support_edge_positions": 54
+  },
+  "guardrails": {
+    "V": "0/24",
+    "panel_row": {
+      "margin_pts": 4.71,
+      "dprime": 4.68,
+      "R": 1.67,
+      "DR": 0.0873
+    },
+    "naive_row_reproduced": true,
+    "panel_smd_byte_identical": true,
+    "default_path_byte_identical": true,
+    "tree_sha256_unchanged": {
+      "src": true,
+      "tests": true,
+      "docs": true
+    },
+    "git_status_src_tests": "clean",
+    "metric_property": "unchanged - no code changed; smd exact metric, opw_gap a score (not a metric)"
+  }
+}

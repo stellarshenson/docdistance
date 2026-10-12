@@ -1,0 +1,1566 @@
+{
+ "id": "E16-H81",
+ "slug": "autodetected-reader-default",
+ "model": "opus",
+ "block_sha256": "3aa9754af4b7523d7fe59eacea07ebc951a7ccd6fe6f7200dcddd96296712248",
+ "registered_at_utc": "2026-10-10T02:52:16Z",
+ "ledger_block": {
+  "lines": 12,
+  "sha256_now": "3aa9754af4b7523d7fe59eacea07ebc951a7ccd6fe6f7200dcddd96296712248",
+  "equals_registration": true
+ },
+ "environment": {
+  "docdistance": "1.1.21",
+  "python": "3.14.8",
+  "pot": "0.9.6.post1",
+  "openvino": "2026.2.1-21919-ede283a88e3-releases/2026/2",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "markdown_it": "4.2.0",
+  "backend": "openvino",
+  "encoder": "openvino",
+  "memo_bound": 64,
+  "memo_entries": 52,
+  "hf_hub_offline": true,
+  "env_passed_by_command": {
+   "CI": "true",
+   "HF_HUB_OFFLINE": "1"
+  },
+  "src_sha256": "39db9393d733638690ba4e6667dc60fc67775f271eb979b8c8f517965c6a82a4",
+  "tests_sha256": "ab6d4acb4d80e73fdc45d12f477f89010bf7475e0bd9bd82fda4cbb727805739"
+ },
+ "fixture": {
+  "documents": {
+   "gold": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-gold-opus-4-6.md",
+   "gold-2": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-gold-2-opus-4-6.md",
+   "v1": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-1-opus-4-6.md",
+   "v2": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-2-opus-4-6.md",
+   "opus": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-opus-4-6.md",
+   "sonnet": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-sonnet-4-6.md",
+   "haiku": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-haiku-4-5.md",
+   "adv1-a": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-adv1-a-sonnet-4-6.md",
+   "adv1-b": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-adv1-b-sonnet-4-6.md",
+   "adv2-a": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-adv2-a-haiku-4-5.md",
+   "adv2-b": "data/interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-adv2-b-haiku-4-5.md",
+   "source": "data/interim/exec-summaries/ibm-ai-adoption/source/source-article.md"
+  },
+  "html_renders": "data/interim/E16-H81/html",
+  "plain_controls": "data/interim/E16-H81/plain",
+  "reference": "gold",
+  "tiers": {
+   "gold": "gold",
+   "gold-2": "gold",
+   "v1": "gold",
+   "v2": "gold",
+   "opus": "gold",
+   "sonnet": "gold",
+   "haiku": "gold",
+   "adv1-a": "adv1",
+   "adv1-b": "adv1",
+   "adv2-a": "adv2",
+   "adv2-b": "adv2"
+  },
+  "pairs": [
+   "v1|v2",
+   "v1|adv1-a",
+   "v1|adv1-b",
+   "v1|adv2-a",
+   "v1|adv2-b",
+   "v1|gold-2",
+   "v1|gold",
+   "v1|haiku",
+   "v1|opus",
+   "v1|sonnet",
+   "v2|adv1-a",
+   "v2|adv1-b",
+   "v2|adv2-a",
+   "v2|adv2-b",
+   "v2|gold-2",
+   "v2|gold",
+   "v2|haiku",
+   "v2|opus",
+   "v2|sonnet",
+   "adv1-a|adv1-b",
+   "adv1-a|adv2-a",
+   "adv1-a|adv2-b",
+   "adv1-a|gold-2",
+   "adv1-a|gold",
+   "adv1-a|haiku",
+   "adv1-a|opus",
+   "adv1-a|sonnet",
+   "adv1-b|adv2-a",
+   "adv1-b|adv2-b",
+   "adv1-b|gold-2",
+   "adv1-b|gold",
+   "adv1-b|haiku",
+   "adv1-b|opus",
+   "adv1-b|sonnet",
+   "adv2-a|adv2-b",
+   "adv2-a|gold-2",
+   "adv2-a|gold",
+   "adv2-a|haiku",
+   "adv2-a|opus",
+   "adv2-a|sonnet",
+   "adv2-b|gold-2",
+   "adv2-b|gold",
+   "adv2-b|haiku",
+   "adv2-b|opus",
+   "adv2-b|sonnet",
+   "gold-2|gold",
+   "gold-2|haiku",
+   "gold-2|opus",
+   "gold-2|sonnet",
+   "gold|haiku",
+   "gold|opus",
+   "gold|sonnet",
+   "haiku|opus",
+   "haiku|sonnet",
+   "opus|sonnet"
+  ],
+  "fixture_functions_verbatim_from_E12_H63": {
+   "score": true,
+   "violations": true,
+   "band": true
+  },
+  "docs_rows_verbatim_from_E12_H63": true,
+  "pairs_equal_allpairs_55": true
+ },
+ "harness": {
+  "passed": true,
+  "tolerance": 0.001,
+  "max_abs_diff_55_pairs": 0.0,
+  "pairs_equal_as_floats": 55,
+  "band_lo": 0.7473565462130423,
+  "band_hi": 0.7944397202927438,
+  "band_lo_doc": "adv2-b",
+  "band_hi_doc": "haiku",
+  "registered_band": [
+   0.7474,
+   0.7944
+  ],
+  "band_lo_diff": 4.345378695769231e-05,
+  "band_hi_diff": 3.9720292743794516e-05,
+  "stored_E12_H63_band": [
+   0.7473565462130423,
+   0.7944397202927438
+  ],
+  "reading": "plain arm (no input_format argument): 55 pair distances against the stored 1.1.5 baseline, largest absolute difference 0.0e+00 (55 of 55 equal as floats; tolerance 0.001); band edges 0.7474 (adv2-b) and 0.7944 (haiku) against 0.7474 and 0.7944 of E12-H63, differences 4.3e-05 and 4.0e-05"
+ },
+ "kill_gate": {
+  "ran": true,
+  "passed": false,
+  "detect_format": {
+   "gold": "markdown",
+   "gold-2": "markdown",
+   "v1": "markdown",
+   "v2": "markdown",
+   "opus": "markdown",
+   "sonnet": "markdown",
+   "haiku": "markdown",
+   "adv1-a": "markdown",
+   "adv1-b": "markdown",
+   "adv2-a": "markdown",
+   "adv2-b": "markdown",
+   "source": "markdown"
+  },
+  "n_markdown": 12,
+  "required_markdown": 11,
+  "marker_statements_default_reader": {
+   "gold": 0,
+   "gold-2": 0,
+   "v1": 0,
+   "v2": 0,
+   "opus": 0,
+   "sonnet": 0,
+   "haiku": 0,
+   "adv1-a": 0,
+   "adv1-b": 0,
+   "adv2-a": 0,
+   "adv2-b": 0,
+   "source": 21
+  },
+  "n_summaries_with_marker": 0,
+  "required_summaries_with_marker": 1,
+  "detect_format_title_lines_removed": {
+   "gold": "plain",
+   "gold-2": "plain",
+   "v1": "plain",
+   "v2": "plain",
+   "opus": "plain",
+   "sonnet": "plain",
+   "haiku": "plain",
+   "adv1-a": "plain",
+   "adv1-b": "plain",
+   "adv2-a": "plain",
+   "adv2-b": "plain",
+   "source": "markdown"
+  },
+  "source_marker_strings_default_reader": {
+   "-": 13,
+   "###": 6,
+   "##": 2
+  },
+  "summary_statements_under_short_words": [
+   0,
+   98
+  ],
+  "short_words": 5,
+  "shortest_summary_statement_words": 9,
+  "reading": "detect_format returns markdown for 12 of 12 ibm documents (the gate requires at least 11); the default reader returns at least 1 marker statement on 0 of 11 summaries (the gate requires at least 1): 0 of the 98 summary statements hold no letter and no digit. The ibm source reads 21 of 70 marker statements under the default reader; it is in none of the 55 scored pairs"
+ },
+ "detection": {
+  "per_document": {
+   "original:gold": "markdown",
+   "original:gold-2": "markdown",
+   "original:v1": "markdown",
+   "original:v2": "markdown",
+   "original:opus": "markdown",
+   "original:sonnet": "markdown",
+   "original:haiku": "markdown",
+   "original:adv1-a": "markdown",
+   "original:adv1-b": "markdown",
+   "original:adv2-a": "markdown",
+   "original:adv2-b": "markdown",
+   "original:source": "markdown",
+   "render:gold": "html",
+   "control:gold": "plain",
+   "render:gold-2": "html",
+   "control:gold-2": "plain",
+   "render:v1": "html",
+   "control:v1": "plain",
+   "render:v2": "html",
+   "control:v2": "plain",
+   "render:opus": "html",
+   "control:opus": "plain",
+   "render:sonnet": "html",
+   "control:sonnet": "plain",
+   "render:haiku": "html",
+   "control:haiku": "plain",
+   "render:adv1-a": "html",
+   "control:adv1-a": "plain",
+   "render:adv1-b": "html",
+   "control:adv1-b": "plain",
+   "render:adv2-a": "html",
+   "control:adv2-a": "plain",
+   "render:adv2-b": "html",
+   "control:adv2-b": "plain",
+   "render:source": "html",
+   "control:source": "plain",
+   "wergeland:raw-extract.txt": "markdown",
+   "wergeland:source-article.md": "markdown"
+  },
+  "expected": {
+   "original": "markdown",
+   "render": "html",
+   "control": "plain"
+  },
+  "right_per_family": {
+   "original": 12,
+   "render": 12,
+   "control": 12
+  },
+  "right": 36,
+  "of": 36,
+  "reader_logged_under_auto": {
+   "original:gold": "markdown",
+   "original:gold-2": "markdown",
+   "original:v1": "markdown",
+   "original:v2": "markdown",
+   "original:opus": "markdown",
+   "original:sonnet": "markdown",
+   "original:haiku": "markdown",
+   "original:adv1-a": "markdown",
+   "original:adv1-b": "markdown",
+   "original:adv2-a": "markdown",
+   "original:adv2-b": "markdown",
+   "original:source": "markdown",
+   "render:gold": "html",
+   "control:gold": "plain",
+   "render:gold-2": "html",
+   "control:gold-2": "plain",
+   "render:v1": "html",
+   "control:v1": "plain",
+   "render:v2": "html",
+   "control:v2": "plain",
+   "render:opus": "html",
+   "control:opus": "plain",
+   "render:sonnet": "html",
+   "control:sonnet": "plain",
+   "render:haiku": "html",
+   "control:haiku": "plain",
+   "render:adv1-a": "html",
+   "control:adv1-a": "plain",
+   "render:adv1-b": "html",
+   "control:adv1-b": "plain",
+   "render:adv2-a": "html",
+   "control:adv2-a": "plain",
+   "render:adv2-b": "html",
+   "control:adv2-b": "plain",
+   "render:source": "html",
+   "control:source": "plain",
+   "wergeland:raw-extract.txt": "markdown",
+   "wergeland:source-article.md": "markdown"
+  },
+  "reader_logged_equals_detection": 36,
+  "reported_lists_equal_calls": [
+   52,
+   52
+  ],
+  "wergeland_line_counts": {
+   "raw-extract.txt": {
+    "non_blank_lines": 744,
+    "tag_lines": 0,
+    "list_lines": 9,
+    "heading_or_fence_lines": 0,
+    "separator_rows": 0
+   },
+   "source-article.md": {
+    "non_blank_lines": 24,
+    "tag_lines": 0,
+    "list_lines": 0,
+    "heading_or_fence_lines": 5,
+    "separator_rows": 0
+   }
+  }
+ },
+ "statements": {
+  "per_ibm_document": {
+   "gold": {
+    "plain_n": 10,
+    "plain_markers": 0,
+    "auto_n": 10,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 10,
+    "control_n": 10,
+    "control_equal": true
+   },
+   "gold-2": {
+    "plain_n": 12,
+    "plain_markers": 0,
+    "auto_n": 12,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 12,
+    "control_n": 12,
+    "control_equal": true
+   },
+   "v1": {
+    "plain_n": 11,
+    "plain_markers": 0,
+    "auto_n": 11,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 11,
+    "control_n": 11,
+    "control_equal": true
+   },
+   "v2": {
+    "plain_n": 11,
+    "plain_markers": 0,
+    "auto_n": 11,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 11,
+    "control_n": 11,
+    "control_equal": true
+   },
+   "opus": {
+    "plain_n": 11,
+    "plain_markers": 0,
+    "auto_n": 12,
+    "auto_markers": 0,
+    "embedded_equal": false,
+    "embeddings_equal": false,
+    "render_n": 12,
+    "control_n": 12,
+    "control_equal": true
+   },
+   "sonnet": {
+    "plain_n": 9,
+    "plain_markers": 0,
+    "auto_n": 10,
+    "auto_markers": 0,
+    "embedded_equal": false,
+    "embeddings_equal": false,
+    "render_n": 10,
+    "control_n": 10,
+    "control_equal": true
+   },
+   "haiku": {
+    "plain_n": 13,
+    "plain_markers": 0,
+    "auto_n": 13,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 13,
+    "control_n": 13,
+    "control_equal": true
+   },
+   "adv1-a": {
+    "plain_n": 8,
+    "plain_markers": 0,
+    "auto_n": 9,
+    "auto_markers": 0,
+    "embedded_equal": false,
+    "embeddings_equal": false,
+    "render_n": 9,
+    "control_n": 9,
+    "control_equal": true
+   },
+   "adv1-b": {
+    "plain_n": 9,
+    "plain_markers": 0,
+    "auto_n": 9,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 9,
+    "control_n": 9,
+    "control_equal": true
+   },
+   "adv2-a": {
+    "plain_n": 1,
+    "plain_markers": 0,
+    "auto_n": 1,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 1,
+    "control_n": 1,
+    "control_equal": true
+   },
+   "adv2-b": {
+    "plain_n": 3,
+    "plain_markers": 0,
+    "auto_n": 3,
+    "auto_markers": 0,
+    "embedded_equal": true,
+    "embeddings_equal": true,
+    "render_n": 3,
+    "control_n": 3,
+    "control_equal": true
+   },
+   "source": {
+    "plain_n": 70,
+    "plain_markers": 21,
+    "auto_n": 48,
+    "auto_markers": 0,
+    "embedded_equal": false,
+    "embeddings_equal": false,
+    "render_n": 48,
+    "control_n": 48,
+    "control_equal": true
+   }
+  },
+  "wergeland_files": {
+   "raw-extract.txt": {
+    "plain_n": 924,
+    "plain_n_marker": 23,
+    "auto_n": 910,
+    "auto_n_marker": 20
+   },
+   "source-article.md": {
+    "plain_n": 52,
+    "plain_n_marker": 3,
+    "auto_n": 51,
+    "auto_n_marker": 0
+   }
+  },
+  "summary_marker_statements": {
+   "plain": 0,
+   "auto": 0
+  },
+  "summary_statements": {
+   "plain": 98,
+   "auto": 101
+  },
+  "source_marker_statements": {
+   "plain": [
+    21,
+    70
+   ],
+   "auto": [
+    0,
+    48
+   ]
+  },
+  "differing_summaries": {
+   "opus": {
+    "n_only_plain": 1,
+    "n_only_auto": 2,
+    "paragraphs": 3,
+    "paragraph_numbers": [
+     1
+    ],
+    "plain_in_paragraph": 2,
+    "auto_in_paragraph": 3,
+    "joined_equal": true,
+    "plain_words": [
+     38
+    ],
+    "pieces_words": [
+     16,
+     22
+    ],
+    "paragraph_alone": 3,
+    "cut": [
+     "... urther ahead—59% of companies already deploying or exploring | AI have accelerated their investments in the past 24 months— ..."
+    ],
+    "cut_after_sentence_end": [
+     false
+    ]
+   },
+   "sonnet": {
+    "n_only_plain": 1,
+    "n_only_auto": 2,
+    "paragraphs": 2,
+    "paragraph_numbers": [
+     2
+    ],
+    "plain_in_paragraph": 1,
+    "auto_in_paragraph": 2,
+    "joined_equal": true,
+    "plain_words": [
+     65
+    ],
+    "pieces_words": [
+     27,
+     38
+    ],
+    "paragraph_alone": 2,
+    "cut": [
+     "... firms already investing in workforce development demonstrate | this is executable—because accessible tooling and embedded A ..."
+    ],
+    "cut_after_sentence_end": [
+     false
+    ]
+   },
+   "adv1-a": {
+    "n_only_plain": 1,
+    "n_only_auto": 2,
+    "paragraphs": 5,
+    "paragraph_numbers": [
+     5
+    ],
+    "plain_in_paragraph": 1,
+    "auto_in_paragraph": 2,
+    "joined_equal": true,
+    "plain_words": [
+     28
+    ],
+    "pieces_words": [
+     21,
+     7
+    ],
+    "paragraph_alone": 2,
+    "cut": [
+     "... a readiness would arguably be among the more impactful steps | organisations could take to broaden meaningful deployment. ..."
+    ],
+    "cut_after_sentence_end": [
+     false
+    ]
+   }
+  },
+  "control_list_equals_original_list_under_auto": 12
+ },
+ "arms": {
+  "plain": {
+   "smd_to_reference": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.25820024284449494,
+    "v2": 0.2081689582285684,
+    "opus": 0.2365863060409373,
+    "sonnet": 0.25371288773086337,
+    "haiku": 0.2907061354472087,
+    "adv1-a": 0.45690302252769466,
+    "adv1-b": 0.44583740731080373,
+    "adv2-a": 0.3805512189865113,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_reference": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8174248573806443,
+    "v2": 0.8528023180040402,
+    "opus": 0.8327082186625774,
+    "sonnet": 0.8205978966110853,
+    "haiku": 0.7944397202927438,
+    "adv1-a": 0.6769207744260373,
+    "adv1-b": 0.6847453459839019,
+    "adv2-a": 0.7309096524658311,
+    "adv2-b": 0.7473565462130423
+   },
+   "V": "0/24",
+   "band_lo": 0.7473565462130423,
+   "band_lo_doc": "adv2-b",
+   "band_hi": 0.7944397202927438,
+   "band_hi_doc": "haiku",
+   "band_width": 0.04708317407970153,
+   "band_midpoint": 0.770898133252893,
+   "verdict_at_default_threshold": {
+    "gold-2": "similar",
+    "v1": "similar",
+    "v2": "similar",
+    "opus": "similar",
+    "sonnet": "similar",
+    "haiku": "similar",
+    "adv1-a": "not similar",
+    "adv1-b": "not similar",
+    "adv2-a": "not similar",
+    "adv2-b": "not similar"
+   },
+   "pair_distances_55": [
+    0.24237144128842789,
+    0.44373913346366456,
+    0.4397479988107777,
+    0.3919532867995174,
+    0.36327081918716436,
+    0.24800796857611698,
+    0.25820024284449494,
+    0.3042288534082733,
+    0.2568560608408668,
+    0.27138894834000654,
+    0.4499329254031182,
+    0.44006505006491525,
+    0.3808642138134349,
+    0.3532888826095697,
+    0.21000153926963155,
+    0.2081689582285684,
+    0.2596858826863182,
+    0.24008768796920776,
+    0.25920451123907107,
+    0.2314529841144879,
+    0.4221825450658798,
+    0.43915514151255286,
+    0.447723555068175,
+    0.45690302252769466,
+    0.44733462396722573,
+    0.4492526244033467,
+    0.44474265186323053,
+    0.4176039563284979,
+    0.43455717629856533,
+    0.43930403888225544,
+    0.44583740731080373,
+    0.44322437430039435,
+    0.43685167004363706,
+    0.43787338998582626,
+    0.22201690574487049,
+    0.38196331510941184,
+    0.3805512189865113,
+    0.3866418783481304,
+    0.3787623237479816,
+    0.3581592043240865,
+    0.358282799522082,
+    0.3572917987902959,
+    0.3677492080590664,
+    0.3604798967188055,
+    0.33574854334195453,
+    0.2264898023257653,
+    0.264237608282994,
+    0.25604043748568406,
+    0.2452149614691734,
+    0.2907061354472087,
+    0.23658630604093733,
+    0.2537128877308633,
+    0.29692304441770473,
+    0.2954671191863524,
+    0.27363495302922797
+   ]
+  },
+  "auto": {
+   "smd_to_reference": {
+    "gold-2": 0.2264898023257653,
+    "v1": 0.25820024284449494,
+    "v2": 0.2081689582285684,
+    "opus": 0.24952334314584732,
+    "sonnet": 0.25360902994871143,
+    "haiku": 0.2907061354472087,
+    "adv1-a": 0.4757913228538301,
+    "adv1-b": 0.44583740731080373,
+    "adv2-a": 0.3805512189865113,
+    "adv2-b": 0.3572917987902959
+   },
+   "closeness_to_reference": {
+    "gold-2": 0.8398475249058507,
+    "v1": 0.8174248573806443,
+    "v2": 0.8528023180040402,
+    "opus": 0.8235603519972335,
+    "sonnet": 0.820671335153124,
+    "haiku": 0.7944397202927438,
+    "adv1-a": 0.6635647291803388,
+    "adv1-b": 0.6847453459839019,
+    "adv2-a": 0.7309096524658311,
+    "adv2-b": 0.7473565462130423
+   },
+   "V": "0/24",
+   "band_lo": 0.7473565462130423,
+   "band_lo_doc": "adv2-b",
+   "band_hi": 0.7944397202927438,
+   "band_hi_doc": "haiku",
+   "band_width": 0.04708317407970153,
+   "band_midpoint": 0.770898133252893,
+   "verdict_at_default_threshold": {
+    "gold-2": "similar",
+    "v1": "similar",
+    "v2": "similar",
+    "opus": "similar",
+    "sonnet": "similar",
+    "haiku": "similar",
+    "adv1-a": "not similar",
+    "adv1-b": "not similar",
+    "adv2-a": "not similar",
+    "adv2-b": "not similar"
+   },
+   "pair_distances_55": [
+    0.24237144128842789,
+    0.4683591238778046,
+    0.4397479988107777,
+    0.3919532867995174,
+    0.36327081918716436,
+    0.24800796857611698,
+    0.25820024284449494,
+    0.3042288534082733,
+    0.27440456402572716,
+    0.27196149230003364,
+    0.47425170017011237,
+    0.44006505006491525,
+    0.3808642138134349,
+    0.3532888826095697,
+    0.21000153926963155,
+    0.2081689582285684,
+    0.2596858826863182,
+    0.2626609342793624,
+    0.26198166933926664,
+    0.2635762095451355,
+    0.45421540737152083,
+    0.4713821609814961,
+    0.468448367383745,
+    0.4757913228538301,
+    0.46718352523624385,
+    0.4653887690769302,
+    0.45841241644488445,
+    0.4176039563284979,
+    0.43455717629856533,
+    0.43930403888225544,
+    0.44583740731080373,
+    0.44322437430039435,
+    0.43718351175387693,
+    0.43435007532437636,
+    0.22201690574487049,
+    0.38196331510941184,
+    0.3805512189865113,
+    0.3866418783481304,
+    0.38969594240188593,
+    0.3629342645406723,
+    0.358282799522082,
+    0.3572917987902959,
+    0.3677492080590664,
+    0.3731085086862246,
+    0.343717806537946,
+    0.2264898023257653,
+    0.264237608282994,
+    0.25874048161009944,
+    0.249643890808026,
+    0.2907061354472087,
+    0.24952334314584726,
+    0.2536090299487114,
+    0.3013736160519795,
+    0.28587233172013204,
+    0.28809641599655145
+   ]
+  }
+ },
+ "clause_2": {
+  "tier_order_auto": true,
+  "width_auto_at_least_plain": true,
+  "closeness_delta_auto_minus_plain": {
+   "gold-2": 0.0,
+   "v1": 0.0,
+   "v2": 0.0,
+   "opus": -0.00914786666534384,
+   "sonnet": 7.343854203867295e-05,
+   "haiku": 0.0,
+   "adv1-a": -0.013356045245698445,
+   "adv1-b": 0.0,
+   "adv2-a": 0.0,
+   "adv2-b": 0.0
+  },
+  "n_lower": 2,
+  "n_equal": 7,
+  "n_higher": 1,
+  "band_shift_plain_minus_auto": {
+   "lo": 0.0,
+   "hi": 0.0,
+   "midpoint": 0.0
+  },
+  "edge_and_reference_documents_unchanged": {
+   "adv2-b": true,
+   "gold": true,
+   "haiku": true
+  },
+  "public_call_vs_score_max_abs_diff": {
+   "plain": 5.551115123125783e-17,
+   "auto": 5.551115123125783e-17
+  }
+ },
+ "clause_3": {
+  "spearman": 0.9816017316017318,
+  "bar": 0.9,
+  "pairs_equal_as_floats": 28,
+  "pairs_differing": 27,
+  "spearman_differing_pairs": 0.9597069597069596,
+  "differs_exactly_when_pair_holds_a_differing_summary": true,
+  "max_abs_difference": 0.03222701946894324,
+  "max_abs_difference_pair": [
+   "adv1-a",
+   "adv2-b"
+  ]
+ },
+ "clause_4": {
+  "per_document": {
+   "gold": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 10,
+    "n_render": 10,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0001869349158369005,
+    "smd_ok": true
+   },
+   "gold-2": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 12,
+    "n_render": 12,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0002203049128487085,
+    "smd_ok": true
+   },
+   "v1": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 11,
+    "n_render": 11,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.00035747389880601656,
+    "smd_ok": true
+   },
+   "v2": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 11,
+    "n_render": 11,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0001829421301160685,
+    "smd_ok": true
+   },
+   "opus": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 12,
+    "n_render": 12,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0001806297829413476,
+    "smd_ok": true
+   },
+   "sonnet": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 10,
+    "n_render": 10,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0001953125,
+    "smd_ok": true
+   },
+   "haiku": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 13,
+    "n_render": 13,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.00025630181279176706,
+    "smd_ok": true
+   },
+   "adv1-a": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 9,
+    "n_render": 9,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.00013097946713161137,
+    "smd_ok": true
+   },
+   "adv1-b": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 9,
+    "n_render": 9,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 3.8362997454694574e-05,
+    "smd_ok": true
+   },
+   "adv2-a": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 1,
+    "n_render": 1,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.0,
+    "smd_ok": true
+   },
+   "adv2-b": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 3,
+    "n_render": 3,
+    "lists_equal": true,
+    "n_differing": 0,
+    "smd": 0.00016276041666666666,
+    "smd_ok": true
+   },
+   "source": {
+    "reader_original": "markdown",
+    "reader_render": "html",
+    "conversion_equals_read_as": true,
+    "n_original": 48,
+    "n_render": 48,
+    "lists_equal": false,
+    "n_differing": 1,
+    "smd": 0.002855855624147807,
+    "smd_ok": false
+   }
+  },
+  "differing_statements": [
+   {
+    "document": "source",
+    "index": 0,
+    "original": "*IBM Newsroom - ARMONK, N.Y., Jan. 10, 2024 (PRNewswire)*",
+    "render": "IBM Newsroom - ARMONK, N.Y., Jan. 10, 2024 (PRNewswire)",
+    "ground_cost": 0.12796156927647165
+   }
+  ],
+  "lists_equal": 11,
+  "smd_within_bar": 11,
+  "bar_smd": 0.001,
+  "max_smd": 0.002855855624147807,
+  "max_smd_document": "source",
+  "max_smd_equal_lists": 0.00035747389880601656,
+  "conversion_equals_read_as": 12
+ },
+ "readings_without_bar": {
+  "default_threshold": 0.77,
+  "threshold_against_band": {
+   "plain": {
+    "inside": true,
+    "above_lower_edge": 0.022643453786957757,
+    "below_upper_edge": 0.024439720292743772,
+    "midpoint": 0.770898133252893,
+    "threshold_minus_midpoint": -0.0008981332528930075
+   },
+   "auto": {
+    "inside": true,
+    "above_lower_edge": 0.022643453786957757,
+    "below_upper_edge": 0.024439720292743772,
+    "midpoint": 0.770898133252893,
+    "threshold_minus_midpoint": -0.0008981332528930075
+   }
+  },
+  "verdict_flips": 0,
+  "wergeland": {
+   "files": [
+    "raw-extract.txt",
+    "source-article.md"
+   ],
+   "stored_documents": [
+    "werg-a",
+    "werg-a~bt",
+    "werg-b",
+    "werg-b~bt",
+    "werg-c",
+    "werg-c~bt"
+   ],
+   "stored_tiers": {
+    "gold": 6
+   },
+   "stored_kinds": {
+    "summary": 3,
+    "paraphrase": 3
+   },
+   "adversarial_tier_documents": 0,
+   "stored_marker_statements": 0,
+   "band_measurable": false
+  },
+  "n_unsupported": {
+   "gold": {
+    "plain": 1,
+    "auto": 1
+   },
+   "gold-2": {
+    "plain": 0,
+    "auto": 0
+   },
+   "v1": {
+    "plain": 1,
+    "auto": 1
+   },
+   "v2": {
+    "plain": 1,
+    "auto": 1
+   },
+   "opus": {
+    "plain": 2,
+    "auto": 3
+   },
+   "sonnet": {
+    "plain": 0,
+    "auto": 0
+   },
+   "haiku": {
+    "plain": 3,
+    "auto": 3
+   }
+  },
+  "n_unsupported_total": {
+   "plain": 8,
+   "auto": 9
+  },
+  "gold_tier_statements": {
+   "plain": 77,
+   "auto": 79
+  },
+  "source_statements": {
+   "plain": 70,
+   "auto": 48
+  },
+  "source_support_cutoff": 0.34625,
+  "match_status_summary_vs_source": {
+   "gold": {
+    "plain": {
+     "kept": 9,
+     "removed": 1,
+     "added": 61
+    },
+    "auto": {
+     "kept": 9,
+     "removed": 1,
+     "added": 39
+    }
+   },
+   "gold-2": {
+    "plain": {
+     "kept": 10,
+     "removed": 2,
+     "added": 60
+    },
+    "auto": {
+     "kept": 11,
+     "removed": 1,
+     "added": 37
+    }
+   },
+   "v1": {
+    "plain": {
+     "kept": 9,
+     "removed": 2,
+     "added": 61
+    },
+    "auto": {
+     "kept": 9,
+     "removed": 2,
+     "added": 39
+    }
+   },
+   "v2": {
+    "plain": {
+     "kept": 10,
+     "removed": 1,
+     "added": 60
+    },
+    "auto": {
+     "kept": 10,
+     "removed": 1,
+     "added": 38
+    }
+   },
+   "opus": {
+    "plain": {
+     "kept": 8,
+     "removed": 3,
+     "added": 62
+    },
+    "auto": {
+     "kept": 8,
+     "removed": 4,
+     "added": 40
+    }
+   },
+   "sonnet": {
+    "plain": {
+     "kept": 9,
+     "removed": 0,
+     "added": 61
+    },
+    "auto": {
+     "kept": 9,
+     "removed": 1,
+     "added": 39
+    }
+   },
+   "haiku": {
+    "plain": {
+     "kept": 7,
+     "removed": 6,
+     "added": 63
+    },
+    "auto": {
+     "kept": 7,
+     "removed": 6,
+     "added": 41
+    }
+   }
+  },
+  "match_status_summary_vs_source_total": {
+   "plain": {
+    "kept": 62,
+    "removed": 15,
+    "added": 428
+   },
+   "auto": {
+    "kept": 63,
+    "removed": 16,
+    "added": 273
+   }
+  },
+  "match_status_reference_vs_summary": {
+   "gold-2": {
+    "plain": {
+     "kept": 9,
+     "removed": 1,
+     "added": 3
+    },
+    "auto": {
+     "kept": 9,
+     "removed": 1,
+     "added": 3
+    }
+   },
+   "v1": {
+    "plain": {
+     "kept": 8,
+     "removed": 2,
+     "added": 3
+    },
+    "auto": {
+     "kept": 8,
+     "removed": 2,
+     "added": 3
+    }
+   },
+   "v2": {
+    "plain": {
+     "kept": 9,
+     "removed": 1,
+     "added": 2
+    },
+    "auto": {
+     "kept": 9,
+     "removed": 1,
+     "added": 2
+    }
+   },
+   "opus": {
+    "plain": {
+     "kept": 8,
+     "removed": 2,
+     "added": 3
+    },
+    "auto": {
+     "kept": 8,
+     "removed": 2,
+     "added": 4
+    }
+   },
+   "sonnet": {
+    "plain": {
+     "kept": 8,
+     "removed": 2,
+     "added": 1
+    },
+    "auto": {
+     "kept": 8,
+     "removed": 2,
+     "added": 2
+    }
+   },
+   "haiku": {
+    "plain": {
+     "kept": 8,
+     "removed": 2,
+     "added": 5
+    },
+    "auto": {
+     "kept": 8,
+     "removed": 2,
+     "added": 5
+    }
+   }
+  },
+  "match_status_reference_vs_summary_total": {
+   "plain": {
+    "kept": 50,
+    "removed": 10,
+    "added": 17
+   },
+   "auto": {
+    "kept": 50,
+    "removed": 10,
+    "added": 19
+   }
+  },
+  "match_cutoff": 0.325
+ },
+ "outside_record": {
+  "pair": [
+   "ibm source-article.md",
+   "wergeland source-article.md"
+  ],
+  "per_arm": {
+   "plain": {
+    "smd": 0.64159953715382,
+    "statements": [
+     70,
+     52
+    ],
+    "markers": [
+     21,
+     3
+    ],
+    "marker_strings": [
+     {
+      "-": 13,
+      "###": 6,
+      "##": 2
+     },
+     {
+      "##": 2,
+      "-->": 1
+     }
+    ],
+    "mass": {
+     "marker → marker": 0.057692307692307675,
+     "marker → content": 0.24230769230769203,
+     "content → marker": 0.0,
+     "content → content": 0.7
+    },
+    "cost_part": {
+     "marker → marker": 0.012859200579779483,
+     "marker → content": 0.26067766969675515,
+     "content → marker": 0.0,
+     "content → content": 0.36806266687728545
+    },
+    "mean_cost": {
+     "marker → marker": 0.2228928100495111,
+     "marker → content": 1.0758126050977208,
+     "content → marker": null,
+     "content → content": 0.5258038098246935
+    }
+   },
+   "auto": {
+    "smd": 0.5254511417930616,
+    "statements": [
+     48,
+     51
+    ],
+    "markers": [
+     0,
+     0
+    ],
+    "marker_strings": [
+     {},
+     {}
+    ],
+    "mass": {
+     "marker → marker": 0.0,
+     "marker → content": 0.0,
+     "content → marker": 0.0,
+     "content → content": 0.9999999999999998
+    },
+    "cost_part": {
+     "marker → marker": 0.0,
+     "marker → content": 0.0,
+     "content → marker": 0.0,
+     "content → content": 0.5254511417930616
+    },
+    "mean_cost": {
+     "marker → marker": null,
+     "marker → content": null,
+     "content → marker": null,
+     "content → content": 0.5254511417930617
+    }
+   }
+  }
+ },
+ "guardrails": {
+  "V": {
+   "plain": "0/24",
+   "auto": "0/24"
+  },
+  "clause_5_plain_equals_baseline": true,
+  "src_untouched": true,
+  "digest_before": {
+   "src": "39db9393d733638690ba4e6667dc60fc67775f271eb979b8c8f517965c6a82a4",
+   "tests": "ab6d4acb4d80e73fdc45d12f477f89010bf7475e0bd9bd82fda4cbb727805739"
+  },
+  "digest_after": {
+   "src": "39db9393d733638690ba4e6667dc60fc67775f271eb979b8c8f517965c6a82a4",
+   "tests": "ab6d4acb4d80e73fdc45d12f477f89010bf7475e0bd9bd82fda4cbb727805739"
+  },
+  "triangle": {
+   "plain": {
+    "checks": 495,
+    "violations": 0,
+    "min_slack": 0.1771487054676779
+   },
+   "auto": {
+    "checks": 495,
+    "violations": 0,
+    "min_slack": 0.1771487054676779
+   }
+  },
+  "symmetry_max_abs_diff": {
+   "plain": 2.220446049250313e-16,
+   "auto": 2.220446049250313e-16
+  },
+  "identity_max": {
+   "plain": 0.00035747389880601656,
+   "auto": 0.00035747389880601656
+  },
+  "default_threshold_unchanged": true,
+  "log_levels": {
+   "DEBUG": 55,
+   "WARNING": 12
+  },
+  "marker_statement_warnings": 12
+ },
+ "acceptance": {
+  "bar": "PASS iff, on the shipped INT8 path: (1) detect_format returns markdown for the 12 ibm documents, html for their 12 HTML renders and plain for their 12 plain controls; (2) under auto every gold-tier summary reads a higher closeness to the gold reference than every adversarial summary, and the band between the two tiers is at least as wide as the band under plain in the same run; (3) the Spearman correlation of the 55 pair distances between plain and auto is at least 0.90; (4) for each of the 12 documents the embedded statement list of the HTML render under auto equals the list of the markdown original under auto, string for string, and the SMD between the two is at most 0.001; (5) the 55 pair distances under plain equal the stored 1.1.5 baseline",
+  "clauses": {
+   "1 detection": true,
+   "2 tier order and band width under auto": true,
+   "3 Spearman": true,
+   "4 HTML twin": false,
+   "5 plain equals the stored baseline": true
+  },
+  "met": false,
+  "status": "the five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict",
+  "readings": {
+   "1_detection": "36 of 36 right (markdown originals 12 of 12, HTML renders 12 of 12, plain controls 12 of 12): met",
+   "2_tier_order_and_band_width": "under auto the lowest gold-tier closeness 0.7944 (haiku) against the highest adversarial closeness 0.7474 (adv2-b), tier order True; band width auto 0.047083 against plain 0.047083, at least as wide True; the documents that set the edges and the reference read the same statements under both readers: True: met",
+   "3_spearman": "0.9816 (bar >= 0.9); 28 of 55 pairs read the same float under both readers, Spearman over the 27 pairs that differ 0.9597: met",
+   "4_html_twin": "embedded lists equal for 11 of 12 documents, SMD <= 0.001 for 11 of 12 (largest 2.856e-03, source; largest with equal lists 3.575e-04): not met",
+   "5_plain_equals_baseline": "np.array_equal on the 55 pair distances of the plain arm against the stored 1.1.5 baseline: True: met"
+  }
+ },
+ "prediction": {
+  "parts": {
+   "detection right on every fixture document": true,
+   "closeness lower under auto for at least 9 of 10": false,
+   "auto band non-empty": true,
+   "auto band at least as wide as the plain band": true,
+   "auto band 0.01 to 0.06 lower on both edges": false,
+   "Spearman at least 0.9": true,
+   "every HTML render reads the embedded statements of its original": false
+  },
+  "held": false,
+  "direction": {
+   "closeness lower under auto for at least 9 of 10": false,
+   "both band edges lower under auto": false
+  },
+  "direction_matched": false,
+  "shift_in_predicted_range": {
+   "lo": false,
+   "hi": false,
+   "midpoint": false
+  }
+ },
+ "verdict": "Killed-at-gate",
+ "verdict_number": "kill-gate: the default reader returns a marker statement on 0 of 11 summaries (the record requires at least 1); detect_format returns markdown for 12 of 12 ibm documents (the record requires at least 11)",
+ "result": {
+  "id": "E16-H81",
+  "slug": "autodetected-reader-default",
+  "model": "opus",
+  "verdict": "Killed-at-gate",
+  "verdict_number": "kill-gate: the default reader returns a marker statement on 0 of 11 summaries (the record requires at least 1); detect_format returns markdown for 12 of 12 ibm documents (the record requires at least 11)",
+  "kill_gate": {
+   "ran": true,
+   "passed": false,
+   "reading": "detect_format returns markdown for 12 of 12 ibm documents (the gate requires at least 11); the default reader returns at least 1 marker statement on 0 of 11 summaries (the gate requires at least 1): 0 of the 98 summary statements hold no letter and no digit. The ibm source reads 21 of 70 marker statements under the default reader; it is in none of the 55 scored pairs"
+  },
+  "sanity_check": {
+   "required": true,
+   "passed": true,
+   "reading": "plain arm (no input_format argument): 55 pair distances against the stored 1.1.5 baseline, largest absolute difference 0.0e+00 (55 of 55 equal as floats; tolerance 0.001); band edges 0.7474 (adv2-b) and 0.7944 (haiku) against 0.7474 and 0.7944 of E12-H63, differences 4.3e-05 and 4.0e-05"
+  },
+  "prediction_check": {
+   "predicted": "detection right on every fixture document; on the 10 non-reference ibm summaries against the gold reference the closeness under auto is lower than under plain for at least 9 of 10; the band from the highest adversarial closeness to the lowest gold-tier closeness under auto is non-empty, at least as wide as the plain band of the same run and lies 0.01 to 0.06 lower; Spearman of the 55 pair distances between the two readers at least 0.90; every HTML render reads the embedded statements of its markdown original",
+   "observed": "detection right on 36 of 36 fixture documents; closeness under auto lower for 2 of 10 summaries, equal as floats for 7, higher for 1; auto band 0.7474 to 0.7944, non-empty True, width 0.0471 against 0.0471 under plain; plain edge minus auto edge +0.0000 (lower) and +0.0000 (upper), midpoint +0.0000, predicted 0.01 to 0.06; Spearman 0.9816; HTML renders with the embedded statements of their original 11 of 12. Effects with a direction: {'closeness lower under auto for at least 9 of 10': False, 'both band edges lower under auto': False}. Parts of the prediction that held: 4 of 7",
+   "direction_matched": false
+  },
+  "acceptance": {
+   "bar": "PASS iff, on the shipped INT8 path: (1) detect_format returns markdown for the 12 ibm documents, html for their 12 HTML renders and plain for their 12 plain controls; (2) under auto every gold-tier summary reads a higher closeness to the gold reference than every adversarial summary, and the band between the two tiers is at least as wide as the band under plain in the same run; (3) the Spearman correlation of the 55 pair distances between plain and auto is at least 0.90; (4) for each of the 12 documents the embedded statement list of the HTML render under auto equals the list of the markdown original under auto, string for string, and the SMD between the two is at most 0.001; (5) the 55 pair distances under plain equal the stored 1.1.5 baseline",
+   "met": false,
+   "readings": {
+    "status": "the five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict",
+    "1_detection": "36 of 36 right (markdown originals 12 of 12, HTML renders 12 of 12, plain controls 12 of 12): met",
+    "2_tier_order_and_band_width": "under auto the lowest gold-tier closeness 0.7944 (haiku) against the highest adversarial closeness 0.7474 (adv2-b), tier order True; band width auto 0.047083 against plain 0.047083, at least as wide True; the documents that set the edges and the reference read the same statements under both readers: True: met",
+    "3_spearman": "0.9816 (bar >= 0.9); 28 of 55 pairs read the same float under both readers, Spearman over the 27 pairs that differ 0.9597: met",
+    "4_html_twin": "embedded lists equal for 11 of 12 documents, SMD <= 0.001 for 11 of 12 (largest 2.856e-03, source; largest with equal lists 3.575e-04): not met",
+    "5_plain_equals_baseline": "np.array_equal on the 55 pair distances of the plain arm against the stored 1.1.5 baseline: True: met"
+   }
+  },
+  "guardrails": {
+   "V": "0/24",
+   "src_untouched": true,
+   "metric_property": "no distance function is changed: the two arms pass different statement lists to the shipped smd. Measured on the 11 summaries: triangle violations plain 0/495 (smallest slack 0.1771), auto 0/495 (0.1771); symmetry, largest absolute difference between the two orientations of a pair: plain 2.2e-16, auto 2.2e-16; largest d(A, A) through the public call: plain 3.57e-04, auto 3.57e-04",
+   "notes": "V per reader: plain 0/24, auto 0/24. sha256 over src/**/*.py 39db9393d7336386 and tests/**/*.py ab6d4acb4d80e73f, equal before and after the run: True; the notebook writes only its fixture files under data/interim/E16-H81 and its metrics JSON. The 55 plain pair distances equal the stored 1.1.5 baseline by np.array_equal: True. DEFAULT_THRESHOLD read from the package: 0.77. docdistance 1.1.21, one instance, memo bound 64, 52 entries; offline flag of huggingface_hub True. The ledger block equals the registered block (sha256): True"
+  },
+  "key_numbers": {
+   "docdistance_version": "1.1.21",
+   "gate_markdown_detected": "12/12",
+   "gate_summaries_with_marker_statement": "0/11",
+   "summary_marker_statements_plain": "0/98",
+   "source_marker_statements": {
+    "plain": "21/70",
+    "auto": "0/48"
+   },
+   "harness_max_abs_diff_55_pairs": 0.0,
+   "detection_right": "36/36",
+   "band": {
+    "plain": {
+     "lo": 0.7474,
+     "lo_doc": "adv2-b",
+     "hi": 0.7944,
+     "hi_doc": "haiku",
+     "width": 0.0471,
+     "midpoint": 0.7709,
+     "V": "0/24"
+    },
+    "auto": {
+     "lo": 0.7474,
+     "lo_doc": "adv2-b",
+     "hi": 0.7944,
+     "hi_doc": "haiku",
+     "width": 0.0471,
+     "midpoint": 0.7709,
+     "V": "0/24"
+    }
+   },
+   "band_shift_plain_minus_auto": {
+    "lo": 0.0,
+    "hi": 0.0,
+    "midpoint": 0.0
+   },
+   "closeness_auto_vs_plain": {
+    "lower": 2,
+    "equal": 7,
+    "higher": 1
+   },
+   "closeness_delta_points": {
+    "gold-2": 0.0,
+    "v1": 0.0,
+    "v2": 0.0,
+    "opus": -0.91,
+    "sonnet": 0.01,
+    "haiku": 0.0,
+    "adv1-a": -1.34,
+    "adv1-b": 0.0,
+    "adv2-a": 0.0,
+    "adv2-b": 0.0
+   },
+   "summaries_with_differing_statements": [
+    "opus",
+    "sonnet",
+    "adv1-a"
+   ],
+   "spearman_55_pairs": 0.9816,
+   "pairs_equal_as_floats": "28/55",
+   "spearman_differing_pairs": 0.9597,
+   "max_abs_pair_difference": 0.0322,
+   "twin_lists_equal": "11/12",
+   "twin_smd_within_bar": "11/12",
+   "twin_max_smd": 0.002856,
+   "twin_max_smd_document": "source",
+   "default_threshold": 0.77,
+   "threshold_against_auto_band": {
+    "inside": true,
+    "above_lower_edge": 0.0226,
+    "below_upper_edge": 0.0244,
+    "midpoint": 0.7709,
+    "threshold_minus_midpoint": -0.0009
+   },
+   "verdict_flips_at_threshold": "0/10",
+   "n_unsupported_7_gold_tier": {
+    "plain": 8,
+    "auto": 9
+   },
+   "match_status_vs_source_7_gold_tier": {
+    "plain": {
+     "kept": 62,
+     "removed": 15,
+     "added": 428
+    },
+    "auto": {
+     "kept": 63,
+     "removed": 16,
+     "added": 273
+    }
+   },
+   "wergeland_band_measurable": false,
+   "outside_record_smd_ibm_source_vs_wergeland_source": {
+    "plain": 0.6416,
+    "auto": 0.5255
+   },
+   "outside_record_plain_marker_to_content": {
+    "mass": 0.2423,
+    "mean_ground_cost": 1.0758
+   },
+   "outside_record_plain_marker_to_marker": {
+    "mass": 0.0577,
+    "mean_ground_cost": 0.2229
+   }
+  },
+  "result_summary": "Verdict Killed-at-gate. Harness check passed: the plain arm reads the 55 stored 1.1.5 pair distances with a largest difference of 0.0e+00 and the band 0.7474 (adv2-b) to 0.7944 (haiku). Kill-gate not passed: detect_format returns markdown for 12 of 12 ibm documents, and the default reader returns a marker statement on 0 of 11 summaries (0 of 98 summary statements hold no letter and no digit). The ibm source is the one ibm document with marker statements (21 of 70 under plain, 0 of 48 under auto) and it is in none of the 55 pairs. Bar status: the five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict. Clause 1: detection right on 36 of 36. Clause 2: the auto band is 0.7474 (adv2-b) to 0.7944 (haiku), width 0.0471 against 0.0471 under plain; closeness under auto is lower for 2 of 10 summaries, equal for 7, higher for 1. Clause 3: Spearman 0.9816; 28 of 55 pairs read the same float under both readers. Clause 4: embedded lists equal for 11 of 12 renders, SMD at most 0.001 for 11 of 12 (largest 2.856e-03, source). Clause 5: the plain arm equals the stored baseline by np.array_equal: True. The statement lists of 3 of 11 summaries differ between the readers (opus, sonnet, adv1-a): in 3 of them one statement of the default reader is returned under auto as two statements whose join by one space equals it, in 3 of them the first of the two does not end with a full stop, a question mark or an exclamation mark, and in 3 of them the segmenter returns the statement count of auto when it is given that paragraph alone. DEFAULT_THRESHOLD 0.77 against the auto band: lower edge < threshold <= upper edge is True, 0.0226 above the lower edge and 0.0244 below the upper edge; midpoint of the auto band 0.7709, threshold minus midpoint -0.0009. Wergeland article: a band between two tiers can be read: False (0 adversarial-tier documents in the fixtures). n_unsupported of the 7 gold-tier summaries against the ibm source: 8 of 77 statements under plain, 9 of 79 under auto. Outside the record, on the one fixture pair in which both documents hold marker statements: SMD(ibm source, Wergeland source) 0.6416 under plain and 0.5255 under auto; under plain 0.2423 of the mass moves from an ibm marker statement to a Wergeland content statement at a mean ground cost of 1.0758",
+  "artifacts": {
+   "notebook": "notebooks/experiments/E16-H81-kj-autodetected-reader-default.ipynb",
+   "metrics_json": "reports/E16-H81-autodetected-reader-default-metrics.json",
+   "log": "logs/E16-H81-autodetected-reader-default.log"
+  },
+  "caveats": "The five clauses were measured after the kill-gate was not passed; they are recorded and do not decide the verdict. The 11 scored summaries hold 0 marker statements under the default reader, so no pair of the 55 and no band edge exercises the registered mechanism (equal marker statements of two documents that exchange mass); this run does not show what a structural reader does to the distance between two documents that both hold markers, apart from the one cross-article pair read outside the record. The readers differ on 3 of 11 summaries through segmentation, not through markers: the markdown reader passes each paragraph to the segmenter on its own (the segmenter on the paragraph alone returns the statement count of auto for 3 of 3). Clause 2 reads equal bands when the documents that set the edges and the reference keep their statements: embedded lists equal under both readers {'adv2-b': True, 'gold': True, 'haiku': True}. Clause 3: 28 of 55 pairs hold two documents with equal statement lists and read the same float under both readers; the correlation over the other 27 is 0.9597. Clause 4 is read on renders of one generator (markdown_it, commonmark with tables); HTML from other tools was not read. The band is in-sample on 11 documents and each edge is one document (E12-H63). The Wergeland article has 0 adversarial-tier documents and its 6 stored documents are statement lists without a file, so no band was read for it; detect_format reads the Wergeland files as {'raw-extract.txt': 'markdown', 'source-article.md': 'markdown'}, and raw-extract.txt is a text extract of the PDF. Executor rules, because the record leaves them open: the marker rule (no letter and no digit), the pair order of baseline.py, the band shift read on each edge, n_unsupported through unsupported_count against the ibm source, match_status counts against the ibm source with the reference pairs as second reading, the threshold position as lower edge < threshold <= upper edge, and direction_matched as the two effects of the prediction that have a direction"
+ }
+}

@@ -1,0 +1,99 @@
+{
+  "id": "E14-H75",
+  "slug": "centering-attribution-transfer",
+  "model": "opus",
+  "verdict": "Confirmed",
+  "verdict_number": "arm a (center + renorm) recovers 102.8% of the full-composition margin gain on the second fixture (+39.99 of +38.90 pts, margin +15.84 → +55.83) at V 0/12; arm b (projection isolate) recovers -3.6%",
+  "kill_gate": {
+    "ran": true,
+    "passed": true,
+    "reading": "76 Wergeland statements: pooled mean norm 0.9476 (kill below 0.15); full-composition margin gain +38.90 pts over naive (+15.84 → +54.74; kill below +1.0)"
+  },
+  "sanity_check": {
+    "required": true,
+    "passed": true,
+    "reading": "E12-H64 ibm rows on OpenVINO INT8, tolerance 5%: naive +4.7083 (registered +4.71, 0.04% off), arm a +19.9526 (+19.95, 0.01% off), full composition +19.4144 (+19.41, 0.02% off), V 0/24 on every row; difference to the E12-H64 full-precision margins 0.00e+00, 0.00e+00 and 2.13e-14 pts; 98 ibm statements"
+  },
+  "prediction_check": {
+    "predicted": "pooled mean norm above 0.9; cos(uncentered PC1, mean direction) at least 0.999; arm a recovers at least 90% of the full-composition margin gain; arm b between -15% and +15%; V 0/12 in arms a and c",
+    "observed": "pooled mean norm 0.9476; cos 0.999999; arm a 102.8%; arm b -3.6%; V 0/12 and 0/12 - 5/5 clauses held",
+    "direction_matched": true
+  },
+  "acceptance": {
+    "bar": "attribution reproduces iff exactly one arm reaches >= 60% of the full-composition margin gain at V = 0/12, that arm is (a), and arm b stays below 30%; guardrails: raw embeddings byte-identical after every arm, default-path smd and order_gap bit-identical, unit norms and cost = sqrt(2 - 2cos) to 1e-6 in every arm",
+    "met": true,
+    "readings": {
+      "full_composition_margin_gain_pts": 38.895448571237914,
+      "arm_a_recovery": 1.0282160712771629,
+      "arm_b_recovery": -0.0356395102759393,
+      "arm_a_V": 0,
+      "arm_b_V": 0,
+      "arm_c_V": 0,
+      "arms_reaching_bar": 1,
+      "arm_reaching_bar": "a center+renorm",
+      "arm_b_below_30pct": true
+    }
+  },
+  "guardrails": {
+    "V": "0/24 on the ibm sanity rows (all four ibm geometries); 0/12 on all four second-fixture geometries",
+    "src_untouched": true,
+    "metric_property": "holds in all 8 scored geometries: unit norms to 2.4e-07 at most, cost = sqrt(2 - 2cos) to 5.2e-08 at most in float64 on exact-unit copies, triangle slack +1.2e-15 at most; the same identity read on the float32 arrays is 4.8e-04 to 7.7e-04 in every geometry, the shipped naive one included",
+    "notes": "raw embeddings byte-identical after each arm and at the end (76 and 98 statements); default-path smd and order_gap bit-identical before and after the arms on 15 second-fixture pairs and 55 ibm pairs, and the 55 ibm pairs equal the bd0002e baseline 55/55 and 55/55; git status reports no modification under src/ and tests/; docs/ shows the orchestrator's two modified files, this run wrote nothing there"
+  },
+  "key_numbers": {
+    "pooled_mean_norm": 0.9475964903831482,
+    "naive_margin_pts": 15.840281221945318,
+    "arm_c_margin_pts": 54.73572979318323,
+    "full_composition_margin_gain_pts": 38.895448571237914,
+    "n_statements": 76,
+    "n_documents": 6,
+    "ibm_naive_margin_pts": 4.708317407970153,
+    "ibm_arm_a_margin_pts": 19.952554955749292,
+    "ibm_arm_b_margin_pts": 4.044454232474026,
+    "ibm_arm_c_margin_pts": 19.414396463424644,
+    "ibm_arm_a_recovery": 1.0365942880012633,
+    "ibm_arm_b_recovery": -0.04514209212345421,
+    "ibm_sanity_max_rel_delta": 0.00035723822289747506,
+    "naive_V": 0,
+    "naive_dprime": 16.97988870838797,
+    "arm_a_margin_pts": 55.8332065424265,
+    "arm_a_V": 0,
+    "arm_a_dprime": 35.88973585875125,
+    "arm_b_margin_pts": 14.454066482903416,
+    "arm_b_V": 0,
+    "arm_b_dprime": 16.41734142118946,
+    "arm_c_V": 0,
+    "arm_c_dprime": 34.70953241254488,
+    "arm_a_gain_pts": 39.992925320481184,
+    "arm_b_gain_pts": -1.3862147390419022,
+    "arm_a_recovery": 1.0282160712771629,
+    "arm_b_recovery": -0.0356395102759393,
+    "arm_a_minus_arm_c_margin_pts": 1.0974767492432704,
+    "ibm_arm_a_minus_arm_c_margin_pts": 0.5381584923246479,
+    "cos_uncentered_pc1_mean": 0.9999988079071045,
+    "cos_centered_pc1_mean": 0.05586512014269829,
+    "singular_value_1_uncentered": 8.262309074401855,
+    "singular_value_2_uncentered": 0.8486492037773132,
+    "singular_value_1_centered": 0.8498095273971558,
+    "ibm_pooled_mean_norm": 0.9538519382476807,
+    "ibm_cos_uncentered_pc1_mean": 0.9999992251396179,
+    "clipped_pairs_total": 0,
+    "arm_a_recovery_unclipped": 1.0282160712771629,
+    "arm_b_recovery_unclipped": -0.035639510275939534,
+    "conditioned_max_abs_closeness_diff": 0.07255897216500196,
+    "conditioned_max_abs_closeness_diff_pts": 7.255897216500196,
+    "conditioned_max_abs_d_sel_diff": 0.4081399717544146,
+    "conditioned_max_abs_residual_diff": 0.10261388250759773,
+    "conditioned_d_sel_ratio_min": 0.32966285646236315,
+    "conditioned_d_sel_ratio_max": 0.4933822994128228,
+    "conditioned_d_sel_order_preserved": true
+  },
+  "result_summary": "The E12-H64 attribution reproduces on a fixture with no ibm document. On the three Wergeland sections and their back-translation paraphrases (76 pooled statements, 3 positives, 12 negatives) the margin reads naive +15.84, arm a +55.83, arm b +14.45, full composition +54.74 closeness points, V 0/12 in all four. Centering plus re-L2-normalisation recovers 102.8% of the full-composition gain and the projection isolate -3.6% (ibm: 103.7% and -4.5%). cos(uncentered PC1, mean direction) is 0.999999 and no closeness is clipped (0/15 pairs). Conditioned-path reading, no bar: with the pre-pass replaced by arm a on the three ibm grounded triples the largest absolute closeness difference to the shipped pre-pass is 0.072559 (7.26 closeness points, adv2-b in gold|adv2-b) and d_sel is 0.330 to 0.493 times the shipped value with the order of the triples preserved, so arm a and the shipped pre-pass are not interchangeable on that path.",
+  "artifacts": {
+    "notebook": "/home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E14-H75-kj-centering-attribution-transfer.ipynb",
+    "metrics_json": "/home/lab/workspace/learning/projects/docdistance/reports/E14-H75-centering-attribution-transfer-metrics.json",
+    "log": "/home/lab/workspace/learning/projects/docdistance/logs/E14-H75-centering-attribution-transfer.log"
+  },
+  "notebook_errors": 0,
+  "caveats": "(1) The record registers 1e-6 for cost = sqrt(2 - 2cos) without naming the arithmetic; the notebook declared the E12-H64 reading (float64, exact-unit copies) before measuring, and it holds at 5.2e-08. Read on the float32 arrays the identity is off by 4.8e-04 to 7.7e-04 in every geometry, the shipped naive one included, so no arm causes it. (2) The 12 negative entries are 9 distinct document pairs because each base-against-base pair is scored once per anchor; margin and V do not depend on it, d' does. (3) One article: the sections share a subject, the positives are machine back-translations (naive closeness 0.8781 to 0.9071), only three positives exist, and the estimation pool is the scored pool as registered. (4) The conditioned-path reading covers three triples and one source and has no bar; it needed only the pre-pass built outside compute_source_conditioned with the internal one switched off (verified bit for bit against the shipped pre-pass and the saved baseline), so both closeness and d_sel are reported; grd_a and grd_b take statement texts, the pre-pass cannot reach them, and they were not recomputed. (5) The E12-H64 full-precision comparison rows are copied from the output of its registered run of 2026-09-01: another process rewrote the E12-H64 notebook and metrics file at 11:09 on 2026-10-09, in the same minutes as E07, E08 and other E12 notebooks and metrics files; this executor wrote none of them. (6) Autoreload is off in the notebook so that one fixed copy of the shipped code is scored."
+}
