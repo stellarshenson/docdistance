@@ -10,6 +10,7 @@ calibration and test-fixture construction, not redistributed and not used for tr
 Usage:
     python data/external/download-fixtures.py           # download any missing file
     python data/external/download-fixtures.py --force    # re-download everything
+    python data/external/download-fixtures.py --only eprs-ata-   # only files whose name starts so
 """
 from __future__ import annotations
 
@@ -134,10 +135,14 @@ def is_pdf(path: Path) -> bool:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Download docdistance external fixture PDFs.")
     ap.add_argument("--force", action="store_true", help="re-download even if the file already exists")
+    ap.add_argument("--only", action="append", metavar="PREFIX",
+                    help="download only the files whose name starts with PREFIX (repeatable)")
     args = ap.parse_args()
 
     rc = 0
     for fx in FIXTURES:
+        if args.only and not fx["filename"].startswith(tuple(args.only)):
+            continue
         dest = HERE / fx["filename"]
         if dest.exists() and not args.force:
             print(f"[skip] {fx['filename']} already present ({dest.stat().st_size:,} bytes)")

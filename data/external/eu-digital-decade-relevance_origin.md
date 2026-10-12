@@ -1,6 +1,6 @@
 # Origin - EU relevance fixture (one Commission report and 14 EPRS briefing notes)
 
-Provenance and usage record for the 15 companion PDFs in this directory. The text fixture built from them is `data/processed/relevance-fixture-eu/` (notebook 14). Reuse notices below are quoted as printed in each PDF.
+Provenance and usage record for the 15 companion PDFs in this directory. The text fixture built from them is `data/processed/relevance-fixture-eu/` (notebook 14). The PDFs and the converted texts are not tracked: `python data/external/download-fixtures.py --only eu-digital-decade --only eprs-ata-` downloads the 15 PDFs from the source URLs below, and `.venv/bin/python data/processed/relevance-fixture-eu/build_fixture.py` downloads and converts them in one call and checks the result against the registered sha256. Reuse notices below are quoted as printed in each PDF.
 
 ## State of the Digital Decade 2024, Annex 1
 
