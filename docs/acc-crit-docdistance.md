@@ -251,6 +251,38 @@ Fields, views and metadata the semantic and structural detail files carry for do
   - test-tags: UNIT
   - log: 2026-10-09T11:29:00Z @kj added
   - log: 2026-10-10T00:34:29Z @kj closed
+- [x] `ACC-MAP-101` **Nearest cost on every flow** - HIGH; each flows record of the semantic detail map carries min_cost, the cheapest ground cost of the statement over the other document (the number changed is read on), and best_target_index, the statement that gives it; every existing key keeps its value
+  - evidence: tests/test_pipeline.py::test_every_flow_carries_the_row_minimum_and_its_argmin passes; build 1.1.33: make test 589 passed, baseline.py verify 55 pairs 0 differences
+  - test: unit test: min_cost equals the row minimum of the cost matrix and best_target_index its argmin, changed equals min_cost > changed_cost; baseline.py verify reads 0 differences
+  - test-tags: UNIT, FUNCTIONAL
+  - mechanism: 2026-10-12T04:39:21Z @kj the row minimum is already computed for changed and no_counterpart; it is written beside them, as targets carry min_incoming_cost and best_source_index
+  - log: 2026-10-12T04:39:21Z @kj added
+  - log: 2026-10-12T09:50:06Z @kj closed
+- [x] `ACC-MAP-102` **Relevance reading of the first document** - HIGH; semantic_distance_with_details(a, b, relevance=True) adds to the map: relevance and relevance_target_index per flow (highest reranker score of the a statement over the b statements), relevance and relevance_source_index per target, mean_relevance and relevance_rank per section, top_relevant in summary, a relevance header block; default False
+  - evidence: tests/test_pipeline.py: test_relevance_fields_equal_their_definitions, test_relevance_rank_and_top_list_break_ties_by_document_order and test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker pass on build 1.1.33 (make test 589 passed)
+  - test: unit test with a stub reranker on a known grid: every field equals its definition; with relevance=False the map holds none of these keys and the reranker is not loaded
+  - test-tags: UNIT, FUNCTIONAL
+  - mechanism: 2026-10-12T04:39:21Z @kj R = reranker.score_grid(statements of b as queries, statements of a as passages), one pass over every pair; flow relevance is the column maximum, target relevance the row maximum; E18-H87
+  - log: 2026-10-12T04:39:21Z @kj added; reason: the criterion lists every added key
+  - log: 2026-10-12T09:50:06Z @kj closed
+- [x] `ACC-MAP-103` **Relevance loads the reranker only** - MEDIUM; relevance=True loads the encoder, the segmenter and the reranker, not the NLI model; a missing reranker model raises ModelsNotInstalled before any scoring; the distance result and every key of the map without relevance are equal to a call with relevance=False
+  - evidence: tests/test_pipeline.py: test_relevance_loads_the_reranker_and_not_the_nli_model passes; test_missing_reranker_raises_before_any_scoring passes with load_reranker stubbed to raise ModelsNotInstalled on both backends (no statement encoded or scored); build 1.1.33, make test 589 passed
+  - test: unit test: after a relevance call the NLI model is None; result and common keys equal the plain call; missing reranker folder raises ModelsNotInstalled
+  - test-tags: UNIT
+  - log: 2026-10-12T04:39:21Z @kj added
+  - log: 2026-10-12T09:50:06Z @kj closed
+- [x] `ACC-MAP-105` **Shipped relevance equals the measured one** - HIGH; the relevance fields the command writes for the report of data/processed/relevance-fixture against briefs 13 to 24 give the E18-H87 reading: mean AUC 0.8611 over the 12 briefs, within the rounding of the map
+  - evidence: reports/E18-relevance/checks/shipped_relevance.py on build 1.1.33: mean AUC 0.8601 of the written values against 0.8611, tolerance 0.005, exit 0 (logs/E18-shipped-relevance.log); grid direction pinned by test_relevance_fields_equal_their_definitions
+  - test: reports/E18-relevance/checks/shipped_relevance.py runs the command on the 12 pairs, reads relevance from the map files and prints the mean AUC beside the notebook value
+  - test-tags: E2E, MANUAL
+  - log: 2026-10-12T04:39:21Z @kj added
+  - log: 2026-10-12T09:50:06Z @kj closed
+- [x] `ACC-MAP-106` **Relevance reading documented with its limits** - MEDIUM; README.md, docs/cli-reference.md, docs/api-reference.md, the docdistance skill and CHANGELOG.md describe min_cost, --relevance and the relevance fields, which document goes first, the reranker cost per pair of statements, and the E17 to E19 readings with their fixture limits; no match rule for one brief is claimed
+  - evidence: README.md, the skill and CHANGELOG.md state fields, document order, 26.8 ms per pair and the E17 to E19 readings with limits; docs/cli-reference.md and docs/api-reference.md state fields and cost and link to the README section for the readings; review runs wf_1f1e3142-9c0, wf_af859e32-319, wf_b773ff90-246
+  - test: read the five documents against the code and the ledger batches E17 to E19
+  - test-tags: MANUAL
+  - log: 2026-10-12T04:39:21Z @kj added
+  - log: 2026-10-12T09:50:07Z @kj closed
 
 ## Transport and flag semantics `TRANS`
 
@@ -605,6 +637,12 @@ Command-line behaviour, config discovery, error output and batch execution
   - test-tags: UNIT, E2E
   - log: 2026-10-10T02:51:44Z @kj added
   - log: 2026-10-10T06:01:28Z @kj closed
+- [x] `ACC-CLI-104` **--relevance on distance-semantic** - HIGH; distance-semantic takes --relevance; it needs --details-json and exits with code 2 before a model loads when that is missing; with --pairs it applies to every row; the map file then carries the relevance fields; without the flag the output is unchanged
+  - evidence: tests/test_cli.py: the five relevance tests pass (exit 2 without --details-json before a model loads, single pair, --pairs, no field without the flag, help); end to end: reports/E18-relevance/checks/shipped_relevance.py runs the command with --pairs and --relevance on 12 pairs with the real models, exit 0 (logs/E18-shipped-relevance.log); build 1.1.33
+  - test: CLI tests: flag without --details-json exits 2 with no model load; single pair and --pairs write maps with the relevance fields; a run without the flag writes none
+  - test-tags: FUNCTIONAL, E2E
+  - log: 2026-10-12T04:39:21Z @kj added
+  - log: 2026-10-12T09:50:06Z @kj closed
 
 ## Embedding geometry pre-pass `GEOM`
 

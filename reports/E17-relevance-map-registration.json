@@ -1,0 +1,42 @@
+{
+ "batch": "E17",
+ "ledger": "docs/experiments/wmd-docdistance-experiments.md",
+ "registered_utc": "2026-10-12T03:01:34Z",
+ "block_sha256": {
+  "E17-H82": "ff961e54bd31c1c75c83249ad47b60c4e0894410645b56e6dffd34134bfda703",
+  "E17-H83": "fb065f66edfced174fdb51da1d15f13960bfcad4307b67e81a45d8c94379a2f8",
+  "E17-H84": "88d4348bac08038d35aa9c9805e81136a3cae208194773135e1c6c36dc90c6e9",
+  "E17-H85": "e12eda3e58a47c1c6076129af224d8abab41591ab246f6616daa14ca97e3e7d4",
+  "E17-H86": "24e36fdd1608163d71ec42ed3905d249d8600dae290ce74b24265e3b58cfab36"
+ },
+ "block_hash_definition": "sha256 of the block text from its '### ' heading to the line before the next '### ' or '## ' heading, trailing whitespace removed",
+ "fixture_sha256": {
+  "data/processed/relevance-fixture/README.md": "792bc7c8ce11d334e3ac5800a0c1d5960185878cb840d07e06cd861fcd8c9dfc",
+  "data/processed/relevance-fixture/briefs/brief-01.md": "0b4365e900ac9066370cea9ab2fa86894207819d63c35a6cb2053fca79bcc3fd",
+  "data/processed/relevance-fixture/briefs/brief-02.md": "a4a019a4d2d1acb0cdc94f25e8bde7ce44d795e2ee2190305cbd085f89bba5bd",
+  "data/processed/relevance-fixture/briefs/brief-03.md": "0e30654f6defb4cc93cd5a079f4f218199c7fd452c520450378720cb04986602",
+  "data/processed/relevance-fixture/briefs/brief-04.md": "4ea984c1f34edb6b11f5d916bd82fc3cf176d22570f59e1152c5078a112e1257",
+  "data/processed/relevance-fixture/briefs/brief-05.md": "f35b97b535d9100f81be43f67c8ee96851e3ad8eaa6e2396da6f967f382102ac",
+  "data/processed/relevance-fixture/briefs/brief-06.md": "bb5c9e97f7358722dbfbbb41217f7565e232d3b98c7211313679a466ca1f79d9",
+  "data/processed/relevance-fixture/briefs/brief-07.md": "8ce7211342d713d69d79187516ee7edae06cb4594730da6e20b596afe6b4b0c4",
+  "data/processed/relevance-fixture/briefs/brief-08.md": "b85b0f15e9ca583313af04deb099091ee42a82c9a36dd07ac7788b9435542c5b",
+  "data/processed/relevance-fixture/briefs/brief-09.md": "beb7232a132d385e38c954c1eb1b6fdadb122ddd61a7a536634dc3b1e97a187e",
+  "data/processed/relevance-fixture/briefs/brief-10.md": "51eeb82fa9556efa2060b31aba016b6cb26f00d98f256343c9b1ddff4bc93c57",
+  "data/processed/relevance-fixture/briefs/brief-11.md": "b9e31262bdffe86e4f5735447c049011c1e7126efd5fb50a17742320bb9a860c",
+  "data/processed/relevance-fixture/briefs/brief-12.md": "083a6fb4c5f5f55bcb1c47e60f0eb09602eb8a0b8e88048421d4bf365422a7db",
+  "data/processed/relevance-fixture/build_report.py": "127c214cd6c516fc16b18e904c3ba859c389a4f55fbfbc0225b136e5b02f7fc8",
+  "data/processed/relevance-fixture/labels.json": "dcdb14b6d4957cd197670a5bced99f777fab8b7e7f031d81d8ec2d23448cb326",
+  "data/processed/relevance-fixture/report.md": "27f846ce7c6d6c62e0fbe884ea5076d59e19e8743cb9d4fb42724844ee2402f4"
+ },
+ "scored_before_registration": "no brief of the fixture; one scratch reading of an ibm summary against the ibm article and the Wergeland article (see the batch opening in the ledger)",
+ "sign_off": "user, 2026-10-12, on the pre-registration table of five rows",
+ "declaration_sha256": {
+  "E17-H82": "1abdc5ee7519808bbe15e6ff7239cd49e5b3b72876867a218f5e73759ef26338",
+  "E17-H83": "4d2267fb20ad0685a252ca8f2b67e4bccaf0760cb58b448d1d676821dfec6e5d",
+  "E17-H84": "b5967ec2007225da37862487bc97093e627378f4416ee0a3821e7a9683c61489",
+  "E17-H85": "52dbed8abe21b0b9c0ecf20913144ead16e57f31c32276d0a43b0183f64e2f32",
+  "E17-H86": "7f3364cda5bcec53a9941d2653ddd5b9e02973ff27112944a19b29ad40efe41a"
+ },
+ "declaration_hash_definition": "sha256 of the eight declaration lines of a block (Hypothesis, Lever, Mechanism, Prediction, Acceptance bar, Experiment, Kill-gate, Evidence) joined by a line feed; it does not change when lock, log, attachment, Result or Verdict lines are added",
+ "block_sha256_note": "taken after register and before the lock lines were added to the blocks"
+}

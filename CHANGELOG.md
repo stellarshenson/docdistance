@@ -3,6 +3,38 @@
 All notable changes to docdistance are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow semantic versioning.
 
+## [1.1.34] - 2026-10-12
+
+The additive policy holds: without `relevance=True` / `--relevance` every key the detail file held
+keeps its value.
+
+### Added
+
+- Semantic detail file: `min_cost` (the cheapest ground cost of the statement over the other
+  document, the number `changed` is read on, 4 decimals) and `best_target_index` on each flow, with
+  both keys in `definitions`
+- `DocDistance.semantic_distance_with_details(..., relevance=True)` and `distance-semantic
+  --relevance` (needs `--details-json`, exit code 2 without it, applies to every row of `--pairs`):
+  the reranker score of each statement of the first document over the statements of the second,
+  as `relevance` and `relevance_target_index` on each flow, `relevance` and `relevance_source_index`
+  on each `targets` record, `mean_relevance` and `relevance_rank` on each section,
+  `summary.top_relevant` and a `relevance` header block. The long document goes first and the brief
+  second; the cost is one reranker pass per pair of statements; the NLI model is not loaded. The
+  score is a score, not a distance and not on one scale across pairs. On one report and 12 briefs
+  written by the experimenter, the briefs not seen when it was chosen, it ranks the target sections
+  at a mean AUC of 0.8611 against 0.6183 for the nearest cost (E17, E18). On one public European
+  Commission report of 883 statements and 13 briefing notes of the European Parliamentary Research
+  Service, target sections assigned by the experimenter before a note was scored, it reads 0.8321
+  against 0.6374, above the nearest cost in 13 of 13 notes, at 26.8 ms per pair of statements on a
+  shared CPU (E19). No rule for match and no match of one brief is confirmed
+
+### Changed
+
+- A missing reranker model raises `ModelsNotInstalled` with a message that names the reranker and
+  the call that installs it: `docdistance init wmd-wrt-source`, with `--backend torch` on the torch
+  backend. This holds for `distance-wrt-source` and for `--relevance`; 1.1.32 named `docdistance
+  init`, which does not install the reranker
+
 ## [1.1.32] - 2026-10-12
 
 Every number and every detail-file key that 1.1.5 produces keeps its value, with three registered

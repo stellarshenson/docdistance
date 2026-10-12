@@ -199,6 +199,8 @@ def test_semantic_details_header_self_describing():
     assert set(m["definitions"]) == {
         "changed",
         "no_counterpart",
+        "min_cost",
+        "best_target_index",
         "identical",
         "share_below_changed",
         "kept",
@@ -344,6 +346,8 @@ def test_semantic_flows_carry_the_match():
             "text",
             "matches",
             "section",
+            "min_cost",
+            "best_target_index",
             "changed",
             "no_counterpart",
             "identical",
@@ -1628,3 +1632,235 @@ def test_missing_file_with_a_reader_extension_logs_the_path_warning(
     monkeypatch.chdir(tmp_path)  # the name is no file here
     pipeline.DocDistance().embed_statements(name)
     assert len(pool_warnings) == 1 and "looks like a file path" in pool_warnings[0]
+
+
+# ------------------------------------------- ACC-MAP-101..103: nearest cost and relevance reading
+
+
+def test_every_flow_carries_the_row_minimum_and_its_argmin():
+    """ACC-MAP-101: ``min_cost`` is the row minimum of the cost matrix (4 decimals), ``best_target_index``
+    its argmin, and ``changed`` reads the unrounded minimum against ``changed_cost``."""
+    sa, ea = _labels("a", 6), _emb(6, seed=11)
+    sb, eb = _labels("b", 4), _emb(4, seed=12)
+    cost = pipeline._core.cost_matrix(ea, eb)
+    for changed_cost in (0.0, 0.5, 1.0, 2.0):
+        flows = _build_semantic_details(sa, ea, sb, eb, changed_cost=changed_cost)["flows"]
+        for i, flow in enumerate(flows):
+            assert flow["min_cost"] == round(float(cost[i].min()), 4)
+            assert flow["best_target_index"] == int(cost[i].argmin())
+            assert flow["changed"] == bool(cost[i].min() > changed_cost)
+    details = _build_semantic_details(sa, ea, sb, eb)
+    assert "min_cost" in details["definitions"] and "best_target_index" in details["definitions"]
+
+
+# the grid of the stub reranker: rows are the 3 statements of B (queries), columns the 5 of A
+_GRID = np.array(
+    [
+        [0.9, 0.2, 0.5, 0.5, 0.1],
+        [0.7, 0.7, 0.5, 0.6, 0.1],
+        [0.9, 0.7, 0.4, 0.2, 0.1],
+    ],
+    dtype=np.float32,
+)
+_RELEVANCE_A = "A0. A1. A2. A3. A4."
+_RELEVANCE_B = "B0. B1. B2."
+_RELEVANCE_SECTIONS = ["x", "y", "x", "y", "z"]
+
+
+class _GridReranker:
+    """Returns ``_GRID`` and records the statement lists it was asked to score."""
+
+    def __init__(self):
+        self.asked: list[tuple[list[str], list[str]]] = []
+
+    def score_grid(self, docs: list[str], sources: list[str]) -> np.ndarray:
+        self.asked.append((list(docs), list(sources)))
+        return _GRID.copy()
+
+
+@pytest.fixture
+def relevance_models(monkeypatch):
+    """The wmd mode ready; stub segmenter, encoder, reranker (``_GRID``) and NLI; ``loads`` names
+    each model load in order, ``reranker`` is the stub and ``encoder`` records its batches."""
+    settings.reset()
+    settings.mark_ready("wmd")
+    stubs = SimpleNamespace(loads=[], reranker=_GridReranker(), encoder=_CountingEncoder())
+
+    def loader(name, model):
+        def load(*args, **kwargs):
+            stubs.loads.append(name)
+            return model
+
+        return load
+
+    monkeypatch.setattr(pipeline, "Segmenter", _SentenceSegmenter)
+    monkeypatch.setattr(pipeline, "load_encoder", loader("encoder", stubs.encoder))
+    monkeypatch.setattr(pipeline, "load_reranker", loader("reranker", stubs.reranker))
+    monkeypatch.setattr(pipeline, "load_nli", loader("nli", _TextNLI()))
+    monkeypatch.setattr(
+        pipeline,
+        "_statement_sections",
+        lambda body, statements: (
+            _RELEVANCE_SECTIONS if len(statements) == 5 else [""] * len(statements)
+        ),
+    )
+    yield stubs
+    settings.reset()
+
+
+def test_relevance_fields_equal_their_definitions(relevance_models):
+    """ACC-MAP-102: flow relevance is the column maximum of the grid and the target relevance the row
+    maximum, each with the first index of its maximum; a section carries the mean of the unrounded
+    flow relevance and its rank; ``top_relevant`` and the header block follow the definition."""
+    _, details = pipeline.DocDistance().semantic_distance_with_details(
+        _RELEVANCE_A, _RELEVANCE_B, relevance=True
+    )
+    # the statements of B are the queries, those of A the passages
+    assert relevance_models.reranker.asked == [
+        (["B0", "B1", "B2"], ["A0", "A1", "A2", "A3", "A4"])
+    ]
+    flows = details["flows"]
+    assert [f["relevance"] for f in flows] == pytest.approx([0.9, 0.7, 0.5, 0.6, 0.1])
+    assert [f["relevance_target_index"] for f in flows] == [0, 1, 0, 1, 0]  # ties: first index
+    targets = details["targets"]
+    assert [t["relevance"] for t in targets] == pytest.approx([0.9, 0.7, 0.9])
+    assert [t["relevance_source_index"] for t in targets] == [0, 0, 0]  # ties: first index
+    sections = {s["section"]: s for s in details["sections"]}
+    assert sections["x"]["mean_relevance"] == pytest.approx(0.7)
+    assert sections["y"]["mean_relevance"] == pytest.approx(0.65)
+    assert sections["z"]["mean_relevance"] == pytest.approx(0.1)
+    assert [sections[k]["relevance_rank"] for k in "xyz"] == [1, 2, 3]
+    assert details["summary"]["top_relevant"] == [0, 1, 3, 2, 4]
+    assert details["relevance"] == {
+        "backend": "openvino",
+        "model": "stellars/bge-reranker-v2-m3-openvino-int8",
+        "queries": "b",
+        "passages": "a",
+    }
+    for key in ("relevance", "mean_relevance"):
+        text = details["definitions"][key]
+        assert "sigmoid" in text and "not a distance" in text and "not on one scale" in text
+
+
+def test_relevance_values_are_written_with_four_decimals():
+    """ACC-MAP-102: written flow and target relevance are rounded to 4 decimals (``==``, not
+    approx)."""
+    sa, ea = _labels("a", 2), _emb(2, seed=31)
+    sb, eb = _labels("b", 2), _emb(2, seed=32)
+    details = _build_semantic_details(sa, ea, sb, eb)
+    grid = np.array([[0.123456, 0.2], [0.3, 0.987654]], dtype=np.float32)
+    secs = [""] * 2
+    pipeline._add_relevance(details, grid, {"backend": "torch", "model": "m"}, secs)
+    assert [f["relevance"] for f in details["flows"]] == [0.3, 0.9877]
+    assert [t["relevance"] for t in details["targets"]] == [0.2, 0.9877]
+
+
+def test_relevance_header_names_the_torch_repo_on_the_torch_backend(relevance_models):
+    """ACC-MAP-102: on the torch backend the header holds the ``torch`` repo of the registry."""
+    _, details = pipeline.DocDistance(backend="torch").semantic_distance_with_details(
+        _RELEVANCE_A, _RELEVANCE_B, relevance=True
+    )
+    registry = pipeline.config.MODEL_REGISTRY["reranker"]
+    assert registry["torch"] != registry["hf"]
+    assert details["relevance"]["backend"] == "torch"
+    assert details["relevance"]["model"] == registry["torch"]
+
+
+def test_relevance_rank_and_top_list_break_ties_by_document_order():
+    """ACC-MAP-102: equal section means rank in document order; ``top_relevant`` holds as many
+    flows as ``top_changed`` (10 of 12) and orders equal scores by index. Ranks use the unrounded
+    means: 0.50004 and 0.50001 both write as 0.5 and still rank in that order."""
+    sa, ea = _labels("a", 12), _emb(12, seed=21)
+    sb, eb = _labels("b", 2), _emb(2, seed=22)
+    secs = [f"s{i}" for i in range(12)]
+    grid = np.full((2, 12), 0.5, dtype=np.float64)
+    grid[0, 0], grid[0, 1] = 0.50001, 0.50004
+    details = _build_semantic_details(sa, ea, sb, eb, sections=secs)
+    pipeline._add_relevance(details, grid, {"backend": "openvino", "model": "m"}, secs)
+    ranks = [s["relevance_rank"] for s in details["sections"]]
+    assert ranks[:3] == [2, 1, 3] and ranks[3:] == list(range(4, 13))
+    assert details["sections"][0]["mean_relevance"] == details["sections"][1]["mean_relevance"]
+    assert details["summary"]["top_relevant"] == [1, 0, 2, 3, 4, 5, 6, 7, 8, 9]
+
+
+def _keys(node) -> set[str]:
+    """Every dict key anywhere in a JSON-like structure."""
+    if isinstance(node, dict):
+        return set(node) | {k for value in node.values() for k in _keys(value)}
+    if isinstance(node, list):
+        return {k for value in node for k in _keys(value)}
+    return set()
+
+
+def test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker(relevance_models):
+    """ACC-MAP-102: the default call writes none of the new keys and never loads the reranker."""
+    _, details = pipeline.DocDistance().semantic_distance_with_details(_RELEVANCE_A, _RELEVANCE_B)
+    assert not [k for k in _keys(details) if "relevance" in k]
+    assert not [k for k in details["definitions"] if "relevance" in k]
+    assert relevance_models.loads == ["encoder"]
+    assert relevance_models.reranker.asked == []
+
+
+def test_relevance_loads_the_reranker_and_not_the_nli_model(relevance_models):
+    """ACC-MAP-103: after a relevance call the NLI model is unloaded; the result and every key
+    of the plain call are equal; the grounding path still loads both models."""
+    plain = pipeline.DocDistance()
+    plain_result, plain_details = plain.semantic_distance_with_details(_RELEVANCE_A, _RELEVANCE_B)
+    dd = pipeline.DocDistance()
+    result, details = dd.semantic_distance_with_details(_RELEVANCE_A, _RELEVANCE_B, relevance=True)
+    assert dd._nli is None and dd._reranker is relevance_models.reranker
+    assert "nli" not in relevance_models.loads
+    assert result == plain_result
+    assert {k: v for k, v in details.items() if k != "relevance"}.keys() == plain_details.keys()
+    for key in plain_details.keys() - {"flows", "targets", "sections", "summary", "definitions"}:
+        assert details[key] == plain_details[key]
+    added = {"relevance", "relevance_target_index", "relevance_source_index", "mean_relevance"}
+    added |= {"relevance_rank", "top_relevant"}
+    for part in ("flows", "targets", "sections"):
+        for old, new in zip(plain_details[part], details[part]):
+            assert {k: v for k, v in new.items() if k not in added} == old
+    assert {k: v for k, v in details["summary"].items() if k != "top_relevant"} == (
+        plain_details["summary"]
+    )
+    dd._ensure_grounding()
+    assert dd._nli is not None
+
+
+@pytest.mark.parametrize(
+    ("backend", "call"),
+    [
+        ("openvino", "docdistance init wmd-wrt-source"),
+        ("torch", "docdistance init wmd-wrt-source --backend torch"),
+    ],
+)
+def test_missing_reranker_raises_before_any_scoring(relevance_models, monkeypatch, backend, call):
+    """ACC-MAP-103: a reranker model that is not installed raises ``ModelsNotInstalled`` naming the
+    reranker and the ``docdistance init`` call for the backend in use, before a statement is
+    encoded or scored."""
+    from docdistance.encoders import ModelsNotInstalled
+
+    def missing(*args, **kwargs):
+        raise ModelsNotInstalled("model not found in cache - run:  docdistance init")
+
+    monkeypatch.setattr(pipeline, "load_reranker", missing)
+    with pytest.raises(ModelsNotInstalled) as raised:
+        pipeline.DocDistance(backend=backend).semantic_distance_with_details(
+            _RELEVANCE_A, _RELEVANCE_B, relevance=True
+        )
+    assert str(raised.value) == f"reranker model not found in cache - run:  {call}"
+    assert relevance_models.encoder.batches == []
+    assert relevance_models.reranker.asked == []
+
+
+def test_relevance_does_not_depend_on_anisotropy_threshold_or_changed_cost(relevance_models):
+    """ACC-MAP-102: the relevance fields are equal under any anisotropy, threshold and changed_cost."""
+    dd = pipeline.DocDistance()
+    keys = ("relevance", "relevance_target_index")
+
+    def read(**kwargs):
+        details = dd.semantic_distance_with_details(
+            _RELEVANCE_A, _RELEVANCE_B, relevance=True, **kwargs
+        )[1]
+        return [[f[k] for k in keys] for f in details["flows"]], details["summary"]["top_relevant"]
+
+    assert read() == read(anisotropy=True, threshold=0.5, changed_cost=0.0)

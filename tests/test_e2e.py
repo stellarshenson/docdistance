@@ -1159,3 +1159,39 @@ def test_segmenter_loads_after_init_from_a_source_folder_with_the_tokenizer_file
     assert len(by_hub_name) == 4
     assert loaded == by_hub_name
     assert (sat_dir / "tokenizer_config.json").read_bytes() != as_published
+
+
+# ACC-MAP-102: the real models score the map of a long document against a one-line brief
+_RELEVANCE_SCRIPT = """\
+import json
+
+from docdistance import DocDistance
+
+if __name__ == "__main__":
+    report = "The cat slept on the warm windowsill all afternoon. The central bank raised interest rates again."
+    brief = "Where did the cat sleep?"
+    _, details = DocDistance().semantic_distance_with_details(report, brief, relevance=True)
+    print("FLOWS", json.dumps([[f["text"], f["relevance"]] for f in details["flows"]]), flush=True)
+"""
+
+
+def test_relevance_of_the_real_reranker_ranks_the_answering_statement_first(tmp_path):
+    """ACC-MAP-102: with the real models, the relevance of both statements of a two-statement report
+    lies between 0 and 1, and the statement that answers the one-line brief scores above the
+    unrelated one. Skipped only when the child process reports the models as not installed;
+    any other failure fails the test."""
+    script = tmp_path / "relevance.py"
+    script.write_text(_RELEVANCE_SCRIPT, encoding="utf-8")
+    env = {key: value for key, value in os.environ.items() if key != "CI"}
+    res = _run_script(script, {**env, "HF_HUB_OFFLINE": "1"})
+    if res.returncode != 0 and any(
+        name in res.stderr for name in ("ModelsNotInstalled", "NotInitializedError")
+    ):
+        pytest.skip("the models are not installed")
+    assert res.returncode == 0, res.stderr
+    line = next(ln for ln in res.stdout.splitlines() if ln.startswith("FLOWS "))
+    flows = json.loads(line.removeprefix("FLOWS "))
+    assert len(flows) == 2
+    assert all(0.0 <= score <= 1.0 for _, score in flows)
+    answering, unrelated = flows
+    assert "cat" in answering[0] and answering[1] > unrelated[1]

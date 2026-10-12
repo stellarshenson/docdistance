@@ -44,6 +44,7 @@ from docdistance.distance import (
     StructuralResult,
 )
 from docdistance.encoders import (
+    ModelsNotInstalled,
     Segmenter,
     html_to_markdown,
     load_encoder,
@@ -615,6 +616,9 @@ def _build_semantic_details(
     a ``changed`` flag: whether the cheapest ground cost over the full cost row exceeds
     ``changed_cost`` (default ``DIFF_CHANGED_COST``) - the row minimum, not the heaviest match, because
     transport weight follows the marginal constraints while cost carries the content signal.
+    ``min_cost`` writes that cheapest cost on the flow (4 decimals) and ``best_target_index`` the
+    target that gives it; the flags read the unrounded value. It is the ground cost of one pair of
+    statements, not a distance between the documents.
     ``no_counterpart`` marks flows whose cheapest cost exceeds ``NO_COUNTERPART_COST`` (no target is a
     plausible counterpart; the mass lands on an absorber), and ``identical`` whether the statement's
     normalised text (casefold + whitespace collapse) equals its cheapest-cost target's - so identical /
@@ -664,6 +668,8 @@ def _build_semantic_details(
         # transport weight concentrates elsewhere
         min_cost = float(cost[i].min())
         min_costs.append(min_cost)
+        flow["min_cost"] = round(min_cost, 4)
+        flow["best_target_index"] = int(cost[i].argmin())
         flow["section"] = secs[i]
         flow["changed"] = bool(min_cost > changed_cost)
         flow["no_counterpart"] = bool(min_cost > NO_COUNTERPART_COST)
@@ -726,6 +732,12 @@ def _build_semantic_details(
             "no_counterpart": (
                 "cheapest ground cost over the statement's full cost row > no_counterpart_cost"
             ),
+            "min_cost": (
+                "cheapest ground cost over the statement's full cost row, rounded to 4 "
+                "decimals; the number changed and no_counterpart are read on; the ground cost "
+                "of one pair of statements, not a distance between the documents"
+            ),
+            "best_target_index": "index of the target statement that gives min_cost",
             "identical": (
                 "normalised text (casefold, whitespace collapsed) equals its "
                 "cheapest-cost target's"
@@ -754,6 +766,50 @@ def _build_semantic_details(
         "flows": flows,
         "targets": targets,
     }
+
+
+def _add_relevance(details: dict, grid: np.ndarray, model: dict, secs: list[str]) -> None:
+    """Add the reranker reading of the map in place (E18-H87); the distance and every other key stay.
+
+    ``grid[j, i]`` is the reranker score of the B statement ``j`` (query) over the A statement
+    ``i`` (passage). Flow ``i`` carries ``relevance``, the column maximum, and
+    ``relevance_target_index``, its argmax; target ``j`` carries ``relevance``, the row maximum,
+    and ``relevance_source_index``. Section ``k`` carries ``mean_relevance``, the mean of the
+    unrounded flow relevance of its statements, and ``relevance_rank`` (1 is the highest mean,
+    ties in document order); ``summary.top_relevant`` lists the flows with the highest relevance
+    (ties by index), as many as ``top_changed`` holds. Maxima, means and ranks are taken on
+    unrounded values, written values are rounded to 4 decimals. The score is a sigmoid of a
+    reranker logit: a score, not a metric, a lower bound or a probability, and not on one scale
+    across pairs of documents.
+    """
+    flow_scores = grid.max(axis=0)
+    target_scores = grid.max(axis=1)
+    for i, flow in enumerate(details["flows"]):
+        flow["relevance"] = round(float(flow_scores[i]), 4)
+        flow["relevance_target_index"] = int(grid[:, i].argmax())
+    for j, target in enumerate(details["targets"]):
+        target["relevance"] = round(float(target_scores[j]), 4)
+        target["relevance_source_index"] = int(grid[j].argmax())
+    means = [
+        sum(float(flow_scores[i]) for i in idxs) / len(idxs) for _, idxs in _section_rows(secs)
+    ]
+    ranked = sorted(range(len(means)), key=lambda k: (-means[k], k))
+    for rank, k in enumerate(ranked, start=1):
+        details["sections"][k]["mean_relevance"] = round(means[k], 4)
+        details["sections"][k]["relevance_rank"] = rank
+    by_relevance = sorted(range(len(flow_scores)), key=lambda i: (-float(flow_scores[i]), i))
+    details["summary"]["top_relevant"] = by_relevance[: len(details["summary"]["top_changed"])]
+    details["definitions"]["relevance"] = (
+        "sigmoid of the reranker logit for the pair, taken as the highest over the other "
+        "document's statements; a score, not a distance and not a probability of relevance, "
+        "and not on one scale across pairs of documents"
+    )
+    details["definitions"]["mean_relevance"] = (
+        "mean of the relevance of the section's statements, each a sigmoid of the reranker "
+        "logit; a score, not a distance and not a probability of relevance, and not on one "
+        "scale across pairs of documents"
+    )
+    details["relevance"] = {**model, "queries": "b", "passages": "a"}
 
 
 def _build_structural_details(
@@ -1006,12 +1062,30 @@ class DocDistance:
         self._ensure_base()
         return self._encoder
 
-    def _ensure_grounding(self) -> None:
+    def _ensure_reranker(self) -> None:
+        """Load the encoder, the segmenter and the reranker, not the NLI model.
+
+        Raises:
+            ModelsNotInstalled: the reranker model is not installed; the message names it and the
+                ``docdistance init`` call that installs it for the backend in use.
+        """
         self._ensure_base()
         if self._reranker is None:
-            self._reranker = load_reranker(
-                self.backend, offline=self._offline, device=self._device
-            )
+            try:
+                self._reranker = load_reranker(
+                    self.backend, offline=self._offline, device=self._device
+                )
+            except ModelsNotInstalled as exc:
+                # init fetches the openvino weights unless --backend names the other set
+                flag = " --backend torch" if self.backend == "torch" else ""
+                raise ModelsNotInstalled(
+                    "reranker model not found in cache - run:  docdistance init wmd-wrt-source"
+                    + flag
+                ) from exc
+
+    def _ensure_grounding(self) -> None:
+        self._ensure_reranker()
+        if self._nli is None:
             self._nli = load_nli(self.backend, offline=self._offline, device=self._device)
 
     def embed_statements(
@@ -1191,14 +1265,28 @@ class DocDistance:
         input_format: str = "auto",
         min_words: int = 0,
         skip_table_fragments: bool = False,
+        relevance: bool = False,
     ) -> tuple[DistanceResult, dict]:
         """The symmetric distance result and the optimal-transport statement map, sharing one encode pass.
 
         ``changed_cost`` sets the per-flow ``changed`` cutoff on the cheapest row cost (default
         ``DIFF_CHANGED_COST``) and is emitted in the detail header's ``thresholds`` block; the
         distance result itself does not depend on it.
+
+        ``relevance=True`` adds the reranker reading of the map (:func:`_add_relevance`): the
+        statements of ``b`` are the queries and the statements of ``a`` the passages, so ``a`` is
+        the long document and ``b`` the brief. The cost is one reranker pass per pair of
+        statements, ``len(b) * len(a)`` pairs. It loads the reranker and not the NLI model, and
+        changes neither the result nor any other key of the map; it does not depend on
+        ``anisotropy``, ``threshold`` or ``changed_cost``. The scores are not a distance.
+
+        Raises:
+            ModelsNotInstalled: ``relevance=True`` and the reranker model is not installed; raised
+                before any statement is scored.
         """
         settings.require_ready("wmd")
+        if relevance:
+            self._ensure_reranker()
         requested = _requested_format(markdown, input_format)
         seg = _seg_kwargs(requested, min_words, skip_table_fragments)
         sa, ea = self.embed_statements(a, **seg)
@@ -1208,6 +1296,7 @@ class DocDistance:
         if anisotropy:
             _warn_small_pool(ea, eb)
         result = _core.compute_distance(ea, eb, anisotropy=anisotropy, threshold=threshold)
+        secs = _statement_sections(_read_as(a, requested)[0], sa)
         details = _build_semantic_details(
             sa,
             ea,
@@ -1217,9 +1306,16 @@ class DocDistance:
             changed_cost=changed_cost,
             n_dropped=self.last_n_dropped,
             drop_rules={"min_words": min_words, "skip_table_fragments": skip_table_fragments},
-            sections=_statement_sections(_read_as(a, requested)[0], sa),
+            sections=secs,
             sections_b=_statement_sections(_read_as(b, requested)[0], sb),
         )
+        if relevance:
+            registry = config.MODEL_REGISTRY["reranker"]
+            model = {
+                "backend": self.backend,
+                "model": registry["torch" if self.backend == "torch" else "hf"],
+            }
+            _add_relevance(details, self._reranker.score_grid(sb, sa), model, secs)
         return result, details
 
     def structural_distance(

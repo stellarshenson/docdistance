@@ -1,0 +1,35 @@
+{
+ "batch": "E19",
+ "ledger": "docs/experiments/wmd-docdistance-experiments.md",
+ "registered_utc": "2026-10-12T04:37:04Z",
+ "declaration_sha256": {
+  "E19-H93": "d2c74333aedd44b6edef16f4c4f5dfe3f338fe27878bae0dbde67a5b11513371",
+  "E19-H94": "3f978a89944e5d34a1d484b56423e285b6efab31d7b4595bc26dcc223358ab8c",
+  "E19-H95": "6a1379a30cdab97b68f400df474c7f6abcd99b3d34abecb32546d8ae8daf91f3",
+  "E19-H96": "262d36170fe784e84f31c622069fcdd9f8c09c541b35d9271d8ad675dc5776a6",
+  "E19-H97": "4f2f5a6c240f596168636b4ffa0dccc9fa4fda4bd9cce23bbb3b8983b9e73111"
+ },
+ "declaration_hash_definition": "sha256 of the eight declaration lines of a block (Hypothesis, Lever, Mechanism, Prediction, Acceptance bar, Experiment, Kill-gate, Evidence) joined by a line feed",
+ "fixture_sha256": {
+  "data/processed/relevance-fixture-eu/README.md": "ac270f83f37c5460331321aa65e2d80caef0a785ff132604b6855e8f01eb76f9",
+  "data/processed/relevance-fixture-eu/briefs/739206-european-year-of-skills.md": "6c4611cfb08e2a0e76195628028bf215e4518b5574fdf9919895dbafe40b26e3",
+  "data/processed/relevance-fixture-eu/briefs/739350-online-age-verification.md": "481eddfbee23ce058733ebe529fe6e113538c244a58fb1efa7526d7d82eb8f72",
+  "data/processed/relevance-fixture-eu/briefs/747926-ai-act-parliament-position.md": "1a89832e77dcbc98c3a730b53ca9eeb7a90f64b5469abe98c7c34dc2fc229fd4",
+  "data/processed/relevance-fixture-eu/briefs/751386-eu-chips-act.md": "ab468bdd648e23acaac7f88d6216934accce5a51141df0dcfafacb3da1305438",
+  "data/processed/relevance-fixture-eu/briefs/754642-european-health-data-space.md": "42558c593250d68350edc8dc82628e9528b849872ef75568f92a184d4f918098",
+  "data/processed/relevance-fixture-eu/briefs/759583-strategic-technologies-platform.md": "5ef348d686234c8df0f47b14f4b4b3c930ed9221274b51fe4540a03366522b7f",
+  "data/processed/relevance-fixture-eu/briefs/759620-european-media-freedom-act.md": "510a1745a7f779a33f5af5ad265760d7964f1123b352573f5bf1d3232b81851f",
+  "data/processed/relevance-fixture-eu/briefs/760355-foreign-interference-preparedness.md": "7157ae047d93a5962044beeb7e6f35d056697d08cfa24325eef64eba9feae37d",
+  "data/processed/relevance-fixture-eu/briefs/760391-gdpr-cross-border-procedural-rules.md": "bb0ff0e6dd8de0da190a1780d28f81791540eed0081227596ac8f53f26f5070d",
+  "data/processed/relevance-fixture-eu/briefs/760392-ai-investment-indicators.md": "8a170ce2153fd966307f1aa3cc73f461ff6952d0c72b80243237414e6fa74a3d",
+  "data/processed/relevance-fixture-eu/briefs/760421-gigabit-infrastructure-act.md": "ae5ae520f4b1767a10697690e9295b165c102a78c65f46305a686b69b0c91b73",
+  "data/processed/relevance-fixture-eu/briefs/772906-ai-act-implementation-timeline.md": "b80090b488584f1257557ff491c7513b0f6ef7ff51b801af3b1abf7ca8e0a6aa",
+  "data/processed/relevance-fixture-eu/briefs/779193-simplifying-digital-laws.md": "fc6b8c7b0b7217f49d97e234cb1ad8991d4fa276d675d6fdb3d048e940605258",
+  "data/processed/relevance-fixture-eu/briefs/779252-cybersecurity-act-review.md": "e9c03abcbd609d84bb84c620fed3f52014c18a40af2f9baec29b49e8a072d7f3",
+  "data/processed/relevance-fixture-eu/labels.json": "918e6ae821a4ce3f382aa8c69107114f64aa50983c1fd09072bce77bad3b91c1",
+  "data/processed/relevance-fixture-eu/report.md": "fec9f431f28a4ad395b960987385091cf6745d100d839514230d8f3ef4294ffb",
+  "data/processed/relevance-fixture-eu/sections.json": "843523974a989534a618ae9aeb05a4531afb596056bb89923b19ea8bbff781f7"
+ },
+ "scored_before_registration": "no note of this fixture against the report; the E17 and E18 readings on the constructed fixture were known",
+ "sign_off": "user, 2026-10-12, five rows on the pre-registration table"
+}

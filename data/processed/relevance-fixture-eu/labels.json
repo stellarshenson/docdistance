@@ -1,0 +1,127 @@
+{
+ "report": "report.md",
+ "neutral_sections": [
+  "Introduction",
+  "1. Key drivers of the EU’s digital transformation in 2024"
+ ],
+ "rule": "a statement is neutral for every note when its section path holds one of neutral_sections (the introduction and chapter 1, the context chapter that touches every subject); neutral for one note when its path holds one of that note's related_sections; positive when its path holds one of the note's target_sections; every other statement is negative. A heading in these lists is the full heading text of report.md and stands for its whole subtree",
+ "assigned": "by the experimenter on 2026-10-12 from the note titles, the heading tree and term counts per section, before any note was scored against the report",
+ "notes": {
+  "760421-gigabit-infrastructure-act": {
+   "file": "briefs/760421-gigabit-infrastructure-act.md",
+   "target_sections": [
+    "2.1.3.1 Gigabit connectivity infrastructure"
+   ],
+   "related_sections": []
+  },
+  "751386-eu-chips-act": {
+   "file": "briefs/751386-eu-chips-act.md",
+   "target_sections": [
+    "2.1.3.2 Semiconductors"
+   ],
+   "related_sections": []
+  },
+  "759620-european-media-freedom-act": {
+   "file": "briefs/759620-european-media-freedom-act.md",
+   "target_sections": [
+    "3.3.2. Access to media and media pluralism"
+   ],
+   "related_sections": [
+    "3.3.1. Address disinformation and preserve election integrity"
+   ]
+  },
+  "747926-ai-act-parliament-position": {
+   "file": "briefs/747926-ai-act-parliament-position.md",
+   "target_sections": [
+    "3.2.3. Promote responsible and human-centric AI systems"
+   ],
+   "related_sections": [
+    "Take up of artificial intelligence"
+   ]
+  },
+  "772906-ai-act-implementation-timeline": {
+   "file": "briefs/772906-ai-act-implementation-timeline.md",
+   "target_sections": [
+    "3.2.3. Promote responsible and human-centric AI systems"
+   ],
+   "related_sections": [
+    "Take up of artificial intelligence"
+   ]
+  },
+  "779252-cybersecurity-act-review": {
+   "file": "briefs/779252-cybersecurity-act-review.md",
+   "target_sections": [
+    "2.3. Strengthening cybersecurity"
+   ],
+   "related_sections": []
+  },
+  "760355-foreign-interference-preparedness": {
+   "file": "briefs/760355-foreign-interference-preparedness.md",
+   "target_sections": [
+    "3.3.1. Address disinformation and preserve election integrity"
+   ],
+   "related_sections": [
+    "3.3.2. Access to media and media pluralism",
+    "2.3. Strengthening cybersecurity"
+   ]
+  },
+  "779193-simplifying-digital-laws": {
+   "file": "briefs/779193-simplifying-digital-laws.md",
+   "target_sections": [
+    "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment"
+   ],
+   "related_sections": [
+    "2.1.2. A functioning Digital Single Market as a public good for EU’s productivity"
+   ]
+  },
+  "739206-european-year-of-skills": {
+   "file": "briefs/739206-european-year-of-skills.md",
+   "target_sections": [
+    "3.1.1. Equip people with digital skills"
+   ],
+   "related_sections": []
+  },
+  "739350-online-age-verification": {
+   "file": "briefs/739350-online-age-verification.md",
+   "target_sections": [
+    "3.2.2. Protect and empower children (including via age verification)"
+   ],
+   "related_sections": [
+    "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+    "3.1.2. Trusted solutions for digital interaction: the EU Digital Identity and the digital euro"
+   ]
+  },
+  "754642-european-health-data-space": {
+   "file": "briefs/754642-european-health-data-space.md",
+   "target_sections": [
+    "3.1.4. Leverage on digital technologies for health"
+   ],
+   "related_sections": []
+  },
+  "760392-ai-investment-indicators": {
+   "file": "briefs/760392-ai-investment-indicators.md",
+   "target_sections": [
+    "Take up of artificial intelligence"
+   ],
+   "related_sections": [
+    "3.2.3. Promote responsible and human-centric AI systems",
+    "2.2.2. Scaling up innovative enterprise",
+    "2.1.1. Investing in research and innovation"
+   ]
+  },
+  "759583-strategic-technologies-platform": {
+   "file": "briefs/759583-strategic-technologies-platform.md",
+   "target_sections": [
+    "2.1.1. Investing in research and innovation",
+    "5.3. Synergising funding for digitalisation"
+   ],
+   "related_sections": []
+  }
+ },
+ "no_target_notes": {
+  "760391-gdpr-cross-border-procedural-rules": {
+   "file": "briefs/760391-gdpr-cross-border-procedural-rules.md",
+   "reason": "the report names the GDPR once and has no section on the enforcement of data protection"
+  }
+ }
+}

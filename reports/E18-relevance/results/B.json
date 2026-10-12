@@ -1,0 +1,490 @@
+{
+ "key": "B",
+ "notebook": "notebooks/experiments/E18-kj-contrast-replication.ipynb",
+ "metrics_json": "reports/E18-contrast-replication-metrics.json",
+ "log": "logs/E18-contrast-replication.log",
+ "notebook_errors": 0,
+ "harness_check": {
+  "passed": true,
+  "largest_difference": 0.0,
+  "reading": "baseline and E17-H85 AUC of briefs 01 to 12 and of the 7 controls reproduce the stored values exactly (largest absolute difference 0.0 against 1e-9)"
+ },
+ "hypotheses": [
+  {
+   "id": "E18-H88",
+   "gate": {
+    "passed": true,
+    "reading": "batch gate: baseline mean AUC over briefs 13 to 24 0.6183 < 0.95, passed"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": 0.19748394315269766,
+     "met": true
+    },
+    {
+     "name": "briefs_above_0_ge_10",
+     "value": 10.0,
+     "met": true
+    },
+    {
+     "name": "control_drop_le_0.01",
+     "value": 0.18161940100715623,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Confirmed",
+   "key_numbers": "mean AUC 0.6183 to 0.8158, mean gain +0.1975 (boot 95% +0.1018 to +0.2961), 10/12 briefs above 0 (briefs 13 and 23 lose), control +0.1816; variants: seen-12 background +0.1827 (9/12), all-23 +0.1903 (10/12); top-2 section share 0.4167 to 0.7500"
+  },
+  {
+   "id": "E18-H89",
+   "gate": {
+    "passed": true,
+    "reading": "batch gate passed"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": 0.17435215101593285,
+     "met": true
+    },
+    {
+     "name": "briefs_above_0_ge_10",
+     "value": 9.0,
+     "met": false
+    }
+   ],
+   "verdict_by_bar": "Refuted",
+   "key_numbers": "k=3 mean gain +0.1744 (met), 9/12 briefs above 0 (needs 10, not met; briefs 13, 23, 24 lose at every k); mean gain k=1 +0.1414, k=2 +0.1681, k=5 +0.1828; share of draws above 0 0.7167/0.7708/0.7729/0.7854; all 24 briefs count 18/24 (k=1,2,3), 19/24 (k=5)"
+  },
+  {
+   "id": "E18-H90",
+   "gate": {
+    "passed": true,
+    "reading": "fixed cutoff 0.3253 mean BA over briefs 13 to 24 0.5080 < 0.65, passed"
+   },
+   "clauses": [
+    {
+     "name": "otsu_mean_ba_ge_0.70",
+     "value": 0.7243496193284407,
+     "met": true
+    },
+    {
+     "name": "otsu_minus_fixed_ge_0.10",
+     "value": 0.2163139050427264,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Confirmed",
+   "key_numbers": "Otsu mean BA 0.7243 vs fixed 0.5080 (+0.2163); 5 of 12 new briefs below 0.70 (13,17,18,19,23); seen briefs 0.7366 (seen data)"
+  },
+  {
+   "id": "E18-H92",
+   "gate": {
+    "passed": true,
+    "reading": "batch gate passed"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": -0.00019503681850472723,
+     "met": false
+    },
+    {
+     "name": "briefs_above_0_ge_10",
+     "value": 6.0,
+     "met": false
+    },
+    {
+     "name": "control_drop_le_0.01",
+     "value": 0.1055526106546516,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Refuted",
+   "key_numbers": "mean AUC 0.6181, mean diff -0.0002 (boot 95% -0.0608 to +0.0573), 6/12 briefs above 0, control +0.1056; seen briefs -0.0049 (5/12)"
+  }
+ ],
+ "per_brief": [
+  {
+   "brief": "brief-13",
+   "set": "new",
+   "baseline": 0.6743421052631579,
+   "H88": 0.6513157894736842,
+   "H88_bg_seen": 0.5756578947368421,
+   "H88_bg_all": 0.6052631578947368,
+   "H89_k1": 0.5965625000000001,
+   "H89_k2": 0.6108388157894737,
+   "H89_k3": 0.6023355263157895,
+   "H89_k5": 0.6025164473684211,
+   "H92": 0.506578947368421,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6052631578947368
+  },
+  {
+   "brief": "brief-14",
+   "set": "new",
+   "baseline": 0.6623376623376623,
+   "H88": 0.9653679653679653,
+   "H88_bg_seen": 0.9523809523809523,
+   "H88_bg_all": 0.9696969696969697,
+   "H89_k1": 0.8745021645021644,
+   "H89_k2": 0.9264935064935065,
+   "H89_k3": 0.9440476190476191,
+   "H89_k5": 0.9542857142857142,
+   "H92": 0.6623376623376623,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8701298701298701
+  },
+  {
+   "brief": "brief-15",
+   "set": "new",
+   "baseline": 0.7269736842105263,
+   "H88": 0.993421052631579,
+   "H88_bg_seen": 0.9967105263157895,
+   "H88_bg_all": 0.9967105263157895,
+   "H89_k1": 0.9403125,
+   "H89_k2": 0.9701973684210526,
+   "H89_k3": 0.9836513157894737,
+   "H89_k5": 0.9896052631578947,
+   "H92": 0.5657894736842105,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8421052631578947
+  },
+  {
+   "brief": "brief-16",
+   "set": "new",
+   "baseline": 0.5946666666666667,
+   "H88": 0.8586666666666667,
+   "H88_bg_seen": 0.8906666666666667,
+   "H88_bg_all": 0.8773333333333333,
+   "H89_k1": 0.7589866666666667,
+   "H89_k2": 0.8077866666666667,
+   "H89_k3": 0.8298133333333334,
+   "H89_k5": 0.8448266666666666,
+   "H92": 0.44533333333333336,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.7533333333333334
+  },
+  {
+   "brief": "brief-17",
+   "set": "new",
+   "baseline": 0.35733333333333334,
+   "H88": 0.6906666666666667,
+   "H88_bg_seen": 0.712,
+   "H88_bg_all": 0.6986666666666667,
+   "H89_k1": 0.67164,
+   "H89_k2": 0.7042533333333333,
+   "H89_k3": 0.7065333333333333,
+   "H89_k5": 0.7057066666666667,
+   "H92": 0.43466666666666665,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6266666666666667
+  },
+  {
+   "brief": "brief-18",
+   "set": "new",
+   "baseline": 0.5296052631578947,
+   "H88": 0.6875,
+   "H88_bg_seen": 0.5460526315789473,
+   "H88_bg_all": 0.5888157894736842,
+   "H89_k1": 0.6639144736842105,
+   "H89_k2": 0.6439144736842104,
+   "H89_k3": 0.6247697368421052,
+   "H89_k5": 0.6208059210526315,
+   "H92": 0.5789473684210527,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6842105263157895
+  },
+  {
+   "brief": "brief-19",
+   "set": "new",
+   "baseline": 0.45021645021645024,
+   "H88": 0.7316017316017316,
+   "H88_bg_seen": 0.7619047619047619,
+   "H88_bg_all": 0.7489177489177489,
+   "H89_k1": 0.6977272727272726,
+   "H89_k2": 0.7257359307359308,
+   "H89_k3": 0.7378138528138527,
+   "H89_k5": 0.7460173160173161,
+   "H92": 0.44155844155844154,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.606060606060606
+  },
+  {
+   "brief": "brief-20",
+   "set": "new",
+   "baseline": 0.3815789473684211,
+   "H88": 0.9342105263157895,
+   "H88_bg_seen": 0.8881578947368421,
+   "H88_bg_all": 0.9078947368421053,
+   "H89_k1": 0.8583388157894737,
+   "H89_k2": 0.8767269736842106,
+   "H89_k3": 0.8876973684210527,
+   "H89_k5": 0.9023026315789474,
+   "H92": 0.5032894736842105,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8157894736842105
+  },
+  {
+   "brief": "brief-21",
+   "set": "new",
+   "baseline": 0.7162426614481409,
+   "H88": 0.9667318982387475,
+   "H88_bg_seen": 0.9726027397260274,
+   "H88_bg_all": 0.974559686888454,
+   "H89_k1": 0.9042563600782779,
+   "H89_k2": 0.939559686888454,
+   "H89_k3": 0.9479060665362035,
+   "H89_k5": 0.9581311154598825,
+   "H92": 0.8825831702544031,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.8434442270058709
+  },
+  {
+   "brief": "brief-22",
+   "set": "new",
+   "baseline": 0.7673611111111112,
+   "H88": 0.8194444444444444,
+   "H88_bg_seen": 0.8263888888888888,
+   "H88_bg_all": 0.828125,
+   "H89_k1": 0.7724479166666666,
+   "H89_k2": 0.7950347222222223,
+   "H89_k3": 0.8009895833333335,
+   "H89_k5": 0.8063454861111111,
+   "H92": 0.8298611111111112,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.7291666666666667
+  },
+  {
+   "brief": "brief-23",
+   "set": "new",
+   "baseline": 0.7661538461538462,
+   "H88": 0.681025641025641,
+   "H88_bg_seen": 0.7097435897435898,
+   "H88_bg_all": 0.7066666666666667,
+   "H89_k1": 0.6384358974358973,
+   "H89_k2": 0.6703589743589744,
+   "H89_k3": 0.6711589743589744,
+   "H89_k5": 0.6959128205128206,
+   "H92": 0.7610256410256411,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6076923076923078
+  },
+  {
+   "brief": "brief-24",
+   "set": "new",
+   "baseline": 0.7925,
+   "H88": 0.8091666666666667,
+   "H88_bg_seen": 0.7791666666666667,
+   "H88_bg_all": 0.8,
+   "H89_k1": 0.7394750000000001,
+   "H89_k2": 0.7651729166666666,
+   "H89_k3": 0.7748208333333334,
+   "H89_k5": 0.7859625,
+   "H92": 0.805,
+   "fixed_ba": 0.525,
+   "otsu_ba": 0.7083333333333333
+  },
+  {
+   "brief": "brief-01",
+   "set": "seen",
+   "baseline": 0.37662337662337664,
+   "H88": 0.5974025974025974,
+   "H88_bg_seen": 0.6363636363636364,
+   "H88_bg_all": 0.6233766233766234,
+   "H89_k1": 0.5702380952380952,
+   "H89_k2": 0.5792424242424242,
+   "H89_k3": 0.5863419913419914,
+   "H89_k5": 0.6108225108225108,
+   "H92": 0.39826839826839827,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6428571428571428
+  },
+  {
+   "brief": "brief-02",
+   "set": "seen",
+   "baseline": 0.7335526315789473,
+   "H88": 0.9703947368421053,
+   "H88_bg_seen": 0.930921052631579,
+   "H88_bg_all": 0.9671052631578947,
+   "H89_k1": 0.8604111842105263,
+   "H89_k2": 0.9098848684210527,
+   "H89_k3": 0.9305592105263157,
+   "H89_k5": 0.9432565789473685,
+   "H92": 0.5263157894736842,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.75
+  },
+  {
+   "brief": "brief-03",
+   "set": "seen",
+   "baseline": 0.6277056277056277,
+   "H88": 0.7489177489177489,
+   "H88_bg_seen": 0.7445887445887446,
+   "H88_bg_all": 0.7575757575757576,
+   "H89_k1": 0.6714285714285714,
+   "H89_k2": 0.6906060606060607,
+   "H89_k3": 0.7036363636363636,
+   "H89_k5": 0.717012987012987,
+   "H92": 0.5064935064935064,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5670995670995671
+  },
+  {
+   "brief": "brief-04",
+   "set": "seen",
+   "baseline": 0.5844155844155844,
+   "H88": 0.7142857142857143,
+   "H88_bg_seen": 0.7662337662337663,
+   "H88_bg_all": 0.7575757575757576,
+   "H89_k1": 0.6608225108225108,
+   "H89_k2": 0.7174891774891775,
+   "H89_k3": 0.7204112554112554,
+   "H89_k5": 0.7300865800865801,
+   "H92": 0.4199134199134199,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.7987012987012987
+  },
+  {
+   "brief": "brief-05",
+   "set": "seen",
+   "baseline": 0.1987179487179487,
+   "H88": 0.9102564102564102,
+   "H88_bg_seen": 0.9615384615384616,
+   "H88_bg_all": 0.9615384615384616,
+   "H89_k1": 0.8332692307692308,
+   "H89_k2": 0.8807692307692306,
+   "H89_k3": 0.8992948717948718,
+   "H89_k5": 0.9190064102564102,
+   "H92": 0.5128205128205128,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8397435897435898
+  },
+  {
+   "brief": "brief-06",
+   "set": "seen",
+   "baseline": 0.6150234741784038,
+   "H88": 0.8466353677621283,
+   "H88_bg_seen": 0.9264475743348983,
+   "H88_bg_all": 0.9029733959311425,
+   "H89_k1": 0.7658294209702661,
+   "H89_k2": 0.8046870109546166,
+   "H89_k3": 0.8562284820031298,
+   "H89_k5": 0.8637949921752738,
+   "H92": 0.4350547730829421,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8732394366197183
+  },
+  {
+   "brief": "brief-07",
+   "set": "seen",
+   "baseline": 0.2631578947368421,
+   "H88": 0.9375,
+   "H88_bg_seen": 0.9506578947368421,
+   "H88_bg_all": 0.9473684210526315,
+   "H89_k1": 0.8496381578947368,
+   "H89_k2": 0.8972368421052633,
+   "H89_k3": 0.9163157894736841,
+   "H89_k5": 0.9264802631578948,
+   "H92": 0.4309210526315789,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8223684210526316
+  },
+  {
+   "brief": "brief-08",
+   "set": "seen",
+   "baseline": 0.5202702702702703,
+   "H88": 0.7027027027027027,
+   "H88_bg_seen": 0.7252252252252253,
+   "H88_bg_all": 0.7117117117117117,
+   "H89_k1": 0.6613626126126126,
+   "H89_k2": 0.6790202702702703,
+   "H89_k3": 0.694403153153153,
+   "H89_k5": 0.7087612612612614,
+   "H92": 0.49774774774774777,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5495495495495495
+  },
+  {
+   "brief": "brief-09",
+   "set": "seen",
+   "baseline": 0.6966731898238747,
+   "H88": 0.8845401174168297,
+   "H88_bg_seen": 0.913894324853229,
+   "H88_bg_all": 0.9060665362035225,
+   "H89_k1": 0.8581800391389433,
+   "H89_k2": 0.885440313111546,
+   "H89_k3": 0.8910078277886498,
+   "H89_k5": 0.901751467710372,
+   "H92": 0.8806262230919765,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.863013698630137
+  },
+  {
+   "brief": "brief-10",
+   "set": "seen",
+   "baseline": 0.7621527777777778,
+   "H88": 0.7413194444444444,
+   "H88_bg_seen": 0.7621527777777778,
+   "H88_bg_all": 0.7465277777777778,
+   "H89_k1": 0.6798263888888889,
+   "H89_k2": 0.7016666666666667,
+   "H89_k3": 0.7237586805555556,
+   "H89_k5": 0.7299739583333333,
+   "H92": 0.7881944444444444,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6458333333333333
+  },
+  {
+   "brief": "brief-11",
+   "set": "seen",
+   "baseline": 0.8441025641025641,
+   "H88": 0.8769230769230769,
+   "H88_bg_seen": 0.8625641025641025,
+   "H88_bg_all": 0.8789743589743589,
+   "H89_k1": 0.7656410256410257,
+   "H89_k2": 0.806625641025641,
+   "H89_k3": 0.8201846153846154,
+   "H89_k5": 0.8469538461538462,
+   "H92": 0.8194871794871795,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.7615384615384615
+  },
+  {
+   "brief": "brief-12",
+   "set": "seen",
+   "baseline": 0.8161764705882353,
+   "H88": 0.8161764705882353,
+   "H88_bg_seen": 0.8272058823529411,
+   "H88_bg_all": 0.8247549019607843,
+   "H89_k1": 0.7728125,
+   "H89_k2": 0.7844424019607843,
+   "H89_k3": 0.798094362745098,
+   "H89_k5": 0.8119914215686275,
+   "H92": 0.7634803921568627,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.7254901960784315
+  }
+ ],
+ "deviations": [
+  "brief-23 holds 10 statements with the default reader; the batch opening registers 4 to 9 statements per new brief; no brief changed",
+  "H89 rng order: one default_rng(0), k then brief then draw; the briefs are taken in the order 13 to 24 then 01 to 12 (the registered text does not fix the order of the all-24 reading); a draw is rng.choice(23, size=k, replace=False) over the sorted other ids",
+  "H89 has no control reading (draws are defined for briefs only)",
+  "Notebook kernelspec is python3 as in the template"
+ ],
+ "observations": [
+  "E18-H88 count clause sits exactly at the bar (10 of 12) and E18-H89 is one brief below it (9 of 12); one brief changes both verdicts",
+  "H88 gain is large on briefs 14 to 21 and negative on 13 and 23; briefs 22 and 24 gain little (the baseline AUC is high there, 0.77 and 0.79)",
+  "H92 control AUC rises by 0.1056 while the brief AUC does not move; the clause on the control holds without a brief effect",
+  "fixed cutoff 0.3253 marks 0 statements on 10 of 12 new briefs and 1 on the other two; the Otsu split marks 7 to 53 statements where targets hold 3 to 20",
+  "the user remark relayed with the request (the horeca report is commercial) does not touch this task: the fixture holds the constructed IBM and Wergeland report only, nothing was sent outside the machine",
+  "two headline numbers recomputed with a separate script (own Euclidean cdist, pairwise AUC, brute-force Otsu): H88 mean gain 0.19748394315269766 vs notebook 0.19748394315269766 (difference 0.0), H90 Otsu mean BA 0.7243496193284407 vs 0.7243496193284407 (difference 0.0)"
+ ],
+ "not_verified": [
+  "no check with a second background sample size beyond the registered k",
+  "the reason H92 does not rank (summary-section risk) is not isolated",
+  "single-brief use on a report with distinct subjects (the private dataset) is not read"
+ ],
+ "metrics_json_ok": true
+}

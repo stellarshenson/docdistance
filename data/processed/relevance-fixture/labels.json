@@ -1,0 +1,129 @@
+{
+ "report": "report.md",
+ "parts": {
+  "ibm": "Part 1 - Enterprise adoption of AI",
+  "wergeland": "Part 2 - Impact of artificial intelligence on society"
+ },
+ "neutral_sections": [
+  "Key findings",
+  "Overview"
+ ],
+ "briefs": {
+  "brief-01": {
+   "file": "briefs/brief-01.md",
+   "part": "ibm",
+   "target_sections": [
+    "Barriers keeping the next wave from benefiting"
+   ]
+  },
+  "brief-02": {
+   "file": "briefs/brief-02.md",
+   "part": "ibm",
+   "target_sections": [
+    "Workforce impact"
+   ]
+  },
+  "brief-03": {
+   "file": "briefs/brief-03.md",
+   "part": "ibm",
+   "target_sections": [
+    "Trustworthy and governed AI"
+   ]
+  },
+  "brief-04": {
+   "file": "briefs/brief-04.md",
+   "part": "ibm",
+   "target_sections": [
+    "Easier tools and cost reduction are driving adoption"
+   ]
+  },
+  "brief-05": {
+   "file": "briefs/brief-05.md",
+   "part": "ibm",
+   "target_sections": [
+    "AI use cases cut across business operations"
+   ]
+  },
+  "brief-06": {
+   "file": "briefs/brief-06.md",
+   "part": "ibm",
+   "target_sections": [
+    "Adoption has remained steady at large organizations",
+    "Most companies have accelerated rollout in the past 24 months"
+   ]
+  },
+  "brief-07": {
+   "file": "briefs/brief-07.md",
+   "part": "ibm",
+   "target_sections": [
+    "Methodology"
+   ]
+  },
+  "brief-08": {
+   "file": "briefs/brief-08.md",
+   "part": "ibm",
+   "target_sections": [
+    "Barriers keeping the next wave from benefiting",
+    "Trustworthy and governed AI"
+   ]
+  },
+  "brief-09": {
+   "file": "briefs/brief-09.md",
+   "part": "wergeland",
+   "target_sections": [
+    "Teaching the topic"
+   ]
+  },
+  "brief-10": {
+   "file": "briefs/brief-10.md",
+   "part": "wergeland",
+   "target_sections": [
+    "Bias and data"
+   ]
+  },
+  "brief-11": {
+   "file": "briefs/brief-11.md",
+   "part": "wergeland",
+   "target_sections": [
+    "Future"
+   ]
+  },
+  "brief-12": {
+   "file": "briefs/brief-12.md",
+   "part": "wergeland",
+   "target_sections": [
+    "AI in Society"
+   ]
+  }
+ },
+ "controls": {
+  "gold": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-gold-opus-4-6.md",
+   "positive_part": "ibm"
+  },
+  "gold-2": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-gold-2-opus-4-6.md",
+   "positive_part": "ibm"
+  },
+  "v1": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-1-opus-4-6.md",
+   "positive_part": "ibm"
+  },
+  "v2": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-2-opus-4-6.md",
+   "positive_part": "ibm"
+  },
+  "opus": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-opus-4-6.md",
+   "positive_part": "ibm"
+  },
+  "sonnet": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-sonnet-4-6.md",
+   "positive_part": "ibm"
+  },
+  "haiku": {
+   "file": "../../interim/exec-summaries/ibm-ai-adoption/summaries/exec-summary-haiku-4-5.md",
+   "positive_part": "ibm"
+  }
+ }
+}

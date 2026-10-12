@@ -1,0 +1,518 @@
+{
+ "key": "A",
+ "notebook": "notebooks/experiments/E18-kj-reranker-relevance.ipynb",
+ "metrics_json": "reports/E18-reranker-relevance-metrics.json",
+ "log": "logs/E18-reranker-relevance.log",
+ "notebook_errors": 0,
+ "harness_check": {
+  "passed": true,
+  "largest_difference": 0.0,
+  "reading": "baseline AUC of briefs 01 to 12 reproduces reports/E17-relevance-map-metrics.json exactly; fixture sha256 equal for all 16 files"
+ },
+ "hypotheses": [
+  {
+   "id": "E18-H87",
+   "gate": {
+    "passed": true,
+    "reading": "baseline mean AUC over briefs 13 to 24 = 0.6183 < 0.95"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": 0.24285016661787565,
+     "met": true
+    },
+    {
+     "name": "briefs_above_0_ge_10",
+     "value": 12,
+     "met": true
+    },
+    {
+     "name": "control_mean_auc_diff_ge_-0.01",
+     "value": 0.15524781341107896,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Confirmed",
+   "key_numbers": "new briefs mean AUC reranker 0.8611 vs baseline 0.6183 (+0.2429, bootstrap [+0.1631,+0.3346]), 12/12 above 0; control mean AUC 0.8332 vs 0.6780 (+0.1552); hard-negative AUC 0.8290 vs 0.6435; top-2 share 0.9167 vs 0.4167; seen briefs +0.2776, 12/12; contrast AUC 0.8588 (new), 0.8512 (controls); weakest brief 19 AUC 0.5455"
+  },
+  {
+   "id": "E18-H91",
+   "gate": {
+    "passed": true,
+    "reading": "fixed cutoff 0.3253 mean BA over briefs 13 to 24 = 0.5080 < 0.65"
+   },
+   "clauses": [
+    {
+     "name": "otsu_mean_ba_ge_0.70",
+     "value": 0.640009310864574,
+     "met": false
+    },
+    {
+     "name": "otsu_minus_fixed_ge_0.10",
+     "value": 0.13197359657885976,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Refuted",
+   "key_numbers": "Otsu mean BA 0.6400 vs fixed 0.5080 (+0.1320); r_i>=0.5 rule 0.5817; seen briefs Otsu 0.5790; Otsu marks 2 to 7 statements per brief, TPR 0.00 to 0.71, TNR 0.95 to 1.00; thresholds 0.0135 to 0.4834; brief 19 BA 0.4870"
+  }
+ ],
+ "per_brief": [
+  {
+   "brief": "brief-13",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.6743421052631579,
+   "reranker_auc": 0.9144736842105263,
+   "diff": 0.24013157894736847,
+   "contrast_auc": 0.7960526315789473,
+   "hard_baseline_auc": 0.671875,
+   "hard_reranker_auc": 0.8984375,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.618421052631579,
+   "otsu_threshold": 0.4833592101931572,
+   "targets": [
+    "Workforce impact"
+   ]
+  },
+  {
+   "brief": "brief-14",
+   "set": "new",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.6623376623376623,
+   "reranker_auc": 0.7489177489177489,
+   "diff": 0.08658008658008653,
+   "contrast_auc": 0.9567099567099567,
+   "hard_baseline_auc": 0.7171717171717171,
+   "hard_reranker_auc": 0.7777777777777778,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6601731601731602,
+   "otsu_threshold": 0.013484321534633636,
+   "targets": [
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-15",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.7269736842105263,
+   "reranker_auc": 0.944078947368421,
+   "diff": 0.2171052631578947,
+   "contrast_auc": 0.8092105263157895,
+   "hard_baseline_auc": 0.8046875,
+   "hard_reranker_auc": 0.96875,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.09565152414143085,
+   "targets": [
+    "Most companies have accelerated rollout in the past 24 months"
+   ]
+  },
+  {
+   "brief": "brief-16",
+   "set": "new",
+   "positives": 5,
+   "negatives": 75,
+   "baseline_auc": 0.5946666666666667,
+   "reranker_auc": 0.9546666666666667,
+   "diff": 0.36,
+   "contrast_auc": 0.9733333333333334,
+   "hard_baseline_auc": 0.7419354838709677,
+   "hard_reranker_auc": 0.9354838709677419,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8,
+   "otsu_threshold": 0.30664659291505814,
+   "targets": [
+    "Adoption has remained steady at large organizations"
+   ]
+  },
+  {
+   "brief": "brief-17",
+   "set": "new",
+   "positives": 5,
+   "negatives": 75,
+   "baseline_auc": 0.35733333333333334,
+   "reranker_auc": 0.9226666666666666,
+   "diff": 0.5653333333333332,
+   "contrast_auc": 0.864,
+   "hard_baseline_auc": 0.535483870967742,
+   "hard_reranker_auc": 0.967741935483871,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.58,
+   "otsu_threshold": 0.05447862669825554,
+   "targets": [
+    "AI use cases cut across business operations",
+    "Easier tools and cost reduction are driving adoption"
+   ]
+  },
+  {
+   "brief": "brief-18",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.5296052631578947,
+   "reranker_auc": 0.8092105263157895,
+   "diff": 0.2796052631578948,
+   "contrast_auc": 0.9703947368421053,
+   "hard_baseline_auc": 0.53125,
+   "hard_reranker_auc": 0.703125,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.618421052631579,
+   "otsu_threshold": 0.04258233215659857,
+   "targets": [
+    "About IBM"
+   ]
+  },
+  {
+   "brief": "brief-19",
+   "set": "new",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.45021645021645024,
+   "reranker_auc": 0.5454545454545454,
+   "diff": 0.09523809523809518,
+   "contrast_auc": 0.7489177489177489,
+   "hard_baseline_auc": 0.6060606060606061,
+   "hard_reranker_auc": 0.5858585858585859,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.487012987012987,
+   "otsu_threshold": 0.36990025639533997,
+   "targets": [
+    "Barriers keeping the next wave from benefiting"
+   ]
+  },
+  {
+   "brief": "brief-20",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.3815789473684211,
+   "reranker_auc": 0.8453947368421053,
+   "diff": 0.46381578947368424,
+   "contrast_auc": 0.9013157894736842,
+   "hard_baseline_auc": 0.5,
+   "hard_reranker_auc": 0.7265625,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.2765170931816101,
+   "targets": [
+    "Methodology"
+   ]
+  },
+  {
+   "brief": "brief-21",
+   "set": "new",
+   "positives": 7,
+   "negatives": 73,
+   "baseline_auc": 0.7162426614481409,
+   "reranker_auc": 0.9960861056751468,
+   "diff": 0.2798434442270059,
+   "contrast_auc": 1.0,
+   "hard_baseline_auc": 0.61003861003861,
+   "hard_reranker_auc": 0.9922779922779923,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.8571428571428572,
+   "otsu_threshold": 0.31255146861076355,
+   "targets": [
+    "Teaching the topic"
+   ]
+  },
+  {
+   "brief": "brief-22",
+   "set": "new",
+   "positives": 8,
+   "negatives": 72,
+   "baseline_auc": 0.7673611111111112,
+   "reranker_auc": 0.9375,
+   "diff": 0.17013888888888884,
+   "contrast_auc": 0.6493055555555556,
+   "hard_baseline_auc": 0.7048611111111112,
+   "hard_reranker_auc": 0.9236111111111112,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.625,
+   "otsu_threshold": 0.33290306106209755,
+   "targets": [
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-23",
+   "set": "new",
+   "positives": 15,
+   "negatives": 65,
+   "baseline_auc": 0.7661538461538462,
+   "reranker_auc": 0.8358974358974359,
+   "diff": 0.06974358974358974,
+   "contrast_auc": 0.8338461538461538,
+   "hard_baseline_auc": 0.6482758620689655,
+   "hard_reranker_auc": 0.7103448275862069,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6102564102564103,
+   "otsu_threshold": 0.17673246562480927,
+   "targets": [
+    "Future"
+   ]
+  },
+  {
+   "brief": "brief-24",
+   "set": "new",
+   "positives": 20,
+   "negatives": 60,
+   "baseline_auc": 0.7925,
+   "reranker_auc": 0.8791666666666667,
+   "diff": 0.08666666666666667,
+   "contrast_auc": 0.8025,
+   "hard_baseline_auc": 0.65,
+   "hard_reranker_auc": 0.7583333333333333,
+   "fixed_ba": 0.525,
+   "otsu_ba": 0.6,
+   "otsu_threshold": 0.414080236107111,
+   "targets": [
+    "AI in Society",
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-01",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.37662337662337664,
+   "reranker_auc": 0.5064935064935064,
+   "diff": 0.1298701298701298,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.5555555555555556,
+   "hard_reranker_auc": 0.46464646464646464,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.4935064935064935,
+   "otsu_threshold": 0.4455750286579132,
+   "targets": [
+    "Barriers keeping the next wave from benefiting"
+   ]
+  },
+  {
+   "brief": "brief-02",
+   "set": "seen",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.7335526315789473,
+   "reranker_auc": 0.9473684210526315,
+   "diff": 0.21381578947368418,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7421875,
+   "hard_reranker_auc": 0.96875,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.4934210526315789,
+   "otsu_threshold": 0.4698493033647537,
+   "targets": [
+    "Workforce impact"
+   ]
+  },
+  {
+   "brief": "brief-03",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.6277056277056277,
+   "reranker_auc": 0.7835497835497836,
+   "diff": 0.1558441558441559,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7272727272727273,
+   "hard_reranker_auc": 0.8888888888888888,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.474025974025974,
+   "otsu_threshold": 0.02795885782688856,
+   "targets": [
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-04",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.5844155844155844,
+   "reranker_auc": 0.935064935064935,
+   "diff": 0.35064935064935066,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6666666666666666,
+   "hard_reranker_auc": 0.9090909090909091,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6666666666666666,
+   "otsu_threshold": 0.3032042607665062,
+   "targets": [
+    "Easier tools and cost reduction are driving adoption"
+   ]
+  },
+  {
+   "brief": "brief-05",
+   "set": "seen",
+   "positives": 2,
+   "negatives": 78,
+   "baseline_auc": 0.1987179487179487,
+   "reranker_auc": 0.9423076923076923,
+   "diff": 0.7435897435897436,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.3235294117647059,
+   "hard_reranker_auc": 0.9264705882352942,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.48717948717948717,
+   "otsu_threshold": 0.04982175678014755,
+   "targets": [
+    "AI use cases cut across business operations"
+   ]
+  },
+  {
+   "brief": "brief-06",
+   "set": "seen",
+   "positives": 9,
+   "negatives": 71,
+   "baseline_auc": 0.6150234741784038,
+   "reranker_auc": 0.9280125195618153,
+   "diff": 0.31298904538341155,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7613168724279835,
+   "hard_reranker_auc": 0.9382716049382716,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5970266040688577,
+   "otsu_threshold": 0.12461092323064804,
+   "targets": [
+    "Adoption has remained steady at large organizations",
+    "Most companies have accelerated rollout in the past 24 months"
+   ]
+  },
+  {
+   "brief": "brief-07",
+   "set": "seen",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.2631578947368421,
+   "reranker_auc": 0.9243421052631579,
+   "diff": 0.6611842105263157,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.3828125,
+   "hard_reranker_auc": 0.9375,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.1475299708545208,
+   "targets": [
+    "Methodology"
+   ]
+  },
+  {
+   "brief": "brief-08",
+   "set": "seen",
+   "positives": 6,
+   "negatives": 74,
+   "baseline_auc": 0.5202702702702703,
+   "reranker_auc": 0.7454954954954955,
+   "diff": 0.22522522522522526,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6555555555555556,
+   "hard_reranker_auc": 0.8611111111111112,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5495495495495496,
+   "otsu_threshold": 0.10685883089900017,
+   "targets": [
+    "Barriers keeping the next wave from benefiting",
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-09",
+   "set": "seen",
+   "positives": 7,
+   "negatives": 73,
+   "baseline_auc": 0.6966731898238747,
+   "reranker_auc": 0.9960861056751468,
+   "diff": 0.29941291585127205,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.583011583011583,
+   "hard_reranker_auc": 0.9922779922779923,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.7142857142857143,
+   "otsu_threshold": 0.2679968327283859,
+   "targets": [
+    "Teaching the topic"
+   ]
+  },
+  {
+   "brief": "brief-10",
+   "set": "seen",
+   "positives": 8,
+   "negatives": 72,
+   "baseline_auc": 0.7621527777777778,
+   "reranker_auc": 0.9600694444444444,
+   "diff": 0.19791666666666663,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6770833333333334,
+   "hard_reranker_auc": 0.9305555555555556,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.625,
+   "otsu_threshold": 0.3514510989189148,
+   "targets": [
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-11",
+   "set": "seen",
+   "positives": 15,
+   "negatives": 65,
+   "baseline_auc": 0.8441025641025641,
+   "reranker_auc": 0.8697435897435898,
+   "diff": 0.02564102564102566,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.767816091954023,
+   "hard_reranker_auc": 0.767816091954023,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.658974358974359,
+   "otsu_threshold": 0.20812039077281952,
+   "targets": [
+    "Future"
+   ]
+  },
+  {
+   "brief": "brief-12",
+   "set": "seen",
+   "positives": 12,
+   "negatives": 68,
+   "baseline_auc": 0.8161764705882353,
+   "reranker_auc": 0.8308823529411765,
+   "diff": 0.014705882352941235,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6953125,
+   "hard_reranker_auc": 0.7864583333333334,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5759803921568628,
+   "otsu_threshold": 0.2906976640224457,
+   "targets": [
+    "AI in Society"
+   ]
+  }
+ ],
+ "deviations": [
+  "none from the registered text; the notebook kernel is python3 as in the E17 template",
+  "hypothesis-tools show was run on E18-H87 and E18-H91 to read the records; the tool set a lock line (kj, until 2026-10-13) in the ledger as a side effect of reading, not an edit by this run"
+ ],
+ "observations": [
+  "The user message relayed with the task states the horeca report is commercial. This notebook sends nothing outside the machine (no network, offline models); the report is a fixture inside the repository and the grids are stored in git-ignored data/interim/E18/. Nothing was committed or shared.",
+  "Reranker scores are not calibrated across pairs: pooled positive median 0.0221, negative median 0.0004; Otsu thresholds range 0.0135 to 0.4834 per brief, which is why the split misses most positives",
+  "Contrast adds nothing over the reranker alone on new briefs (0.8588 vs 0.8611)",
+  "Labels are section level, so on-topic statements outside target sections count as negatives",
+  "Wall time per brief grid: median 13.5 s (372 to 930 pairs), per control median 35.6 s",
+  "Brief 19 is the one brief where Otsu BA is below the fixed cutoff's and below 0.5 (AUC 0.5455)"
+ ],
+ "not_verified": [
+  "Independent verifier of the workflow not run by this executor",
+  "Behaviour on the private market research pair (not in the repository)",
+  "Torch backend of the reranker (only OpenVINO INT8 defaults read)",
+  "Scratch recomputation used the stored grids, so a second model run of the grids was not compared"
+ ],
+ "scratch_check": "separate script (pairwise AUC count, brute-force Otsu, own cosine cost) from the stored grids: mean AUC difference 0.242850 vs notebook 0.242850 (difference 0.0); Otsu mean BA 0.640009 vs 0.640009 (difference 0.0); baseline mean AUC and fixed BA also equal"
+}

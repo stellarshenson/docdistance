@@ -1,0 +1,34 @@
+{
+ "allow": "moved,n_moved",
+ "packages": [
+  {
+   "key": "relevance-map",
+   "title": "relevance reading of the semantic map: numeric nearest cost per flow and an opt-in reranker score per statement and section",
+   "items": [
+    "ACC-MAP-101",
+    "ACC-MAP-102",
+    "ACC-MAP-103",
+    "ACC-CLI-104",
+    "ACC-MAP-105",
+    "ACC-MAP-106"
+   ],
+   "files": [
+    "src/docdistance/pipeline.py",
+    "src/docdistance/cli.py",
+    "src/docdistance/config.py",
+    "tests/test_pipeline.py",
+    "tests/test_cli.py",
+    "tests/test_e2e.py",
+    "README.md",
+    "docs/cli-reference.md",
+    "docs/api-reference.md",
+    ".claude/skills/docdistance/SKILL.md",
+    "CHANGELOG.md",
+    "reports/E18-relevance/checks/"
+   ],
+   "brief": "Read reports/E18-relevance/relevance-build-brief.md in full: it is the contract (entries R1 to R6, tests, gates and limits of this run). The six criteria are in docs/acc-crit-docdistance.md. The primer reports/E13-campaign/PRIMER.md gives the environment and the hard rules of a build; the brief overrides it on one point: no make install in this run. The additive policy holds: without relevance=True / --relevance the map gains only min_cost and best_target_index per flow and every existing key keeps its value.",
+   "verify_note": "the brief of this package is reports/E18-relevance/relevance-build-brief.md; check each entry R1 to R6 against the code and the tests. Probe yourself: a map without --relevance holds no relevance key and equals the map of the committed tree in every existing key (read the committed function with `git show HEAD:src/docdistance/pipeline.py`, or compare against the stored outputs of reports/E13-campaign/baseline); --relevance without --details-json exits 2 before a model loads; the NLI model stays unloaded; relevance_rank and top_relevant on ties; the direction of the grid (the statements of the second document are the queries). Run reports/E18-relevance/checks/shipped_relevance.py and compare its mean AUC with 0.8611. Confirm that no document claims a match rule for one brief and that nothing about batch E19 is written. No make install may have run (the version line of pyproject.toml reads 1.1.32).",
+   "grounded": false
+  }
+ ]
+}

@@ -370,6 +370,7 @@ def _emit_wrt_source(r, json_out: bool, result_only: bool, extra: dict | None = 
     "  docdistance distance-semantic a.md b.md --json\n"
     "  docdistance distance-semantic a.md b.md --details-json content.json   [dim]# statement → statement content alignment[/dim]\n"
     "  docdistance distance-structural a.md b.md --details-json order.json   [dim]# per-statement displacement / moved[/dim]\n"
+    "  docdistance distance-semantic report.md brief.md --details-json map.json --relevance   [dim]# long document first, brief second[/dim]\n"
     "  docdistance distance-semantic --pairs pairs.tsv                       [dim]# batch: one model load, JSONL out[/dim]\n"
     "  docdistance distance-semantic a.md b.md --result-only",
 )
@@ -414,6 +415,13 @@ def distance_semantic(
         help="batch mode: TSV of a-path<TAB>b-path[<TAB>id] - one model load, "
         "one JSON object per pair per line (JSONL) to stdout",
     ),
+    relevance: bool = typer.Option(
+        False,
+        "--relevance",
+        help="add the reranker relevance of each statement of the first document over the "
+        "second to the map; needs --details-json; pass the long document first and the brief "
+        "second; costs one reranker pass per pair of statements",
+    ),
     json_out: bool = typer.Option(False, "--json", help="machine-readable JSON to stdout"),
     result_only: bool = typer.Option(
         False, "--result-only", help="bare SMD scalar to stdout, no clutter"
@@ -429,6 +437,9 @@ def distance_semantic(
     configure_logging(verbose)
     _apply_home(home)
     _check_pair_args(pairs, a, b)
+    if relevance and not details_json:
+        _err.print("[bold red]error:[/bold red] --relevance needs --details-json")
+        raise typer.Exit(2)
     requested = _input_format(markdown, input_format)
 
     backend_value, device = _resolve_gpu(gpu, backend)
@@ -451,7 +462,7 @@ def distance_semantic(
                 x, y, anisotropy=anisotropy, threshold=threshold, **seg
             ),
             lambda x, y: dd.semantic_distance_with_details(
-                x, y, anisotropy=anisotropy, threshold=threshold, **seg
+                x, y, anisotropy=anisotropy, threshold=threshold, relevance=relevance, **seg
             ),
             extra=(lambda: _drop_extra(dd, min_words, skip_table_fragments))
             if filters_on
@@ -465,7 +476,7 @@ def distance_semantic(
 
         def _details_run():
             res = dd.semantic_distance_with_details(
-                a, b, anisotropy=anisotropy, threshold=threshold, **seg
+                a, b, anisotropy=anisotropy, threshold=threshold, relevance=relevance, **seg
             )
             Path(details_json).write_text(json.dumps(res[1], indent=2))
             return res

@@ -1,0 +1,332 @@
+{
+ "run_id": "wf_1f1e3142-9c0",
+ "script": "reports/E18-relevance/workflow-review.js",
+ "ended": "2026-10-12",
+ "clean": true,
+ "clean_rounds": 2,
+ "steps": [
+  {
+   "label": "review:r1:architect",
+   "result": {
+    "lens": "architect",
+    "verdict": "VERDICT: SHIP - no critical or major finding; the relevance reading is one opt-in flag, one post-builder function and one split loader with no dead code or second code path, and the two minor recommendations leave the system net smaller (one parameter less, one sentence corrected).\n\nConfirmed by running: `pytest tests/test_pipeline.py tests/test_cli.py` gives 253 passed. I ran `docdistance distance-semantic --pairs ... --details-json ... --relevance` on the 12 E18 pairs into the scratch directory: all 12 maps written, exit code 0. The shipped `relevance_rank` gives a top-2 target-section share of 0.9167, equal to the notebook value the README quotes, with the neutral sections left in the ranking. The README and CHANGELOG numbers (0.6183, 0.8611, 12 of 12, 0.4167 → 0.9167, Otsu 0.6400 against 0.70) equal `reports/E18-reranker-relevance-metrics.json`; 0.5865 equals the E18-H87 ledger block.\n\nConfirmed by reading: `_ensure_grounding` loads the same two models in the same order as before the split. Without `relevance` the builder diff adds only `min_cost`, `best_target_index` and their two `definitions` entries. The exit-2 usage error writes to stderr only, the same form as `_check_pair_args`. The Python signature, the CLI option, the five documents and the six criteria describe one contract.\n\nNot run: `baseline.py verify` (no log of it exists for this build under `logs/`) and the real-model end-to-end test.\n\nConstructs tested with \"what breaks if this is deleted\": the `ModelsNotInstalled` re-wrap in `_ensure_reranker` (entry R3 directs it; it cannot hide the missing-dependency hint because `_ensure_base` raises that first), the `model` dict of the header block (R2), `top_relevant` sized by `top_changed` (R2), and the `secs` parameter (finding 1).",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "MATERIALITY: no user of the map is harmed; this is a maintenance cost only. `_add_relevance` takes a fourth parameter `secs` that repeats data the map already holds, and the caller was changed to hoist `secs` into a local for it. JUDGEMENT: the function can group on `[f[\"section\"] for f in details[\"flows\"]]`, which removes the parameter, restores the caller's inline `sections=` argument and removes the unstated requirement that `secs` be the same list the builder received. Remedy: EDIT (delete one parameter); adds nothing. Acceptable as is if the orchestrator declines.",
+      "evidence": "Read /home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py: line 771 signature `_add_relevance(details, grid, model, secs)`, line 794 `_section_rows(secs)`, builder line 674 writes `flow[\"section\"] = secs[i]` for every flow and line 697 builds `details[\"sections\"]` from the same `_section_rows(secs)`, so the flows carry the identical list. Caller lines 1296 and 1315 hold the hoisted local.",
+      "file": "src/docdistance/pipeline.py",
+      "line": 771
+     },
+     {
+      "severity": "minor",
+      "claim": "MATERIALITY: a reader of the README who checks the evidence finds a count that contradicts itself; no result is wrong. The Evidence bullet says \"one report of two articles and 12 briefs written by the experimenter\" and then quotes readings for \"first 12 briefs\" and \"second 12\", which is 24 briefs in two sets of 12. Remedy: EDIT the phrase to \"two sets of 12 briefs\" (the wording of the build brief, line 111 of the first tool output: \"two sets of 12 constructed briefs\").",
+      "evidence": "Read the diff of /home/lab/workspace/learning/projects/docdistance/README.md (section \"Reading a long report against a brief\", Evidence bullet). `reports/E18-reranker-relevance-metrics.json` key `statement_counts.briefs` lists brief-01 to brief-24; the 0.5865 reading is on briefs 01 to 12 (E17) and 0.6183 on briefs 13 to 24 (E18), per `hypothesis-tools show ... E18-H87`.",
+      "file": "README.md",
+      "line": 218
+     }
+    ]
+   }
+  },
+  {
+   "label": "review:r1:bug-hunter",
+   "result": {
+    "lens": "bug-hunter",
+    "verdict": "VERDICT: SHIP - 2 minor findings, both in the provenance documents of the E19 fixture; no wrong result and no broken guarantee found in the code, the tests or the check.\n\nTested and cleared (all runs with CI=true HF_HUB_OFFLINE=1 on the working tree, real OpenVINO models unless stated):\n- Direction, ties, rounding, relevance_rank, top_relevant: a probe recomputed score_grid(statements of b, statements of a) and compared every written field on 8 pairs (1 statement against 1, a document against itself, 368 statements against 2 = 736 pairs which is above the reranker batch of 256, the reversed order 2 against 368, raw text, --min-words 3 with --skip-table-fragments, anisotropy on). Every field equals its definition; the map with the relevance keys removed equals the map of relevance=False; the result is equal; the NLI model stays unloaded\n- --pairs with memos: 5 rows (the same pair twice, two rows that share a document, one reversed pair, one document against itself) with filters and --anisotropy. The two maps of the repeated pair are equal and each batch map equals the map of the single-pair command\n- --relevance without --details-json: exit code 2, empty stdout, message on stderr, in plain, --json, --result-only and --pairs modes\n- Missing reranker (HF cache without the reranker, home initialised for wmd only): exit code 1 and no map file written in plain, --json, --result-only and --pairs modes; the three machine modes print {\"error\": \"models_not_installed\", ...} on stdout; the plain command without --relevance still exits 0\n- reports/E13-campaign/baseline.py verify --grounded --allow moved,n_moved: 55 pairs, 3 grounded, 0 differences\n- Section reading of the shipped field: on the 12 E18 maps a target section holds relevance_rank 1 or 2 in 11 of 12 briefs, the same count as the 0.9167 of the notebook, with the neutral sections included in the shipped rank\n- Quoted numbers 0.5865, 0.6183, 0.8611, 0.4167, 0.9167 and 0.6400 equal the metrics files of E17 and E18\n- 18 relevance unit and CLI tests pass; the real-model end-to-end test passes and is not skipped\n- shipped_relevance.py: the per-brief AUC of the written values differs from the notebook by up to 0.0151 (brief-14, 0.7338 against 0.7489) while the mean differs by 0.0011; this is the rounding reading the locked decisions already record, and the direction of the grid is pinned by the unit test, so it is not reported as a finding\n\nNot tested: the torch backend with the real torch models (covered by the stub test of the header block only); the E19 notebooks and the ledger text of E19 beyond the fixture line.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "Two documents name the wrong notebook as the builder of the EU relevance fixture: they say notebook 12, the builder is notebook 14.",
+      "evidence": "MATERIALITY: a reader who follows the provenance record to rebuild data/processed/relevance-fixture-eu/ opens notebooks/12-kj-structure-distance-e2e.ipynb, which does not build it; no result of the product is affected. Confirmed by reading: data/external/README.md line 14 says 'converted to markdown by notebook 12 into data/processed/relevance-fixture-eu/' and data/external/eu-digital-decade-relevance_origin.md line 3 says '(notebook 12)'; `ls notebooks` shows 12-kj-structure-distance-e2e.ipynb and 14-kj-eu-relevance-fixture.ipynb; the ledger (docs/experiments/wmd-docdistance-experiments.md line 1966) names notebooks/14-kj-eu-relevance-fixture.ipynb as the builder. REMEDY (EDIT): replace 'notebook 12' with 'notebook 14' in both files.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/data/external/README.md",
+      "line": 14
+     },
+     {
+      "severity": "minor",
+      "claim": "The provenance sidecar of the 15 EU PDF files is git-ignored and untracked, so a commit of this change made with a plain `git add` leaves it out, while data/external/README.md says each source has a tracked sidecar and names this file.",
+      "evidence": "MATERIALITY: on a fresh clone the README line 14 points at a file that is absent, and the licence and source record of the E19 fixture exists on this host only; no result of the product is affected. Confirmed by commands: `git check-ignore -v data/external/eu-digital-decade-relevance_origin.md` prints `.gitignore:4:/data/external/*`; `git status --short data/external` lists only README.md and download-fixtures.py (the sidecar is not shown as untracked); `git ls-files data/external` lists the two earlier sidecars ibm-enterprise-ai-adoption_origin.md and impact-of-ai-on-society_origin.md, which were added by force. data/external/README.md line 7 states 'Provenance is tracked - each source has a <name>_origin.md sidecar'. REMEDY (no file edit): the orchestrator stages the sidecar with `git add -f` when the user approves the commit, as was done for the two earlier sidecars.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/data/external/eu-digital-decade-relevance_origin.md",
+      "line": 1
+     }
+    ]
+   }
+  },
+  {
+   "label": "review:r1:data-scientist",
+   "result": {
+    "lens": "data-scientist",
+    "verdict": "VERDICT: SHIP - 5 MINOR findings, 0 MAJOR. Every recorded verdict of E17-H82 to E19-H97 follows from its registered bar and its stored artefact; no bar, label or exclusion moved after scoring.\n\nMateriality bar used (the prompt carries no bar field; taken from the \"Why\" section of /home/lab/workspace/learning/projects/docdistance/reports/E18-relevance/relevance-build-brief.md): purpose = find the parts of a long report that matter for one short brief; input universe = one report against one brief or a few; primary path = `distance-semantic report brief --details-json FILE --relevance`.\n\n## What I recomputed with my own code\nScript: /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/recompute.py (own cost matrix, pairwise Mann-Whitney AUC, Otsu split, bootstrap; no code shared with the notebooks).\n\n| Hypothesis | Ledger | My reading | Verdict holds |\n|---|---|---|---|\n| E18-H87 reranker | 0.6183 → 0.8611, +0.2429, 12 of 12, interval +0.1631 to +0.3346 | identical to 4 decimals | Confirmed, yes |\n| E18-H88 contrast | 0.8158, +0.1975, 10 of 12, interval +0.1018 to +0.2961 | identical | Confirmed, yes (count clause exactly at its bar, as the ledger says) |\n| E18-H91 Otsu on reranker | 0.6400 against fixed 0.5080 | 0.6400 / 0.5080 | Refuted, yes |\n| E19-H93 plain map | 0.6374, range 0.4708 to 0.7614 | identical | Refuted, yes |\n| E19-H94 pre-pass | 0.7250, +0.0876, 13 of 13 | 0.7250, +0.0876, 13 of 13 (same with my own all-but-the-top) | Confirmed, yes |\n| E19-H96 contrast | 0.7345, +0.0971, 12 of 13, loser 779193 -0.1655 | 0.7345, +0.0971, 12 of 13, -0.1654 | Confirmed, yes |\n| E19-H97 Otsu on contrast | 0.6592 against fixed 0.5835 | identical | Refuted, yes |\n\nMy E19 bootstrap intervals differ in the fourth decimal (+0.0611 to +0.1173 against +0.0603 to +0.1170) because I resample the notes in another order; no verdict depends on an interval.\n\n## What is already rigorous\n- The 16 declaration hashes (eight declaration lines per block, E17-H82 to E19-H97) recomputed from the ledger equal the three registration files, and every fixture file on disk equals its registered sha256; fixture file times precede each registration time. The attachment hashes of all notebooks and metrics files equal the files on disk\n- The baseline of each batch is the plain map as shipped: `min_cost` of the map files equals my nearest ground cost within 5e-5 on the 12 E18 pairs and on one E19 pair (anisotropy off, default reader, heading lines included)\n- ACC-MAP-105 holds on the current tree: my own run of `.venv/bin/docdistance distance-semantic --pairs ... --relevance` gives a mean AUC of 0.8601 on the written values, and all 1116 written flow scores equal the column maxima of the stored grids `data/interim/E18/reranker-grids.npz` within 5e-5\n- The documented \"top-2 section share 0.9167\" also holds on the shipped `relevance_rank` field, which ranks every section including the neutral ones (0.9167 on the 12 map files); the stub test pins the query and passage roles; 16 relevance tests pass\n- The caution \"not on one scale across pairs\" is supported: the highest score of a pair runs from 0.0318 (brief-14) to 0.9827 (brief-24). Sign-test p values in the bars are correct (0.0193 and 0.0461)\n\n## Claims not carried by evidence\nListed as findings 1 to 3 below; none changes a verdict or a shipped number.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "README states the fixture as \"12 briefs\" and then quotes readings on a first 12 and a second 12, which is 24 briefs in two sets. material=true but small: a reader of the Evidence bullet cannot tell that 0.8611 was read on a separate second set of 12. FACT. REMEDY (EDIT): write \"two sets of 12 briefs written by the experimenter\".",
+      "evidence": "Read /home/lab/workspace/learning/projects/docdistance/README.md line 215: \"on one report of two articles and 12 briefs written by the experimenter, the nearest ground cost ranks the target sections at a mean AUC of 0.5865 (first 12 briefs) and 0.6183 (second 12)\". The ledger and the registrations hold brief-01 to brief-12 (E17) and brief-13 to brief-24 (E18).",
+      "file": "README.md",
+      "line": 215
+     },
+     {
+      "severity": "minor",
+      "claim": "The \"E18 results\" narrative gives a cause that the measurement does not support: \"the split of the reranker scores reads 0.6400, because the scores are not on one scale across pairs\". The Otsu split of E18-H91 is taken per pair, so a scale that differs across pairs cannot make it fail. The stored arrays show the cause inside one pair: a strong right skew. UNPROVEN mechanism, not a wrong number; the verdict Refuted stands. material=true but small: the sentence would direct the next hypothesis to a calibration across pairs. REMEDY (EDIT, narrative paragraph only, not a Result or Verdict line): attribute the 0.6400 to the skew inside a pair (the split marks 2 to 7 of 93 statements, recall on target statements 0.00 to 0.71) and keep the scale sentence for the fixed rule r >= 0.5 (0.5817). For the orchestrator: the immutable Result line of E18-H91 supports \"not on one scale across pairs\" with pooled medians of target against other statements, which do not measure a scale across pairs; the Otsu thresholds 0.0135 to 0.4834 in the same line do.",
+      "evidence": "Read docs/experiments/wmd-docdistance-experiments.md line 1958 and the E18-H91 block. From data/interim/E18/reranker-grids.npz, per brief 13 to 24: median of r_i 0.00007 to 0.0030, 90th percentile 0.0047 to 0.149, maximum 0.0318 to 0.9827; statements at or above 0.1: 0 to 11 of 93. My Otsu recomputation reads 0.6400.",
+      "file": "docs/experiments/wmd-docdistance-experiments.md",
+      "line": 1958
+     },
+     {
+      "severity": "minor",
+      "claim": "CHANGELOG quotes the headline (mean AUC 0.8611 against 0.6183) with the words \"On 12 briefs not seen when it was chosen\" and no fixture limit (one constructed report on one broad topic, briefs by the experimenter). README carries the limit; criterion ACC-MAP-106 asks for the readings \"with their fixture limits\" in all five documents. material=true but small: a reader of the changelog alone can take the number as a general result. FACT. REMEDY (EDIT): add \"on one constructed report\" to the sentence or point to the README section; this can be done in the same pass that adds the E19 text.",
+      "evidence": "Read CHANGELOG.md lines 23 to 25 (git diff 2ff35bf -- CHANGELOG.md) and the text of ACC-MAP-106 in docs/acc-crit-docdistance.md.",
+      "file": "CHANGELOG.md",
+      "line": 23
+     },
+     {
+      "severity": "minor",
+      "claim": "The evidence stored for ACC-MAP-105 is weaker than the criterion text, although the criterion is met. (a) The check compares two means with a tolerance of 0.005, while the AUC of one brief moves by 0.0151 through the rounding (brief-14: 0.7489 unrounded, 0.7338 written), so the check cannot tell rounding from a scoring drift of that size. (b) logs/E18-shipped-relevance.log was written at 04:50 UTC, before the build run ended (05:37 UTC) and before the orchestrator's later edits of pipeline.py. I closed both gaps by measurement, so no harm exists today: material=false for the product, this concerns the audit record only. REMEDY: run the check again on the final tree and keep that log (no code change). Adding an element-wise comparison against the stored grids would be a NEW MECHANISM that depends on a git-ignored file; DEFER.",
+      "evidence": "My run of `.venv/bin/docdistance distance-semantic --pairs pairs18.tsv --details-json maps18 --relevance` on the current tree: mean AUC of the written values 0.8601, unrounded 0.8611; max |written relevance - column maximum of data/interim/E18/reranker-grids.npz| = 5e-5 over all 12 briefs (1116 flows). File times: logs/E18-shipped-relevance.log 06:50 +0200, reports/E18-relevance/results/stage-b-run-wf_107b2527-8e4.json 07:37 +0200. reports/E18-relevance/checks/shipped_relevance.py lines 35 and 85.",
+      "file": "reports/E18-relevance/checks/shipped_relevance.py",
+      "line": 35
+     },
+     {
+      "severity": "minor",
+      "claim": "The registration hashes of E18 and E19 cover the eight declaration lines of each block and the fixture files, not the Shared Setup paragraph of the batch. The second clause of the bar of E19-H93 (\"the target section is among the 3 best-ranked sections for at least 10 of the 13 notes\") depends on definitions that exist only in that paragraph: which headings count as a section, the minimum of 5 statements, neutral sections left out. Nothing shows that the paragraph changed; the verdict is robust to the alternative the ledger itself reports (5 of 13 as defined, 6 of 13 on whole subtrees, bar 10). material=false for this change. JUDGEMENT on tamper evidence. REMEDY: DEFER; for the next batch, either put the metric definition into the Experiment line of the block or hash the Shared Setup paragraph with the declarations.",
+      "evidence": "Recomputed the 16 declaration hashes from the ledger: all equal reports/E17-relevance-map-registration.json, reports/E18-relevance/E18-relevance-registration.json and reports/E19-relevance/E19-relevance-registration.json; `declaration_hash_definition` in those files names the eight lines only. The section-reading definition is in the \"Metrics\" bullet of the E19 Shared Setup (ledger section starting at line 1960) and in constants MIN_UNIT, UNIT_ROLES, TOP_UNITS of notebooks/experiments/E19-kj-real-document-map.ipynb.",
+      "file": "docs/experiments/wmd-docdistance-experiments.md",
+      "line": 1960
+     }
+    ]
+   }
+  },
+  {
+   "label": "adjudicate:r1",
+   "result": {
+    "changes": [
+     {
+      "root_cause": "README Evidence bullet counts the brief fixture as 12 briefs and then quotes readings on a first 12 and a second 12 (24 briefs, brief-01 to brief-24). Reported by two lenses (architect, data-scientist); one defect. Confirmed at README.md line 215.",
+      "change": "In /home/lab/workspace/learning/projects/docdistance/README.md line 215 replace `on one report of two articles and 12 briefs written by the experimenter` with `on one report of two articles and two sets of 12 briefs written by the experimenter`. No other word of the bullet changes.",
+      "files": [
+       "/home/lab/workspace/learning/projects/docdistance/README.md"
+      ],
+      "could_break": "Nothing executable. A test or check that matches the old README sentence literally would fail; none was found by grep of the phrase in README.md and CHANGELOG.md only, so the applier should grep tests/ for `12 briefs written` before applying."
+     },
+     {
+      "root_cause": "Two provenance documents name notebook 12 as the builder of data/processed/relevance-fixture-eu/. Confirmed: notebooks/12-kj-structure-distance-e2e.ipynb is the structure end-to-end notebook; the builder is notebooks/14-kj-eu-relevance-fixture.ipynb.",
+      "change": "Replace `notebook 12` with `notebook 14` at /home/lab/workspace/learning/projects/docdistance/data/external/README.md line 14 (`converted to markdown by notebook 12 into`) and at /home/lab/workspace/learning/projects/docdistance/data/external/eu-digital-decade-relevance_origin.md line 3 (`(notebook 12)`). Only these two occurrences.",
+      "files": [
+       "/home/lab/workspace/learning/projects/docdistance/data/external/README.md",
+       "/home/lab/workspace/learning/projects/docdistance/data/external/eu-digital-decade-relevance_origin.md"
+      ],
+      "could_break": "Nothing executable. The sidecar is git-ignored (`.gitignore:4:/data/external/*`), so its edit is visible in git only after the forced add listed in for_orchestrator."
+     },
+     {
+      "root_cause": "CHANGELOG.md lines 23 to 25 quote mean AUC 0.8611 against 0.6183 with `On 12 briefs not seen when it was chosen` and no fixture limit. Criterion ACC-MAP-106 names CHANGELOG.md among the five documents that must carry the readings with their fixture limits. Confirmed by reading both.",
+      "change": "In /home/lab/workspace/learning/projects/docdistance/CHANGELOG.md, in the `--relevance` bullet, replace `On 12 briefs not seen when it was chosen it ranks the target sections` with `On one report and 12 briefs written by the experimenter, the briefs not seen when it was chosen, it ranks the target sections`, and re-wrap the bullet to the file's line width. No number changes. The E19 text is not part of this change.",
+      "files": [
+       "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md"
+      ],
+      "could_break": "Nothing executable. The orchestrator's later pass that adds the E19 reading edits the same bullet; apply this one first to avoid a conflicting edit."
+     }
+    ],
+    "declined": [
+     {
+      "finding": "architect: `_add_relevance(details, grid, model, secs)` takes a parameter `secs` that repeats `flow[\"section\"]` of the map (src/docdistance/pipeline.py line 771, caller lines 1296 to 1315)",
+      "reason": "Immaterial, declined as taste. Confirmed that line 673 writes `flow[\"section\"] = secs[i]` and line 697 groups on the same list, so the parameter is redundant, but the reviewer states that no user of the map is harmed. The single caller passes the same list the builder received, so no wrong value is reachable. An edit of pipeline.py also changes a module that the executing notebook E19-kj-real-document-reranker imports from the working tree, for no gain to a user."
+     },
+     {
+      "finding": "data-scientist: add an element-wise comparison against the stored reranker grids to reports/E18-relevance/checks/shipped_relevance.py (line 35, tolerance 0.005 on two means)",
+      "reason": "Deferred, no defect id needed for the product: the reviewer measured the gap closed on the current tree (max difference of written relevance to the grid column maximum 5e-5 over 1116 flows, mean AUC 0.8601 written and 0.8611 unrounded). The comparison would be a new mechanism that depends on the git-ignored data/interim/E18/reranker-grids.npz and answers a minor finding. The re-run of the existing check is passed to the orchestrator. What stays live: the stored check cannot separate rounding from a scoring drift below about 0.005 on the mean."
+     },
+     {
+      "finding": "data-scientist: the registration hashes of E18 and E19 cover the eight declaration lines and the fixture files, not the Shared Setup paragraph that defines the section reading of E19-H93",
+      "reason": "Deferred as the reviewer proposes: material=false for this change, nothing shows the paragraph changed, and the verdict holds under both readings the ledger reports (5 of 13 and 6 of 13 against a bar of 10). A change to the hash definition would alter registration files of recorded batches. Passed to the orchestrator as a practice for the next batch."
+     },
+     {
+      "finding": "data-scientist: the E18 results narrative (ledger line 1958) attributes the 0.6400 Otsu reading to scores not being on one scale across pairs",
+      "reason": "Not planned as a change because the file is the ledger, which only the orchestrator writes. The sentence is confirmed at line 1958, and the Result line 1904 gives per-brief thresholds 0.0135 to 0.4834, which shows the split is taken per brief. Listed in for_orchestrator."
+     },
+     {
+      "finding": "bug-hunter: data/external/eu-digital-decade-relevance_origin.md is git-ignored and untracked while data/external/README.md says each source has a tracked sidecar",
+      "reason": "Confirmed (`git check-ignore` prints `.gitignore:4:/data/external/*`; `git ls-files data/external` lists the two earlier sidecars only). The remedy is a staging action, not a file edit, and staging for a commit belongs to the orchestrator under the user's approval. Listed in for_orchestrator."
+     }
+    ],
+    "for_orchestrator": [
+     "Ledger docs/experiments/wmd-docdistance-experiments.md line 1958 (narrative paragraph of the E18 results, not a Result or Verdict line): the sentence `the split of the reranker scores reads 0.6400, because the scores are not on one scale across pairs` gives a cause the per-brief Otsu split cannot have. Proposed wording: attribute 0.6400 to the right skew of the scores inside one pair (the split marks 2 to 7 of 93 statements, recall on the target statements 0.00 to 0.71) and keep the scale sentence for the fixed rule r_i >= 0.5 (0.5817). I confirmed the sentence and the per-brief thresholds in Result line 1904; I did not recompute the reviewer's percentiles from data/interim/E18/reranker-grids.npz.",
+     "Ledger, immutable Result line of E18-H91 (line 1904): it supports `not on one scale across pairs` with pooled medians of target against other statements (0.0221 and 0.0004), which do not measure a scale across pairs; the Otsu thresholds 0.0135 to 0.4834 in the same line do. The line is immutable; record the reading as a note or a defect entry if you agree.",
+     "When the user approves the commit, stage data/external/eu-digital-decade-relevance_origin.md with `git add -f`, as was done for ibm-enterprise-ai-adoption_origin.md and impact-of-ai-on-society_origin.md. A plain `git add` leaves it out because of `.gitignore:4:/data/external/*`, and data/external/README.md line 14 names the file.",
+     "ACC-MAP-105 evidence: logs/E18-shipped-relevance.log was written at 06:50 +0200, before the build run ended (07:37 +0200) and before later edits of pipeline.py. Run reports/E18-relevance/checks/shipped_relevance.py again on the final tree and keep that log before closing the criterion. The reviewer's own run on the current tree read mean AUC 0.8601 written and 0.8611 unrounded.",
+     "ACC-MAP-106 stays open until the E19 readings with their fixture limits are in the five documents; the CHANGELOG change of this plan adds the E17/E18 fixture limit only.",
+     "Next batch registration practice: put the metric definition (which headings count as a section, the minimum of 5 statements, neutral sections left out) into the Experiment line of the block, or include the Shared Setup paragraph in the declaration hash. No change to the E17 to E19 registration files.",
+     "The redundant `secs` parameter of `_add_relevance` (src/docdistance/pipeline.py line 771) was declined as taste. If you want it removed, do it after notebook E19-kj-real-document-reranker ends, because that notebook imports pipeline.py from the working tree."
+    ],
+    "notes": "RULING: PROCEED WITH DEFERRALS (3 changes, 3 deferred, 2 routed to the orchestrator as ledger or staging actions).\n\nAll 9 findings are minor; 8 distinct causes after merging the two README findings. The three planned changes are single-phrase edits of documents (README.md, CHANGELOG.md, two provenance files) and add no mechanism. No source file, test, notebook or tracker is edited by this plan.\n\nVerification: I read the cited lines of README.md, CHANGELOG.md, data/external/README.md, the sidecar, pipeline.py (grep of `secs`, `_add_relevance`, `_section_rows`), ledger lines 1904 and 1958, and the text of ACC-MAP-106; I ran `git check-ignore` and `git ls-files data/external`. I did not re-run the reviewer's measurements on the E18 grids or the registration hashes; those findings lead to no planned change.\n\nReverts: none. This is round 1 and no applied change exists to revert.\n\nTrajectory: converging. Worst severity is minor, zero findings sit in a fix made by this loop, and the plan edits existing sentences only.\n\nResearch: none approved.\n\nRadius source: grep of the consumers and reading the call sites; no graph instrument was named in the prompt and none was used."
+   }
+  },
+  {
+   "label": "fix:r1",
+   "result": {
+    "applied": [
+     {
+      "change": "README.md line 215: '12 briefs' → 'two sets of 12 briefs'",
+      "done": true,
+      "evidence": "grep of tests/, README.md, CHANGELOG.md for '12 briefs written' found no literal match in tests before the edit; sed applied, line re-read"
+     },
+     {
+      "change": "notebook 12 → notebook 14 in data/external/README.md line 14 and data/external/eu-digital-decade-relevance_origin.md line 3",
+      "done": true,
+      "evidence": "grep shows 'notebook 14' on both lines; sidecar is git-ignored, needs forced add"
+     },
+     {
+      "change": "CHANGELOG.md --relevance bullet: fixture limit sentence replaced and bullet re-wrapped",
+      "done": true,
+      "evidence": "python replace asserted the old text was present; no number changed"
+     }
+    ],
+    "files_changed": [
+     "/home/lab/workspace/learning/projects/docdistance/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/data/external/README.md",
+     "/home/lab/workspace/learning/projects/docdistance/data/external/eu-digital-decade-relevance_origin.md",
+     "/home/lab/workspace/learning/projects/docdistance/CHANGELOG.md"
+    ],
+    "make_test": "588 passed, 1 skipped in 102.04s (0:01:42)",
+    "make_lint": "All checks passed!",
+    "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s)",
+    "for_orchestrator": [
+     "data/external/eu-digital-decade-relevance_origin.md is git-ignored (.gitignore:4 /data/external/*); its edit shows in git only after a forced add (git add -f)",
+     "make format last line: '18 files left unchanged'; uvx ruff@0.16.2 check --target-version py312 last line: 'All checks passed!'",
+     "CHANGELOG --relevance bullet now carries the fixture limit; the E19 text can be added to the same bullet afterwards"
+    ]
+   }
+  },
+  {
+   "label": "review:r2:architect",
+   "result": {
+    "lens": "architect",
+    "verdict": "VERDICT: SHIP - no material finding in round 2; the relevance reading is one opt-in flag, one post-builder function and one load split, and I recommend no change, so the system size is unchanged.\n\nChecked and passing:\n- Size: `_add_relevance` (src/docdistance/pipeline.py:771-812) has one caller (line 1315) and is a function only because the builder must stay untouched under the additive policy. `_ensure_reranker` (1065-1081) has two callers (1084, 1286). I found no dead branch, no speculative parameter beyond the `secs` duplication declined in round 1, and no second code path for the same job.\n- Load split: `_ensure_grounding` (1083-1086) now loads the NLI model on its own `None` check. The source-conditioned path still loads encoder, segmenter, reranker and NLI in the same order. The `except ModelsNotInstalled` rewrite cannot hide the missing-dependency hint of `_require_models_extra`, because `_ensure_base` loads the encoder through the same check first.\n- Field names: `min_cost` / `best_target_index` on a flow mirror `min_incoming_cost` / `best_source_index` on a target. `top_relevant` takes its length from `top_changed` (line 801), so `_TOP_CHANGED_N` stays the single constant.\n- One contract: the Python signature, the CLI option (src/docdistance/cli.py:418-424, 440-442, 465, 479), README.md 204-217, docs/cli-reference.md 46/57/58, docs/api-reference.md 21 and 277-284, SKILL.md 57-58/91, CHANGELOG Unreleased and criteria ACC-MAP-101/102/103/105 and ACC-CLI-104 name the same keys, the same order of documents, the same exit codes (2 for the usage error, 1 with `models_not_installed` through `_run`) and the same rounding rule. `changed_cost=0.3253` in the API table equals `DIFF_CHANGED_COST`.\n- Numbers: 0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 → 0.9167 and 0.6400 against 0.70 match the build brief. logs/E18-shipped-relevance.log reads 0.8601 against 0.8611, difference -0.0011, inside the 0.005 tolerance. No document calls the score a distance, a lower bound or a probability, and none states a match rule.\n- Additive policy: without the flag the only new writes are `flow[\"min_cost\"]`, `flow[\"best_target_index\"]` and their two `definitions` entries (pipeline.py:671-672, 735-740).\n\nHow I confirmed it: read `git diff 2ff35bf` for pipeline.py, cli.py and the five documents plus the tracker; read `_run`, `_run_batch`, `_check_pair_args`, `load_reranker`, `OpenVINOReranker.__init__`, `_resolve_ov_dir` and `MODEL_REGISTRY`; grepped the repository for `min_incoming_cost|top_changed|relevance|min_cost` to find field listings the change could have missed (none stale); ran `pytest tests/test_pipeline.py tests/test_cli.py -k \"relevance or min_cost or reranker\"` → 16 passed. I did not run the real-model end-to-end test or `baseline.py verify`, because the host is running the E19 notebook.",
+    "findings": []
+   }
+  },
+  {
+   "label": "review:r2:data-scientist",
+   "result": {
+    "lens": "data-scientist",
+    "verdict": "VERDICT: SHIP - every recomputed headline of E18-H87, E18-H88, E19-H94 and E19-H96 equals the ledger to 4 decimals, the registration hashes equal the fixtures and the declaration lines, and no sentence of the five documents claims more than E17 and E18 measured; one minor note on the age of the stored check log.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "MATERIALITY: none - no reader of the map or of the documents is harmed (material=false). FACT: the stored evidence of criterion ACC-MAP-105, logs/E18-shipped-relevance.log, was written at 06:50:37 local time, and src/docdistance/pipeline.py was last edited at 07:37:25 (the minor findings of the build review: docstring and the `definitions` entry of `min_cost`). The log therefore records a tree older than the one under review. I re-ran the check on the current tree and it prints the same 12 per-brief values, shipped mean AUC 0.8601 against 0.8611, difference -0.0011, exit code 0, so the criterion is supported as built. REMEDY (EDIT, no new mechanism): the orchestrator re-runs the documented command with `tee` so the stored log is of the tree that gets committed; or DEFER, because the numbers are equal.",
+      "evidence": "`ls -la --time-style=full-iso` on logs/E18-shipped-relevance.log (06:50:37) and src/docdistance/pipeline.py (07:37:25). `CI=true HF_HUB_OFFLINE=1 .venv/bin/python reports/E18-relevance/checks/shipped_relevance.py` without tee on the current tree: brief-13 0.9145, brief-14 0.7338, brief-19 0.5476, brief-24 0.8800, mean 0.8601, notebook 0.8611, difference -0.0011, exit 0 - equal to the stored log line by line. Separate probe: `semantic_distance_with_details(report, brief-16, relevance=True)` on the current tree gives flow `relevance` within 4.97e-05 of the column maximum of the stored grid data/interim/E18/reranker-grids.npz, and the NLI model stays unloaded.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/logs/E18-shipped-relevance.log",
+      "line": 1
+     },
+     {
+      "severity": "minor",
+      "claim": "NOT A DEFECT - record of what was checked and held, so the orchestrator can rely on it (material=false, no remedy). (1) Recomputed with my own code (pairwise Mann-Whitney AUC with ties one half, percentile bootstrap over briefs with 10000 resamples seed 0, exact Otsu split over midpoints): E18-H87 baseline 0.6183, reranker 0.8611, difference +0.2429, interval +0.1631 to +0.3346, 12 of 12 above 0, brief 19 at 0.5455, top-2 section share 0.4167 to 0.9167; E18-H88 contrast 0.8158, +0.1975, interval +0.1018 to +0.2961, 10 of 12 (brief 13 -0.0230, brief 23 -0.0851); E18-H91 Otsu balanced accuracy 0.6400, range 0.4870 to 0.8571; E19-H93 baseline 0.6374 (below the bar 0.80, so Refuted on the first clause alone); E19-H94 pre-pass 0.7250, +0.0876, interval +0.0603 to +0.1170, 13 of 13, minimum +0.0011, maximum +0.1928; E19-H96 contrast 0.7345, +0.0971, interval +0.0427 to +0.1405, 12 of 13, minimum -0.1655; E19-H97 Otsu 0.6592 against the fixed cutoff 0.5835. Each verdict follows from its registered bar. (2) Registration: all 16 + 16 + 18 fixture files equal their registered sha256; the declaration hash of all 16 blocks E17-H82 to E19-H97 equals the eight declaration lines now in the ledger, so no bar, lever or experiment line changed after registration; the newest fixture file of each batch is older than its registration (02:59:38 against 03:01:34 UTC, 03:21:15 against 03:23:38, 04:07:50 against 04:37:04) and the stored score arrays are younger. The readings outside the registered text (heading lines left out, whole-subtree section count) are labelled as such in the Result lines and do not carry a verdict. (3) Baseline: the nearest cost of the notebooks equals the shipped `min_cost` of the map within the 4-decimal rounding (largest difference 4.99e-05 on E18 brief-13 and on the 883-statement E19 report), and data/interim/E19/baseline-costs.npz equals my recomputation exactly. (4) Documents: README.md lines 213 to 216, CHANGELOG.md Unreleased, docs/cli-reference.md, docs/api-reference.md and the skill quote 0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 to 0.9167 and 0.6400 against 0.70, each equal to the ledger and to my recomputation; each names one report and one author of the briefs, denies a probability reading, a cross-pair scale and a match rule, and none recommends the pre-pass or the contrast.",
+      "evidence": "Script /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/recompute.py run with `CI=true HF_HUB_OFFLINE=1 .venv/bin/python`; it reads the fixtures, the three registration files, the ledger blocks, data/interim/E18/reranker-grids.npz and data/interim/E19/baseline-costs.npz, encodes with the shipped encoder, and shares no code with the notebooks. `git diff 2ff35bf` of the five documents read in full. `git status --short` after the run shows no file changed by this review.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/docs/experiments/wmd-docdistance-experiments.md",
+      "line": 1787
+     }
+    ]
+   }
+  },
+  {
+   "label": "review:r2:bug-hunter",
+   "result": {
+    "lens": "bug-hunter",
+    "verdict": "VERDICT: SHIP - 0 blocking, 0 major, 1 minor (the ACC-MAP-105 check also passes on a map scored in the reversed direction; the shipped direction is correct and is pinned by a unit test). Tested and cleared on the current tree with the real OpenVINO models, scratch under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/: (1) direction, maxima, argmax, section means, relevance_rank and top_relevant of 5 written maps (11x2, 5x2 after --min-words 3 --skip-table-fragments, 1x1, 11x11 identical documents, 2x11) equal an independent score_grid(b, a) call, max difference 4.9e-5 = rounding; the reversed grid differs by 0.588 on the same map; (2) map with --relevance minus the six added keys equals the plain map, single pair and all 4 rows of --pairs; plain map holds no relevance key; (3) --json and --result-only write the same map as plain mode; --anisotropy changes smd and leaves every relevance field, rank and top_relevant equal; (4) --pairs: the same pair twice gives identical maps, a row sharing the report gives the single-pair map, a row with the documents swapped is scored in its own direction; (5) statement count above the reranker batch of 256: 93x10 = 930 pairs in brief-23 of E18, check passes; (6) --relevance without --details-json exits 2 with empty stdout in plain, --json and --pairs; (7) missing reranker (load_reranker replaced): exit 1, no map file written, message names the reranker and `docdistance init wmd-wrt-source`, stdout carries models_not_installed in --json, --result-only and --pairs; (8) torch backend: runs, header names BAAI/bge-reranker-v2-m3; (9) `baseline.py verify --grounded --allow moved,n_moved`: 55 pairs, 3 grounded, 0 differences; (10) tests/test_pipeline.py + tests/test_cli.py: 253 passed; (11) reports/E18-relevance/checks/shipped_relevance.py re-run after the 07:37 edit of pipeline.py: 0.8601 against 0.8611, exit 0, same per-brief values as logs/E18-shipped-relevance.log; the check fails as it should on rotated labels (0.4600), inverted scores (0.1399), min_cost in place of relevance (0.6181) and a mean aggregation (0.8721); (12) README numbers 0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 and 0.9167 equal the metrics files, and the shipped relevance_rank reproduces the 0.9167 top-2 reading (11 of 12 briefs) with the neutral sections left in.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "reports/E18-relevance/checks/shipped_relevance.py passes on a map scored in the reversed direction (statements of the report as queries, statements of the brief as passages), so the check of ACC-MAP-105 does not show that the shipped command uses the registered direction of E18-H87. MATERIALITY: nobody is harmed on the current tree (material=false) - the shipped direction is correct and tests/test_pipeline.py `test_relevance_fields_equal_their_definitions` pins it by asserting the argument order the reranker receives. The harm is limited to a reader of the criterion who takes the passing check as evidence of the direction. REMEDY: DEFER; when ACC-MAP-105 is closed, the orchestrator names the unit test, not the check, as the evidence of the direction. No code change. Adding a direction comparison to the check would be a NEW MECHANISM (round 1 already declined the element-wise comparison against the stored grids), and this finding does not ask for it.",
+      "evidence": "Probe /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/wrong.py: wrote the 12 E18 maps with the shipped command, then recomputed each brief's AUC with the check's own `brief_auc` on substituted scores rounded to 4 decimals. Mean AUC: shipped 0.8601 (difference -0.0010, pass); reversed direction `score_grid(sa, sb).T.max(0)` 0.8616 (difference +0.0005, pass); mean aggregation 0.8721 (fail); rotated labels 0.4600 (fail); 1 - relevance 0.1399 (fail); -min_cost 0.6181 (fail). On a small pair the two directions give different values (max difference 0.588 on an 11x2 map), so the reversed map is a different map that the check accepts. Line 35 is `TOLERANCE = 0.005`; the comparison is on the mean over 12 briefs only (line 88).",
+      "file": "/home/lab/workspace/learning/projects/docdistance/reports/E18-relevance/checks/shipped_relevance.py",
+      "line": 35
+     }
+    ]
+   }
+  },
+  {
+   "label": "adjudicate:r2",
+   "result": {
+    "changes": [],
+    "declined": [
+     {
+      "finding": "bug-hunter, minor: reports/E18-relevance/checks/shipped_relevance.py (TOLERANCE = 0.005, line 35) passes on a map scored in the reversed direction, so the check of ACC-MAP-105 does not show the registered direction of E18-H87.",
+      "reason": "Immaterial, as the reviewer states (material=false). I confirmed the mechanism: the check compares only the mean AUC over 12 briefs against the notebook value with tolerance 0.005 (lines 35, 76 to 85). I did not re-run the reviewer's reversed-direction probe. The shipped direction is pinned elsewhere: tests/test_pipeline.py `test_relevance_fields_equal_their_definitions` asserts the argument order the reranker receives (line 1718 comment `the statements of B are the queries, those of A the passages`, assertion on `reranker.asked` at line 1719). No user of the map is harmed. A direction comparison inside the check would be a new mechanism answering a minor finding, and round 1 already declined the element-wise comparison against the stored grids. No code change; the wording of the criterion's evidence goes to the orchestrator."
+     },
+     {
+      "finding": "data-scientist, minor: logs/E18-shipped-relevance.log (06:50:37) is older than the last edit of src/docdistance/pipeline.py (07:37:25), so the stored evidence of ACC-MAP-105 records an older tree.",
+      "reason": "Immaterial, as the reviewer states (material=false). I confirmed both timestamps with `ls --time-style=full-iso` and confirmed the stored log ends with shipped mean AUC 0.8601, notebook 0.8611, difference -0.0011. I did not re-run the check; the reviewer reports the re-run on the current tree prints the same values line by line with exit code 0. No file edit is planned: refreshing the log is a command run by the orchestrator, listed in for_orchestrator as optional."
+     },
+     {
+      "finding": "data-scientist, minor: record of what was recomputed and held (verdicts of E18-H87, H88, H91, E19-H93, H94, H96, H97; registration hashes and file times; baseline `min_cost` agreement; the numbers quoted in the five documents).",
+      "reason": "Not a defect by the reviewer's own statement (material=false, no remedy requested). Nothing to change. I did not re-verify the recomputation, because no ruling depends on it."
+     }
+    ],
+    "for_orchestrator": [
+     "ACC-MAP-105 (docs/acc-crit-docdistance.md): when the criterion is closed, name the unit test tests/test_pipeline.py `test_relevance_fields_equal_their_definitions` as the evidence of the scoring direction (statements of the second document as queries). The check reports/E18-relevance/checks/shipped_relevance.py supports only the mean AUC reading; a reviewer reports it also passes on a reversed-direction map (mean AUC 0.8616 against 0.8611, inside the tolerance 0.005).",
+     "Optional: re-run `CI=true HF_HUB_OFFLINE=1 .venv/bin/python reports/E18-relevance/checks/shipped_relevance.py | tee logs/E18-shipped-relevance.log` so the stored log is of the tree that gets committed. The stored log (06:50:37) predates the last edit of src/docdistance/pipeline.py (07:37:25). The reviewer's re-run on the current tree gave the same 12 values, mean 0.8601, difference -0.0011, exit code 0, so skipping this leaves the criterion supported. The run loads the reranker; schedule it with regard to the executing E19 notebook."
+    ],
+    "notes": "RULING: PROCEED (0 changes) - round 2 is clean. All three findings are minor and declared material=false by their reviewers; none harms a user of the map or a reader of the documents, so none earns a change. No revert: no finding sits in a round 1 change (the three round 1 edits were document wording in README.md, CHANGELOG.md and data/external/). Trajectory: converging - round 1 produced three document edits, round 2 produces zero changes, the worst severity fell to minor with no material finding, and 0 of 3 findings trace to round 1 fixes. Research: none approved. Verification done: timestamps of the log and of pipeline.py, the tolerance and comparison lines of the check, the direction assertion in the unit test, and the last lines of the stored log. I ran no check script and no notebook, and wrote no file."
+   }
+  },
+  {
+   "label": "review:r3:architect",
+   "result": {
+    "lens": "architect",
+    "verdict": "VERDICT: SHIP - no blocking or major finding; one minor, immaterial finding on the missing-reranker hint under the torch backend. My recommendation leaves the system unchanged in size. The relevance reading is one opt-in flag, one post-builder function (`_add_relevance`, pipeline.py 771 to 811) and one loader split (`_ensure_reranker`, 1065 to 1081); every added field traces to entry R1 or R2 of the build brief. Constructs I tested with \"what breaks if this is deleted\": target-side `relevance` / `relevance_source_index` (R2 requires them), the `relevance` header block (R2), the `ModelsNotInstalled` re-raise (R3, locked), the `if self._nli is None` guard (required once the reranker can be loaded alone: without it a `relevance=True` call followed by a source-conditioned call would leave the NLI model unloaded), the exit-2 guard in cli.py 440 to 442 (R4, same form as cli.py 196 to 200). No zero-caller symbol, no second code path: `_ensure_reranker` has two callers (pipeline.py 1084, 1286), `_ensure_grounding` two (1391, 1429), `score_grid` is the same call the source-conditioned path uses (1198). Field names follow the existing pairs: `min_cost` / `best_target_index` mirror `min_incoming_cost` / `best_source_index` (688 to 689), `mean_relevance` mirrors `mean_cost`, `top_relevant` reuses the length of `top_changed`. The Python signature, the CLI option, README 204 to 216, docs/cli-reference.md 46 and 57 to 58, docs/api-reference.md 21 and 277 to 284, SKILL.md 57 to 58 and 91, CHANGELOG Unreleased and criteria ACC-MAP-101 to 103, 105, ACC-CLI-104 describe one contract; the quoted numbers (0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 to 0.9167, 0.6400 against 0.70) equal the build brief. `score_grid(sb, sa)` gives `R[j, i]` with b as first argument (encoders.py 566 to 571), as the documents state. I ran `pytest tests/test_pipeline.py tests/test_cli.py -k \"relevance or min_cost or grounding or reranker\"`: 23 passed. I did not re-run `baseline.py verify` or the real-model end-to-end test.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "MATERIALITY: none shown inside the bar (material=false) - the same gap exists in the generic hint of release 1.1.32 and the wording of this message is a locked decision. The missing-reranker message names `docdistance init wmd-wrt-source` for every backend, while `init` takes `--backend` with default openvino. Under `--gpu` or `backend=\"torch\"` a missing torch reranker (`BAAI/bge-reranker-v2-m3`) produces a hint whose command, as written, provisions the openvino weights. Remedy: DEFER; no edit proposed, because a backend-specific message would add a branch for a case the earlier hint `docdistance init` also did not cover.",
+      "evidence": "Read src/docdistance/pipeline.py lines 1073 to 1081 (the re-raise carries one fixed string for both backends), src/docdistance/cli.py lines 798 to 806 (`init` has `--backend`, default `Backend.openvino`), src/docdistance/encoders.py lines 46 and 632 to 635 (the torch reranker raises the generic hint `docdistance init`, which the new method replaces). Not reproduced by execution: it needs a cache without the torch reranker and no network request is allowed in this run.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py",
+      "line": 1080
+     }
+    ]
+   }
+  },
+  {
+   "label": "review:r3:data-scientist",
+   "result": {
+    "lens": "data-scientist",
+    "verdict": "VERDICT: SHIP - every recorded verdict of E17-H82 to E19-H97 follows from its registered bar and stored artefact under independent recomputation; one minor finding, no material defect.\n\nWhat I recomputed with my own code (pairwise-count AUC, my own Otsu split, bootstrap with another seed), in /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/r3.py and r3b.py:\n- E18-H87: baseline 0.6183, reranker 0.8611, difference +0.2429, 12 of 12 above 0, smallest gains 0.0697 / 0.0866 / 0.0867 / 0.0952, interval +0.1618 to +0.3327 (ledger +0.1631 to +0.3346) - Confirmed holds\n- E18-H88: 0.8158, +0.1975, 10 of 12 above 0 (brief 13 -0.0230, brief 23 -0.0851, brief 24 +0.0167) - Confirmed holds, and the ledger says the count clause is met exactly at its bar\n- E18-H90 0.7243 and E18-H91 0.6400 (fixed cutoff 0.5080, thresholds 0.0135 to 0.4834, 2 to 7 statements marked) - both verdicts hold\n- E19-H93: 0.6374, per note 0.4708 to 0.7614 - Refuted holds; the stored baseline costs equal a fresh embedding exactly (largest difference 0.0)\n- E19-H94: 0.7250, +0.0876, 13 of 13, gains 0.0011 to 0.1928 - Confirmed holds\n- E19-H96: 0.7345, +0.0971, 12 of 13, note 779193 at -0.1655 - Confirmed holds; paired difference to E19-H94 +0.0095 with interval -0.0289 to +0.0426, which matches the ledger sentence that it reads no higher than the pre-pass\n- E19-H97: 0.6592 against fixed 0.5835, 40.26% of statements marked - Refuted holds\n- The decisions blocks of the three metrics files give the same verdicts as the ledger for E17-H82 to H86, E18-H88, H89, H90, H92 and the four recorded E19 blocks\n\nSelection after scoring: none found. All 50 registered fixture hashes equal the files on disk (16 + 16 + 18). File times precede the registrations (E18 fixture 05:21:15, registration 05:23:38, first reranker grid 06:04; E19 labels 06:07:09, registration 06:37:04, first scoring after it). notebooks/14-kj-eu-relevance-fixture.ipynb loads the segmenter only and embeds nothing, so the E19 labels were not built from a model score. The ledger attachment hashes equal the current notebooks and metrics files.\n\nBaseline as shipped: `min_cost` of the shipped map equals `min_j c_ij` to within the 4-decimal rounding (largest difference 5e-5 on the 93 flows of brief 13), and the shipped `anisotropy=True` map equals the notebook pre-pass of E19-H94 to the same tolerance (note 751386, 883 flows).\n\nACC-MAP-105: the mean AUC of the stored grid maxima rounded to 4 decimals is exactly 0.8601, so the 0.0011 gap to 0.8611 is rounding and not a scoring drift. The top-2 section share of 0.9167 quoted in README.md also holds when the sections are ranked as the shipped `relevance_rank` ranks them (all 18 sections, neutral ones included).\n\nDocument claims: README.md, docs/cli-reference.md, docs/api-reference.md, the skill and CHANGELOG.md each state one report and one author of the briefs, deny a probability reading, deny one scale across pairs and deny a match rule. I found no sentence that claims more than E17 and E18 measured. `top_relevant` has a fixed length (`_TOP_CHANGED_N = 10`, pipeline.py line 115), so the api-reference sentence that the fields do not depend on `changed_cost` is true.",
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "README.md gives the cost of `--relevance` as a pair count only; the measured time on a real long report is 10 to 22 minutes per pair of documents, and no shipped document states a time. material=false for this change: no sentence is false, and the E19 text is deferred until E19-H95 has a verdict. Remedy: when the E19 text is added, EDIT the Cost bullet to give the measured time per pair of statements on the real report. Nothing else changes.",
+      "evidence": "I read the `seconds__` entries of data/interim/E19/reranker-grids.npz (read only): six notes finished so far, 568 s to 1307 s per note for 23 to 51 note statements against 883 report statements, 25.0 to 41.1 ms per pair of statements (the CPU was shared with my probes). The ledger's E18 figure is a median of 13.5 s per brief on the 93-statement report (docs/experiments/wmd-docdistance-experiments.md line 1801). `grep -n '13.5|seconds|minutes'` on README.md, docs/cli-reference.md and docs/api-reference.md returns no line about the reranker; the README Cost bullet reads `one reranker pass per pair of statements, len(report) * len(brief) pairs`.",
+      "file": "/home/lab/workspace/learning/projects/docdistance/README.md",
+      "line": 213
+     }
+    ]
+   }
+  },
+  {
+   "label": "review:r3:bug-hunter",
+   "result": {
+    "lens": "bug-hunter",
+    "verdict": "VERDICT: SHIP - no material finding in round 3; every focus item was run against the live tree and behaved as the contract (reports/E18-relevance/relevance-build-brief.md) states.\n\nTested and cleared (scratch files under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/relevance-review/):\n- Direction of the grid: on report.md against e18/briefs/brief-13.md (93 x 5 statements) a single call score_grid([b_j],[a_i]) equals the map grid within 1.1e-07 on 12 sampled pairs; the reversed call differs by up to 0.042. The statements of the second document are the queries.\n- Field definitions with the real OpenVINO reranker (probe_api.py): flow and target relevance, both argmax indices, section order, mean_relevance, relevance_rank and top_relevant equal an independent recomputation from the grid in 8 cases: report against brief (465 pairs, above the batch size of 256), --anisotropy, min_words=8 with skip_table_fragments (16 statements dropped, 385 pairs), one statement against one statement, a document against itself, two equal raw texts, brief first and report second, and a repeated call. In each case the result and every key of the plain map are equal to the call without relevance. A document whose statements are all dropped raises the existing ValueError.\n- CLI (.venv/bin/docdistance): a --pairs batch of 5 rows (two rows sharing the report, the same pair twice, a reversed pair) writes maps equal to the maps of the single-pair runs; rows p1 and p3 are equal; the JSONL stdout is byte-equal with and without --relevance; --json stdout and the --result-only scalar are equal with and without the flag; the relevance fields are equal with --anisotropy. --relevance without --details-json exits 2 with empty stdout in plain, --json and --pairs mode.\n- Missing reranker (load_reranker patched to raise ModelsNotInstalled, CliRunner): exit code 1 in plain, --json, --result-only and --pairs mode; the three machine modes print one models_not_installed JSON object on stdout; no map file is written.\n- Torch backend: --backend torch runs with exit code 0, the header names BAAI/bge-reranker-v2-m3. Its scores differ from the INT8 OpenVINO scores by up to 0.078 and the section ranks differ; the AUC of brief-13 is 0.9046 (torch) against 0.9145 (OpenVINO). This is one sample of a quantisation difference of a heuristic component, not a defect of this change.\n- Load split: `CI=true HF_HUB_OFFLINE=1 .venv/bin/python reports/E13-campaign/baseline.py verify --grounded --allow moved,n_moved` prints `verify: 55 pairs, 3 grounded, 0 difference(s)`.\n- Tests that cannot fail: 8 mutants of a scratch copy of src/docdistance (last-index argmax on flows, last-index argmax on targets, rank on rounded means, top_relevant on rounded scores, transposed grid direction, the relevance argument removed from the --pairs call, reversed tie order of sections, section mean of rounded values) each fail at least one test of `pytest -k relevance`. The 18 selected tests pass on the working tree, and the real-model end-to-end test test_relevance_of_the_real_reranker_ranks_the_answering_statement_first passes without a skip.\n- Documents: the option row and field list of docs/cli-reference.md (lines 46, 58), docs/api-reference.md (lines 277 to 284), README.md (lines 206 to 215) and SKILL.md line 58 agree with the behaviour observed above (exit codes, tie rule, document order, header block).\n\nNot re-run: reports/E18-relevance/checks/shipped_relevance.py (rounds 1 and 2 cover its tolerance and its direction blindness; no new evidence). Not verified: interrupting a --pairs batch between rows.",
+    "findings": []
+   }
+  },
+  {
+   "label": "adjudicate:r3",
+   "result": {
+    "changes": [],
+    "declined": [
+     {
+      "finding": "architect, minor: the missing-reranker message at /home/lab/workspace/learning/projects/docdistance/src/docdistance/pipeline.py lines 1079 to 1081 names `docdistance init wmd-wrt-source` for both backends, while `init` takes `--backend` with default openvino, so under the torch backend the command as written fetches the openvino weights.",
+      "reason": "Confirmed by reading and declined as immaterial, with the defect deferred. The re-raise in pipeline.py carries one fixed string, and `init` in /home/lab/workspace/learning/projects/docdistance/src/docdistance/cli.py lines 797 to 806 defaults `--backend` to `Backend.openvino`. The reviewer marks it material=false and proposes no edit. The wording of this message is a locked decision (entry R3 of the build brief). A backend-specific message would add a new branch for a minor finding, and the generic hint `docdistance init` of release 1.1.32 had the same gap, so this is not a regression against commit 2ff35bf. What stays live: a user on the torch backend with no torch reranker in the cache gets a hint that omits `--backend torch`. I did not reproduce this by execution, because it needs a cache without the torch reranker."
+     },
+     {
+      "finding": "data-scientist, minor: the Cost bullet of /home/lab/workspace/learning/projects/docdistance/README.md (line 213) gives the cost of `--relevance` as a pair count only; no shipped document states a measured time, and the partial E19 timings read 10 to 22 minutes per pair of documents on a real long report.",
+      "reason": "Confirmed by reading and declined for this round. The bullet reads `one reranker pass per pair of statements, len(report) * len(brief) pairs`, which is a true sentence. The reviewer marks it material=false. The timings come from the E19 reranker notebook that is still executing, on a CPU the reviewer says was shared with its probes, so they are not a final measurement. The E19 text is deferred until E19-H95 has a verdict. What stays live: a reader of the README cannot estimate the run time of `--relevance` on a long report from the pair count alone. I did not read data/interim/E19/ to check the reviewer's timings."
+     }
+    ],
+    "for_orchestrator": [
+     "When the E19 text is added to README.md after E19-H95 has a verdict, consider extending the Cost bullet (line 213) with the measured time per pair of statements on the real report, taken from the finished run of notebooks/experiments/E19-kj-real-document-reranker.ipynb and not from the partial timings quoted in this round (25.0 to 41.1 ms per pair of statements on a shared CPU). This is a suggestion, not a planned change.",
+     "Optional entry for docs/defects-docdistance.md (minor, deferred): the missing-reranker message of the source-conditioned and relevance paths names `docdistance init wmd-wrt-source` without `--backend torch`, so under `--gpu` or `backend=\"torch\"` the command as written fetches the openvino weights. The generic hint of release 1.1.32 had the same gap. The wording is locked by entry R3 of the build brief, so a change needs the user's decision."
+    ],
+    "notes": "RULING: PROCEED WITH DEFERRALS (0 changes, 2 deferred). The empty change plan rules round 3 clean.\n\nBoth findings are minor, both are marked material=false by their own reviewers, and neither proposes an edit for this round. I read the cited lines of pipeline.py, cli.py and README.md and both descriptions match the files. I ran no code and did not read data/interim/E19/.\n\nReverts: none. Neither finding sits in a change applied in round 1; the README finding is on line 213 and the round 1 edit was on line 215.\n\nTrajectory: converging. Round 1 applied 3 document edits, round 2 applied none, round 3 applies none. The worst severity this round is minor, and 0 of 2 findings trace to an earlier round's change. Rounds 2 and 3 are two consecutive rounds with no change, which meets the workspace rule for ending the review loop.\n\nResearch: none requested, none approved."
+   }
+  }
+ ]
+}

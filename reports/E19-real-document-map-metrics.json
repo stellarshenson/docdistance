@@ -1,0 +1,993 @@
+{
+ "batch": "E19",
+ "notebook": "B",
+ "written_utc": "2026-10-12T05:24:09+00:00",
+ "environment": {
+  "docdistance": "1.1.32",
+  "python": "3.14.8",
+  "numpy": "2.4.6",
+  "POT": "0.9.6.post1",
+  "encoder_backend": "openvino",
+  "reader": "default (auto by extension)",
+  "DIFF_CHANGED_COST": 0.3252691193458119
+ },
+ "fixture_sha256": {
+  "data/processed/relevance-fixture-eu/README.md": "ac270f83f37c5460331321aa65e2d80caef0a785ff132604b6855e8f01eb76f9",
+  "data/processed/relevance-fixture-eu/briefs/739206-european-year-of-skills.md": "6c4611cfb08e2a0e76195628028bf215e4518b5574fdf9919895dbafe40b26e3",
+  "data/processed/relevance-fixture-eu/briefs/739350-online-age-verification.md": "481eddfbee23ce058733ebe529fe6e113538c244a58fb1efa7526d7d82eb8f72",
+  "data/processed/relevance-fixture-eu/briefs/747926-ai-act-parliament-position.md": "1a89832e77dcbc98c3a730b53ca9eeb7a90f64b5469abe98c7c34dc2fc229fd4",
+  "data/processed/relevance-fixture-eu/briefs/751386-eu-chips-act.md": "ab468bdd648e23acaac7f88d6216934accce5a51141df0dcfafacb3da1305438",
+  "data/processed/relevance-fixture-eu/briefs/754642-european-health-data-space.md": "42558c593250d68350edc8dc82628e9528b849872ef75568f92a184d4f918098",
+  "data/processed/relevance-fixture-eu/briefs/759583-strategic-technologies-platform.md": "5ef348d686234c8df0f47b14f4b4b3c930ed9221274b51fe4540a03366522b7f",
+  "data/processed/relevance-fixture-eu/briefs/759620-european-media-freedom-act.md": "510a1745a7f779a33f5af5ad265760d7964f1123b352573f5bf1d3232b81851f",
+  "data/processed/relevance-fixture-eu/briefs/760355-foreign-interference-preparedness.md": "7157ae047d93a5962044beeb7e6f35d056697d08cfa24325eef64eba9feae37d",
+  "data/processed/relevance-fixture-eu/briefs/760391-gdpr-cross-border-procedural-rules.md": "bb0ff0e6dd8de0da190a1780d28f81791540eed0081227596ac8f53f26f5070d",
+  "data/processed/relevance-fixture-eu/briefs/760392-ai-investment-indicators.md": "8a170ce2153fd966307f1aa3cc73f461ff6952d0c72b80243237414e6fa74a3d",
+  "data/processed/relevance-fixture-eu/briefs/760421-gigabit-infrastructure-act.md": "ae5ae520f4b1767a10697690e9295b165c102a78c65f46305a686b69b0c91b73",
+  "data/processed/relevance-fixture-eu/briefs/772906-ai-act-implementation-timeline.md": "b80090b488584f1257557ff491c7513b0f6ef7ff51b801af3b1abf7ca8e0a6aa",
+  "data/processed/relevance-fixture-eu/briefs/779193-simplifying-digital-laws.md": "fc6b8c7b0b7217f49d97e234cb1ad8991d4fa276d675d6fdb3d048e940605258",
+  "data/processed/relevance-fixture-eu/briefs/779252-cybersecurity-act-review.md": "e9c03abcbd609d84bb84c620fed3f52014c18a40af2f9baec29b49e8a072d7f3",
+  "data/processed/relevance-fixture-eu/labels.json": "918e6ae821a4ce3f382aa8c69107114f64aa50983c1fd09072bce77bad3b91c1",
+  "data/processed/relevance-fixture-eu/report.md": "fec9f431f28a4ad395b960987385091cf6745d100d839514230d8f3ef4294ffb",
+  "data/processed/relevance-fixture-eu/sections.json": "843523974a989534a618ae9aeb05a4531afb596056bb89923b19ea8bbff781f7"
+ },
+ "fixture_sha256_equals_registration": true,
+ "label_assertion_passed": true,
+ "statement_counts": {
+  "report": 883,
+  "notes": {
+   "739206-european-year-of-skills": 51,
+   "739350-online-age-verification": 49,
+   "747926-ai-act-parliament-position": 32,
+   "751386-eu-chips-act": 23,
+   "754642-european-health-data-space": 29,
+   "759583-strategic-technologies-platform": 26,
+   "759620-european-media-freedom-act": 29,
+   "760355-foreign-interference-preparedness": 52,
+   "760391-gdpr-cross-border-procedural-rules": 22,
+   "760392-ai-investment-indicators": 32,
+   "760421-gigabit-infrastructure-act": 25,
+   "772906-ai-act-implementation-timeline": 26,
+   "779193-simplifying-digital-laws": 56,
+   "779252-cybersecurity-act-review": 51
+  },
+  "units_total": 49,
+  "units_with_statements": 49,
+  "units_ranked": 41
+ },
+ "label_counts": {
+  "739206-european-year-of-skills": {
+   "positives": 67,
+   "negatives": 748,
+   "neutral": 68
+  },
+  "739350-online-age-verification": {
+   "positives": 25,
+   "negatives": 736,
+   "neutral": 122
+  },
+  "747926-ai-act-parliament-position": {
+   "positives": 16,
+   "negatives": 782,
+   "neutral": 85
+  },
+  "751386-eu-chips-act": {
+   "positives": 38,
+   "negatives": 777,
+   "neutral": 68
+  },
+  "754642-european-health-data-space": {
+   "positives": 26,
+   "negatives": 789,
+   "neutral": 68
+  },
+  "759583-strategic-technologies-platform": {
+   "positives": 54,
+   "negatives": 761,
+   "neutral": 68
+  },
+  "759620-european-media-freedom-act": {
+   "positives": 13,
+   "negatives": 779,
+   "neutral": 91
+  },
+  "760355-foreign-interference-preparedness": {
+   "positives": 23,
+   "negatives": 744,
+   "neutral": 116
+  },
+  "760391-gdpr-cross-border-procedural-rules": {
+   "positives": 0,
+   "negatives": 815,
+   "neutral": 68
+  },
+  "760392-ai-investment-indicators": {
+   "positives": 17,
+   "negatives": 729,
+   "neutral": 137
+  },
+  "760421-gigabit-infrastructure-act": {
+   "positives": 57,
+   "negatives": 758,
+   "neutral": 68
+  },
+  "772906-ai-act-implementation-timeline": {
+   "positives": 16,
+   "negatives": 782,
+   "neutral": 85
+  },
+  "779193-simplifying-digital-laws": {
+   "positives": 19,
+   "negatives": 770,
+   "neutral": 94
+  },
+  "779252-cybersecurity-act-review": {
+   "positives": 35,
+   "negatives": 780,
+   "neutral": 68
+  }
+ },
+ "auc_per_note": {
+  "739206-european-year-of-skills": {
+   "baseline": 0.6585322052837417,
+   "H94": 0.7316824966078698,
+   "H96": 0.7973301939500359
+  },
+  "739350-online-age-verification": {
+   "baseline": 0.7265217391304348,
+   "H94": 0.8281521739130435,
+   "H96": 0.8444021739130435
+  },
+  "747926-ai-act-parliament-position": {
+   "baseline": 0.6244804987212276,
+   "H94": 0.7019261508951407,
+   "H96": 0.7091192455242967
+  },
+  "751386-eu-chips-act": {
+   "baseline": 0.4707884576305629,
+   "H94": 0.6636354399512294,
+   "H96": 0.7199248120300752
+  },
+  "754642-european-health-data-space": {
+   "baseline": 0.5612996002729843,
+   "H94": 0.612971629131325,
+   "H96": 0.717973091547236
+  },
+  "759583-strategic-technologies-platform": {
+   "baseline": 0.5842458753102643,
+   "H94": 0.6569085511266851,
+   "H96": 0.665011923881832
+  },
+  "759620-european-media-freedom-act": {
+   "baseline": 0.761429841019058,
+   "H94": 0.8274908660017775,
+   "H96": 0.9022415325367829
+  },
+  "760355-foreign-interference-preparedness": {
+   "baseline": 0.7263616175783076,
+   "H94": 0.7475163627863488,
+   "H96": 0.8042017297802712
+  },
+  "760392-ai-investment-indicators": {
+   "baseline": 0.7238763818284516,
+   "H94": 0.8185265875897684,
+   "H96": 0.7738239328653272
+  },
+  "760421-gigabit-infrastructure-act": {
+   "baseline": 0.5933782345044669,
+   "H94": 0.6945678840901727,
+   "H96": 0.7023677267046243
+  },
+  "772906-ai-act-implementation-timeline": {
+   "baseline": 0.593630115089514,
+   "H94": 0.6987292199488491,
+   "H96": 0.6673992966751918
+  },
+  "779193-simplifying-digital-laws": {
+   "baseline": 0.7027682843472317,
+   "H94": 0.7038619275461381,
+   "H96": 0.5372863978127136
+  },
+  "779252-cybersecurity-act-review": {
+   "baseline": 0.5594139194139194,
+   "H94": 0.7393406593406593,
+   "H96": 0.7079120879120879
+  }
+ },
+ "auc_hard_negatives_per_note": {
+  "739206-european-year-of-skills": {
+   "baseline": 0.6614783226723525,
+   "H94": 0.7561478322672353,
+   "H96": 0.832409381663113
+  },
+  "739350-online-age-verification": {
+   "baseline": 0.6862626262626262,
+   "H94": 0.797979797979798,
+   "H96": 0.7991919191919192
+  },
+  "747926-ai-act-parliament-position": {
+   "baseline": 0.6078783524904214,
+   "H94": 0.6825909961685823,
+   "H96": 0.6921695402298851
+  },
+  "751386-eu-chips-act": {
+   "baseline": 0.49044152935530316,
+   "H94": 0.6347384418493041,
+   "H96": 0.7017677171652535
+  },
+  "754642-european-health-data-space": {
+   "baseline": 0.5373889059148024,
+   "H94": 0.5772295433650015,
+   "H96": 0.7160588415568495
+  },
+  "759583-strategic-technologies-platform": {
+   "baseline": 0.5944822373393802,
+   "H94": 0.607601770867077,
+   "H96": 0.6203973652953245
+  },
+  "759620-european-media-freedom-act": {
+   "baseline": 0.7430577721034153,
+   "H94": 0.7982764123842963,
+   "H96": 0.8608362591765082
+  },
+  "760355-foreign-interference-preparedness": {
+   "baseline": 0.6961933970773949,
+   "H94": 0.7167598773227494,
+   "H96": 0.7616813999639185
+  },
+  "760392-ai-investment-indicators": {
+   "baseline": 0.702515349574173,
+   "H94": 0.7601505248564072,
+   "H96": 0.7177658942364825
+  },
+  "760421-gigabit-infrastructure-act": {
+   "baseline": 0.6126485568760611,
+   "H94": 0.6862195812110923,
+   "H96": 0.6789190718732314
+  },
+  "772906-ai-act-implementation-timeline": {
+   "baseline": 0.5724377394636015,
+   "H94": 0.6974377394636015,
+   "H96": 0.6586446360153256
+  },
+  "779193-simplifying-digital-laws": {
+   "baseline": 0.6929824561403509,
+   "H94": 0.682615629984051,
+   "H96": 0.5598086124401914
+  },
+  "779252-cybersecurity-act-review": {
+   "baseline": 0.5981067125645438,
+   "H94": 0.7481067125645439,
+   "H96": 0.7185886402753873
+  }
+ },
+ "summary": {
+  "baseline": {
+   "mean_auc": 0.6374405207792435,
+   "mean_diff": 0.0,
+   "n_above_0": 0,
+   "n": 13,
+   "boot_lo": 0.0,
+   "boot_hi": 0.0,
+   "mean_auc_hard": 0.6304518429103404,
+   "mean_diff_hard": 0.0,
+   "top3_hits": 5
+  },
+  "H94": {
+   "mean_auc": 0.7250238422253082,
+   "mean_diff": 0.08758332144606482,
+   "n_above_0": 13,
+   "n": 13,
+   "boot_lo": 0.06029131110199658,
+   "boot_hi": 0.11698205687101423,
+   "mean_auc_hard": 0.7035272969449031,
+   "mean_diff_hard": 0.07307545403456255,
+   "top3_hits": 12
+  },
+  "H96": {
+   "mean_auc": 0.7345380111641169,
+   "mean_diff": 0.09709749038487331,
+   "n_above_0": 12,
+   "n": 13,
+   "boot_lo": 0.04272726725491647,
+   "boot_hi": 0.14047680918475425,
+   "mean_auc_hard": 0.7167876368525684,
+   "mean_diff_hard": 0.08633579394222794,
+   "top3_hits": 12
+  }
+ },
+ "section_reading": {
+  "baseline": {
+   "739206-european-year-of-skills": {
+    "best_target_rank": 1,
+    "top3": [
+     "A highly skilled digital workforce: ICT specialists and advanced digital skills",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade",
+     "3.1. Empower people and bring the digital transformation closer to their needs"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "739350-online-age-verification": {
+    "best_target_rank": 4,
+    "top3": [
+     "3. Protecting and empowering EU people and society",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "3.1. Empower people and bring the digital transformation closer to their needs"
+    ],
+    "hit": false,
+    "n_ranked_units": 34
+   },
+   "747926-ai-act-parliament-position": {
+    "best_target_rank": 8,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade",
+     "3.1. Empower people and bring the digital transformation closer to their needs"
+    ],
+    "hit": false,
+    "n_ranked_units": 35
+   },
+   "751386-eu-chips-act": {
+    "best_target_rank": 21,
+    "top3": [
+     "4.3. The digitalisation for the green transition is entering into concrete delivery.",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "4.2. Towards Sustainable digital infrastructures"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   },
+   "754642-european-health-data-space": {
+    "best_target_rank": 15,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "A highly skilled digital workforce: ICT specialists and advanced digital skills"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   },
+   "759583-strategic-technologies-platform": {
+    "best_target_rank": 12,
+    "top3": [
+     "4. Leveraging digital transformation for a smart greening",
+     "4.3. The digitalisation for the green transition is entering into concrete delivery.",
+     "2.1. Building digital technological leadership for future competitiveness"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   },
+   "759620-european-media-freedom-act": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.3.2. Access to media and media pluralism",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "760355-foreign-interference-preparedness": {
+    "best_target_rank": 2,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "3.3.1. Address disinformation and preserve election integrity",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade"
+    ],
+    "hit": true,
+    "n_ranked_units": 34
+   },
+   "760392-ai-investment-indicators": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "Take up of artificial intelligence",
+     "4.3. The digitalisation for the green transition is entering into concrete delivery."
+    ],
+    "hit": true,
+    "n_ranked_units": 33
+   },
+   "760421-gigabit-infrastructure-act": {
+    "best_target_rank": 11,
+    "top3": [
+     "4.3. The digitalisation for the green transition is entering into concrete delivery.",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "4.2. Towards Sustainable digital infrastructures"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   },
+   "772906-ai-act-implementation-timeline": {
+    "best_target_rank": 6,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "4.3. The digitalisation for the green transition is entering into concrete delivery.",
+     "4.2. Towards Sustainable digital infrastructures"
+    ],
+    "hit": false,
+    "n_ranked_units": 35
+   },
+   "779193-simplifying-digital-laws": {
+    "best_target_rank": 1,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "3.1. Empower people and bring the digital transformation closer to their needs",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "779252-cybersecurity-act-review": {
+    "best_target_rank": 15,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade",
+     "2.1. Building digital technological leadership for future competitiveness"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   }
+  },
+  "H94": {
+   "739206-european-year-of-skills": {
+    "best_target_rank": 1,
+    "top3": [
+     "A digitally skilled population: at least basic digital skills",
+     "5.3. Synergising funding for digitalisation",
+     "A highly skilled digital workforce: ICT specialists and advanced digital skills"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "739350-online-age-verification": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.2.2. Protect and empower children (including via age verification)",
+     "3.3.2. Access to media and media pluralism",
+     "Take up of big data/use of data analytics"
+    ],
+    "hit": true,
+    "n_ranked_units": 34
+   },
+   "747926-ai-act-parliament-position": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.2.3. Promote responsible and human-centric AI systems",
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+     "3.2.2. Protect and empower children (including via age verification)"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "751386-eu-chips-act": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "2.1.3.2 Semiconductors",
+     "Take up of artificial intelligence"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "754642-european-health-data-space": {
+    "best_target_rank": 4,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "Take up of cloud services",
+     "3.2.2. Protect and empower children (including via age verification)"
+    ],
+    "hit": false,
+    "n_ranked_units": 36
+   },
+   "759583-strategic-technologies-platform": {
+    "best_target_rank": 1,
+    "top3": [
+     "2.1.1. Investing in research and innovation",
+     "Take up of big data/use of data analytics",
+     "2.1.3.2 Semiconductors"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "759620-european-media-freedom-act": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.3.2. Access to media and media pluralism",
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+     "3.2.2. Protect and empower children (including via age verification)"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "760355-foreign-interference-preparedness": {
+    "best_target_rank": 2,
+    "top3": [
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+     "3.3.1. Address disinformation and preserve election integrity",
+     "Take up of big data/use of data analytics"
+    ],
+    "hit": true,
+    "n_ranked_units": 34
+   },
+   "760392-ai-investment-indicators": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "Take up of artificial intelligence",
+     "2.1.3.2 Semiconductors"
+    ],
+    "hit": true,
+    "n_ranked_units": 33
+   },
+   "760421-gigabit-infrastructure-act": {
+    "best_target_rank": 1,
+    "top3": [
+     "2.1.3.1 Gigabit connectivity infrastructure",
+     "Take up of big data/use of data analytics",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "772906-ai-act-implementation-timeline": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "3.2.3. Promote responsible and human-centric AI systems",
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "779193-simplifying-digital-laws": {
+    "best_target_rank": 1,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+     "3.3.2. Access to media and media pluralism"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "779252-cybersecurity-act-review": {
+    "best_target_rank": 2,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "2.3. Strengthening cybersecurity",
+     "Take up of big data/use of data analytics"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   }
+  },
+  "H96": {
+   "739206-european-year-of-skills": {
+    "best_target_rank": 1,
+    "top3": [
+     "A digitally skilled population: at least basic digital skills",
+     "A highly skilled digital workforce: ICT specialists and advanced digital skills",
+     "3.1.1. Equip people with digital skills"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "739350-online-age-verification": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.2.2. Protect and empower children (including via age verification)",
+     "3. Protecting and empowering EU people and society",
+     "3.1. Empower people and bring the digital transformation closer to their needs"
+    ],
+    "hit": true,
+    "n_ranked_units": 34
+   },
+   "747926-ai-act-parliament-position": {
+    "best_target_rank": 2,
+    "top3": [
+     "4. Leveraging digital transformation for a smart greening",
+     "3.2.3. Promote responsible and human-centric AI systems",
+     "3.1. Empower people and bring the digital transformation closer to their needs"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "751386-eu-chips-act": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "2.1.3.2 Semiconductors",
+     "4.3. The digitalisation for the green transition is entering into concrete delivery."
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "754642-european-health-data-space": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "3.1.4. Leverage on digital technologies for health",
+     "Take up of cloud services"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "759583-strategic-technologies-platform": {
+    "best_target_rank": 2,
+    "top3": [
+     "4. Leveraging digital transformation for a smart greening",
+     "5.3. Synergising funding for digitalisation",
+     "2.1.3.2 Semiconductors"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "759620-european-media-freedom-act": {
+    "best_target_rank": 1,
+    "top3": [
+     "3.3.2. Access to media and media pluralism",
+     "3.2.2. Protect and empower children (including via age verification)",
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "760355-foreign-interference-preparedness": {
+    "best_target_rank": 2,
+    "top3": [
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+     "3.3.1. Address disinformation and preserve election integrity",
+     "5.1. Horizontal implementation through national roadmap"
+    ],
+    "hit": true,
+    "n_ranked_units": 34
+   },
+   "760392-ai-investment-indicators": {
+    "best_target_rank": 2,
+    "top3": [
+     "Take up of big data/use of data analytics",
+     "Take up of artificial intelligence",
+     "2.1.3.2 Semiconductors"
+    ],
+    "hit": true,
+    "n_ranked_units": 33
+   },
+   "760421-gigabit-infrastructure-act": {
+    "best_target_rank": 1,
+    "top3": [
+     "2.1.3.1 Gigabit connectivity infrastructure",
+     "2.1.3.4 Quantum computing",
+     "2.1.3.3 Edge nodes"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   },
+   "772906-ai-act-implementation-timeline": {
+    "best_target_rank": 2,
+    "top3": [
+     "3.1.4. Leverage on digital technologies for health",
+     "3.2.3. Promote responsible and human-centric AI systems",
+     "3.2.1. Build safe digital environments and safeguard fundamental rights online"
+    ],
+    "hit": true,
+    "n_ranked_units": 35
+   },
+   "779193-simplifying-digital-laws": {
+    "best_target_rank": 9,
+    "top3": [
+     "4.4. The way forward",
+     "3.1. Empower people and bring the digital transformation closer to their needs",
+     "2.1. Building digital technological leadership for future competitiveness"
+    ],
+    "hit": false,
+    "n_ranked_units": 35
+   },
+   "779252-cybersecurity-act-review": {
+    "best_target_rank": 3,
+    "top3": [
+     "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+     "5.1. Horizontal implementation through national roadmap",
+     "2.3. Strengthening cybersecurity"
+    ],
+    "hit": true,
+    "n_ranked_units": 36
+   }
+  }
+ },
+ "top3_hits": {
+  "baseline": 5,
+  "H94": 12,
+  "H96": 12
+ },
+ "balanced_accuracy_per_note": {
+  "739206-european-year-of-skills": {
+   "fixed_ba": 0.6505806528853061,
+   "otsu_ba": 0.7138139516322133,
+   "otsu_threshold": -0.017985378702481597,
+   "n_match_fixed": 97,
+   "n_match_otsu": 368,
+   "fixed_tpr": 0.3880597014925373,
+   "fixed_tnr": 0.9131016042780749,
+   "otsu_tpr": 0.8059701492537313,
+   "otsu_tnr": 0.6216577540106952
+  },
+  "739350-online-age-verification": {
+   "fixed_ba": 0.6639945652173913,
+   "otsu_ba": 0.7257065217391304,
+   "otsu_threshold": -0.006700648615757615,
+   "n_match_fixed": 74,
+   "n_match_otsu": 375,
+   "fixed_tpr": 0.4,
+   "fixed_tnr": 0.9279891304347826,
+   "otsu_tpr": 0.84,
+   "otsu_tnr": 0.6114130434782609
+  },
+  "747926-ai-act-parliament-position": {
+   "fixed_ba": 0.596787084398977,
+   "otsu_ba": 0.6741528132992327,
+   "otsu_threshold": -0.004691270490487426,
+   "n_match_fixed": 106,
+   "n_match_otsu": 424,
+   "fixed_tpr": 0.3125,
+   "fixed_tnr": 0.881074168797954,
+   "otsu_tpr": 0.8125,
+   "otsu_tnr": 0.5358056265984654
+  },
+  "751386-eu-chips-act": {
+   "fixed_ba": 0.5288220551378446,
+   "otsu_ba": 0.6780125990652306,
+   "otsu_threshold": -0.0043423461417357034,
+   "n_match_fixed": 41,
+   "n_match_otsu": 302,
+   "fixed_tpr": 0.10526315789473684,
+   "fixed_tnr": 0.9523809523809523,
+   "otsu_tpr": 0.6842105263157895,
+   "otsu_tnr": 0.6718146718146718
+  },
+  "754642-european-health-data-space": {
+   "fixed_ba": 0.5361460466023203,
+   "otsu_ba": 0.5966169445256898,
+   "otsu_threshold": -0.019565381109714508,
+   "n_match_fixed": 39,
+   "n_match_otsu": 170,
+   "fixed_tpr": 0.11538461538461539,
+   "fixed_tnr": 0.9569074778200254,
+   "otsu_tpr": 0.38461538461538464,
+   "otsu_tnr": 0.8086185044359949
+  },
+  "759583-strategic-technologies-platform": {
+   "fixed_ba": 0.54056553268117,
+   "otsu_ba": 0.620930062782888,
+   "otsu_threshold": -0.008069617052872957,
+   "n_match_fixed": 60,
+   "n_match_otsu": 342,
+   "fixed_tpr": 0.14814814814814814,
+   "fixed_tnr": 0.9329829172141918,
+   "otsu_tpr": 0.6111111111111112,
+   "otsu_tnr": 0.6307490144546649
+  },
+  "759620-european-media-freedom-act": {
+   "fixed_ba": 0.68524735854646,
+   "otsu_ba": 0.7734768440801817,
+   "otsu_threshold": 0.01307066281636557,
+   "n_match_fixed": 17,
+   "n_match_otsu": 362,
+   "fixed_tpr": 0.38461538461538464,
+   "fixed_tnr": 0.9858793324775353,
+   "otsu_tpr": 0.9230769230769231,
+   "otsu_tnr": 0.6238767650834403
+  },
+  "760355-foreign-interference-preparedness": {
+   "fixed_ba": 0.5968326320710612,
+   "otsu_ba": 0.6917075736325387,
+   "otsu_threshold": -0.008108361313740403,
+   "n_match_fixed": 68,
+   "n_match_otsu": 381,
+   "fixed_tpr": 0.2608695652173913,
+   "fixed_tnr": 0.9327956989247311,
+   "otsu_tpr": 0.782608695652174,
+   "otsu_tnr": 0.6008064516129032
+  },
+  "760392-ai-investment-indicators": {
+   "fixed_ba": 0.6011861534737352,
+   "otsu_ba": 0.7123376099410959,
+   "otsu_threshold": -0.013710260391235352,
+   "n_match_fixed": 34,
+   "n_match_otsu": 251,
+   "fixed_tpr": 0.23529411764705882,
+   "fixed_tnr": 0.9670781893004116,
+   "otsu_tpr": 0.7058823529411765,
+   "otsu_tnr": 0.7187928669410151
+  },
+  "760421-gigabit-infrastructure-act": {
+   "fixed_ba": 0.510287922973661,
+   "otsu_ba": 0.637226311160487,
+   "otsu_threshold": 0.00610086942712465,
+   "n_match_fixed": 13,
+   "n_match_otsu": 335,
+   "fixed_tpr": 0.03508771929824561,
+   "fixed_tnr": 0.9854881266490765,
+   "otsu_tpr": 0.6491228070175439,
+   "otsu_tnr": 0.6253298153034301
+  },
+  "772906-ai-act-implementation-timeline": {
+   "fixed_ba": 0.5248561381074168,
+   "otsu_ba": 0.6015824808184143,
+   "otsu_threshold": 0.008465626587470354,
+   "n_match_fixed": 12,
+   "n_match_otsu": 322,
+   "fixed_tpr": 0.0625,
+   "fixed_tnr": 0.9872122762148338,
+   "otsu_tpr": 0.5625,
+   "otsu_tnr": 0.6406649616368286
+  },
+  "779193-simplifying-digital-laws": {
+   "fixed_ba": 0.5669514695830485,
+   "otsu_ba": 0.5180451127819549,
+   "otsu_threshold": -0.006964356948932021,
+   "n_match_fixed": 71,
+   "n_match_otsu": 491,
+   "fixed_tpr": 0.21052631578947367,
+   "fixed_tnr": 0.9233766233766234,
+   "otsu_tpr": 0.5789473684210527,
+   "otsu_tnr": 0.45714285714285713
+  },
+  "779252-cybersecurity-act-review": {
+   "fixed_ba": 0.5836996336996336,
+   "otsu_ba": 0.6256410256410256,
+   "otsu_threshold": -0.00615449994802475,
+   "n_match_fixed": 81,
+   "n_match_otsu": 498,
+   "fixed_tpr": 0.2571428571428571,
+   "fixed_tnr": 0.9102564102564102,
+   "otsu_tpr": 0.8,
+   "otsu_tnr": 0.4512820512820513
+  }
+ },
+ "balanced_accuracy_means": {
+  "fixed": 0.5835351727213866,
+  "otsu": 0.659173065469237
+ },
+ "note_without_target": {
+  "note": "760391-gdpr-cross-border-procedural-rules",
+  "reason": "the report names the GDPR once and has no section on the enforcement of data protection",
+  "note_statements": 22,
+  "top3": {
+   "baseline": [
+    "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+    "3.1. Empower people and bring the digital transformation closer to their needs",
+    "5.4. Increase cooperation across levels, including involving cities and regions more in the Digital Decade"
+   ],
+   "H94": [
+    "5.2. Striving for an effective, efficient and red-tape free implementation of the digital regulatory environment",
+    "3.2.1. Build safe digital environments and safeguard fundamental rights online",
+    "5.1. Horizontal implementation through national roadmap"
+   ],
+   "H96": [
+    "3.2.2. Protect and empower children (including via age verification)",
+    "3.3.1. Address disinformation and preserve election integrity",
+    "3.1. Empower people and bring the digital transformation closer to their needs"
+   ]
+  },
+  "quantiles_of_cost_score": {
+   "baseline": {
+    "0.0": 0.29632920026779175,
+    "0.05": 0.33843894302845,
+    "0.25": 0.37415890395641327,
+    "0.5": 0.4085982143878937,
+    "0.75": 0.4537305384874344,
+    "0.95": 0.6101249873638153,
+    "1.0": 0.8726734519004822
+   },
+   "H94": {
+    "0.0": 0.5200211405754089,
+    "0.05": 1.1044546008110045,
+    "0.25": 1.2028716206550598,
+    "0.5": 1.2589383125305176,
+    "0.75": 1.3162894248962402,
+    "0.95": 1.378867518901825,
+    "1.0": 1.4533510208129883
+   },
+   "H96": {
+    "0.0": -0.23263197678786063,
+    "0.05": -0.01867808195260855,
+    "0.25": 0.0016535669565200806,
+    "0.5": 0.01596469833300662,
+    "0.75": 0.029211666721564084,
+    "0.95": 0.05069969135981339,
+    "1.0": 0.08209281472059393
+   }
+  },
+  "share_fixed_cutoff": 0.022650056625141562,
+  "share_otsu_contrast": 0.47451868629671573,
+  "otsu_threshold": 0.014567479491233826,
+  "contrast_background": "the 13 notes with a target section"
+ },
+ "gates": {
+  "baseline_auc": {
+   "value": 0.6374405207792435,
+   "threshold": 0.95,
+   "killed": false
+  },
+  "fixed_cutoff_ba": {
+   "value": 0.5835351727213866,
+   "threshold": 0.65,
+   "killed": false
+  }
+ },
+ "decisions": {
+  "E19-H93": {
+   "clauses": {
+    "baseline_mean_auc_ge_0.80": {
+     "value": 0.6374405207792435,
+     "met": false
+    },
+    "top3_hits_ge_10_of_13": {
+     "value": 5,
+     "met": false
+    },
+    "bar_met": false
+   },
+   "beyond_gate": false,
+   "verdict_by_bar": "Refuted"
+  },
+  "E19-H94": {
+   "clauses": {
+    "mean_diff_ge_0.03": {
+     "value": 0.08758332144606482,
+     "met": true
+    },
+    "notes_above_0_ge_10": {
+     "value": 13,
+     "met": true
+    },
+    "bar_met": true
+   },
+   "beyond_gate": false,
+   "verdict_by_bar": "Confirmed"
+  },
+  "E19-H96": {
+   "clauses": {
+    "mean_diff_ge_0.03": {
+     "value": 0.09709749038487331,
+     "met": true
+    },
+    "notes_above_0_ge_10": {
+     "value": 12,
+     "met": true
+    },
+    "bar_met": true
+   },
+   "beyond_gate": false,
+   "verdict_by_bar": "Confirmed"
+  },
+  "E19-H97": {
+   "gate": {
+    "fixed_mean_ba": 0.5835351727213866,
+    "threshold": 0.65,
+    "killed": false
+   },
+   "clauses": {
+    "otsu_mean_ba_ge_0.70": {
+     "value": 0.659173065469237,
+     "met": false
+    },
+    "otsu_minus_fixed_ge_0.10": {
+     "value": 0.07563789274785049,
+     "met": false
+    },
+    "bar_met": false
+   },
+   "otsu_mean_ba": 0.659173065469237,
+   "beyond_gate": false,
+   "verdict_by_bar": "Refuted"
+  }
+ },
+ "verdict_by_bar": {
+  "E19-H93": "Refuted",
+  "E19-H94": "Confirmed",
+  "E19-H96": "Confirmed",
+  "E19-H97": "Refuted"
+ },
+ "wall_seconds": 92.2
+}

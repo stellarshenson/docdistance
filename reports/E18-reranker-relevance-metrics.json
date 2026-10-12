@@ -1,0 +1,2869 @@
+{
+ "batch": "E18",
+ "notebook": "A",
+ "written_utc": "2026-10-12T04:04:10+00:00",
+ "environment": {
+  "docdistance": "1.1.32",
+  "python": "3.14.8",
+  "numpy": "2.4.6",
+  "POT": "0.9.6.post1",
+  "encoder_backend": "openvino",
+  "reranker_class": "OpenVINOReranker",
+  "reranker_defaults": "load_reranker()",
+  "reader": "default (auto by extension)",
+  "DIFF_CHANGED_COST": 0.3252691193458119
+ },
+ "fixture_sha256": {
+  "data/processed/relevance-fixture/e18/README.md": "bb690f4959537b3a2baa0a70dcd7b131116b0d1f0c8b1238f2f67cfca8c1aed7",
+  "data/processed/relevance-fixture/e18/briefs/brief-13.md": "14b6261623f9b2fd1b9c1d94add90d6422d80516df4237b747d451851abcd1db",
+  "data/processed/relevance-fixture/e18/briefs/brief-14.md": "14dcd9d2a240ece1cbae8942abd839c4782b4d1e7bd602e3339577a70c50c7bb",
+  "data/processed/relevance-fixture/e18/briefs/brief-15.md": "c6896ee97de533ab066358ad97fa8f8d6dc4f88e3a81bebe2c9879f1f48bed1d",
+  "data/processed/relevance-fixture/e18/briefs/brief-16.md": "05fdaf174490ddffa7b260a371da993a474fbb5de2923aaae50695203f81451a",
+  "data/processed/relevance-fixture/e18/briefs/brief-17.md": "252e2518628269ed268c06075484c8e353552edf1292b75f3812337ba5d3a410",
+  "data/processed/relevance-fixture/e18/briefs/brief-18.md": "0ba6e5f210b22b695c28b4792286390885b9042baa17105f3498c8f5551475a1",
+  "data/processed/relevance-fixture/e18/briefs/brief-19.md": "d072d0d4f85d26c55b47853f6bf6be37584b8411e01adc45ceacaf5416b0da08",
+  "data/processed/relevance-fixture/e18/briefs/brief-20.md": "b74f35c08592f7c9e6ddcb4ca205026bd705f08a25b869f6fb7dd43606160c28",
+  "data/processed/relevance-fixture/e18/briefs/brief-21.md": "f1578f5cddeab551c7387fc52733eae7b7343e452425c8116b1e81e27396e81b",
+  "data/processed/relevance-fixture/e18/briefs/brief-22.md": "dd3d091e010b446c08425836468cf505a3c3e4abef89789575fbe14ca574b7be",
+  "data/processed/relevance-fixture/e18/briefs/brief-23.md": "81667d2da5befab7b0f4dfe785470a3adf67818b982495611cbf6e25586f7426",
+  "data/processed/relevance-fixture/e18/briefs/brief-24.md": "5eba082b6391a170c6898a0e58cacf43c60cd9f264295513f61169c7dac30d7e",
+  "data/processed/relevance-fixture/e18/labels.json": "3f170731966a1ab148b3a7f1ef59eed23db3db5bd4db99ddd9647927f1d8fa58",
+  "data/processed/relevance-fixture/report.md": "27f846ce7c6d6c62e0fbe884ea5076d59e19e8743cb9d4fb42724844ee2402f4",
+  "data/processed/relevance-fixture/labels.json": "dcdb14b6d4957cd197670a5bced99f777fab8b7e7f031d81d8ec2d23448cb326"
+ },
+ "fixture_sha256_equals_registration": true,
+ "harness_check": {
+  "passed": true,
+  "largest_abs_difference": 0.0,
+  "tolerance": 1e-09,
+  "per_brief": {
+   "brief-01": {
+    "computed": 0.37662337662337664,
+    "stored": 0.37662337662337664,
+    "abs_diff": 0.0
+   },
+   "brief-02": {
+    "computed": 0.7335526315789473,
+    "stored": 0.7335526315789473,
+    "abs_diff": 0.0
+   },
+   "brief-03": {
+    "computed": 0.6277056277056277,
+    "stored": 0.6277056277056277,
+    "abs_diff": 0.0
+   },
+   "brief-04": {
+    "computed": 0.5844155844155844,
+    "stored": 0.5844155844155844,
+    "abs_diff": 0.0
+   },
+   "brief-05": {
+    "computed": 0.1987179487179487,
+    "stored": 0.1987179487179487,
+    "abs_diff": 0.0
+   },
+   "brief-06": {
+    "computed": 0.6150234741784038,
+    "stored": 0.6150234741784038,
+    "abs_diff": 0.0
+   },
+   "brief-07": {
+    "computed": 0.2631578947368421,
+    "stored": 0.2631578947368421,
+    "abs_diff": 0.0
+   },
+   "brief-08": {
+    "computed": 0.5202702702702703,
+    "stored": 0.5202702702702703,
+    "abs_diff": 0.0
+   },
+   "brief-09": {
+    "computed": 0.6966731898238747,
+    "stored": 0.6966731898238747,
+    "abs_diff": 0.0
+   },
+   "brief-10": {
+    "computed": 0.7621527777777778,
+    "stored": 0.7621527777777778,
+    "abs_diff": 0.0
+   },
+   "brief-11": {
+    "computed": 0.8441025641025641,
+    "stored": 0.8441025641025641,
+    "abs_diff": 0.0
+   },
+   "brief-12": {
+    "computed": 0.8161764705882353,
+    "stored": 0.8161764705882353,
+    "abs_diff": 0.0
+   }
+  }
+ },
+ "statement_counts": {
+  "report": 93,
+  "briefs": {
+   "brief-01": 6,
+   "brief-02": 6,
+   "brief-03": 6,
+   "brief-04": 6,
+   "brief-05": 6,
+   "brief-06": 6,
+   "brief-07": 6,
+   "brief-08": 6,
+   "brief-09": 6,
+   "brief-10": 6,
+   "brief-11": 6,
+   "brief-12": 6,
+   "brief-13": 5,
+   "brief-14": 5,
+   "brief-15": 6,
+   "brief-16": 4,
+   "brief-17": 8,
+   "brief-18": 5,
+   "brief-19": 7,
+   "brief-20": 5,
+   "brief-21": 6,
+   "brief-22": 6,
+   "brief-23": 10,
+   "brief-24": 6
+  },
+  "controls": {
+   "gold": 10,
+   "gold-2": 12,
+   "v1": 11,
+   "v2": 11,
+   "opus": 12,
+   "sonnet": 10,
+   "haiku": 13
+  }
+ },
+ "label_counts": {
+  "brief-01": {
+   "positives": 3,
+   "negatives": 77,
+   "hard_negatives": 33
+  },
+  "brief-02": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-03": {
+   "positives": 3,
+   "negatives": 77,
+   "hard_negatives": 33
+  },
+  "brief-04": {
+   "positives": 3,
+   "negatives": 77,
+   "hard_negatives": 33
+  },
+  "brief-05": {
+   "positives": 2,
+   "negatives": 78,
+   "hard_negatives": 34
+  },
+  "brief-06": {
+   "positives": 9,
+   "negatives": 71,
+   "hard_negatives": 27
+  },
+  "brief-07": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-08": {
+   "positives": 6,
+   "negatives": 74,
+   "hard_negatives": 30
+  },
+  "brief-09": {
+   "positives": 7,
+   "negatives": 73,
+   "hard_negatives": 37
+  },
+  "brief-10": {
+   "positives": 8,
+   "negatives": 72,
+   "hard_negatives": 36
+  },
+  "brief-11": {
+   "positives": 15,
+   "negatives": 65,
+   "hard_negatives": 29
+  },
+  "brief-12": {
+   "positives": 12,
+   "negatives": 68,
+   "hard_negatives": 32
+  },
+  "brief-13": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-14": {
+   "positives": 3,
+   "negatives": 77,
+   "hard_negatives": 33
+  },
+  "brief-15": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-16": {
+   "positives": 5,
+   "negatives": 75,
+   "hard_negatives": 31
+  },
+  "brief-17": {
+   "positives": 5,
+   "negatives": 75,
+   "hard_negatives": 31
+  },
+  "brief-18": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-19": {
+   "positives": 3,
+   "negatives": 77,
+   "hard_negatives": 33
+  },
+  "brief-20": {
+   "positives": 4,
+   "negatives": 76,
+   "hard_negatives": 32
+  },
+  "brief-21": {
+   "positives": 7,
+   "negatives": 73,
+   "hard_negatives": 37
+  },
+  "brief-22": {
+   "positives": 8,
+   "negatives": 72,
+   "hard_negatives": 36
+  },
+  "brief-23": {
+   "positives": 15,
+   "negatives": 65,
+   "hard_negatives": 29
+  },
+  "brief-24": {
+   "positives": 20,
+   "negatives": 60,
+   "hard_negatives": 24
+  },
+  "gold": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "gold-2": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "v1": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "v2": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "opus": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "sonnet": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  },
+  "haiku": {
+   "positives": 49,
+   "negatives": 44,
+   "hard_negatives": null
+  }
+ },
+ "neutral_statements": 13,
+ "auc_per_brief": {
+  "brief-01": {
+   "baseline": 0.37662337662337664,
+   "reranker": 0.5064935064935064
+  },
+  "brief-02": {
+   "baseline": 0.7335526315789473,
+   "reranker": 0.9473684210526315
+  },
+  "brief-03": {
+   "baseline": 0.6277056277056277,
+   "reranker": 0.7835497835497836
+  },
+  "brief-04": {
+   "baseline": 0.5844155844155844,
+   "reranker": 0.935064935064935
+  },
+  "brief-05": {
+   "baseline": 0.1987179487179487,
+   "reranker": 0.9423076923076923
+  },
+  "brief-06": {
+   "baseline": 0.6150234741784038,
+   "reranker": 0.9280125195618153
+  },
+  "brief-07": {
+   "baseline": 0.2631578947368421,
+   "reranker": 0.9243421052631579
+  },
+  "brief-08": {
+   "baseline": 0.5202702702702703,
+   "reranker": 0.7454954954954955
+  },
+  "brief-09": {
+   "baseline": 0.6966731898238747,
+   "reranker": 0.9960861056751468
+  },
+  "brief-10": {
+   "baseline": 0.7621527777777778,
+   "reranker": 0.9600694444444444
+  },
+  "brief-11": {
+   "baseline": 0.8441025641025641,
+   "reranker": 0.8697435897435898
+  },
+  "brief-12": {
+   "baseline": 0.8161764705882353,
+   "reranker": 0.8308823529411765
+  },
+  "brief-13": {
+   "baseline": 0.6743421052631579,
+   "reranker": 0.9144736842105263,
+   "contrast": 0.7960526315789473
+  },
+  "brief-14": {
+   "baseline": 0.6623376623376623,
+   "reranker": 0.7489177489177489,
+   "contrast": 0.9567099567099567
+  },
+  "brief-15": {
+   "baseline": 0.7269736842105263,
+   "reranker": 0.944078947368421,
+   "contrast": 0.8092105263157895
+  },
+  "brief-16": {
+   "baseline": 0.5946666666666667,
+   "reranker": 0.9546666666666667,
+   "contrast": 0.9733333333333334
+  },
+  "brief-17": {
+   "baseline": 0.35733333333333334,
+   "reranker": 0.9226666666666666,
+   "contrast": 0.864
+  },
+  "brief-18": {
+   "baseline": 0.5296052631578947,
+   "reranker": 0.8092105263157895,
+   "contrast": 0.9703947368421053
+  },
+  "brief-19": {
+   "baseline": 0.45021645021645024,
+   "reranker": 0.5454545454545454,
+   "contrast": 0.7489177489177489
+  },
+  "brief-20": {
+   "baseline": 0.3815789473684211,
+   "reranker": 0.8453947368421053,
+   "contrast": 0.9013157894736842
+  },
+  "brief-21": {
+   "baseline": 0.7162426614481409,
+   "reranker": 0.9960861056751468,
+   "contrast": 1.0
+  },
+  "brief-22": {
+   "baseline": 0.7673611111111112,
+   "reranker": 0.9375,
+   "contrast": 0.6493055555555556
+  },
+  "brief-23": {
+   "baseline": 0.7661538461538462,
+   "reranker": 0.8358974358974359,
+   "contrast": 0.8338461538461538
+  },
+  "brief-24": {
+   "baseline": 0.7925,
+   "reranker": 0.8791666666666667,
+   "contrast": 0.8025
+  }
+ },
+ "auc_hard_negatives_per_brief": {
+  "baseline": {
+   "brief-01": 0.5555555555555556,
+   "brief-02": 0.7421875,
+   "brief-03": 0.7272727272727273,
+   "brief-04": 0.6666666666666666,
+   "brief-05": 0.3235294117647059,
+   "brief-06": 0.7613168724279835,
+   "brief-07": 0.3828125,
+   "brief-08": 0.6555555555555556,
+   "brief-09": 0.583011583011583,
+   "brief-10": 0.6770833333333334,
+   "brief-11": 0.767816091954023,
+   "brief-12": 0.6953125,
+   "brief-13": 0.671875,
+   "brief-14": 0.7171717171717171,
+   "brief-15": 0.8046875,
+   "brief-16": 0.7419354838709677,
+   "brief-17": 0.535483870967742,
+   "brief-18": 0.53125,
+   "brief-19": 0.6060606060606061,
+   "brief-20": 0.5,
+   "brief-21": 0.61003861003861,
+   "brief-22": 0.7048611111111112,
+   "brief-23": 0.6482758620689655,
+   "brief-24": 0.65
+  },
+  "reranker": {
+   "brief-01": 0.46464646464646464,
+   "brief-02": 0.96875,
+   "brief-03": 0.8888888888888888,
+   "brief-04": 0.9090909090909091,
+   "brief-05": 0.9264705882352942,
+   "brief-06": 0.9382716049382716,
+   "brief-07": 0.9375,
+   "brief-08": 0.8611111111111112,
+   "brief-09": 0.9922779922779923,
+   "brief-10": 0.9305555555555556,
+   "brief-11": 0.767816091954023,
+   "brief-12": 0.7864583333333334,
+   "brief-13": 0.8984375,
+   "brief-14": 0.7777777777777778,
+   "brief-15": 0.96875,
+   "brief-16": 0.9354838709677419,
+   "brief-17": 0.967741935483871,
+   "brief-18": 0.703125,
+   "brief-19": 0.5858585858585859,
+   "brief-20": 0.7265625,
+   "brief-21": 0.9922779922779923,
+   "brief-22": 0.9236111111111112,
+   "brief-23": 0.7103448275862069,
+   "brief-24": 0.7583333333333333
+  },
+  "contrast": {
+   "brief-13": 0.7734375,
+   "brief-14": 0.9494949494949495,
+   "brief-15": 0.8046875,
+   "brief-16": 0.9548387096774194,
+   "brief-17": 0.8774193548387097,
+   "brief-18": 0.9453125,
+   "brief-19": 0.8080808080808081,
+   "brief-20": 0.796875,
+   "brief-21": 1.0,
+   "brief-22": 0.6423611111111112,
+   "brief-23": 0.7471264367816092,
+   "brief-24": 0.79375
+  }
+ },
+ "auc_per_control": {
+  "gold": {
+   "baseline": 0.6743970315398887,
+   "reranker": 0.8455473098330241,
+   "contrast": 0.8506493506493507
+  },
+  "gold-2": {
+   "baseline": 0.686456400742115,
+   "reranker": 0.8418367346938775,
+   "contrast": 0.8562152133580705
+  },
+  "v1": {
+   "baseline": 0.6646567717996289,
+   "reranker": 0.8432282003710575,
+   "contrast": 0.8724489795918368
+  },
+  "v2": {
+   "baseline": 0.6818181818181818,
+   "reranker": 0.838126159554731,
+   "contrast": 0.862708719851577
+  },
+  "opus": {
+   "baseline": 0.6869202226345084,
+   "reranker": 0.8232838589981447,
+   "contrast": 0.849721706864564
+  },
+  "sonnet": {
+   "baseline": 0.6711502782931354,
+   "reranker": 0.8205009276437848,
+   "contrast": 0.8316326530612245
+  },
+  "haiku": {
+   "baseline": 0.6804267161410018,
+   "reranker": 0.8200371057513914,
+   "contrast": 0.8353432282003711
+  }
+ },
+ "summary_new_briefs_headline": {
+  "baseline": {
+   "mean_auc": 0.6182759776056009,
+   "mean_diff": 0.0,
+   "n_above_0": 0,
+   "boot_lo": 0.0,
+   "boot_hi": 0.0,
+   "hard_mean_auc": 0.6434699801074767,
+   "top2_share": 0.4166666666666667
+  },
+  "reranker": {
+   "mean_auc": 0.8611261442234767,
+   "mean_diff": 0.24285016661787565,
+   "n_above_0": 12,
+   "boot_lo": 0.16311535923167025,
+   "boot_hi": 0.3345703007172005,
+   "hard_mean_auc": 0.8290253695330515,
+   "top2_share": 0.9166666666666666
+  },
+  "contrast": {
+   "mean_auc": 0.8587988693811061,
+   "mean_diff": 0.24052289177550534,
+   "n_above_0": 11,
+   "boot_lo": 0.12845229247474202,
+   "boot_hi": 0.35156479749022107,
+   "hard_mean_auc": 0.8411153224987172,
+   "top2_share": 0.9166666666666666
+  }
+ },
+ "summary_seen_briefs_no_bar": {
+  "baseline": {
+   "mean_auc": 0.5865476508766211,
+   "mean_diff": 0.0,
+   "n_above_0": 0,
+   "boot_lo": 0.0,
+   "boot_hi": 0.0,
+   "hard_mean_auc": 0.6281766914618444,
+   "top2_share": 0.375
+  },
+  "reranker": {
+   "mean_auc": 0.8641179959661146,
+   "mean_diff": 0.2775703450894935,
+   "n_above_0": 12,
+   "boot_lo": 0.16633846963375284,
+   "boot_hi": 0.40281903404490604,
+   "hard_mean_auc": 0.8643197950026537,
+   "top2_share": 0.8333333333333334
+  }
+ },
+ "control_mean_auc": {
+  "baseline": 0.6779750861383513,
+  "reranker": 0.8332228995494303,
+  "contrast": 0.8512456930824278
+ },
+ "control_diff_to_baseline": {
+  "baseline": 0.0,
+  "reranker": 0.15524781341107896,
+  "contrast": 0.17327060694407648
+ },
+ "section_reading": {
+  "baseline": {
+   "brief-01": {
+    "ranked_sections": [
+     "AI in Society",
+     "Bias and data",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-02": {
+    "ranked_sections": [
+     "AI in Society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "Bias and data",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-03": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Future",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-04": {
+    "ranked_sections": [
+     "AI in Society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Bias and data",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-05": {
+    "ranked_sections": [
+     "Easier tools and cost reduction are driving adoption",
+     "AI in Society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Future",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-06": {
+    "ranked_sections": [
+     "AI in Society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Future",
+     "Bias and data",
+     "Easier tools and cost reduction are driving adoption",
+     "Trustworthy and governed AI",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "AI use cases cut across business operations",
+     "Methodology"
+    ],
+    "top2_share": 0.5
+   },
+   "brief-07": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Trustworthy and governed AI",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-08": {
+    "ranked_sections": [
+     "AI in Society",
+     "Bias and data",
+     "Trustworthy and governed AI",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-09": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Future",
+     "AI in Society",
+     "Bias and data",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-10": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Future",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Barriers keeping the next wave from benefiting",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Easier tools and cost reduction are driving adoption",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-11": {
+    "ranked_sections": [
+     "Future",
+     "AI in Society",
+     "Bias and data",
+     "Easier tools and cost reduction are driving adoption",
+     "Teaching the topic",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Trustworthy and governed AI",
+     "Barriers keeping the next wave from benefiting",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-12": {
+    "ranked_sections": [
+     "AI in Society",
+     "Bias and data",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Teaching the topic",
+     "Barriers keeping the next wave from benefiting",
+     "Adoption has remained steady at large organizations",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-13": {
+    "ranked_sections": [
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "AI in Society",
+     "Easier tools and cost reduction are driving adoption",
+     "Bias and data",
+     "Future",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-14": {
+    "ranked_sections": [
+     "AI in Society",
+     "Bias and data",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Barriers keeping the next wave from benefiting",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-15": {
+    "ranked_sections": [
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "AI in Society",
+     "Future",
+     "Bias and data",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Trustworthy and governed AI",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-16": {
+    "ranked_sections": [
+     "AI in Society",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Bias and data",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-17": {
+    "ranked_sections": [
+     "AI in Society",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Bias and data",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Trustworthy and governed AI",
+     "Part 2 - Impact of artificial intelligence on society",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Workforce impact",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-18": {
+    "ranked_sections": [
+     "AI in Society",
+     "Easier tools and cost reduction are driving adoption",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Bias and data",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-19": {
+    "ranked_sections": [
+     "AI in Society",
+     "Future",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-20": {
+    "ranked_sections": [
+     "AI in Society",
+     "Future",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "Methodology",
+     "About IBM"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-21": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Future",
+     "AI in Society",
+     "Bias and data",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-22": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Future",
+     "Barriers keeping the next wave from benefiting",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-23": {
+    "ranked_sections": [
+     "AI in Society",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Bias and data",
+     "Teaching the topic",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "Part 2 - Impact of artificial intelligence on society",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-24": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Trustworthy and governed AI",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 2 - Impact of artificial intelligence on society",
+     "AI use cases cut across business operations",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Methodology"
+    ],
+    "top2_share": 1.0
+   }
+  },
+  "reranker": {
+   "brief-01": {
+    "ranked_sections": [
+     "AI in Society",
+     "AI use cases cut across business operations",
+     "Teaching the topic",
+     "Workforce impact",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Bias and data",
+     "Future",
+     "Methodology",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Adoption has remained steady at large organizations",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-02": {
+    "ranked_sections": [
+     "AI in Society",
+     "Workforce impact",
+     "AI use cases cut across business operations",
+     "Easier tools and cost reduction are driving adoption",
+     "Teaching the topic",
+     "Bias and data",
+     "Methodology",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Future",
+     "Adoption has remained steady at large organizations",
+     "Barriers keeping the next wave from benefiting",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-03": {
+    "ranked_sections": [
+     "AI in Society",
+     "Trustworthy and governed AI",
+     "Teaching the topic",
+     "Bias and data",
+     "Methodology",
+     "Future",
+     "AI use cases cut across business operations",
+     "Barriers keeping the next wave from benefiting",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Part 1 - Enterprise adoption of AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Workforce impact",
+     "About IBM",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Highlights from the IBM Global AI Adoption Index 2023"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-04": {
+    "ranked_sections": [
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "Teaching the topic",
+     "AI in Society",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "Bias and data",
+     "Future",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-05": {
+    "ranked_sections": [
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Teaching the topic",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 1 - Enterprise adoption of AI",
+     "AI in Society",
+     "Adoption has remained steady at large organizations",
+     "Bias and data",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "Methodology",
+     "Barriers keeping the next wave from benefiting",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Future",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-06": {
+    "ranked_sections": [
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Teaching the topic",
+     "Easier tools and cost reduction are driving adoption",
+     "AI in Society",
+     "Workforce impact",
+     "Barriers keeping the next wave from benefiting",
+     "Bias and data",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Trustworthy and governed AI",
+     "Future",
+     "About IBM",
+     "Methodology",
+     "Highlights from the IBM Global AI Adoption Index 2023"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-07": {
+    "ranked_sections": [
+     "Methodology",
+     "AI in Society",
+     "Teaching the topic",
+     "Bias and data",
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Trustworthy and governed AI",
+     "Future",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-08": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Bias and data",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Future",
+     "AI in Society",
+     "AI use cases cut across business operations",
+     "Workforce impact",
+     "Methodology",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 1 - Enterprise adoption of AI",
+     "About IBM",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-09": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "AI in Society",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Barriers keeping the next wave from benefiting",
+     "Future",
+     "Bias and data",
+     "Trustworthy and governed AI",
+     "Methodology",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Workforce impact"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-10": {
+    "ranked_sections": [
+     "Bias and data",
+     "Future",
+     "AI in Society",
+     "Methodology",
+     "Teaching the topic",
+     "Adoption has remained steady at large organizations",
+     "About IBM",
+     "Trustworthy and governed AI",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 1 - Enterprise adoption of AI",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Workforce impact",
+     "Barriers keeping the next wave from benefiting"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-11": {
+    "ranked_sections": [
+     "Future",
+     "Bias and data",
+     "Teaching the topic",
+     "AI in Society",
+     "Workforce impact",
+     "About IBM",
+     "Methodology",
+     "Trustworthy and governed AI",
+     "AI use cases cut across business operations",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption",
+     "Adoption has remained steady at large organizations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-12": {
+    "ranked_sections": [
+     "AI in Society",
+     "Adoption has remained steady at large organizations",
+     "Bias and data",
+     "Teaching the topic",
+     "Future",
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Workforce impact",
+     "Trustworthy and governed AI",
+     "Methodology",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Barriers keeping the next wave from benefiting",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-13": {
+    "ranked_sections": [
+     "Workforce impact",
+     "AI in Society",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "AI use cases cut across business operations",
+     "Teaching the topic",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "About IBM",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "Highlights from the IBM Global AI Adoption Index 2023"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-14": {
+    "ranked_sections": [
+     "Trustworthy and governed AI",
+     "AI use cases cut across business operations",
+     "AI in Society",
+     "Bias and data",
+     "Workforce impact",
+     "Barriers keeping the next wave from benefiting",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic",
+     "Part 1 - Enterprise adoption of AI",
+     "Future",
+     "Methodology",
+     "About IBM",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Easier tools and cost reduction are driving adoption"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-15": {
+    "ranked_sections": [
+     "Most companies have accelerated rollout in the past 24 months",
+     "Teaching the topic",
+     "AI in Society",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Easier tools and cost reduction are driving adoption",
+     "Trustworthy and governed AI",
+     "Barriers keeping the next wave from benefiting",
+     "Future",
+     "Methodology",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Bias and data"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-16": {
+    "ranked_sections": [
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "AI use cases cut across business operations",
+     "Teaching the topic",
+     "Part 1 - Enterprise adoption of AI",
+     "Workforce impact",
+     "AI in Society",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Bias and data",
+     "Future",
+     "Easier tools and cost reduction are driving adoption",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Methodology",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-17": {
+    "ranked_sections": [
+     "AI use cases cut across business operations",
+     "Easier tools and cost reduction are driving adoption",
+     "AI in Society",
+     "Teaching the topic",
+     "Bias and data",
+     "Part 1 - Enterprise adoption of AI",
+     "Methodology",
+     "Future",
+     "Workforce impact",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Trustworthy and governed AI",
+     "Barriers keeping the next wave from benefiting",
+     "About IBM",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-18": {
+    "ranked_sections": [
+     "Easier tools and cost reduction are driving adoption",
+     "About IBM",
+     "Adoption has remained steady at large organizations",
+     "Part 1 - Enterprise adoption of AI",
+     "Teaching the topic",
+     "AI in Society",
+     "Bias and data",
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Trustworthy and governed AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Methodology",
+     "Barriers keeping the next wave from benefiting",
+     "Workforce impact",
+     "Future",
+     "Part 2 - Impact of artificial intelligence on society"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-19": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Future",
+     "AI use cases cut across business operations",
+     "Barriers keeping the next wave from benefiting",
+     "Workforce impact",
+     "Bias and data",
+     "AI in Society",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Adoption has remained steady at large organizations",
+     "Methodology",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-20": {
+    "ranked_sections": [
+     "Methodology",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "AI in Society",
+     "Barriers keeping the next wave from benefiting",
+     "Teaching the topic",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Bias and data",
+     "Future",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-21": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "AI in Society",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Future",
+     "Bias and data",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Methodology",
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "Workforce impact",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 1 - Enterprise adoption of AI",
+     "Adoption has remained steady at large organizations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-22": {
+    "ranked_sections": [
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Future",
+     "AI in Society",
+     "Methodology",
+     "AI use cases cut across business operations",
+     "About IBM",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Teaching the topic",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Workforce impact",
+     "Barriers keeping the next wave from benefiting",
+     "Easier tools and cost reduction are driving adoption"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-23": {
+    "ranked_sections": [
+     "Future",
+     "Teaching the topic",
+     "Bias and data",
+     "AI in Society",
+     "AI use cases cut across business operations",
+     "Methodology",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Adoption has remained steady at large organizations",
+     "Trustworthy and governed AI",
+     "Workforce impact",
+     "Part 1 - Enterprise adoption of AI",
+     "Most companies have accelerated rollout in the past 24 months",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-24": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Teaching the topic",
+     "Future",
+     "Trustworthy and governed AI",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Methodology",
+     "AI use cases cut across business operations",
+     "Easier tools and cost reduction are driving adoption",
+     "Barriers keeping the next wave from benefiting",
+     "Workforce impact",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 1 - Enterprise adoption of AI",
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months"
+    ],
+    "top2_share": 1.0
+   }
+  },
+  "contrast": {
+   "brief-13": {
+    "ranked_sections": [
+     "Workforce impact",
+     "AI in Society",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-14": {
+    "ranked_sections": [
+     "Trustworthy and governed AI",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Part 1 - Enterprise adoption of AI",
+     "AI use cases cut across business operations",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "AI in Society",
+     "Workforce impact",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-15": {
+    "ranked_sections": [
+     "Most companies have accelerated rollout in the past 24 months",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "AI in Society",
+     "Future",
+     "Methodology",
+     "Workforce impact",
+     "Teaching the topic",
+     "Adoption has remained steady at large organizations",
+     "Bias and data"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-16": {
+    "ranked_sections": [
+     "Adoption has remained steady at large organizations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Barriers keeping the next wave from benefiting",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Trustworthy and governed AI",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "AI in Society",
+     "Easier tools and cost reduction are driving adoption",
+     "Workforce impact",
+     "Future",
+     "Methodology",
+     "Bias and data",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-17": {
+    "ranked_sections": [
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "AI in Society",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "Workforce impact",
+     "Bias and data",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-18": {
+    "ranked_sections": [
+     "Easier tools and cost reduction are driving adoption",
+     "About IBM",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Part 1 - Enterprise adoption of AI",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "AI use cases cut across business operations",
+     "Future",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "AI in Society",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations",
+     "Bias and data",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-19": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Future",
+     "AI use cases cut across business operations",
+     "Barriers keeping the next wave from benefiting",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "AI in Society",
+     "Workforce impact",
+     "Bias and data",
+     "Adoption has remained steady at large organizations"
+    ],
+    "top2_share": 0.0
+   },
+   "brief-20": {
+    "ranked_sections": [
+     "Methodology",
+     "Workforce impact",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Adoption has remained steady at large organizations",
+     "Easier tools and cost reduction are driving adoption",
+     "Trustworthy and governed AI",
+     "AI use cases cut across business operations",
+     "Part 1 - Enterprise adoption of AI",
+     "Barriers keeping the next wave from benefiting",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "AI in Society",
+     "Future",
+     "Bias and data",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-21": {
+    "ranked_sections": [
+     "Teaching the topic",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "AI in Society",
+     "Methodology",
+     "Workforce impact",
+     "Bias and data",
+     "Adoption has remained steady at large organizations"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-22": {
+    "ranked_sections": [
+     "Bias and data",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Part 1 - Enterprise adoption of AI",
+     "Trustworthy and governed AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "AI use cases cut across business operations",
+     "Methodology",
+     "Most companies have accelerated rollout in the past 24 months",
+     "AI in Society",
+     "Adoption has remained steady at large organizations",
+     "Workforce impact",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-23": {
+    "ranked_sections": [
+     "Future",
+     "Teaching the topic",
+     "Bias and data",
+     "Part 2 - Impact of artificial intelligence on society",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "Easier tools and cost reduction are driving adoption",
+     "AI use cases cut across business operations",
+     "AI in Society",
+     "Methodology",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations"
+    ],
+    "top2_share": 1.0
+   },
+   "brief-24": {
+    "ranked_sections": [
+     "Bias and data",
+     "AI in Society",
+     "Highlights from the IBM Global AI Adoption Index 2023",
+     "Part 2 - Impact of artificial intelligence on society",
+     "About IBM",
+     "Barriers keeping the next wave from benefiting",
+     "Trustworthy and governed AI",
+     "Part 1 - Enterprise adoption of AI",
+     "Easier tools and cost reduction are driving adoption",
+     "Future",
+     "AI use cases cut across business operations",
+     "Most companies have accelerated rollout in the past 24 months",
+     "Methodology",
+     "Workforce impact",
+     "Adoption has remained steady at large organizations",
+     "Teaching the topic"
+    ],
+    "top2_share": 1.0
+   }
+  }
+ },
+ "balanced_accuracy": {
+  "fixed_cutoff_nearest_cost": {
+   "brief-01": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-02": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-03": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-04": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-05": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-06": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-07": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-08": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-09": {
+    "ba": 0.5714285714285714,
+    "n_match": 1,
+    "tpr": 0.14285714285714285,
+    "tnr": 1.0
+   },
+   "brief-10": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-11": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-12": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-13": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-14": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-15": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-16": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-17": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-18": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-19": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-20": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-21": {
+    "ba": 0.5714285714285714,
+    "n_match": 1,
+    "tpr": 0.14285714285714285,
+    "tnr": 1.0
+   },
+   "brief-22": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-23": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-24": {
+    "ba": 0.525,
+    "n_match": 1,
+    "tpr": 0.05,
+    "tnr": 1.0
+   }
+  },
+  "otsu_reranker": {
+   "brief-01": {
+    "ba": 0.4935064935064935,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.987012987012987,
+    "threshold": 0.4455750286579132
+   },
+   "brief-02": {
+    "ba": 0.4934210526315789,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.9868421052631579,
+    "threshold": 0.4698493033647537
+   },
+   "brief-03": {
+    "ba": 0.474025974025974,
+    "n_match": 4,
+    "tpr": 0.0,
+    "tnr": 0.948051948051948,
+    "threshold": 0.02795885782688856
+   },
+   "brief-04": {
+    "ba": 0.6666666666666666,
+    "n_match": 1,
+    "tpr": 0.3333333333333333,
+    "tnr": 1.0,
+    "threshold": 0.3032042607665062
+   },
+   "brief-05": {
+    "ba": 0.48717948717948717,
+    "n_match": 2,
+    "tpr": 0.0,
+    "tnr": 0.9743589743589743,
+    "threshold": 0.04982175678014755
+   },
+   "brief-06": {
+    "ba": 0.5970266040688577,
+    "n_match": 7,
+    "tpr": 0.2222222222222222,
+    "tnr": 0.971830985915493,
+    "threshold": 0.12461092323064804
+   },
+   "brief-07": {
+    "ba": 0.611842105263158,
+    "n_match": 3,
+    "tpr": 0.25,
+    "tnr": 0.9736842105263158,
+    "threshold": 0.1475299708545208
+   },
+   "brief-08": {
+    "ba": 0.5495495495495496,
+    "n_match": 6,
+    "tpr": 0.16666666666666666,
+    "tnr": 0.9324324324324325,
+    "threshold": 0.10685883089900017
+   },
+   "brief-09": {
+    "ba": 0.7142857142857143,
+    "n_match": 3,
+    "tpr": 0.42857142857142855,
+    "tnr": 1.0,
+    "threshold": 0.2679968327283859
+   },
+   "brief-10": {
+    "ba": 0.625,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 1.0,
+    "threshold": 0.3514510989189148
+   },
+   "brief-11": {
+    "ba": 0.658974358974359,
+    "n_match": 6,
+    "tpr": 0.3333333333333333,
+    "tnr": 0.9846153846153847,
+    "threshold": 0.20812039077281952
+   },
+   "brief-12": {
+    "ba": 0.5759803921568628,
+    "n_match": 3,
+    "tpr": 0.16666666666666666,
+    "tnr": 0.9852941176470589,
+    "threshold": 0.2906976640224457
+   },
+   "brief-13": {
+    "ba": 0.618421052631579,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 0.9868421052631579,
+    "threshold": 0.4833592101931572
+   },
+   "brief-14": {
+    "ba": 0.6601731601731602,
+    "n_match": 3,
+    "tpr": 0.3333333333333333,
+    "tnr": 0.987012987012987,
+    "threshold": 0.013484321534633636
+   },
+   "brief-15": {
+    "ba": 0.611842105263158,
+    "n_match": 3,
+    "tpr": 0.25,
+    "tnr": 0.9736842105263158,
+    "threshold": 0.09565152414143085
+   },
+   "brief-16": {
+    "ba": 0.8,
+    "n_match": 4,
+    "tpr": 0.6,
+    "tnr": 1.0,
+    "threshold": 0.30664659291505814
+   },
+   "brief-17": {
+    "ba": 0.58,
+    "n_match": 4,
+    "tpr": 0.2,
+    "tnr": 0.96,
+    "threshold": 0.05447862669825554
+   },
+   "brief-18": {
+    "ba": 0.618421052631579,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 0.9868421052631579,
+    "threshold": 0.04258233215659857
+   },
+   "brief-19": {
+    "ba": 0.487012987012987,
+    "n_match": 2,
+    "tpr": 0.0,
+    "tnr": 0.974025974025974,
+    "threshold": 0.36990025639533997
+   },
+   "brief-20": {
+    "ba": 0.611842105263158,
+    "n_match": 6,
+    "tpr": 0.25,
+    "tnr": 0.9736842105263158,
+    "threshold": 0.2765170931816101
+   },
+   "brief-21": {
+    "ba": 0.8571428571428572,
+    "n_match": 5,
+    "tpr": 0.7142857142857143,
+    "tnr": 1.0,
+    "threshold": 0.31255146861076355
+   },
+   "brief-22": {
+    "ba": 0.625,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 1.0,
+    "threshold": 0.33290306106209755
+   },
+   "brief-23": {
+    "ba": 0.6102564102564103,
+    "n_match": 7,
+    "tpr": 0.26666666666666666,
+    "tnr": 0.9538461538461539,
+    "threshold": 0.17673246562480927
+   },
+   "brief-24": {
+    "ba": 0.6,
+    "n_match": 4,
+    "tpr": 0.2,
+    "tnr": 1.0,
+    "threshold": 0.414080236107111
+   }
+  },
+  "fixed_rule_reranker_ge_0.5": {
+   "brief-01": {
+    "ba": 0.4935064935064935,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.987012987012987
+   },
+   "brief-02": {
+    "ba": 0.4934210526315789,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.9868421052631579
+   },
+   "brief-03": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-04": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-05": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-06": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-07": {
+    "ba": 0.4934210526315789,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.9868421052631579
+   },
+   "brief-08": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-09": {
+    "ba": 0.6428571428571428,
+    "n_match": 2,
+    "tpr": 0.2857142857142857,
+    "tnr": 1.0
+   },
+   "brief-10": {
+    "ba": 0.5625,
+    "n_match": 1,
+    "tpr": 0.125,
+    "tnr": 1.0
+   },
+   "brief-11": {
+    "ba": 0.5333333333333333,
+    "n_match": 1,
+    "tpr": 0.06666666666666667,
+    "tnr": 1.0
+   },
+   "brief-12": {
+    "ba": 0.5416666666666666,
+    "n_match": 1,
+    "tpr": 0.08333333333333333,
+    "tnr": 1.0
+   },
+   "brief-13": {
+    "ba": 0.618421052631579,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 0.9868421052631579
+   },
+   "brief-14": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-15": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-16": {
+    "ba": 0.7,
+    "n_match": 2,
+    "tpr": 0.4,
+    "tnr": 1.0
+   },
+   "brief-17": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-18": {
+    "ba": 0.5,
+    "n_match": 0,
+    "tpr": 0.0,
+    "tnr": 1.0
+   },
+   "brief-19": {
+    "ba": 0.4935064935064935,
+    "n_match": 1,
+    "tpr": 0.0,
+    "tnr": 0.987012987012987
+   },
+   "brief-20": {
+    "ba": 0.625,
+    "n_match": 3,
+    "tpr": 0.25,
+    "tnr": 1.0
+   },
+   "brief-21": {
+    "ba": 0.7857142857142857,
+    "n_match": 4,
+    "tpr": 0.5714285714285714,
+    "tnr": 1.0
+   },
+   "brief-22": {
+    "ba": 0.625,
+    "n_match": 2,
+    "tpr": 0.25,
+    "tnr": 1.0
+   },
+   "brief-23": {
+    "ba": 0.5333333333333333,
+    "n_match": 1,
+    "tpr": 0.06666666666666667,
+    "tnr": 1.0
+   },
+   "brief-24": {
+    "ba": 0.6,
+    "n_match": 4,
+    "tpr": 0.2,
+    "tnr": 1.0
+   }
+  },
+  "mean_new": {
+   "fixed": 0.5080357142857143,
+   "otsu": 0.640009310864574,
+   "fixed_rule_0.5": 0.5817479304321409
+  },
+  "mean_seen_no_bar": {
+   "fixed": 0.5059523809523809,
+   "otsu": 0.5789548665257253,
+   "fixed_rule_0.5": 0.5217254784688995
+  }
+ },
+ "gates": {
+  "E18-H87": {
+   "baseline_mean_auc_new": 0.6182759776056009,
+   "threshold": 0.95,
+   "killed": false
+  },
+  "E18-H91": {
+   "fixed_mean_ba_new": 0.5080357142857143,
+   "threshold": 0.65,
+   "killed": false
+  }
+ },
+ "clauses": {
+  "E18-H87": {
+   "mean_diff_ge_0.03": {
+    "value": 0.24285016661787565,
+    "ok": true
+   },
+   "briefs_above_0_ge_10": {
+    "value": 12,
+    "ok": true
+   },
+   "control_drop_le_0.01": {
+    "value": 0.15524781341107896,
+    "ok": true
+   },
+   "bar_met": true
+  },
+  "E18-H91": {
+   "otsu_mean_ba_ge_0.70": {
+    "value": 0.640009310864574,
+    "ok": false
+   },
+   "otsu_minus_fixed_ge_0.10": {
+    "value": 0.13197359657885976,
+    "ok": true
+   },
+   "bar_met": false
+  }
+ },
+ "verdict_by_bar": {
+  "E18-H87": "Confirmed",
+  "E18-H91": "Refuted"
+ },
+ "reranker_wall_seconds_per_grid": {
+  "first_call": 13.632748830015771,
+  "briefs_02_to_24_median": 13.833378377952613,
+  "briefs_02_to_24_mean": 14.293682985301333,
+  "per_query": {
+   "brief-01": 13.632748830015771,
+   "brief-02": 13.265964281046763,
+   "brief-03": 13.945629320049193,
+   "brief-04": 14.491546617005952,
+   "brief-05": 12.876155875972472,
+   "brief-06": 13.864033019985072,
+   "brief-07": 12.686672816984355,
+   "brief-08": 13.757756998995319,
+   "brief-09": 12.499446769012138,
+   "brief-10": 13.211560088966507,
+   "brief-11": 13.399510594026651,
+   "brief-12": 13.984312726999633,
+   "brief-13": 14.417789631988853,
+   "brief-14": 14.746163376024924,
+   "brief-15": 12.583099431998562,
+   "brief-16": 10.715606154990382,
+   "brief-17": 20.724402040010318,
+   "brief-18": 15.210698445967864,
+   "brief-19": 16.69520943297539,
+   "brief-20": 14.351235592970625,
+   "brief-21": 12.803979495016392,
+   "brief-22": 13.418981669994537,
+   "brief-23": 21.27157590299612,
+   "brief-24": 13.833378377952613,
+   "gold": 72.4288678310113,
+   "gold-2": 35.447276935970876,
+   "v1": 37.83012525102822,
+   "v2": 37.008558580011595,
+   "opus": 54.42555819498375,
+   "sonnet": 32.82785656204214,
+   "haiku": 33.917134388990235
+  },
+  "pairs_per_query": {
+   "brief-01": 558,
+   "brief-02": 558,
+   "brief-03": 558,
+   "brief-04": 558,
+   "brief-05": 558,
+   "brief-06": 558,
+   "brief-07": 558,
+   "brief-08": 558,
+   "brief-09": 558,
+   "brief-10": 558,
+   "brief-11": 558,
+   "brief-12": 558,
+   "brief-13": 465,
+   "brief-14": 465,
+   "brief-15": 558,
+   "brief-16": 372,
+   "brief-17": 744,
+   "brief-18": 465,
+   "brief-19": 651,
+   "brief-20": 465,
+   "brief-21": 558,
+   "brief-22": 558,
+   "brief-23": 930,
+   "brief-24": 558,
+   "gold": 930,
+   "gold-2": 1116,
+   "v1": 1023,
+   "v2": 1023,
+   "opus": 1116,
+   "sonnet": 930,
+   "haiku": 1209
+  }
+ },
+ "grids_file": "data/interim/E18/reranker-grids.npz",
+ "per_brief_table": [
+  {
+   "brief": "brief-13",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.6743421052631579,
+   "reranker_auc": 0.9144736842105263,
+   "diff": 0.24013157894736847,
+   "contrast_auc": 0.7960526315789473,
+   "hard_baseline_auc": 0.671875,
+   "hard_reranker_auc": 0.8984375,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.618421052631579,
+   "otsu_threshold": 0.4833592101931572,
+   "targets": [
+    "Workforce impact"
+   ]
+  },
+  {
+   "brief": "brief-14",
+   "set": "new",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.6623376623376623,
+   "reranker_auc": 0.7489177489177489,
+   "diff": 0.08658008658008653,
+   "contrast_auc": 0.9567099567099567,
+   "hard_baseline_auc": 0.7171717171717171,
+   "hard_reranker_auc": 0.7777777777777778,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6601731601731602,
+   "otsu_threshold": 0.013484321534633636,
+   "targets": [
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-15",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.7269736842105263,
+   "reranker_auc": 0.944078947368421,
+   "diff": 0.2171052631578947,
+   "contrast_auc": 0.8092105263157895,
+   "hard_baseline_auc": 0.8046875,
+   "hard_reranker_auc": 0.96875,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.09565152414143085,
+   "targets": [
+    "Most companies have accelerated rollout in the past 24 months"
+   ]
+  },
+  {
+   "brief": "brief-16",
+   "set": "new",
+   "positives": 5,
+   "negatives": 75,
+   "baseline_auc": 0.5946666666666667,
+   "reranker_auc": 0.9546666666666667,
+   "diff": 0.36,
+   "contrast_auc": 0.9733333333333334,
+   "hard_baseline_auc": 0.7419354838709677,
+   "hard_reranker_auc": 0.9354838709677419,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.8,
+   "otsu_threshold": 0.30664659291505814,
+   "targets": [
+    "Adoption has remained steady at large organizations"
+   ]
+  },
+  {
+   "brief": "brief-17",
+   "set": "new",
+   "positives": 5,
+   "negatives": 75,
+   "baseline_auc": 0.35733333333333334,
+   "reranker_auc": 0.9226666666666666,
+   "diff": 0.5653333333333332,
+   "contrast_auc": 0.864,
+   "hard_baseline_auc": 0.535483870967742,
+   "hard_reranker_auc": 0.967741935483871,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.58,
+   "otsu_threshold": 0.05447862669825554,
+   "targets": [
+    "AI use cases cut across business operations",
+    "Easier tools and cost reduction are driving adoption"
+   ]
+  },
+  {
+   "brief": "brief-18",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.5296052631578947,
+   "reranker_auc": 0.8092105263157895,
+   "diff": 0.2796052631578948,
+   "contrast_auc": 0.9703947368421053,
+   "hard_baseline_auc": 0.53125,
+   "hard_reranker_auc": 0.703125,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.618421052631579,
+   "otsu_threshold": 0.04258233215659857,
+   "targets": [
+    "About IBM"
+   ]
+  },
+  {
+   "brief": "brief-19",
+   "set": "new",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.45021645021645024,
+   "reranker_auc": 0.5454545454545454,
+   "diff": 0.09523809523809518,
+   "contrast_auc": 0.7489177489177489,
+   "hard_baseline_auc": 0.6060606060606061,
+   "hard_reranker_auc": 0.5858585858585859,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.487012987012987,
+   "otsu_threshold": 0.36990025639533997,
+   "targets": [
+    "Barriers keeping the next wave from benefiting"
+   ]
+  },
+  {
+   "brief": "brief-20",
+   "set": "new",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.3815789473684211,
+   "reranker_auc": 0.8453947368421053,
+   "diff": 0.46381578947368424,
+   "contrast_auc": 0.9013157894736842,
+   "hard_baseline_auc": 0.5,
+   "hard_reranker_auc": 0.7265625,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.2765170931816101,
+   "targets": [
+    "Methodology"
+   ]
+  },
+  {
+   "brief": "brief-21",
+   "set": "new",
+   "positives": 7,
+   "negatives": 73,
+   "baseline_auc": 0.7162426614481409,
+   "reranker_auc": 0.9960861056751468,
+   "diff": 0.2798434442270059,
+   "contrast_auc": 1.0,
+   "hard_baseline_auc": 0.61003861003861,
+   "hard_reranker_auc": 0.9922779922779923,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.8571428571428572,
+   "otsu_threshold": 0.31255146861076355,
+   "targets": [
+    "Teaching the topic"
+   ]
+  },
+  {
+   "brief": "brief-22",
+   "set": "new",
+   "positives": 8,
+   "negatives": 72,
+   "baseline_auc": 0.7673611111111112,
+   "reranker_auc": 0.9375,
+   "diff": 0.17013888888888884,
+   "contrast_auc": 0.6493055555555556,
+   "hard_baseline_auc": 0.7048611111111112,
+   "hard_reranker_auc": 0.9236111111111112,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.625,
+   "otsu_threshold": 0.33290306106209755,
+   "targets": [
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-23",
+   "set": "new",
+   "positives": 15,
+   "negatives": 65,
+   "baseline_auc": 0.7661538461538462,
+   "reranker_auc": 0.8358974358974359,
+   "diff": 0.06974358974358974,
+   "contrast_auc": 0.8338461538461538,
+   "hard_baseline_auc": 0.6482758620689655,
+   "hard_reranker_auc": 0.7103448275862069,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6102564102564103,
+   "otsu_threshold": 0.17673246562480927,
+   "targets": [
+    "Future"
+   ]
+  },
+  {
+   "brief": "brief-24",
+   "set": "new",
+   "positives": 20,
+   "negatives": 60,
+   "baseline_auc": 0.7925,
+   "reranker_auc": 0.8791666666666667,
+   "diff": 0.08666666666666667,
+   "contrast_auc": 0.8025,
+   "hard_baseline_auc": 0.65,
+   "hard_reranker_auc": 0.7583333333333333,
+   "fixed_ba": 0.525,
+   "otsu_ba": 0.6,
+   "otsu_threshold": 0.414080236107111,
+   "targets": [
+    "AI in Society",
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-01",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.37662337662337664,
+   "reranker_auc": 0.5064935064935064,
+   "diff": 0.1298701298701298,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.5555555555555556,
+   "hard_reranker_auc": 0.46464646464646464,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.4935064935064935,
+   "otsu_threshold": 0.4455750286579132,
+   "targets": [
+    "Barriers keeping the next wave from benefiting"
+   ]
+  },
+  {
+   "brief": "brief-02",
+   "set": "seen",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.7335526315789473,
+   "reranker_auc": 0.9473684210526315,
+   "diff": 0.21381578947368418,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7421875,
+   "hard_reranker_auc": 0.96875,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.4934210526315789,
+   "otsu_threshold": 0.4698493033647537,
+   "targets": [
+    "Workforce impact"
+   ]
+  },
+  {
+   "brief": "brief-03",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.6277056277056277,
+   "reranker_auc": 0.7835497835497836,
+   "diff": 0.1558441558441559,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7272727272727273,
+   "hard_reranker_auc": 0.8888888888888888,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.474025974025974,
+   "otsu_threshold": 0.02795885782688856,
+   "targets": [
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-04",
+   "set": "seen",
+   "positives": 3,
+   "negatives": 77,
+   "baseline_auc": 0.5844155844155844,
+   "reranker_auc": 0.935064935064935,
+   "diff": 0.35064935064935066,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6666666666666666,
+   "hard_reranker_auc": 0.9090909090909091,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.6666666666666666,
+   "otsu_threshold": 0.3032042607665062,
+   "targets": [
+    "Easier tools and cost reduction are driving adoption"
+   ]
+  },
+  {
+   "brief": "brief-05",
+   "set": "seen",
+   "positives": 2,
+   "negatives": 78,
+   "baseline_auc": 0.1987179487179487,
+   "reranker_auc": 0.9423076923076923,
+   "diff": 0.7435897435897436,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.3235294117647059,
+   "hard_reranker_auc": 0.9264705882352942,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.48717948717948717,
+   "otsu_threshold": 0.04982175678014755,
+   "targets": [
+    "AI use cases cut across business operations"
+   ]
+  },
+  {
+   "brief": "brief-06",
+   "set": "seen",
+   "positives": 9,
+   "negatives": 71,
+   "baseline_auc": 0.6150234741784038,
+   "reranker_auc": 0.9280125195618153,
+   "diff": 0.31298904538341155,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.7613168724279835,
+   "hard_reranker_auc": 0.9382716049382716,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5970266040688577,
+   "otsu_threshold": 0.12461092323064804,
+   "targets": [
+    "Adoption has remained steady at large organizations",
+    "Most companies have accelerated rollout in the past 24 months"
+   ]
+  },
+  {
+   "brief": "brief-07",
+   "set": "seen",
+   "positives": 4,
+   "negatives": 76,
+   "baseline_auc": 0.2631578947368421,
+   "reranker_auc": 0.9243421052631579,
+   "diff": 0.6611842105263157,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.3828125,
+   "hard_reranker_auc": 0.9375,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.611842105263158,
+   "otsu_threshold": 0.1475299708545208,
+   "targets": [
+    "Methodology"
+   ]
+  },
+  {
+   "brief": "brief-08",
+   "set": "seen",
+   "positives": 6,
+   "negatives": 74,
+   "baseline_auc": 0.5202702702702703,
+   "reranker_auc": 0.7454954954954955,
+   "diff": 0.22522522522522526,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6555555555555556,
+   "hard_reranker_auc": 0.8611111111111112,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5495495495495496,
+   "otsu_threshold": 0.10685883089900017,
+   "targets": [
+    "Barriers keeping the next wave from benefiting",
+    "Trustworthy and governed AI"
+   ]
+  },
+  {
+   "brief": "brief-09",
+   "set": "seen",
+   "positives": 7,
+   "negatives": 73,
+   "baseline_auc": 0.6966731898238747,
+   "reranker_auc": 0.9960861056751468,
+   "diff": 0.29941291585127205,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.583011583011583,
+   "hard_reranker_auc": 0.9922779922779923,
+   "fixed_ba": 0.5714285714285714,
+   "otsu_ba": 0.7142857142857143,
+   "otsu_threshold": 0.2679968327283859,
+   "targets": [
+    "Teaching the topic"
+   ]
+  },
+  {
+   "brief": "brief-10",
+   "set": "seen",
+   "positives": 8,
+   "negatives": 72,
+   "baseline_auc": 0.7621527777777778,
+   "reranker_auc": 0.9600694444444444,
+   "diff": 0.19791666666666663,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6770833333333334,
+   "hard_reranker_auc": 0.9305555555555556,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.625,
+   "otsu_threshold": 0.3514510989189148,
+   "targets": [
+    "Bias and data"
+   ]
+  },
+  {
+   "brief": "brief-11",
+   "set": "seen",
+   "positives": 15,
+   "negatives": 65,
+   "baseline_auc": 0.8441025641025641,
+   "reranker_auc": 0.8697435897435898,
+   "diff": 0.02564102564102566,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.767816091954023,
+   "hard_reranker_auc": 0.767816091954023,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.658974358974359,
+   "otsu_threshold": 0.20812039077281952,
+   "targets": [
+    "Future"
+   ]
+  },
+  {
+   "brief": "brief-12",
+   "set": "seen",
+   "positives": 12,
+   "negatives": 68,
+   "baseline_auc": 0.8161764705882353,
+   "reranker_auc": 0.8308823529411765,
+   "diff": 0.014705882352941235,
+   "contrast_auc": null,
+   "hard_baseline_auc": 0.6953125,
+   "hard_reranker_auc": 0.7864583333333334,
+   "fixed_ba": 0.5,
+   "otsu_ba": 0.5759803921568628,
+   "otsu_threshold": 0.2906976640224457,
+   "targets": [
+    "AI in Society"
+   ]
+  }
+ ],
+ "wall_seconds": 670.2
+}

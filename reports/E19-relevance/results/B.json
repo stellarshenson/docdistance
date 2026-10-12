@@ -1,0 +1,352 @@
+{
+ "key": "E19-B",
+ "notebook": "notebooks/experiments/E19-kj-real-document-map.ipynb",
+ "metrics_json": "reports/E19-real-document-map-metrics.json",
+ "log": "logs/E19-real-document-map.log",
+ "notebook_errors": 0,
+ "harness_check": {
+  "passed": true,
+  "largest_difference": 0,
+  "reading": "all 18 fixture files equal the registered sha256; every note's targets hold at least 5 statements"
+ },
+ "hypotheses": [
+  {
+   "id": "E19-H93",
+   "gate": {
+    "passed": true,
+    "reading": "no gate; fixture check passed"
+   },
+   "clauses": [
+    {
+     "name": "baseline_mean_auc_ge_0.80",
+     "value": 0.6374405207792435,
+     "met": false
+    },
+    {
+     "name": "top3_hits_ge_10_of_13",
+     "value": 5.0,
+     "met": false
+    }
+   ],
+   "verdict_by_bar": "Refuted",
+   "key_numbers": "baseline mean AUC 0.6374 (bar 0.80), top-3 hits 5/13 (bar 10), hard-negative mean AUC 0.6305, no note at 0.80"
+  },
+  {
+   "id": "E19-H94",
+   "gate": {
+    "passed": true,
+    "reading": "baseline mean AUC 0.6374 < 0.95, passed"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": 0.08758332144606482,
+     "met": true
+    },
+    {
+     "name": "notes_above_0_ge_10",
+     "value": 13.0,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Confirmed",
+   "key_numbers": "mean AUC 0.7250, mean diff +0.0876, 13/13 notes above 0, boot [+0.0603,+0.1170], top-3 hits 12/13"
+  },
+  {
+   "id": "E19-H96",
+   "gate": {
+    "passed": true,
+    "reading": "baseline mean AUC 0.6374 < 0.95, passed"
+   },
+   "clauses": [
+    {
+     "name": "mean_diff_ge_0.03",
+     "value": 0.09709749038487331,
+     "met": true
+    },
+    {
+     "name": "notes_above_0_ge_10",
+     "value": 12.0,
+     "met": true
+    }
+   ],
+   "verdict_by_bar": "Confirmed",
+   "key_numbers": "mean AUC 0.7345, mean diff +0.0971, 12/13 notes above 0 (loser 779193 -0.1655), boot [+0.0427,+0.1405], top-3 hits 12/13"
+  },
+  {
+   "id": "E19-H97",
+   "gate": {
+    "passed": true,
+    "reading": "fixed-cutoff mean balanced accuracy 0.5835 < 0.65, passed"
+   },
+   "clauses": [
+    {
+     "name": "otsu_mean_ba_ge_0.70",
+     "value": 0.659173065469237,
+     "met": false
+    },
+    {
+     "name": "otsu_minus_fixed_ge_0.10",
+     "value": 0.07563789274785049,
+     "met": false
+    }
+   ],
+   "verdict_by_bar": "Refuted",
+   "key_numbers": "Otsu mean BA 0.6592 (bar 0.70), fixed 0.5835, difference +0.0756 (bar 0.10); no-target note: fixed cutoff marks 2.27 percent, Otsu of contrast 47.45 percent"
+  }
+ ],
+ "per_brief": [
+  {
+   "note": "739206-european-year-of-skills",
+   "positives": 67,
+   "negatives": 748,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.6585322052837417,
+    "H94": 0.7316824966078698,
+    "H96": 0.7973301939500359
+   },
+   "best_target_rank": {
+    "baseline": 1,
+    "H94": 1,
+    "H96": 1
+   },
+   "fixed_ba": 0.6505806528853061,
+   "otsu_ba": 0.7138139516322133
+  },
+  {
+   "note": "739350-online-age-verification",
+   "positives": 25,
+   "negatives": 736,
+   "neutral": 122,
+   "auc": {
+    "baseline": 0.7265217391304348,
+    "H94": 0.8281521739130435,
+    "H96": 0.8444021739130435
+   },
+   "best_target_rank": {
+    "baseline": 4,
+    "H94": 1,
+    "H96": 1
+   },
+   "fixed_ba": 0.6639945652173913,
+   "otsu_ba": 0.7257065217391304
+  },
+  {
+   "note": "747926-ai-act-parliament-position",
+   "positives": 16,
+   "negatives": 782,
+   "neutral": 85,
+   "auc": {
+    "baseline": 0.6244804987212276,
+    "H94": 0.7019261508951407,
+    "H96": 0.7091192455242967
+   },
+   "best_target_rank": {
+    "baseline": 8,
+    "H94": 1,
+    "H96": 2
+   },
+   "fixed_ba": 0.596787084398977,
+   "otsu_ba": 0.6741528132992327
+  },
+  {
+   "note": "751386-eu-chips-act",
+   "positives": 38,
+   "negatives": 777,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.4707884576305629,
+    "H94": 0.6636354399512294,
+    "H96": 0.7199248120300752
+   },
+   "best_target_rank": {
+    "baseline": 21,
+    "H94": 2,
+    "H96": 2
+   },
+   "fixed_ba": 0.5288220551378446,
+   "otsu_ba": 0.6780125990652306
+  },
+  {
+   "note": "754642-european-health-data-space",
+   "positives": 26,
+   "negatives": 789,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.5612996002729843,
+    "H94": 0.612971629131325,
+    "H96": 0.717973091547236
+   },
+   "best_target_rank": {
+    "baseline": 15,
+    "H94": 4,
+    "H96": 2
+   },
+   "fixed_ba": 0.5361460466023203,
+   "otsu_ba": 0.5966169445256898
+  },
+  {
+   "note": "759583-strategic-technologies-platform",
+   "positives": 54,
+   "negatives": 761,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.5842458753102643,
+    "H94": 0.6569085511266851,
+    "H96": 0.665011923881832
+   },
+   "best_target_rank": {
+    "baseline": 12,
+    "H94": 1,
+    "H96": 2
+   },
+   "fixed_ba": 0.54056553268117,
+   "otsu_ba": 0.620930062782888
+  },
+  {
+   "note": "759620-european-media-freedom-act",
+   "positives": 13,
+   "negatives": 779,
+   "neutral": 91,
+   "auc": {
+    "baseline": 0.761429841019058,
+    "H94": 0.8274908660017775,
+    "H96": 0.9022415325367829
+   },
+   "best_target_rank": {
+    "baseline": 1,
+    "H94": 1,
+    "H96": 1
+   },
+   "fixed_ba": 0.68524735854646,
+   "otsu_ba": 0.7734768440801817
+  },
+  {
+   "note": "760355-foreign-interference-preparedness",
+   "positives": 23,
+   "negatives": 744,
+   "neutral": 116,
+   "auc": {
+    "baseline": 0.7263616175783076,
+    "H94": 0.7475163627863488,
+    "H96": 0.8042017297802712
+   },
+   "best_target_rank": {
+    "baseline": 2,
+    "H94": 2,
+    "H96": 2
+   },
+   "fixed_ba": 0.5968326320710612,
+   "otsu_ba": 0.6917075736325387
+  },
+  {
+   "note": "760392-ai-investment-indicators",
+   "positives": 17,
+   "negatives": 729,
+   "neutral": 137,
+   "auc": {
+    "baseline": 0.7238763818284516,
+    "H94": 0.8185265875897684,
+    "H96": 0.7738239328653272
+   },
+   "best_target_rank": {
+    "baseline": 2,
+    "H94": 2,
+    "H96": 2
+   },
+   "fixed_ba": 0.6011861534737352,
+   "otsu_ba": 0.7123376099410959
+  },
+  {
+   "note": "760421-gigabit-infrastructure-act",
+   "positives": 57,
+   "negatives": 758,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.5933782345044669,
+    "H94": 0.6945678840901727,
+    "H96": 0.7023677267046243
+   },
+   "best_target_rank": {
+    "baseline": 11,
+    "H94": 1,
+    "H96": 1
+   },
+   "fixed_ba": 0.510287922973661,
+   "otsu_ba": 0.637226311160487
+  },
+  {
+   "note": "772906-ai-act-implementation-timeline",
+   "positives": 16,
+   "negatives": 782,
+   "neutral": 85,
+   "auc": {
+    "baseline": 0.593630115089514,
+    "H94": 0.6987292199488491,
+    "H96": 0.6673992966751918
+   },
+   "best_target_rank": {
+    "baseline": 6,
+    "H94": 2,
+    "H96": 2
+   },
+   "fixed_ba": 0.5248561381074168,
+   "otsu_ba": 0.6015824808184143
+  },
+  {
+   "note": "779193-simplifying-digital-laws",
+   "positives": 19,
+   "negatives": 770,
+   "neutral": 94,
+   "auc": {
+    "baseline": 0.7027682843472317,
+    "H94": 0.7038619275461381,
+    "H96": 0.5372863978127136
+   },
+   "best_target_rank": {
+    "baseline": 1,
+    "H94": 1,
+    "H96": 9
+   },
+   "fixed_ba": 0.5669514695830485,
+   "otsu_ba": 0.5180451127819549
+  },
+  {
+   "note": "779252-cybersecurity-act-review",
+   "positives": 35,
+   "negatives": 780,
+   "neutral": 68,
+   "auc": {
+    "baseline": 0.5594139194139194,
+    "H94": 0.7393406593406593,
+    "H96": 0.7079120879120879
+   },
+   "best_target_rank": {
+    "baseline": 15,
+    "H94": 2,
+    "H96": 3
+   },
+   "fixed_ba": 0.5836996336996336,
+   "otsu_ba": 0.6256410256410256
+  }
+ ],
+ "deviations": [
+  "Unit size and unit score use the statements assigned to the deepest unit of their path (own statements); the primer text 'hold' is read that way, so numbered section 3.1.1 (1 own statement) is left out and its subheadings stand for it",
+  "Hard-negative chapter is the first path element of the first positive statement of the note (for 759583 with targets in chapters 2 and 5 this is chapter 2); positives are not restricted",
+  "A statement is neutral first (introduction, chapter 1, related heading), then positive, then negative; no statement was both neutral and target",
+  "Kernelspec python3 as in the E18 template"
+ ],
+ "observations": [
+  "Baseline ranks general implementation chapters (5.2, 5.4, 4.3, 4.2) at the top for many notes, regardless of the note",
+  "H94 and H96 differ by 0.0095 mean AUC; H96 loses on 779193 (-0.1655), H94 loses on none",
+  "Otsu split of the contrast marks 40.26 percent of the statements on average and 47.45 percent for the note without a target; fixed cutoff marks 6.21 and 2.27 percent",
+  "Scratch recomputation (brute-force pairwise AUC, float64 cosines, own label loop): baseline mean AUC 0.6374353 vs notebook 0.6374405 (diff 5.3e-6, float32 vs float64 ties); H96 mean AUC 0.7345380 vs 0.7345380 (diff 0); H96 notes above 0: 12 in both",
+  "docdistance 1.1.32, backend openvino"
+ ],
+ "not_verified": [
+  "Otsu balanced accuracies and the section reading were not recomputed by the scratch script",
+  "H94 pre-pass AUC not recomputed independently",
+  "Labels by one annotator at section level; no second opinion"
+ ]
+}

@@ -18,7 +18,7 @@ names the reader of the documents: `auto` (the default, by file extension), plai
 | `source_conditioned_distance` | `(a, b, source, *, backend="openvino", anisotropy=True, offline=True, device=None)` | `SourceConditionedResult` | `d(A, B | S)`; selection axis + reranker x NLI grounding residuals |
 | `DocDistance` | `DocDistance(backend="openvino", offline=True, device=None, memo_size=0)` | pipeline | construct once, models load lazily on first use, then score many pairs; `memo_size` above 0 switches on the two batch memos (below) |
 | `DocDistance.semantic_distance` | `(a, b, *, anisotropy=False, threshold=0.77)` | `DistanceResult` | symmetric distance on the loaded models |
-| `DocDistance.semantic_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.77)` | `(DistanceResult, dict)` | the distance plus the content alignment details, one encode pass |
+| `DocDistance.semantic_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.77, changed_cost=0.3253, relevance=False)` | `(DistanceResult, dict)` | the distance plus the content alignment details, one encode pass; `relevance=True` adds the reranker reading below |
 | `DocDistance.structural_distance` | `(a, b, *, anisotropy=False, threshold=0.90)` | `StructuralResult` | structural OPW order-gap distance on the loaded models |
 | `DocDistance.structural_distance_with_details` | `(a, b, *, anisotropy=False, threshold=0.90)` | `(StructuralResult, dict)` | the structural distance plus the order details, one encode pass |
 | `DocDistance.distance_wrt_source` | `(a, b, source, *, anisotropy=True)` | `SourceConditionedResult` | source-conditioned distance, runs the reranker x NLI grounding |
@@ -273,6 +273,15 @@ for flow in tmap["flows"]:                        # each statement of A
     best = flow["matches"][0]                     # the B statement it maps to (most mass)
     print(flow["text"], "->", best["target_text"], best["weight"], best["cost"])
 ```
+
+Map fields of the nearest cost and of the relevance reading (from the release after 1.1.32):
+
+- **`min_cost`, `best_target_index`** - on every flow: the cheapest ground cost over the full cost row (4 decimals; the flags read the unrounded value) and the target statement that gives it, the one `identical` is judged against
+- **`relevance=True`** - `R = reranker.score_grid(statements of b, statements of a)`, shape `[n_b, n_a]`: the statements of `b` are the queries and the statements of `a` the passages, so `a` is the long document and `b` the brief. Cost: one reranker pass per pair of statements, 26.8 ms per pair measured with the OpenVINO reranker on a CPU shared with other jobs (E19). The call loads the reranker and not the NLI model, and raises `ModelsNotInstalled` before any scoring when the reranker model is missing. The result and every key the map holds without `relevance` are equal to a call with `relevance=False`; the fields do not depend on `anisotropy`, `threshold` or `changed_cost`
+- **flow `i`** - `relevance` is `max_j R[j, i]` and `relevance_target_index` its argmax; **target `j`** - `relevance` is `max_i R[j, i]` and `relevance_source_index` its argmax; ties take the lowest index
+- **section `k`** - `mean_relevance` is the mean of the unrounded flow relevance of its statements and `relevance_rank` its position by `mean_relevance` from high to low (1 is the most relevant, ties in document order); maxima, means and ranks are taken on unrounded values, written values have 4 decimals
+- **`summary.top_relevant`** - the indices of the flows with the highest relevance, as many as `top_changed` holds, ties by index; the header block `relevance` holds `backend`, the reranker `model` of that backend, `queries: "b"` and `passages: "a"`
+- **Kind of quantity** - a score: the sigmoid of the reranker logit for the pair. It is not a distance, not a metric, not a lower bound of the SMD and not a probability of relevance, and it is not on one scale across pairs of documents. No rule for match and no match of one brief is confirmed; the readings of batches E17 to E19 and their fixture limits are in the README, [Reading a long report against a brief](../README.md#reading-a-long-report-against-a-brief)
 
 The low-level `transport_plan(X, Y)` returns the raw `[n_X, n_Y]` coupling if you hold the embeddings
 and want the matrix directly; `semantic_distance_with_details` is the text-aware wrapper that pairs it with statements.

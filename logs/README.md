@@ -40,7 +40,8 @@ Background-job and notebook-execution logs for this project.
 - `E12-H67-pairs-embed-memo.log` - nbconvert execution log for `notebooks/experiments/E12-H67-kj-pairs-embed-memo.ipynb` (E12-H67: per-document embed memo for `--pairs` batches over 9 arms plus a 110-document disjoint control, 56 load-gated timed runs; 9.94x on the 55-row all-pairs sweep, byte-identical)
 - `E12-H68-grounding-grid-memo.log` - nbconvert execution log for `notebooks/experiments/E12-H68-kj-grounding-grid-memo.ipynb` (E12-H68: (doc, source) reranker-grid and NLI-vector memo over a 55-pair wrt-source sweep plus anchor-fanout, fragment-filter and no-fanout arms and a cold-CLI line; 10.03x, byte-identical; run 4 after three aborted cycles)
 - `E12-H69-relevance-gate-form.log` - nbconvert execution log for `notebooks/experiments/E12-H69-kj-relevance-gate-form.ipynb` (E12-H69: D_grd re-derived on the current INT8 chain with per-statement max reranker relevance persisted to `data/interim/E12-H69-grounding-signals.npz`; no gate / soft gate / hard gate over tau; killed at gate, Set 2 max-r 4/4 above 0.6)
-- `E13-H<n>-<slug>.log`, `E14-H<n>-<slug>.log`, `E15-H<n>-<slug>.log`, `E16-H<n>-<slug>.log` - nbconvert execution output of the experiment notebook with the same id under `notebooks/experiments/`
+- `E13-H<n>-<slug>.log`, `E14-H<n>-<slug>.log`, `E15-H<n>-<slug>.log`, `E16-H<n>-<slug>.log`, `E17-<slug>.log`, `E18-<slug>.log`, `E19-<slug>.log` - nbconvert execution output of the experiment notebook with the same id under `notebooks/experiments/`
+- `E18-shipped-relevance.log` - output of `reports/E18-relevance/checks/shipped_relevance.py` (AUC of the `--relevance` fields of the map files against the value of the E18 notebook)
 - `E13-baseline.log` - output of `reports/E13-campaign/baseline.py capture`
 - `E13-batch-memos-<run>.log` - output of one run of `reports/E13-campaign/checks/batch-memos/measure.py`, one JSON record per line
 - `E13-repairs-<check>.log` - output of one check of the stage B repairs package on the installed build: `baseline.py verify`, the markdown reader on the ibm fixture, and the scripts under `reports/E13-campaign/checks/`
@@ -48,5 +49,7 @@ Background-job and notebook-execution logs for this project.
 - `input-format-<check>.log`, `input-format-fixes-<check>.log` - output of one check of the input-format package, and of its fixes, on the installed build: `make test`, `baseline.py verify`
 - `extension-default-<check>.log` - output of one check of the extension-default package on the installed build: `make test`, `baseline.py verify`, `reports/E13-campaign/checks/default-reader/diff.py`
 - `env-install.log` - output of the most recent `make install`
+- `gates-latest.log`, `make-test-latest.log` - output of the most recent run of the project gates (`make lint`, `make test`, `baseline.py verify`, the shipped relevance check, tracker and ledger checks); overwritten by each run
 - `reexec-<notebook>.log` - nbconvert output of one re-execution of `notebooks/experiments/<notebook>.ipynb` by `reports/E13-campaign/reexec.sh`
 - `reexec-lane<n>.log`, `reexec-model-fetch.log` - runner output of one re-execution lane; Hugging Face snapshot download of the models the E01 to E12 notebooks load
+- `14-eu-relevance-fixture.log` - nbconvert execution of `notebooks/14-kj-eu-relevance-fixture.ipynb` (conversion of the EU report and the Parliament notes from PDF to the text fixture)

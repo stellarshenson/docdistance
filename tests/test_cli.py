@@ -904,3 +904,156 @@ def test_reader_error_of_the_command_line_loads_no_model(command, options, monke
         assert res.stdout == ""
     assert loads == []
     settings.reset()
+
+
+# ------------------------------------------------------------------ ACC-CLI-104: --relevance
+
+
+class _RampReranker:
+    """A stub reranker whose score of query ``j`` over passage ``i`` is ``(j + 1) / (i + n)``."""
+
+    def score_grid(self, docs, sources):
+        import numpy as np
+
+        n = len(docs) + len(sources)
+        return np.array(
+            [[(j + 1) / (i + n) for i in range(len(sources))] for j in range(len(docs))],
+            dtype=np.float32,
+        )
+
+
+def _wire_relevance(monkeypatch):
+    """Stub embeddings for ``docA`` (4 statements) and ``docB`` (3) plus a stub reranker; returns
+    the list that records every model load attempt."""
+    from docdistance import pipeline
+
+    docs = {
+        "docA": ([f"a{i}" for i in range(4)], _emb(4, seed=1)),
+        "docB": ([f"b{i}" for i in range(3)], _emb(3, seed=2)),
+    }
+    _wire_embeddings(monkeypatch, docs)
+    loads: list[str] = []
+
+    def ensure_reranker(self):
+        loads.append("reranker")
+        self._reranker = _RampReranker()
+
+    monkeypatch.setattr(pipeline.DocDistance, "_ensure_reranker", ensure_reranker)
+    return loads
+
+
+_RELEVANCE_KEYS = {"relevance", "relevance_target_index"}
+
+
+@pytest.mark.parametrize("extra", [[], ["--json"]], ids=["plain", "json"])
+@pytest.mark.parametrize("mode", ["one-shot", "pairs"])
+def test_relevance_without_details_json_exits_2_before_a_model_loads(
+    extra, mode, monkeypatch, tmp_path
+):
+    """ACC-CLI-104: ``--relevance`` without ``--details-json`` is a usage error: exit code 2, the
+    message names both options, no model load attempt and no document read."""
+    import re
+
+    from docdistance import pipeline, settings
+
+    loads = _wire_relevance(monkeypatch)
+    monkeypatch.setattr(pipeline.DocDistance, "_ensure_base", lambda self: loads.append("base"))
+    monkeypatch.setattr(
+        pipeline.DocDistance, "embed_statements", lambda self, doc, **kw: loads.append("embed")
+    )
+    if mode == "pairs":
+        tsv = tmp_path / "pairs.tsv"
+        tsv.write_text("docA\tdocB\n")
+        args = ["--pairs", str(tsv)]
+    else:
+        args = ["docA", "docB"]
+    res = runner.invoke(app, ["distance-semantic", *args, "--relevance", *extra], env=_WIDE)
+    assert res.exit_code == 2, res.output
+    plain = re.sub(r"\x1b\[[0-9;]*m", "", res.output)
+    assert "--relevance" in plain and "--details-json" in plain
+    assert res.stdout == ""
+    assert loads == []
+    settings.reset()
+
+
+def test_relevance_single_pair_writes_the_fields_into_the_map(monkeypatch, tmp_path):
+    """ACC-CLI-104: one pair with ``--details-json`` and ``--relevance`` writes a map whose flows,
+    targets and sections carry the relevance fields."""
+    import json
+
+    from docdistance import settings
+
+    loads = _wire_relevance(monkeypatch)
+    out = tmp_path / "content.json"
+    res = runner.invoke(
+        app,
+        ["distance-semantic", "docA", "docB", "--details-json", str(out), "--relevance"],
+        env=_WIDE,
+    )
+    assert res.exit_code == 0, res.output
+    details = json.loads(out.read_text())
+    assert loads == ["reranker"]
+    assert all(_RELEVANCE_KEYS <= set(flow) for flow in details["flows"])
+    assert all("relevance_source_index" in target for target in details["targets"])
+    assert all("relevance_rank" in sec for sec in details["sections"])
+    assert details["relevance"]["queries"] == "b" and "top_relevant" in details["summary"]
+    settings.reset()
+
+
+def test_relevance_pairs_writes_the_fields_into_every_map(monkeypatch, tmp_path):
+    """ACC-CLI-104: with ``--pairs`` every row gets a map with the relevance fields."""
+    import json
+
+    from docdistance import settings
+
+    _wire_relevance(monkeypatch)
+    tsv = tmp_path / "pairs.tsv"
+    tsv.write_text("docA\tdocB\tfirst\ndocA\tdocB\tsecond\n")
+    out_dir = tmp_path / "maps"
+    res = runner.invoke(
+        app,
+        ["distance-semantic", "--pairs", str(tsv), "--details-json", str(out_dir), "--relevance"],
+        env=_WIDE,
+    )
+    assert res.exit_code == 0, res.output
+    for name in ("first.json", "second.json"):
+        details = json.loads((out_dir / name).read_text())
+        assert all(_RELEVANCE_KEYS <= set(flow) for flow in details["flows"])
+    settings.reset()
+
+
+def test_run_without_relevance_writes_no_relevance_field(monkeypatch, tmp_path):
+    """ACC-CLI-104: without the flag, in both modes, no map holds a relevance key and the
+    reranker is not loaded."""
+
+    from docdistance import settings
+
+    loads = _wire_relevance(monkeypatch)
+    single = tmp_path / "single.json"
+    res = runner.invoke(
+        app, ["distance-semantic", "docA", "docB", "--details-json", str(single)], env=_WIDE
+    )
+    assert res.exit_code == 0, res.output
+    tsv = tmp_path / "pairs.tsv"
+    tsv.write_text("docA\tdocB\tfirst\n")
+    res = runner.invoke(
+        app,
+        ["distance-semantic", "--pairs", str(tsv), "--details-json", str(tmp_path / "maps")],
+        env=_WIDE,
+    )
+    assert res.exit_code == 0, res.output
+    for path in (single, tmp_path / "maps" / "first.json"):
+        assert "relevance" not in path.read_text()
+    assert loads == []
+    settings.reset()
+
+
+def test_distance_help_describes_the_relevance_option():
+    """ACC-CLI-104: the help names the document order and the cost."""
+    import re
+
+    res = runner.invoke(app, ["distance-semantic", "--help"], env=_WIDE)
+    plain = re.sub(r"\s+", " ", res.output)
+    assert "--relevance" in plain
+    assert "long document first" in plain and "brief second" in plain
+    assert "one reranker pass per pair of statements" in plain

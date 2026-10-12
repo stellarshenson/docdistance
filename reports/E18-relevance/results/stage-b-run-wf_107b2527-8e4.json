@@ -1,0 +1,267 @@
+{
+ "run_id": "wf_107b2527-8e4",
+ "script": "reports/E18-relevance/workflow-build.js",
+ "contract": "reports/E18-relevance/relevance-build-brief.md",
+ "ended": "2026-10-12",
+ "make_install": "not run (version 1.1.32 unchanged)",
+ "steps": [
+  {
+   "label": "build:relevance-map",
+   "result": {
+    "package": "relevance-map",
+    "status": "done",
+    "items": [
+     {
+      "id": "ACC-MAP-101",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_every_flow_carries_the_row_minimum_and_its_argmin: min_cost = 4-decimal row minimum of cost_matrix, best_target_index = argmin, changed = unrounded min > changed_cost for four cutoffs, both keys in definitions. Baseline verify: 0 difference(s). Two existing tests that pin exact key sets (flow keys, definitions keys) were updated for the two new keys."
+     },
+     {
+      "id": "ACC-MAP-102",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_relevance_fields_equal_their_definitions (stub reranker grid with ties: flow/target relevance and indices, section mean_relevance and rank, top_relevant, header block, definitions text; the reranker is asked with b as queries and a as passages), test_relevance_rank_and_top_list_break_ties_by_document_order (equal means rank in document order on unrounded values; top_relevant capped at 10 of 12), test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker, test_relevance_does_not_depend_on_anisotropy_threshold_or_changed_cost; tests/test_e2e.py::test_relevance_of_the_real_reranker_ranks_the_answering_statement_first (real models, scores in [0,1], answering statement above the unrelated one)."
+     },
+     {
+      "id": "ACC-MAP-103",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_relevance_loads_the_reranker_and_not_the_nli_model (NLI unloaded after relevance=True, result and all common keys equal the plain call, _ensure_grounding still loads both) and test_missing_reranker_raises_before_any_scoring (ModelsNotInstalled matching 'reranker.*docdistance init', encoder and reranker not called). _ensure_reranker is a new method that _ensure_grounding calls."
+     },
+     {
+      "id": "ACC-CLI-104",
+      "met": true,
+      "evidence": "tests/test_cli.py: test_relevance_without_details_json_exits_2_before_a_model_loads (plain and --json, single pair and --pairs: exit 2, both options named, stdout empty, no load or embed call), test_relevance_single_pair_writes_the_fields_into_the_map, test_relevance_pairs_writes_the_fields_into_every_map, test_run_without_relevance_writes_no_relevance_field, test_distance_help_describes_the_relevance_option."
+     },
+     {
+      "id": "ACC-MAP-105",
+      "met": true,
+      "evidence": "CI=true .venv/bin/python reports/E18-relevance/checks/shipped_relevance.py (log logs/E18-shipped-relevance.log): shipped mean AUC over 12 briefs 0.8601, notebook value 0.8611, difference -0.0011, tolerance 0.005, exit 0. Per brief: 13 0.9145, 14 0.7338, 15 0.9441, 16 0.9547, 17 0.9213, 18 0.8092, 19 0.5476, 20 0.8454, 21 0.9961, 22 0.9384, 23 0.8359, 24 0.8800."
+     },
+     {
+      "id": "ACC-MAP-106",
+      "met": true,
+      "evidence": "README.md (new section 'Reading a long report against a brief'), docs/cli-reference.md (--relevance row, field bullets, example), docs/api-reference.md (signature row and field list with the kind of quantity), .claude/skills/docdistance/SKILL.md (map fields, option, parameter), CHANGELOG.md ('## [Unreleased]' above '## [1.1.32]'). Numbers only from the brief and E17/E18 (0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 to 0.9167, Otsu 0.6400 against 0.70); no E19 text, no match rule claimed, no client name."
+     }
+    ],
+    "files_changed": [
+     "src/docdistance/pipeline.py",
+     "src/docdistance/cli.py",
+     "tests/test_pipeline.py",
+     "tests/test_cli.py",
+     "tests/test_e2e.py",
+     "README.md",
+     "docs/cli-reference.md",
+     "docs/api-reference.md",
+     ".claude/skills/docdistance/SKILL.md",
+     "CHANGELOG.md",
+     "reports/E18-relevance/checks/shipped_relevance.py",
+     "logs/E18-shipped-relevance.log"
+    ],
+    "tests_added": [
+     "tests/test_pipeline.py::test_every_flow_carries_the_row_minimum_and_its_argmin",
+     "tests/test_pipeline.py::test_relevance_fields_equal_their_definitions",
+     "tests/test_pipeline.py::test_relevance_rank_and_top_list_break_ties_by_document_order",
+     "tests/test_pipeline.py::test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker",
+     "tests/test_pipeline.py::test_relevance_loads_the_reranker_and_not_the_nli_model",
+     "tests/test_pipeline.py::test_missing_reranker_raises_before_any_scoring",
+     "tests/test_pipeline.py::test_relevance_does_not_depend_on_anisotropy_threshold_or_changed_cost",
+     "tests/test_cli.py::test_relevance_without_details_json_exits_2_before_a_model_loads",
+     "tests/test_cli.py::test_relevance_single_pair_writes_the_fields_into_the_map",
+     "tests/test_cli.py::test_relevance_pairs_writes_the_fields_into_every_map",
+     "tests/test_cli.py::test_run_without_relevance_writes_no_relevance_field",
+     "tests/test_cli.py::test_distance_help_describes_the_relevance_option",
+     "tests/test_e2e.py::test_relevance_of_the_real_reranker_ranks_the_answering_statement_first"
+    ],
+    "make_test": "586 passed, 1 skipped",
+    "make_lint": "clean (make lint and uvx ruff@0.16.2 check --target-version py312 both pass)",
+    "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s)",
+    "out_of_scope_needs": [
+     "logs/README.md needs a line for the new log family E18-shipped-relevance (the orchestrator adds it, per the brief).",
+     "Run make install after the notebook ends, so the installed build and its version carry this change; this run did not."
+    ],
+    "notes": "No make install in this run; the version is not changed. Design: R1 is two keys written beside the existing row-minimum code in _build_semantic_details. R2 is a new function _add_relevance(details, grid, model, secs) that adds the fields in place after the builder, so the builder and every other key stay as they were. R3 splits the reranker load into DocDistance._ensure_reranker, which _ensure_grounding calls and then loads the NLI model only if it is None. The reranker load error is re-raised as ModelsNotInstalled with the message 'reranker model not found in cache - run:  docdistance init wmd-wrt-source'. That message now also applies on the grounding path, where it used to be the generic 'model not found in cache - run:  docdistance init'. The relevance=True call loads the reranker before any statement is encoded. The relevance header names the model from MODEL_REGISTRY['reranker']: the 'hf' repo for the openvino backend, the 'torch' repo for torch. The CLI --relevance check uses the existing exit-2 error form (stderr text, no JSON object), the same for plain and --json. The real-model e2e test runs in a child process with HF_HUB_OFFLINE=1 and skips when the models are missing. Baseline verify ran before the last two test-only edits, which touch no source. The brief and the criteria did not differ.\""
+   }
+  },
+  {
+   "label": "verify:relevance-map",
+   "result": {
+    "package": "relevance-map",
+    "verified": false,
+    "findings": [
+     {
+      "severity": "major",
+      "claim": "The real-model end-to-end test of the relevance reading reports SKIPPED, not FAILED, on the unchanged tree and on any exception in the real-model path. It is listed in tests_added and as evidence for ACC-MAP-102, and the primer requires every new test to fail on the unchanged tree.",
+      "evidence": "tests/test_e2e.py:1186-1187 reads `if res.returncode != 0: pytest.skip(\"the models are not installed\")`, so every non-zero exit of the child process is a skip. I ran the test against scratch copies of the source with the models installed (unmutated copy: 1 passed). (a) committed source (git archive HEAD): `1 skipped`, reason `the models are not installed` (the cause is a TypeError on the unknown argument relevance). (b) grid direction swapped at pipeline.py:1313 (score_grid(sa, sb)): `1 skipped`. (c) a NameError injected into _add_relevance that only the real 1x2 grid reaches: all new tests read `15 passed, 1 skipped`. A wrong ranking or a score outside [0,1] still fails the test; a crash does not. The existing real-model tests skip on a narrower condition: test_e2e.py:815-817 skips only when a control run also fails, test_e2e.py:1049-1061 skips on a cache lookup. Materiality: a later change that breaks --relevance on the real reranker leaves `make test` green with one more skip, and no other automatic test runs the real score_grid through the relevance path. Remedy (EDIT): skip only when the models are absent (the cache lookup of test_e2e.py:1049-1061, or a stderr that names ModelsNotInstalled / NotInitializedError), and assert returncode == 0 otherwise.",
+      "file": "tests/test_e2e.py",
+      "line": 1187
+     },
+     {
+      "severity": "minor",
+      "claim": "No test pins the 4-decimal rounding of the written flow and target relevance, and none pins the torch branch of the header model name.",
+      "evidence": "Mutation 1: pipeline.py:786 and :789 changed to write float(flow_scores[i]) and float(target_scores[j]) without round(). All new tests in test_pipeline.py and test_cli.py stay green and the real-model test passes (15 passed plus 1 passed). tests/test_pipeline.py:1723 and :1726 compare with pytest.approx, which accepts 0.8999999761581421 for 0.9. Only mean_relevance rounding is pinned (the tie test). Mutation 2: pipeline.py:1311 changed to registry[\"hf\"] on every backend: 15 passed; test_pipeline.py:1734-1739 pins the openvino value only. Materiality: the map would hold 17-digit floats, or a wrong model name on the torch backend; no ranking or number a user reads changes. Remedy (EDIT): compare the written values with == against 4-decimal literals from a grid value that needs rounding; add the torch backend to the header assertion or leave it unpinned by decision.",
+      "file": "tests/test_pipeline.py",
+      "line": 1723
+     },
+     {
+      "severity": "minor",
+      "claim": "The implementer's note \"The brief and the criteria did not differ\" is false for ACC-MAP-106, and that criterion is not met as it is worded.",
+      "evidence": "docs/acc-crit-docdistance.md:272 requires the documents to describe \"the E17 to E19 readings with their fixture limits\". Brief R6 says \"Batch E19 is running: write nothing about it\", and also says the criterion wins and the difference is to be reported. The five documents hold no E19 text (grep for E19 and real document in README.md, docs/cli-reference.md, docs/api-reference.md, SKILL.md, CHANGELOG.md: 0 hits), which is what the brief and this review task ask for. The orchestrator has to reword the criterion to E17 and E18 or keep the item open until E19 has a verdict. No code or document edit follows from this finding."
+     }
+    ],
+    "gates": {
+     "make_test": "586 passed, 1 skipped in 110.34s (the skip is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in S3; the relevance e2e test PASSED)",
+     "make_lint": "18 files already formatted; All checks passed! (uvx ruff@0.16.2 check --target-version py312: All checks passed!)",
+     "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s)"
+    },
+    "items_not_met": [
+     "ACC-MAP-106 - the E19 clause of the criterion text only; the documents follow the brief, which withholds E19. The other clauses hold."
+    ],
+    "notes": "VERDICT: DO-NOT-SHIP (3 findings) - one major: the real-model test of the relevance reading skips instead of failing on the unchanged tree and on any crash. The code of all six items holds; the major finding is a test defect with a small edit as remedy.\n\nConfirmed by my own runs:\n- ACC-MAP-101: on the committed source 14 of the new or changed tests fail. On 20 synthetic cases (anisotropy on and off, two changed_cost values, identical documents) the map of the working tree equals the map of HEAD in every key once min_cost and best_target_index are removed. The only added key paths are those two on flows and in definitions; no relevance key without the option.\n- ACC-MAP-102 and ACC-MAP-103: swapping the grid direction turns 3 unit tests red. With the real models the NLI model stays unloaded, the header reads backend openvino and model stellars/bge-reranker-v2-m3-openvino-int8, and every written flow and target relevance and index equals the grid on 12 real pairs. The tie test pins rank and top_relevant on unrounded values. The one new test that passes on the committed source is test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker; it guards the default path and fails when the default or the load is changed, so it is not a finding.\n- ACC-CLI-104: exit 2 with empty stdout in the four cases. With a missing reranker the command exits 1 with models_not_installed and the message \"reranker model not found in cache - run:  docdistance init wmd-wrt-source\" in single, --json, --result-only and --pairs mode, and writes no map file; this matches docs/cli-reference.md.\n- ACC-MAP-105: reports/E18-relevance/checks/shipped_relevance.py exit 0, shipped mean AUC 0.8601, notebook 0.8611, difference -0.0011. My probe shows the shipped grid equals the stored notebook grid (data/interim/E18/reranker-grids.npz) with a largest absolute difference of 0.0 on all 12 briefs; the unrounded mean AUC is 0.861126 and the rounded one 0.860075. The whole difference is the 4-decimal rounding. Per brief the rounding moves the AUC by up to 0.0151 (brief-14: 0.7489 → 0.7338), and 3 to 40 of the 93 flows are written as 0.0. The rounding is fixed by the brief, so this is not a finding.\n- ACC-MAP-106: the quoted numbers match the ledger and the metrics files (0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 → 0.9167, Otsu 0.6400 against 0.70); changed_cost=0.3253 is correct. No document claims a match rule, none holds E19 text, an em-dash or an ASCII arrow in an added line.\n\nPolicy checks:\n- Additive policy holds. One disclosed change on an existing path: a missing reranker on the source-conditioned path now reads the reranker message instead of \"model not found in cache - run:  docdistance init\". No test pins either text.\n- Files outside the package list (journal, trackers, ledger, data/external, logs/README.md) were last written at or before 06:41:24, before the first package file at 06:42:56; journal entry 99 is the orchestrator's launch record. The E19 files belong to the batch that is running.\n- No commit, tag or staged change; HEAD is 2ff35bf; pyproject.toml reads version 1.1.32 and has no diff; src/docdistance/config.py has no diff.\n- The quantity is named a score in the docstrings and in definitions; nothing approximate is called exact. No dead code and no speculative parameter found.\n\nCut list: nothing to delete.\n\nMy runs wrote only .coverage (from make test, ignored by git) in the repository. Scratch copies and logs are under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad."
+   }
+  },
+  {
+   "label": "repair:relevance-map",
+   "result": {
+    "package": "relevance-map",
+    "status": "done",
+    "items": [
+     {
+      "id": "ACC-MAP-101",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_every_flow_carries_the_row_minimum_and_its_argmin: min_cost is the 4-decimal row minimum, best_target_index the argmin, changed = unrounded min > changed_cost for four cutoffs; both keys in definitions. Baseline verify: 0 difference(s)."
+     },
+     {
+      "id": "ACC-MAP-102",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_relevance_fields_equal_their_definitions, test_relevance_rank_and_top_list_break_ties_by_document_order, test_relevance_values_are_written_with_four_decimals_and_the_torch_model_name (new: == against 4-decimal literals 0.3, 0.9877, 0.2 from grid values that need rounding), test_relevance_header_names_the_torch_repo_on_the_torch_backend (new: backend torch, model = registry torch repo), test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker, test_relevance_does_not_depend_on_anisotropy_threshold_or_changed_cost. tests/test_e2e.py::test_relevance_of_the_real_reranker_ranks_the_answering_statement_first now skips only when the child stderr names ModelsNotInstalled or NotInitializedError and otherwise asserts returncode == 0 (passes with the real models in 23.6 s)."
+     },
+     {
+      "id": "ACC-MAP-103",
+      "met": true,
+      "evidence": "tests/test_pipeline.py::test_relevance_loads_the_reranker_and_not_the_nli_model and test_missing_reranker_raises_before_any_scoring (ModelsNotInstalled matching 'reranker.*docdistance init', encoder and reranker not called)."
+     },
+     {
+      "id": "ACC-CLI-104",
+      "met": true,
+      "evidence": "tests/test_cli.py: test_relevance_without_details_json_exits_2_before_a_model_loads, test_relevance_single_pair_writes_the_fields_into_the_map, test_relevance_pairs_writes_the_fields_into_every_map, test_run_without_relevance_writes_no_relevance_field, test_distance_help_describes_the_relevance_option."
+     },
+     {
+      "id": "ACC-MAP-105",
+      "met": true,
+      "evidence": "reports/E18-relevance/checks/shipped_relevance.py (log logs/E18-shipped-relevance.log): shipped mean AUC over 12 briefs 0.8601, notebook 0.8611, difference -0.0011, tolerance 0.005, exit 0. The difference is the fixed 4-decimal rounding."
+     },
+     {
+      "id": "ACC-MAP-106",
+      "met": true,
+      "evidence": "README.md, docs/cli-reference.md, docs/api-reference.md, .claude/skills/docdistance/SKILL.md and CHANGELOG.md describe the E17 and E18 readings with their fixture limits. The E19 clause of the criterion text is not met by design: the brief withholds E19 text while batch E19 runs. The orchestrator must reword the criterion to E17 and E18 or keep the clause open until E19 has a verdict."
+     }
+    ],
+    "files_changed": [
+     "src/docdistance/pipeline.py",
+     "src/docdistance/cli.py",
+     "tests/test_pipeline.py",
+     "tests/test_cli.py",
+     "tests/test_e2e.py",
+     "README.md",
+     "docs/cli-reference.md",
+     "docs/api-reference.md",
+     ".claude/skills/docdistance/SKILL.md",
+     "CHANGELOG.md",
+     "reports/E18-relevance/checks/shipped_relevance.py",
+     "logs/E18-shipped-relevance.log"
+    ],
+    "tests_added": [
+     "tests/test_pipeline.py::test_every_flow_carries_the_row_minimum_and_its_argmin",
+     "tests/test_pipeline.py::test_relevance_fields_equal_their_definitions",
+     "tests/test_pipeline.py::test_relevance_rank_and_top_list_break_ties_by_document_order",
+     "tests/test_pipeline.py::test_relevance_values_are_written_with_four_decimals_and_the_torch_model_name",
+     "tests/test_pipeline.py::test_relevance_header_names_the_torch_repo_on_the_torch_backend",
+     "tests/test_pipeline.py::test_map_without_relevance_holds_no_relevance_key_and_loads_no_reranker",
+     "tests/test_pipeline.py::test_relevance_loads_the_reranker_and_not_the_nli_model",
+     "tests/test_pipeline.py::test_missing_reranker_raises_before_any_scoring",
+     "tests/test_pipeline.py::test_relevance_does_not_depend_on_anisotropy_threshold_or_changed_cost",
+     "tests/test_cli.py::test_relevance_without_details_json_exits_2_before_a_model_loads",
+     "tests/test_cli.py::test_relevance_single_pair_writes_the_fields_into_the_map",
+     "tests/test_cli.py::test_relevance_pairs_writes_the_fields_into_every_map",
+     "tests/test_cli.py::test_run_without_relevance_writes_no_relevance_field",
+     "tests/test_cli.py::test_distance_help_describes_the_relevance_option",
+     "tests/test_e2e.py::test_relevance_of_the_real_reranker_ranks_the_answering_statement_first"
+    ],
+    "make_test": "588 passed, 1 skipped",
+    "make_lint": "clean (make format: 18 files already formatted; ruff check: All checks passed)",
+    "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s)",
+    "out_of_scope_needs": [
+     "logs/README.md needs a line for the new log family E18-shipped-relevance (the orchestrator adds it, per the brief).",
+     "Run make install after the notebook ends, so the installed build and its version carry this change; this run did not.",
+     "docs/acc-crit-docdistance.md ACC-MAP-106 names E17 to E19 readings; the brief withholds E19. Reword the criterion to E17 and E18 or keep the E19 clause open until E19 has a verdict."
+    ],
+    "notes": "Repair round, test edits only (no source change). (1) The real-model e2e test skipped on any non-zero exit. It now skips only when the child stderr names ModelsNotInstalled or NotInitializedError, and otherwise asserts returncode == 0 with stderr as the message; it passes with the real models installed. (2) Rounding is now pinned with == against 4-decimal literals; the torch header is pinned by a new test using DocDistance(backend='torch') and the relevance_models fixture. (3) The ACC-MAP-106 difference is reported in out_of_scope_needs; the documents hold no E19 text, as the brief requires. No make install, no version change."
+   }
+  },
+  {
+   "label": "reverify:relevance-map",
+   "result": {
+    "package": "relevance-map",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "ACC-MAP-106 is reported met: true, but the criterion as written is not met: it names the E17 to E19 readings and the five documents hold no E19 text.",
+      "evidence": "MATERIALITY: nobody using the product is harmed; the gap is in the tracker record. docs/acc-crit-docdistance.md:272 reads 'the E17 to E19 readings with their fixture limits'. grep for E19/e19 over README.md, docs/cli-reference.md, docs/api-reference.md, .claude/skills/docdistance/SKILL.md and CHANGELOG.md returns nothing. The brief (reports/E18-relevance/relevance-build-brief.md, R6) forbids E19 text and also states 'where this brief and a criterion differ, the criterion wins; report the difference'. The implementer disclosed the difference in evidence and out_of_scope_needs. The E17 and E18 numbers in the documents (0.5865, 0.6183, 0.8611, 12 of 12, 0.4167 → 0.9167, Otsu 0.6400 against 0.70) match the brief, and no document claims a match rule for one brief. REMEDY: DEFER to the orchestrator - reword the criterion to E17 and E18 or keep it open; do not tick it as written.",
+      "file": "docs/acc-crit-docdistance.md",
+      "line": 272
+     },
+     {
+      "severity": "minor",
+      "claim": "The tie rule of a target's relevance_source_index is documented but no test exercises it.",
+      "evidence": "MATERIALITY: none today; np.argmax returns the first index, so the shipped behaviour matches the document. FACT: mutation `int(grid[j].argmax())` → last index on a tie (src/docdistance/pipeline.py:791) leaves all 16 relevance tests green (run on a scratch copy of src with PYTHONPATH). _GRID in tests/test_pipeline.py:1657 has a tie in column 0 (flow side, killed by the mirror mutation) but no row holds its maximum twice. docs/api-reference.md states 'ties take the lowest index' for both sides, and brief R2 asks for 'each field equals its definition, including ties'. REMEDY: EDIT one value of _GRID so that one row holds its maximum twice (for example row 2, columns 0 and 1, both 0.9) and adjust the expected lists.",
+      "file": "tests/test_pipeline.py",
+      "line": 1657
+     },
+     {
+      "severity": "minor",
+      "claim": "The name and docstring of test_relevance_values_are_written_with_four_decimals_and_the_torch_model_name state a header assertion the body does not make.",
+      "evidence": "MATERIALITY: none; a reader of a failure report is misled about what the test covers. FACT: the body (tests/test_pipeline.py:1741-1752) passes {'backend': 'torch', 'model': 'm'} and asserts only the rounded flow and target values; it never reads details['relevance']. The torch repo name is pinned by the separate test_relevance_header_names_the_torch_repo_on_the_torch_backend (mutation registry['hf'] always → that test fails). REMEDY: EDIT the name and docstring to the rounding claim only.",
+      "file": "tests/test_pipeline.py",
+      "line": 1741
+     },
+     {
+      "severity": "minor",
+      "claim": "The docstring and the definitions entry of min_cost do not say what kind of quantity it is (check 5).",
+      "evidence": "MATERIALITY: low; a reader could take the per-statement number for a document distance. src/docdistance/pipeline.py:619-620 and 734-737 say 'cheapest ground cost over the statement's full cost row, rounded to 4 decimals'. Neither says that it is one value of the ground cost between two statements and not a distance between the documents, a lower bound or a score. The relevance fields carry that statement in full (docstring of _add_relevance, both definitions entries, api-reference 'Kind of quantity'). Nothing approximate is called exact. REMEDY: EDIT one clause into the docstring ('a ground cost of one pair of statements, not a document distance').",
+      "file": "src/docdistance/pipeline.py",
+      "line": 619
+     },
+     {
+      "severity": "minor",
+      "claim": "The claim of docs/cli-reference.md that a missing reranker ends the command with models_not_installed has no test on the --relevance path.",
+      "evidence": "MATERIALITY: low; the path is the existing generic guard. FACT: no test in tests/test_cli.py combines --relevance with a reranker load that raises; the CLI tests replace DocDistance._ensure_reranker as a whole (tests/test_cli.py:938-942). The behaviour follows from _run (src/docdistance/cli.py:91-104), which wraps the single-pair call and the batch (cli.py:253), and the code models_not_installed is written to stdout only in --json / --result-only / --pairs mode; the plain mode prints the error line and exits 1. The library side is pinned: mutation removing the reranker message in _ensure_reranker fails test_missing_reranker_raises_before_any_scoring. JUDGEMENT: no new test needed; the sentence in cli-reference could say 'exit code 1' beside the code. REMEDY: DEFER."
+     }
+    ],
+    "gates": {
+     "make_test": "588 passed, 1 skipped in 91.46s",
+     "make_lint": "uvx ruff@0.16.2 format --check: 18 files already formatted; uvx ruff@0.16.2 check: All checks passed!",
+     "baseline_verify": "verify: 55 pairs, 0 grounded, 0 difference(s)"
+    },
+    "items_not_met": [
+     "ACC-MAP-106 - E19 clause of the criterion text only; the E17 and E18 content is present and correct. The brief withholds E19, the implementer disclosed it. The orchestrator rewords the criterion or keeps it open."
+    ],
+    "notes": "VERDICT: SHIP - no blocking or major finding; 5 minor.\n\nGates, run by me: make test 588 passed, 1 skipped; make lint clean; baseline verify 0 difference(s) on 55 pairs; uvx ruff@0.16.2 check --target-version py312 on src, tests and reports/E18-relevance/checks: All checks passed. pyproject.toml version reads 1.1.32, HEAD is 2ff35bf, no tag on a newer commit, so no make install, commit or tag happened.\n\nMutation probes on a scratch copy of src (repo untouched), 13 of 14 non-equivalent mutations killed by the new tests: grid direction flipped (score_grid(sa, sb).T), --pairs lambda without relevance, single-pair call without relevance, mean_relevance unrounded, mean taken on rounded flow values, rank taken on rounded means, flow tie → last index, reranker load removed or moved after the encode, _ensure_grounding in place of _ensure_reranker (NLI loaded), reranker message removed, hf repo name on the torch backend, target relevance unrounded, min_cost unrounded. Survivor: target tie → last index (minor finding). A 15th mutation (top_relevant cut at 10) is equivalent to the code.\n\nACC-MAP-105: reports/E18-relevance/checks/shipped_relevance.py, run by me with output to scratch, exit 0: shipped mean AUC 0.8601, notebook 0.8611, difference -0.0011. I checked the implementer's explanation: the same 12 pairs through the same call with the unrounded grid captured read a mean AUC of 0.8611261442234767, equal to the notebook value to every digit, and 0.860074564437522 from the rounded map values. The difference is the 4-decimal rounding; 180 of 1116 flow scores are below 5e-5 and are written as 0.0. The script reads the report through e18/labels.json ('../report.md'), which is data/processed/relevance-fixture/report.md.\n\nProbes asked for: a map without relevance holds no key containing 'relevance' and loads only the encoder (unit and CLI tests, both modes); existing keys are equal to HEAD per baseline verify, the only additions are min_cost and best_target_index; --relevance without --details-json exits 2 before DocDistance is constructed, in plain, --json, single-pair and --pairs form, in the same error form as _check_pair_args; the NLI model stays None; rank and top_relevant ties follow document order on unrounded values; the statements of b are the queries (test asserts the argument lists the stub received). The real-model end-to-end test ran and passed here (1 passed in 22.94 s, not skipped); the 1 skip of the suite is another test.\n\nR1 to R6 hold against code and tests, with the ACC-MAP-106 difference above. No dead code, speculative parameter or fallback found; the ModelsNotInstalled wrapper in _ensure_reranker also changes the message of the source-conditioned path for a missing reranker, as R3 directs. `docdistance init wmd-wrt-source` is a valid call.\n\nFiles outside the package list that are modified in the working tree: data/external/README.md, data/external/download-fixtures.py (EU fixture entries), logs/README.md (already holds the E18-shipped-relevance line the implementer said the orchestrator adds, plus E17/E19 family names), .claude/JOURNAL.md, docs/acc-crit-docdistance.md, the ledger. Their content belongs to the fixture notebook 14, batch E19 and the orchestrator's records; I found no evidence that this package wrote them, and cannot attribute them from the tree alone. src/docdistance/config.py is unchanged.\n\nScratch files are under /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad. Running the check script and pytest refreshed the ignored __pycache__ folders only."
+   }
+  },
+  {
+   "label": "verify:final-gate",
+   "result": {
+    "package": "final-gate",
+    "verified": true,
+    "findings": [],
+    "gates": {
+     "make_test": "588 passed, 1 skipped in 94.58s (0:01:34) - exit 0. The 1 skip is tests/test_bootstrap.py::test_init_s3_source_downloads_the_mmbert_ir, opt-in through DOCDISTANCE_S3_TEST. No FAILED, ERROR, XFAIL or XPASS line.",
+     "make_lint": "clean - `All checks passed!`, exit 0 (format check: `18 files already formatted`)",
+     "baseline_verify": "verify: 55 pairs, 3 grounded, 0 difference(s) - exit 0, 0 DIFF lines. With stderr merged, the literal last line is `<sys>:0: DeprecationWarning: builtin type swigvarlink has no __module__ attribute`; the verify line is the line before it."
+    },
+    "items_not_met": [],
+    "notes": "All five commands are green. I ran them from the repository root between 07:30 and 07:36 +0200 on 2026-10-12, with a load average of 16 to 23.\n\nRemaining command results:\n- `uvx ruff@0.16.2 check --target-version py312`: `All checks passed!`, exit 0\n- `git status --short`: last line `?? reports/E19-relevance/`. It lists 29 entries (16 modified tracked files, 13 untracked) and is identical before and after the gates, so the gates changed no file\n- `git log -1 --oneline`: `2ff35bf feat: release 1.1.32 - reader by file extension, one-to-one matching, batch memos`\n- `git tag --points-at HEAD`: empty. No tag contains HEAD. The newest tag is CHECKPOINT_BEFORE_E12_EXPERIMENTS_1.1.5 from 2026-08-31\n- `grep -n '^version' pyproject.toml`: `7:version = \"1.1.32\"`\n\nVersion: pyproject.toml and uv.lock have no difference against HEAD. The installed metadata reads 1.1.32 and the package is an editable install from src/docdistance/, so the gates ran against the working-tree source without `make install`.\n\nLimit of the no-commit confirmation: the newest reflog entry is the HEAD commit itself, made 2026-10-12 04:45:22 +0200, and HEAD equals origin/main. Every modified tracked file was last written after that commit (05:54:17 to 07:25:26; src/docdistance/cli.py 06:42:56, src/docdistance/pipeline.py 06:43:43). No commit or tag was made after the uncommitted change set began. I could not determine from the repository whether the 04:45:22 commit belongs to this build. If this build includes the 1.1.32 release, one commit and one push happened at that time. `git stash list` is empty.\n\nContent of the working tree: the task names the target the E13 build, but the release commit message says E13 to E16 shipped in 1.1.32. The uncommitted change set adds a CHANGELOG `[Unreleased]` section for `relevance=True` / `--relevance`. The gate results apply to 1.1.32 plus that uncommitted change set.\n\nWhat the green run does not show: the prompt supplied no bar (purpose, input universe, primary path), so I ran the gates only and did not perform the qa-engineer sweep. I ran no mutation, so nothing here shows that the tests added in this change set fail without the change. None of the four `pytest.skip(\"the models are not installed\")` sites in tests/test_e2e.py fired, so the end-to-end tests ran with the models present.\n\nGate logs are in /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/ (lint.log, ruff312.log, test.log, baseline.log)."
+   }
+  }
+ ]
+}

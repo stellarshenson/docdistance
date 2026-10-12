@@ -1,0 +1,531 @@
+{
+ "run": "wf_6145ef2c-c4d",
+ "script": "reports/E18-relevance/workflow-measure.js",
+ "agents": [
+  {
+   "agent": "run:B",
+   "result": {
+    "key": "B",
+    "notebook": "notebooks/experiments/E18-kj-contrast-replication.ipynb",
+    "metrics_json": "reports/E18-contrast-replication-metrics.json",
+    "log": "logs/E18-contrast-replication.log",
+    "notebook_errors": 0,
+    "harness_check": {
+     "passed": true,
+     "largest_difference": 0,
+     "reading": "baseline and E17-H85 AUC of briefs 01 to 12 and of the 7 controls reproduce the stored values exactly (largest absolute difference 0.0 against 1e-9)"
+    },
+    "hypotheses": [
+     {
+      "id": "E18-H88",
+      "gate": {
+       "passed": true,
+       "reading": "batch gate: baseline mean AUC over briefs 13 to 24 0.6183 < 0.95, passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.19748394315269766,
+        "met": true
+       },
+       {
+        "name": "briefs_above_0_ge_10",
+        "value": 10,
+        "met": true
+       },
+       {
+        "name": "control_drop_le_0.01",
+        "value": 0.18161940100715623,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "mean AUC 0.6183 to 0.8158, mean gain +0.1975 (boot 95% +0.1018 to +0.2961), 10/12 briefs above 0 (briefs 13 and 23 lose), control +0.1816; variants: seen-12 background +0.1827 (9/12), all-23 +0.1903 (10/12); top-2 section share 0.4167 to 0.7500"
+     },
+     {
+      "id": "E18-H89",
+      "gate": {
+       "passed": true,
+       "reading": "batch gate passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.17435215101593285,
+        "met": true
+       },
+       {
+        "name": "briefs_above_0_ge_10",
+        "value": 9,
+        "met": false
+       }
+      ],
+      "verdict_by_bar": "Refuted",
+      "key_numbers": "k=3 mean gain +0.1744 (met), 9/12 briefs above 0 (needs 10, not met; briefs 13, 23, 24 lose at every k); mean gain k=1 +0.1414, k=2 +0.1681, k=5 +0.1828; share of draws above 0 0.7167/0.7708/0.7729/0.7854; all 24 briefs count 18/24 (k=1,2,3), 19/24 (k=5)"
+     },
+     {
+      "id": "E18-H90",
+      "gate": {
+       "passed": true,
+       "reading": "fixed cutoff 0.3253 mean BA over briefs 13 to 24 0.5080 < 0.65, passed"
+      },
+      "clauses": [
+       {
+        "name": "otsu_mean_ba_ge_0.70",
+        "value": 0.7243496193284407,
+        "met": true
+       },
+       {
+        "name": "otsu_minus_fixed_ge_0.10",
+        "value": 0.2163139050427264,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "Otsu mean BA 0.7243 vs fixed 0.5080 (+0.2163); 5 of 12 new briefs below 0.70 (13,17,18,19,23); seen briefs 0.7366 (seen data)"
+     },
+     {
+      "id": "E18-H92",
+      "gate": {
+       "passed": true,
+       "reading": "batch gate passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": -0.00019503681850472723,
+        "met": false
+       },
+       {
+        "name": "briefs_above_0_ge_10",
+        "value": 6,
+        "met": false
+       },
+       {
+        "name": "control_drop_le_0.01",
+        "value": 0.1055526106546516,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Refuted",
+      "key_numbers": "mean AUC 0.6181, mean diff -0.0002 (boot 95% -0.0608 to +0.0573), 6/12 briefs above 0, control +0.1056; seen briefs -0.0049 (5/12)"
+     }
+    ],
+    "deviations": [
+     "brief-23 holds 10 statements with the default reader; the batch opening registers 4 to 9 statements per new brief; no brief changed",
+     "H89 rng order: one default_rng(0), k then brief then draw; briefs taken in the order 13 to 24 then 01 to 12 (the registered text does not fix the order for the all-24 reading); a draw is rng.choice(23, size=k, replace=False) over the sorted other ids",
+     "H89 has no control reading (draws are defined for briefs only)",
+     "Notebook kernelspec is python3 as in the template"
+    ],
+    "observations": [
+     "E18-H88 count clause sits exactly at the bar (10 of 12) and E18-H89 is one brief below it (9 of 12); one brief changes both verdicts",
+     "H88 gain is large on briefs 14 to 21 and negative on 13 and 23; briefs 22 and 24 gain little (baseline AUC already 0.77 and 0.79)",
+     "H92 control AUC rises by 0.1056 while the brief AUC does not move; the control clause holds without a brief effect",
+     "fixed cutoff 0.3253 marks 0 statements on 10 of 12 new briefs and 1 on the other two; the Otsu split marks 7 to 53 statements where targets hold 3 to 20",
+     "the relayed user remark (horeca report is commercial) does not touch this task: the fixture holds the constructed IBM and Wergeland report only, nothing was sent outside the machine",
+     "two headline numbers recomputed with a separate script (own Euclidean cdist, pairwise AUC, brute-force Otsu): H88 mean gain 0.19748394315269766 vs notebook 0.19748394315269766 (difference 0.0), H90 Otsu mean BA 0.7243496193284407 vs 0.7243496193284407 (difference 0.0)",
+     "result file reports/E18-relevance/results/B.json holds the full per_brief table (24 briefs); the per_brief field of this return is omitted"
+    ],
+    "not_verified": [
+     "no check with a second background sample size beyond the registered k",
+     "the reason H92 does not rank (summary-section risk) is not isolated",
+     "single-brief use on a report with distinct subjects (the private dataset) is not read"
+    ]
+   }
+  },
+  {
+   "agent": "verify:B",
+   "result": {
+    "key": "B",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The executor's deviation text describes the E18-H89 draw mapping wrongly: it says a draw indexes 'the sorted other ids', but the notebook indexes the other ids in the order 13 to 24 then 01 to 12. The verdict does not move.",
+      "evidence": "MATERIALITY: a person who re-runs the draws from the deviation text gets different numbers; no verdict or count changes. Notebook cell 19: `others = [b for b in ALL_IDS if b != bid]` with cell 9 `ALL_IDS = NEW_IDS + OLD_IDS`, then `chosen = rng.choice(len(others), size=k, replace=False)`. My replication with that order reproduces the notebook (k=1 mean gain 0.1414406530236183, difference 0.0; k=3 0.17435104 against 0.17435215, difference 1.1e-6, which equals one positive-negative pair in one draw and comes from float32 against float64 costs). With lexicographically sorted other ids the k=3 mean gain is 0.17545087, not 0.17435215. Count at k=3 is 9 of 12 in every variant I ran: sorted other ids, brief order 01 to 24, new briefs only in the stream, seeds 1 to 20, and the exact mean over all 1771 subsets of 3 from 23 (mean gain +0.1750, 9 of 12, brief-24 at -0.0175, brief-13 at -0.0688, brief-23 at -0.0911). REMEDY (EDIT): change the deviation line in reports/E18-relevance/results/B.json to 'over the other ids in the order 13 to 24 then 01 to 12'."
+     },
+     {
+      "severity": "minor",
+      "claim": "One sentence of the conclusions cell states more than the outputs show: 'The gain therefore does not depend on the briefs E17-H85 was read on or on their uniform structure'. A second sentence says briefs 13, 23 and 24 lose 'at every k from 1 to 5', and k = 4 was not run.",
+      "evidence": "MATERIALITY: a reader of the notebook, or a ledger entry copied from it, takes independence from brief structure as measured; the E18-H88 verdict by bar does not depend on the sentence. Cell 40 against the outputs of cells 21 and 35: the outputs show that a gain above the bar remains (+0.1975, 10 of 12). They do not isolate brief structure. The mean gain fell from +0.2474 (seen briefs, own background) to +0.1975, and the registered Mechanism of E18-H88 names a smaller gain as the sign of a gain that came from the uniform structure; the bootstrap interval +0.1018 to +0.2961 does not separate the two values. With the 12 seen briefs as the background the count is 9 of 12. brief-13 has the same target section as seen brief-02 (Workforce impact) and loses -0.0230 where brief-02 gains +0.1974 to +0.2368; brief-23 has the same target section as seen brief-11 (Future) and loses -0.0851 where brief-11 gains +0.0185 to +0.0328. 11 of the 12 new briefs target sections that E17 briefs already targeted (only 'About IBM' is new), which the paragraph on what the fixture cannot show does not state. H89_KS is (1, 2, 3, 5). REMEDY (EDIT): reword to 'a gain above the bar remains on briefs of varied length and form with a background that holds no seen brief; the outputs do not separate the effect of brief structure', and 'at k = 1, 2, 3 and 5'."
+     },
+     {
+      "severity": "minor",
+      "claim": "E18-H90 is decided by its first clause alone. The registered comparator (fixed cutoff 0.3253) is a rule that marks no statement, so the second clause and the gate could not discriminate. The verdict by bar stays Confirmed.",
+      "evidence": "MATERIALITY: a reader who takes 'Confirmed' as support for the registered Mechanism ('the split ... follows the level of the pair') is misled; nobody is harmed on the bar as written. Cell 23: `fixed_match = BASE_COST[bid] <= DIFF_CHANGED_COST` marks 0 statements on 10 of 12 new briefs and 1 on the other two, so the fixed balanced accuracy is 0.5000 by construction on 10 briefs (mean 0.5080). Cell 25 clause `OTSU_MEAN_NEW - FIXED_MEAN_NEW >= H90_BAR_GAIN` then equals 'Otsu mean BA >= 0.608', which the first clause (>= 0.70) already implies. E17 read 0.5060 for the same fixed rule on the seen briefs before registration, so the gate (< 0.65) was not at risk. The first clause could fail: 5 of 12 briefs read below 0.70 and the mean is 0.0243 above the bar. My probes on the same scores (not registered, the fractions were chosen by me after the data, so they are not results): Otsu split of the nearest cost without the contrast 0.5031; median split of the contrast 0.6829; marking the lowest 20 percent or 30 percent of the contrast 0.7507 and 0.7425, both at or above the Otsu split's 0.7243. The data support 'the contrast can be cut to a mean balanced accuracy of 0.70 or more'; they do not show that the Otsu split does better than a fixed share. The notebook already says the split 'does not follow the number of relevant statements'. REMEDY: DEFER. Record with the verdict that it rests on the first clause; a later batch that tests the split rule itself needs a comparator that marks statements, registered before the run."
+     }
+    ],
+    "corrected": [],
+    "recomputed": "Own code (explicit Euclidean distance in float64 on the package embeddings, pairwise AUC with ties one half, brute-force Otsu split, section labels from my own parse of report.md headings, which equal the package `section` field on all 93 statements). Baseline mean AUC over briefs 13 to 24: 0.6182759776056009 against notebook 0.6182759776056009 (difference 0.0; largest per-brief difference over 24 briefs 0.0, over 7 controls 0.0). E18-H88: mean gain 0.19748394315269766 (difference 0.0), 10 of 12 above 0 (briefs 13 and 23 lose, brief-24 gains +0.0167 = 20 of 1200 pairs), control difference +0.18161940100715623 (difference 0.0); background of 12 seen briefs +0.18267679 with 9 of 12, all 23 other briefs +0.19027821 with 10 of 12 (differences 0.0). E18-H89: same generator and order reproduce k=1 exactly (0.1414406530236183) and k=2, 3, 5 within 1.1e-6; count 9 of 12 at every k; exact mean over all subsets at k=3: +0.1750, 9 of 12. E18-H90: fixed cutoff mean BA 0.5080357142857143 (difference 0.0), Otsu mean BA 0.7243496193284407 (difference 0.0), difference +0.2163. E18-H92: mean difference -0.00019503681850472723 (difference 0.0), 6 of 12, control difference +0.1055526106546516 (difference 0.0), 18 section groups. Brief-blind null for E18-H88 (background mean alone, no brief): mean AUC 0.5546, above the baseline on 4 of 12 briefs, against 0.8158 for the contrast. All four verdicts follow from the recomputed clauses: Confirmed, Refuted, Confirmed, Refuted.",
+    "notes": "VERDICT: SHIP (0 blocking, 0 major, 3 minor). Lens: methodologist.\n\nChecks 1 to 11:\n(1) Passed. Fixture hash assert in cell 9 (execution count 4), harness assert in cell 17 (count 8), first AUC of a new brief in cell 21 (count 10). The embeddings and nearest costs of the new briefs are computed in cells 11 and 15, before the harness check; no label of a new brief is read before it. All 16 fixture files still equal the registered sha256 now.\n(2) Passed. Gates in cell 23 (0.6183 against 0.95; 0.5080 against 0.65), decisions in cell 25; `verdict(killed, bar_met)` gives the gate precedence. The score summary table of cell 21 is displayed before the gate lines; the run is one non-interactive execution (counts 1 to 19, 03:27:37Z to 03:27:58Z), so the display order cannot change a verdict.\n(3) Passed. Coded bars equal the registered text: `mean_diff >= 0.03`, `n_above_0 >= 10` with `diff > 0`, `control_diff >= -0.01`; E18-H89 two clauses at k = 3; E18-H90 `>= 0.70` and `>= 0.10`. The sha256 of the eight declaration lines of each of the six blocks in the ledger equals the value in E18-relevance-registration.json, so no registered text changed after registration. No parameter was chosen on the scored data; the one free choice (brief order in the generator stream) does not move the E18-H89 count.\n(4) Passed. Every clause value of the result equals the metrics file and reports/E18-relevance/results/B.json to the last digit; the key numbers appear in the outputs of cells 21, 23, 25, 27, 29, 31, 33, 35.\n(5) Passed, see `recomputed`.\n(6) Passed. Bars are read on briefs 13 to 24; tables on briefs 01 to 12 carry 'seen data, no bar' and the per-brief table marks them '(seen)'.\n(7) Passed. One `np.random.default_rng(0)` in the order k, brief, draw; the bootstrap uses a separate generator. See finding 1 for the wording of the deviation.\n(8) Passed. 0 error outputs in 41 cells. The log line reports 228784 characters written; the notebook on disk re-serialised with the placeholder conclusions cell of the executor's build script holds 228783 characters plus the final line feed, and all other 40 cells equal the build script. The only change after execution is the conclusions markdown cell.\n(9) Passed. Each verdict follows from its clauses and gates.\n(10) Two sentences overstate, see finding 2. All other statements of the conclusions cell match the outputs.\n(11) Passed. `git status --short` equals the state at the start of the session; the notebook writes only its metrics file. My run wrote only under the scratch folder e18-verify.\n\nCould each test fail: E18-H88 yes (the seen-brief background reads 9 of 12, which would refute; a score without the brief reads 0.5546). E18-H89 and E18-H92 did fail. E18-H90 yes on its first clause only (finding 3). The control can move in both directions: baseline 0.6780, and 8 of the 12 background briefs target part 1, which works against the control.\n\nDesign limits that are registered and disclosed, not executor faults: the count clause of E18-H88 sits at the bar; briefs 22 and 24 share the 8 positives of 'Bias and data', so the 12 briefs are not 12 independent units.\n\nThe relayed user remark (the horeca report is commercial) was respected: this verification read only the constructed IBM and Wergeland fixture, made no network request and sent nothing outside the machine. The open item 'single-brief use on a report with distinct subjects' stays unmeasured and cannot be closed with that report.\n\nFiles: /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E18-kj-contrast-replication.ipynb, /home/lab/workspace/learning/projects/docdistance/reports/E18-contrast-replication-metrics.json, /home/lab/workspace/learning/projects/docdistance/reports/E18-relevance/results/B.json, /home/lab/workspace/learning/projects/docdistance/logs/E18-contrast-replication.log; scratch scripts in /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/e18-verify/ (recompute.py, analyse.py, final.py, nbcheck.py)."
+   }
+  },
+  {
+   "agent": "run:A",
+   "result": {
+    "key": "A",
+    "notebook": "notebooks/experiments/E18-kj-reranker-relevance.ipynb",
+    "metrics_json": "reports/E18-reranker-relevance-metrics.json",
+    "log": "logs/E18-reranker-relevance.log",
+    "notebook_errors": 0,
+    "harness_check": {
+     "passed": true,
+     "largest_difference": 0,
+     "reading": "Baseline AUC of briefs 01 to 12 reproduces reports/E17-relevance-map-metrics.json exactly (tolerance 1e-9). Fixture sha256 equal for all 16 files."
+    },
+    "hypotheses": [
+     {
+      "id": "E18-H87",
+      "gate": {
+       "passed": true,
+       "reading": "batch gate: baseline mean AUC over briefs 13 to 24 = 0.6183, below 0.95"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.24285016661787565,
+        "met": true
+       },
+       {
+        "name": "briefs_above_0_ge_10",
+        "value": 12,
+        "met": true
+       },
+       {
+        "name": "control_mean_auc_diff_ge_-0.01",
+        "value": 0.15524781341107896,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "New briefs mean AUC reranker 0.8611 vs baseline 0.6183 (+0.2429, bootstrap [+0.1631,+0.3346]), 12/12 above 0. Controls 0.8332 vs 0.6780 (+0.1552). Hard-negative AUC 0.8290 vs 0.6435. Top-2 section share 0.9167 vs 0.4167. Seen briefs +0.2776, 12/12. Contrast AUC 0.8588 (new), 0.8512 (controls). Weakest brief 19: AUC 0.5455."
+     },
+     {
+      "id": "E18-H91",
+      "gate": {
+       "passed": true,
+       "reading": "fixed cutoff 0.3253 on nearest cost: mean BA over briefs 13 to 24 = 0.5080, below 0.65"
+      },
+      "clauses": [
+       {
+        "name": "otsu_mean_ba_ge_0.70",
+        "value": 0.640009310864574,
+        "met": false
+       },
+       {
+        "name": "otsu_minus_fixed_ge_0.10",
+        "value": 0.13197359657885976,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Refuted",
+      "key_numbers": "Otsu mean BA 0.6400 vs fixed 0.5080 (+0.1320). Rule r_i>=0.5: 0.5817. Seen briefs Otsu 0.5790. Otsu marks 2 to 7 statements per brief, TPR 0.00 to 0.71, TNR 0.95 to 1.00; thresholds 0.0135 to 0.4834; brief 19 BA 0.4870."
+     }
+    ],
+    "deviations": [
+     "None from the registered text or the primer; the notebook kernel is python3 as in the E17 template.",
+     "Reading the records with hypothesis-tools show set a lock line (kj, until 2026-10-13) on E18-H87 and E18-H91 in the ledger; that is a tool side effect, not an edit by this run."
+    ],
+    "observations": [
+     "Scratch recomputation (separate script, pairwise AUC count, brute-force Otsu, own cosine cost, from the stored grids): mean AUC difference 0.242850 vs notebook 0.242850 (diff 0.0); Otsu mean BA 0.640009 vs 0.640009 (diff 0.0); baseline mean AUC and fixed BA also equal.",
+     "The relayed user message says the horeca report is commercial. The run sent nothing off the machine (offline models, no network); the report is a repository fixture and the grids are in git-ignored data/interim/E18/. Nothing was committed or shared.",
+     "Reranker scores are not calibrated across pairs (pooled positive median 0.0221, negative median 0.0004); per-brief Otsu thresholds range 0.0135 to 0.4834, which is why the split misses most positives.",
+     "Contrast adds nothing over the reranker alone on new briefs (AUC 0.8588 vs 0.8611).",
+     "Labels are section level, so on-topic statements outside target sections count as negatives.",
+     "Wall time per brief grid: median 13.5 s (372 to 930 pairs); per control median 35.6 s (930 to 1209 pairs).",
+     "Brief 19 is weak: AUC 0.5455 and Otsu BA 0.4870, below the fixed cutoff's 0.5."
+    ],
+    "not_verified": [
+     "The independent verifier of the workflow was not run by this executor.",
+     "Behaviour on the private market research pair (not in the repository).",
+     "The torch backend of the reranker (only the load_reranker() defaults were read).",
+     "The scratch check used the stored grids, so a second model run of the grids was not compared."
+    ],
+    "per_brief": [
+     {
+      "brief": "brief-13",
+      "set": "new",
+      "baseline_auc": 0.6743,
+      "reranker_auc": 0.9145,
+      "diff": 0.2401,
+      "contrast_auc": 0.7961,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6184
+     },
+     {
+      "brief": "brief-14",
+      "set": "new",
+      "baseline_auc": 0.6623,
+      "reranker_auc": 0.7489,
+      "diff": 0.0866,
+      "contrast_auc": 0.9567,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6602
+     },
+     {
+      "brief": "brief-15",
+      "set": "new",
+      "baseline_auc": 0.727,
+      "reranker_auc": 0.9441,
+      "diff": 0.2171,
+      "contrast_auc": 0.8092,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6118
+     },
+     {
+      "brief": "brief-16",
+      "set": "new",
+      "baseline_auc": 0.5947,
+      "reranker_auc": 0.9547,
+      "diff": 0.36,
+      "contrast_auc": 0.9733,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.8
+     },
+     {
+      "brief": "brief-17",
+      "set": "new",
+      "baseline_auc": 0.3573,
+      "reranker_auc": 0.9227,
+      "diff": 0.5653,
+      "contrast_auc": 0.864,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.58
+     },
+     {
+      "brief": "brief-18",
+      "set": "new",
+      "baseline_auc": 0.5296,
+      "reranker_auc": 0.8092,
+      "diff": 0.2796,
+      "contrast_auc": 0.9704,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6184
+     },
+     {
+      "brief": "brief-19",
+      "set": "new",
+      "baseline_auc": 0.4502,
+      "reranker_auc": 0.5455,
+      "diff": 0.0952,
+      "contrast_auc": 0.7489,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.487
+     },
+     {
+      "brief": "brief-20",
+      "set": "new",
+      "baseline_auc": 0.3816,
+      "reranker_auc": 0.8454,
+      "diff": 0.4638,
+      "contrast_auc": 0.9013,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6118
+     },
+     {
+      "brief": "brief-21",
+      "set": "new",
+      "baseline_auc": 0.7162,
+      "reranker_auc": 0.9961,
+      "diff": 0.2798,
+      "contrast_auc": 1,
+      "fixed_ba": 0.5714,
+      "otsu_ba": 0.8571
+     },
+     {
+      "brief": "brief-22",
+      "set": "new",
+      "baseline_auc": 0.7674,
+      "reranker_auc": 0.9375,
+      "diff": 0.1701,
+      "contrast_auc": 0.6493,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.625
+     },
+     {
+      "brief": "brief-23",
+      "set": "new",
+      "baseline_auc": 0.7662,
+      "reranker_auc": 0.8359,
+      "diff": 0.0697,
+      "contrast_auc": 0.8338,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6103
+     },
+     {
+      "brief": "brief-24",
+      "set": "new",
+      "baseline_auc": 0.7925,
+      "reranker_auc": 0.8792,
+      "diff": 0.0867,
+      "contrast_auc": 0.8025,
+      "fixed_ba": 0.525,
+      "otsu_ba": 0.6
+     },
+     {
+      "brief": "brief-01",
+      "set": "seen",
+      "baseline_auc": 0.3766,
+      "reranker_auc": 0.5065,
+      "diff": 0.1299,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.4935
+     },
+     {
+      "brief": "brief-02",
+      "set": "seen",
+      "baseline_auc": 0.7336,
+      "reranker_auc": 0.9474,
+      "diff": 0.2138,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.4934
+     },
+     {
+      "brief": "brief-03",
+      "set": "seen",
+      "baseline_auc": 0.6277,
+      "reranker_auc": 0.7835,
+      "diff": 0.1558,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.474
+     },
+     {
+      "brief": "brief-04",
+      "set": "seen",
+      "baseline_auc": 0.5844,
+      "reranker_auc": 0.9351,
+      "diff": 0.3506,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6667
+     },
+     {
+      "brief": "brief-05",
+      "set": "seen",
+      "baseline_auc": 0.1987,
+      "reranker_auc": 0.9423,
+      "diff": 0.7436,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.4872
+     },
+     {
+      "brief": "brief-06",
+      "set": "seen",
+      "baseline_auc": 0.615,
+      "reranker_auc": 0.928,
+      "diff": 0.313,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.597
+     },
+     {
+      "brief": "brief-07",
+      "set": "seen",
+      "baseline_auc": 0.2632,
+      "reranker_auc": 0.9243,
+      "diff": 0.6612,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.6118
+     },
+     {
+      "brief": "brief-08",
+      "set": "seen",
+      "baseline_auc": 0.5203,
+      "reranker_auc": 0.7455,
+      "diff": 0.2252,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.5495
+     },
+     {
+      "brief": "brief-09",
+      "set": "seen",
+      "baseline_auc": 0.6967,
+      "reranker_auc": 0.9961,
+      "diff": 0.2994,
+      "contrast_auc": null,
+      "fixed_ba": 0.5714,
+      "otsu_ba": 0.7143
+     },
+     {
+      "brief": "brief-10",
+      "set": "seen",
+      "baseline_auc": 0.7622,
+      "reranker_auc": 0.9601,
+      "diff": 0.1979,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.625
+     },
+     {
+      "brief": "brief-11",
+      "set": "seen",
+      "baseline_auc": 0.8441,
+      "reranker_auc": 0.8697,
+      "diff": 0.0256,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.659
+     },
+     {
+      "brief": "brief-12",
+      "set": "seen",
+      "baseline_auc": 0.8162,
+      "reranker_auc": 0.8309,
+      "diff": 0.0147,
+      "contrast_auc": null,
+      "fixed_ba": 0.5,
+      "otsu_ba": 0.576
+     }
+    ]
+   }
+  },
+  {
+   "agent": "verify:A",
+   "result": {
+    "key": "A",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The clause values of E18-H87 are printed before its gate, against the primer line 'gates printed with their numbers before any bar'. No verdict moves.",
+      "evidence": "notebooks/experiments/E18-kj-reranker-relevance.ipynb cell 20 (execution 10) prints the summary table with mean diff +0.2429, 12/12 and the control difference +0.1552. The gate is evaluated and printed in cell 22 (execution 11): `H87_KILLED = bool(BASE_MEAN_NEW >= BATCH_GATE_AUC)`. In the same cell the Otsu balanced accuracy of every brief is computed in the loop before `H91_KILLED = bool(FIXED_MEAN_NEW >= H91_GATE_BA)`. The clause booleans and verdicts are set after the gates (cells 24 and 26) and the ladder `\"Killed-at-gate\" if H87_KILLED else (\"Confirmed\" if H87_BAR_MET else \"Refuted\")` gives the gate precedence. Gate values 0.6183 against 0.95 and 0.5080 against 0.65. Remedy: EDIT - move the gate cell above the summary cell."
+     },
+     {
+      "severity": "minor",
+      "claim": "Clause 2 of E18-H91 ('at least 0.10 above the fixed cutoff's', reported met at +0.1320) is measured against a comparator that marks almost nothing, so it equals a comparison with an always-no-match classifier. The verdict Refuted rests on clause 1 and does not move.",
+      "evidence": "My recompute: the fixed cutoff `b_i <= 0.3253` marks [0,0,0,0,0,0,0,0,1,0,0,1] statements on briefs 13 to 24 (smallest nearest cost per brief 0.281 to 0.424), so its balanced accuracy is exactly 0.5 on 10 of 12 briefs and 0.5080 on average. Clause 2 therefore reads 'Otsu mean BA at least 0.608', which clause 1 (at least 0.70) already implies. The gate (below 0.65) had no realistic way to kill: E17 read 0.5060 for the same rule on the same report. Notebook cell 26 table column 'fixed match' shows the counts; the conclusions cell says 'clause 2 met' without stating that the comparator marks 2 statements in total. Remedy: EDIT - one sentence in the conclusions cell; the registered bar stays."
+     },
+     {
+      "severity": "minor",
+      "claim": "The notebook on disk is not the file that the logged execution wrote. The closing conclusions cell was replaced after the execution, with no second execution and no log line.",
+      "evidence": "logs/E18-reranker-relevance.log line 3: 'Writing 218033 bytes' (nbconvert counts characters), log mtime 05:37:50. The notebook now holds 222264 characters (241656 bytes), mtime 05:39:04. The difference of 4231 characters fits the closing markdown cell (4336 characters serialised), which cites a scratch recomputation that ran after the execution. Code outputs are consistent with the execution: execution counts 1 to 16 in order, 0 error outputs, every output number equals reports/E18-reranker-relevance-metrics.json (written_utc 2026-10-12T03:37:45Z, inside the execution) and my recompute. The workflow prompt asks for the conclusions cell after the outputs, so this is the intended procedure; the log alone does not prove the final file."
+     },
+     {
+      "severity": "minor",
+      "claim": "The executor's deviation 'hypothesis-tools show set a lock line on E18-H87 and E18-H91' is false. The lock lines were written at registration, before the workflow started.",
+      "evidence": "docs/experiments/wmd-docdistance-experiments.md mtime 2026-10-12 05:23:39 +0200 (03:23:39Z), earlier than reports/E18-relevance/workflow-measure.js (05:24:53) and unchanged after my run. All six E18 blocks carry `lock: 2026-10-13T03:23:38Z` or `...39Z @kj`, which is registered_utc (2026-10-12T03:23:38Z) plus the 24 hour default of the separate `lock` subcommand. `hypothesis-tools show --help` lists only `--json`. The run did not alter the ledger."
+     },
+     {
+      "severity": "minor",
+      "claim": "The registered Setup and the fixture README say the new briefs hold '4 to 9 statements'; brief-23 reads as 10. The executor reported 'None' under deviations.",
+      "evidence": "Notebook cell 10 output: 'briefs ... 23: 10'. data/processed/relevance-fixture/e18/briefs/brief-23.md holds 10 sentences (7 and 3). The sha256 of the file equals the registration, so the file is the registered one and the description is off by one. No bar or gate depends on the count."
+     },
+     {
+      "severity": "minor",
+      "claim": "The conclusions sentence 'the background adds nothing on top of the reranker on this fixture' is a reading of two means that hides large per-brief changes in both directions.",
+      "evidence": "Notebook cell 28 table, contrast against reranker AUC per new brief: brief-14 0.7489 to 0.9567, brief-18 0.8092 to 0.9704, brief-19 0.5455 to 0.7489 (the weakest brief), brief-22 0.9375 to 0.6493, brief-13 0.9145 to 0.7961, brief-15 0.9441 to 0.8092. 6 briefs rise and 6 fall; the means are 0.8588 and 0.8611. The reading carries no bar and no verdict depends on it. Remedy: EDIT - state the per-brief range next to the means."
+     }
+    ],
+    "corrected": [],
+    "recomputed": "Scratch script /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/e18-verify/verify_a.py, sharing no function with the notebook: statements and embeddings through DocDistance().embed_statements; sections from my own parse of the headings of report.md (all 93 statements located in order, 18 leaf sections, 13 neutral); cost sqrt(2 - 2cos) in numpy; AUC by pairwise count with ties one half; Otsu by brute-force minimum of the within-class sum of squares; reranker scores from a second model run of load_reranker().score_grid for briefs 13 to 24 and the controls gold and haiku (largest absolute difference to data/interim/E18/reranker-grids.npz: 0.0 on all 14 grids), stored grids for the rest. Results against the notebook: baseline AUC of briefs 13 to 24 per brief equal (largest absolute difference 0.0 over baseline AUC, reranker AUC, Otsu BA, fixed BA and Otsu threshold of all 24 briefs); baseline mean AUC 0.6182759776 (notebook 0.6182759776). E18-H87: reranker mean AUC 0.8611261442, mean difference 0.2428501666, 12 of 12 above 0, smallest difference +0.0697, control mean 0.8332228995 against 0.6779750861 (+0.1552478134) - all equal to the notebook. E18-H91: fixed cutoff mean BA 0.5080357143, Otsu mean BA 0.6400093109, difference 0.1319735966, rule r_i >= 0.5 0.5817479304 - all equal. Also equal: bootstrap interval [0.16311536, 0.33457030] with numpy default_rng(0) and integers(0, 12, size=(10000, 12)); hard-negative AUC 0.8290 against 0.6435; contrast mean AUC 0.8587988694; seen briefs mean difference 0.2775703451 and Otsu BA 0.5789548665; pooled medians 0.0221 and 0.0004. Declaration sha256 of the ledger blocks E18-H87 and E18-H91 and the sha256 of all 16 fixture files equal reports/E18-relevance/E18-relevance-registration.json.",
+    "notes": "VERDICT: SHIP. No blocking and no major finding; both verdicts stand (E18-H87 Confirmed, E18-H91 Refuted). Checks: (1) fixture hash assert in cell 8 (execution 4) and harness assert in cell 16 (execution 8, largest difference 0.0) both precede the first reranker grid (cell 18) and the first AUC of a new brief (cell 20); the nearest costs of the new briefs are computed one line before the harness assert, without labels. (2) Gates coded as registered (`>= 0.95` kills, `>= 0.65` kills); print order is finding 1. (3) Bars literal: `mean_diff >= 0.03`, `n_above_0 >= 10` with `diff > 0`, `CONTROL_DIFF >= -0.01`, `otsu_mean >= 0.70`, `otsu - fixed >= 0.10`; label rule, auc, otsu_threshold and balanced_accuracy are character-identical to the E17 template, section_reading differs only in its arguments; Otsu runs on all 93 r_i with match on `>`; no parameter outside the registered text. (4) Every number of the result is in the notebook outputs and the metrics file; the result names the control clause `control_mean_auc_diff_ge_-0.01` while the metrics file names it `control_drop_le_0.01`, same value. (6) Headline set is briefs 13 to 24; tables, figure axis and conclusions label briefs 01 to 12 as seen data. (7) The bootstrap is the only random draw; generator and call equal the template; interval reproduced. (8) 0 error outputs; see finding 3 for the log. (9) Ladder Killed-at-gate / Confirmed / Refuted is complete and each verdict follows from its clauses. (11) git status shows only the notebook's own untracked files plus tracked changes (ledger, journal, logs/README.md) with mtimes 05:23:39 to 05:25:20, at least 12 minutes before the execution wrote its outputs; attribution of those to the orchestrator is by timing only. A further untracked file, notebooks/12-kj-eu-relevance-fixture.ipynb (mtime 05:48:04, no mention of E18), appeared during my verification; neither notebook A nor my scratch script wrote it. Both tests could fail: the smallest per-brief gain is +0.0697 and an oracle threshold per brief on r_i reaches a mean BA of 0.8536, so the 0.70 bar was reachable for a threshold rule and the Otsu rule missed it. Scope of the Confirmed verdict, registered and signed off, not a finding: 11 of the 12 new briefs target report sections that briefs 01 to 12 also target (About IBM is the only new one; briefs 09 and 21 read the same reranker AUC 0.996086 on the same 7 positives), on one report by one author, so the bootstrap interval treats as independent 12 readings that share positives with the seen set; the E17 notebook holds no reranker code, so the lever was not selected on seen data. I did not run `hypothesis-tools show` because the executor reported a write side effect; I read the two blocks from the ledger file and checked their declaration hashes. On the relayed user message: I read only the repository fixture (ibm and wergeland articles), made no network request and did not look for or read any horeca material; the private pair stays unmeasured."
+   }
+  }
+ ]
+}

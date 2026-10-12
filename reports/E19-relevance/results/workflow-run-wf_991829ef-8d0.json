@@ -1,0 +1,472 @@
+{
+ "run_id": "wf_991829ef-8d0",
+ "script": "reports/E19-relevance/workflow-measure.js",
+ "ended": "2026-10-12",
+ "verified": {
+  "verify:B": true,
+  "verify:A": true
+ },
+ "steps": [
+  {
+   "label": "run:B",
+   "result": {
+    "key": "E19-B",
+    "notebook": "notebooks/experiments/E19-kj-real-document-map.ipynb",
+    "metrics_json": "reports/E19-real-document-map-metrics.json",
+    "log": "logs/E19-real-document-map.log",
+    "notebook_errors": 0,
+    "harness_check": {
+     "passed": true,
+     "largest_difference": 0,
+     "reading": "all 18 fixture files equal the registered sha256; every note's targets hold at least 5 statements"
+    },
+    "hypotheses": [
+     {
+      "id": "E19-H93",
+      "gate": {
+       "passed": true,
+       "reading": "no gate; fixture check passed"
+      },
+      "clauses": [
+       {
+        "name": "baseline_mean_auc_ge_0.80",
+        "value": 0.6374405207792435,
+        "met": false
+       },
+       {
+        "name": "top3_hits_ge_10_of_13",
+        "value": 5,
+        "met": false
+       }
+      ],
+      "verdict_by_bar": "Refuted",
+      "key_numbers": "baseline mean AUC 0.6374 (bar 0.80), top-3 hits 5/13 (bar 10), hard-negative mean AUC 0.6305, no note at 0.80"
+     },
+     {
+      "id": "E19-H94",
+      "gate": {
+       "passed": true,
+       "reading": "baseline mean AUC 0.6374 < 0.95, passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.08758332144606482,
+        "met": true
+       },
+       {
+        "name": "notes_above_0_ge_10",
+        "value": 13,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "mean AUC 0.7250, mean diff +0.0876, 13/13 notes above 0, boot [+0.0603,+0.1170], top-3 hits 12/13"
+     },
+     {
+      "id": "E19-H96",
+      "gate": {
+       "passed": true,
+       "reading": "baseline mean AUC 0.6374 < 0.95, passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.09709749038487331,
+        "met": true
+       },
+       {
+        "name": "notes_above_0_ge_10",
+        "value": 12,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "mean AUC 0.7345, mean diff +0.0971, 12/13 notes above 0 (loser 779193 -0.1655), boot [+0.0427,+0.1405], top-3 hits 12/13"
+     },
+     {
+      "id": "E19-H97",
+      "gate": {
+       "passed": true,
+       "reading": "fixed-cutoff mean balanced accuracy 0.5835 < 0.65, passed"
+      },
+      "clauses": [
+       {
+        "name": "otsu_mean_ba_ge_0.70",
+        "value": 0.659173065469237,
+        "met": false
+       },
+       {
+        "name": "otsu_minus_fixed_ge_0.10",
+        "value": 0.07563789274785049,
+        "met": false
+       }
+      ],
+      "verdict_by_bar": "Refuted",
+      "key_numbers": "Otsu mean BA 0.6592 (bar 0.70), fixed 0.5835, difference +0.0756 (bar 0.10); no-target note: fixed cutoff marks 2.27 percent, Otsu of contrast 47.45 percent"
+     }
+    ],
+    "deviations": [
+     "Unit size and unit score use the statements assigned to the deepest unit of their path (own statements); the primer text 'hold' is read that way, so numbered section 3.1.1 (1 own statement) is left out and its subheadings stand for it",
+     "Hard-negative chapter is the first path element of the first positive statement of the note (for 759583 with targets in chapters 2 and 5 this is chapter 2); positives are not restricted",
+     "A statement is neutral first (introduction, chapter 1, related heading), then positive, then negative; no statement was both neutral and target",
+     "Kernelspec python3 as in the E18 template"
+    ],
+    "observations": [
+     "Baseline ranks general implementation chapters (5.2, 5.4, 4.3, 4.2) at the top for many notes, regardless of the note",
+     "H94 and H96 differ by 0.0095 mean AUC; H96 loses on 779193 (-0.1655), H94 loses on none",
+     "Otsu split of the contrast marks 40.26 percent of the statements on average and 47.45 percent for the note without a target; fixed cutoff marks 6.21 and 2.27 percent",
+     "Scratch recomputation (brute-force pairwise AUC, float64 cosines, own label loop): baseline mean AUC 0.6374353 vs notebook 0.6374405 (diff 5.3e-6, float32 vs float64 ties); H96 mean AUC 0.7345380 vs 0.7345380 (diff 0); H96 notes above 0: 12 in both",
+     "docdistance 1.1.32, backend openvino"
+    ],
+    "not_verified": [
+     "Otsu balanced accuracies and the section reading were not recomputed by the scratch script",
+     "H94 pre-pass AUC not recomputed independently",
+     "Labels by one annotator at section level; no second opinion"
+    ],
+    "per_brief": [
+     {
+      "note": "739206-european-year-of-skills",
+      "positives": 67,
+      "negatives": 748,
+      "auc": {
+       "baseline": 0.6585,
+       "H94": 0.7317,
+       "H96": 0.7973
+      },
+      "best_target_rank": {
+       "baseline": 1,
+       "H94": 1,
+       "H96": 1
+      },
+      "fixed_ba": 0.6506,
+      "otsu_ba": 0.7138
+     },
+     {
+      "note": "739350-online-age-verification",
+      "positives": 25,
+      "negatives": 736,
+      "auc": {
+       "baseline": 0.7265,
+       "H94": 0.8282,
+       "H96": 0.8444
+      },
+      "best_target_rank": {
+       "baseline": 4,
+       "H94": 1,
+       "H96": 1
+      },
+      "fixed_ba": 0.664,
+      "otsu_ba": 0.7257
+     },
+     {
+      "note": "747926-ai-act-parliament-position",
+      "positives": 16,
+      "negatives": 782,
+      "auc": {
+       "baseline": 0.6245,
+       "H94": 0.7019,
+       "H96": 0.7091
+      },
+      "best_target_rank": {
+       "baseline": 8,
+       "H94": 1,
+       "H96": 2
+      },
+      "fixed_ba": 0.5968,
+      "otsu_ba": 0.6742
+     },
+     {
+      "note": "751386-eu-chips-act",
+      "positives": 38,
+      "negatives": 777,
+      "auc": {
+       "baseline": 0.4708,
+       "H94": 0.6636,
+       "H96": 0.7199
+      },
+      "best_target_rank": {
+       "baseline": 21,
+       "H94": 2,
+       "H96": 2
+      },
+      "fixed_ba": 0.5288,
+      "otsu_ba": 0.678
+     },
+     {
+      "note": "754642-european-health-data-space",
+      "positives": 26,
+      "negatives": 789,
+      "auc": {
+       "baseline": 0.5613,
+       "H94": 0.613,
+       "H96": 0.718
+      },
+      "best_target_rank": {
+       "baseline": 15,
+       "H94": 4,
+       "H96": 2
+      },
+      "fixed_ba": 0.5361,
+      "otsu_ba": 0.5966
+     },
+     {
+      "note": "759583-strategic-technologies-platform",
+      "positives": 54,
+      "negatives": 761,
+      "auc": {
+       "baseline": 0.5842,
+       "H94": 0.6569,
+       "H96": 0.665
+      },
+      "best_target_rank": {
+       "baseline": 12,
+       "H94": 1,
+       "H96": 2
+      },
+      "fixed_ba": 0.5406,
+      "otsu_ba": 0.6209
+     },
+     {
+      "note": "759620-european-media-freedom-act",
+      "positives": 13,
+      "negatives": 779,
+      "auc": {
+       "baseline": 0.7614,
+       "H94": 0.8275,
+       "H96": 0.9022
+      },
+      "best_target_rank": {
+       "baseline": 1,
+       "H94": 1,
+       "H96": 1
+      },
+      "fixed_ba": 0.6852,
+      "otsu_ba": 0.7735
+     },
+     {
+      "note": "760355-foreign-interference-preparedness",
+      "positives": 23,
+      "negatives": 744,
+      "auc": {
+       "baseline": 0.7264,
+       "H94": 0.7475,
+       "H96": 0.8042
+      },
+      "best_target_rank": {
+       "baseline": 2,
+       "H94": 2,
+       "H96": 2
+      },
+      "fixed_ba": 0.5968,
+      "otsu_ba": 0.6917
+     },
+     {
+      "note": "760392-ai-investment-indicators",
+      "positives": 17,
+      "negatives": 729,
+      "auc": {
+       "baseline": 0.7239,
+       "H94": 0.8185,
+       "H96": 0.7738
+      },
+      "best_target_rank": {
+       "baseline": 2,
+       "H94": 2,
+       "H96": 2
+      },
+      "fixed_ba": 0.6012,
+      "otsu_ba": 0.7123
+     },
+     {
+      "note": "760421-gigabit-infrastructure-act",
+      "positives": 57,
+      "negatives": 758,
+      "auc": {
+       "baseline": 0.5934,
+       "H94": 0.6946,
+       "H96": 0.7024
+      },
+      "best_target_rank": {
+       "baseline": 11,
+       "H94": 1,
+       "H96": 1
+      },
+      "fixed_ba": 0.5103,
+      "otsu_ba": 0.6372
+     },
+     {
+      "note": "772906-ai-act-implementation-timeline",
+      "positives": 16,
+      "negatives": 782,
+      "auc": {
+       "baseline": 0.5936,
+       "H94": 0.6987,
+       "H96": 0.6674
+      },
+      "best_target_rank": {
+       "baseline": 6,
+       "H94": 2,
+       "H96": 2
+      },
+      "fixed_ba": 0.5249,
+      "otsu_ba": 0.6016
+     },
+     {
+      "note": "779193-simplifying-digital-laws",
+      "positives": 19,
+      "negatives": 770,
+      "auc": {
+       "baseline": 0.7028,
+       "H94": 0.7039,
+       "H96": 0.5373
+      },
+      "best_target_rank": {
+       "baseline": 1,
+       "H94": 1,
+       "H96": 9
+      },
+      "fixed_ba": 0.567,
+      "otsu_ba": 0.518
+     },
+     {
+      "note": "779252-cybersecurity-act-review",
+      "positives": 35,
+      "negatives": 780,
+      "auc": {
+       "baseline": 0.5594,
+       "H94": 0.7393,
+       "H96": 0.7079
+      },
+      "best_target_rank": {
+       "baseline": 15,
+       "H94": 2,
+       "H96": 3
+      },
+      "fixed_ba": 0.5837,
+      "otsu_ba": 0.6256
+     }
+    ]
+   }
+  },
+  {
+   "label": "verify:B",
+   "result": {
+    "key": "E19-B",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The conclusions cell and deviation 1 of the result say that numbered section 3.1.1 is left out of the section reading because it holds fewer than 5 statements (the result says '1 own statement'). The notebook ranks unit 3.1.1, and it holds 9 statements.",
+      "evidence": "Materiality: a reader of the limits paragraph gets a wrong picture of which units are ranked; no verdict and no count changes. /home/lab/workspace/learning/projects/docdistance/notebooks/experiments/E19-kj-real-document-map.ipynb cell 14: `deepest = max((k for k in range(len(e)) if unit_key(e[k]) in SECTION_ROWS), default=None)` assigns the statements of the two recommendation boxes under 3.1.1 to unit 3.1.1, because box titles and box labels are not units. My recount with the same rule: 3.1.1 holds 9 statements (its heading line, and 4 statements in each of the boxes 'Basic skills' and 'ICT specialists'). The 8 units below 5 statements are 1 (4), 2 (2), 2.1.3 (2), 2.2 (3), 2.2.1 (3), 3.2 (4), 3.3 (3), 5 (3). Cell 24 output, table of score H96, note 739206, rank 3: '3.1.1. Equip people with digital skills'. Cell 32 text: 'the units that hold fewer than 5 statements are left out, which includes the numbered section 3.1.1 (its subheadings carry the target)'. Ranks, unit counts (33 to 36) and top-3 hit counts (5, 12, 12) recompute equal to the metrics file with 3.1.1 ranked. Remedy: EDIT the sentence of cell 32 and deviation 1 of reports/E19-relevance/results/B.json to name the 8 units that are left out."
+     },
+     {
+      "severity": "minor",
+      "claim": "The result records 'docdistance 1.1.32' as the code the notebook ran on, but the working tree at run time held uncommitted changes to src/docdistance/pipeline.py, so the version string does not identify the code.",
+      "evidence": "Materiality: a later reader cannot reproduce the run from the version alone; no number is affected as far as measured. src/docdistance/pipeline.py has modification time 06:43:43 local and is listed ` M` by git; the metrics file has written_utc 2026-10-12T04:48:05 and wall_seconds 98.6, so the notebook started about 06:46:26 local, after that change. The diff touches `semantic_distance_with_details` (the source of the `section` field), as a move of the `_statement_sections(...)` call into a variable. My run at 06:50 to 06:52 on the same file state reproduces data/interim/E19/baseline-costs.npz with a largest absolute difference of 0.0 over the 14 notes, and the section paths give label counts equal to the metrics file for all 14 notes. Remedy: EDIT the observation in the result to say that src/docdistance/pipeline.py carried uncommitted changes at run time."
+     },
+     {
+      "severity": "minor",
+      "claim": "113 of the 883 scored report statements are heading lines; they count as positives and negatives and inside the 5-statement threshold for units. The notebook does not say so in its label section or in its limits paragraph.",
+      "evidence": "Materiality: a reader who compares the baseline mean AUC of 0.6374 with other experiments does not know that 1 to 8 positives per note are heading lines such as '###### Mobilising investments:', which repeat across sections. This is the registered fixture ('report.md, 883 statements'), so it is not a deviation by the executor. sections.json: every one of the 113 nodes holds exactly 1 statement more by section path than its `statements_own`. Heading lines among the positives per note: 739206 7/67, 759583 8/54, 760421 5/57, 760392 1/17, the others 2 to 4. Sensitivity from my own computation, outside the registered text and shown only for the size of the effect: with heading lines left out the mean AUC reads baseline 0.6876, pre-pass 0.7514, contrast 0.7580; the baseline stays below 0.80 and both mean differences stay above 0.03. Remedy: EDIT the limits paragraph of cell 32 with one sentence; DEFER any change of the metric."
+     },
+     {
+      "severity": "minor",
+      "claim": "The conclusions cell calls the 3 best-ranked units of the note without a target section 'general implementation chapters (5.2, 3.1, 5.4, 5.1, 3.2.1)'. The outputs show the unit names only; two of them are not implementation chapters.",
+      "evidence": "Materiality: wording only; no number depends on it. Cell 26 output: baseline 5.2, 3.1, 5.4; pre-pass 5.2, 3.2.1, 5.1. Unit 3.2.1 is 'Build safe digital environments and safeguard fundamental rights online' and unit 3.1 is 'Empower people and bring the digital transformation closer to their needs'; for a note on the enforcement of data protection, 3.2.1 is a section on rights online and not a general implementation chapter. The observation in the result applies the same label to 4.3 and 4.2, which are sections of chapter 4 on green transition. Remedy: EDIT the sentence to list the unit numbers without the label."
+     }
+    ],
+    "corrected": [],
+    "recomputed": "Own code (numpy only; float64 cosines from the package embeddings; brute-force pairwise AUC with ties one half; all-but-the-top by eigen-decomposition of the centred pool; Otsu split by cumulative sums; labels by my own loop; units by a walk of the sections.json tree). Fixture: 18 of 18 sha256 equal the registration; 883 report statements; label counts of all 14 notes equal the metrics file; 0 statements both neutral and target; smallest positive count 13. Baseline mean AUC over 13 notes: 0.6374353 in float64, 0.6374405 on the package float32 costs; notebook 0.6374405; largest per-note difference 6.8e-5 (float64) and 0 (package costs). E19-H93: top-3 hits 5/13, notebook 5; every best target rank and ranked-unit count equal. E19-H94: mean AUC 0.7250482 (float64) and 0.7250238 (package costs), notebook 0.7250238; mean difference +0.0876129 and +0.0875833, notebook +0.0875833; notes above 0: 13, notebook 13; smallest difference +0.0013 (779193); bootstrap [+0.0603, +0.1170] equal. E19-H96: mean AUC 0.7345380, notebook 0.7345380; mean difference +0.0971027 and +0.0970975, notebook +0.0970975; notes above 0: 12, notebook 12; loser 779193 at -0.1654; bootstrap [+0.0427, +0.1405] equal. E19-H97: fixed-cutoff mean balanced accuracy 0.5835352, Otsu 0.6591731, difference +0.0756379; all equal to the notebook; every per-note Otsu threshold equal within 1e-9 and every per-note balanced accuracy equal. Hard-negative mean AUC with the chapter of the first target of the list: 0.6305, 0.7035, 0.7168, equal. Note without a target: fixed share 0.0227, Otsu share 0.4745, threshold +0.0146, background of 13 notes, equal. Stored data/interim/E19/baseline-costs.npz: 14 keys, largest difference to the package costs of my run 0.0 and to my float64 costs 3.1e-6. Declaration sha256 of E19-H93, H94, H96 and H97 in the ledger equal the registration file.",
+    "notes": "VERDICT: SHIP. All four verdicts stand: E19-H93 Refuted, E19-H94 Confirmed, E19-H96 Confirmed, E19-H97 Refuted. 4 minor findings, none of which changes a verdict or a count.\n\nChecks 1 to 11:\n(1) Cell 9 asserts the 18 hashes and cell 10 asserts at least 5 positives per note; the first score is computed in cell 12. Labels follow the `rule` field of labels.json. Neutral is applied before positive; this has no effect because no statement is both.\n(2) Cell 16 prints both gates (0.6374 against 0.95; 0.5835 against 0.65) before the clause booleans of cells 18, 20 and 22. Cell 14 prints the top-3 hit counts before the gate cell; that line holds no bar comparison.\n(3) Bars in cell 7 equal the registered text: 0.80 and 10 of 13; 0.03 and 10 of 13; 0.70 and 0.10; gates 0.95 and 0.65. The fixed cutoff is the package constant 0.32527. No parameter is chosen on the scored data. The registered batch has no control clause. The four ledger blocks hash to the registered values, so no bar changed after registration.\n(4) The result file reports/E19-relevance/results/B.json equals the metrics file at full precision for every per-note AUC, balanced accuracy, rank and count, and for every clause value and boolean. Every key number is printed in cells 16 to 28.\n(5) See `recomputed`.\n(6) Every mean runs over NOTE_IDS (13 notes). The note 760391 is in no per-note dictionary of the metrics file and in no background: `BACKGROUND = {nid: [b for b in NOTE_IDS if b != nid] ...}`.\n(7) The unit rule matches the primer and the batch opening (a statement belongs to its deepest unit; units below 5 such statements and neutral units are left out). Sensitivity with subtree sizes in place of own sizes: baseline 6/13, still below 10.\n(8) 0 error outputs. The log line 'Writing 222249 bytes' equals the 222249 characters of the notebook file (247597 bytes on disk because of multi-byte characters); log and notebook share the modification time 06:48:08.\n(9) Each verdict equals the conjunction of its clauses in the result, the metrics file and the notebook.\n(10) See findings 1 and 4; every other sentence of cell 32 matches a printed number.\n(11) `git status --short` holds 29 lines. This notebook's files are the untracked notebook, the untracked metrics file and reports/E19-relevance/results/B.json; the log and the npz file are git-ignored. The notebook source has two write calls (METRICS_FILE, COSTS_FILE). The tracked files changed between 06:42 and 06:46 (src/docdistance/cli.py, src/docdistance/pipeline.py, tests/test_e2e.py, CHANGELOG.md, README.md, docs/api-reference.md, docs/cli-reference.md, the docdistance SKILL.md) are not written by any cell of the notebook.\n\nCould each test have failed: a score equal to the baseline gives a mean difference of 0 and 0 notes above 0, so E19-H94 and E19-H96 would read Refuted; a constant match map gives a balanced accuracy of 0.5; the contrast uses no label. Two notes share the target 3.2.3, so the sign-test p value of the registered bar assumes more independence than the 13 notes have; cell 32 says this. E19-H94 counts 13 of 13 with one note at +0.0011; the clause needs 10.\n\nDisclosure about my own run: my first scratch script wrote its pickle through a relative path into the repository root (stage1.pkl, 06:52). I moved it to the scratch directory in the next command; the repository status is back to the same 29 lines. I edited no repository file and did not execute the notebook."
+   }
+  },
+  {
+   "label": "run:A",
+   "result": {
+    "key": "E19-A",
+    "notebook": "notebooks/experiments/E19-kj-real-document-reranker.ipynb",
+    "metrics_json": "reports/E19-real-document-reranker-metrics.json",
+    "log": "logs/E19-real-document-reranker.log",
+    "notebook_errors": 0,
+    "harness_check": {
+     "passed": true,
+     "largest_difference": 0,
+     "reading": "fixture sha256 of all 17 files equals the registration; every note with a target holds at least 5 statements under its targets"
+    },
+    "hypotheses": [
+     {
+      "id": "E19-H95",
+      "gate": {
+       "passed": true,
+       "reading": "baseline mean AUC over the 13 notes 0.6374 vs 0.95 -> passed"
+      },
+      "clauses": [
+       {
+        "name": "mean_diff_ge_0.03",
+        "value": 0.1947001235282591,
+        "met": true
+       },
+       {
+        "name": "notes_above_0_ge_10",
+        "value": 13,
+        "met": true
+       }
+      ],
+      "verdict_by_bar": "Confirmed",
+      "key_numbers": "baseline mean AUC 0.6374, reranker 0.8321, mean diff +0.1947 (bootstrap 95% [+0.1440, +0.2434]), 13/13 notes above 0; hard-negative AUC 0.8187 vs 0.6305; top-3 unit hits 12/13 vs 5/13; contrast AUC 0.8231 (+0.1857, 13/13); Otsu of r_i mean BA 0.6846 vs fixed cutoff 0.5835; smallest gains 779193 +0.0074, 759583 +0.0460; note without target: Otsu(r_i) marks 3.3% of statements, fixed cutoff 2.3% (13-note means 8.5% and 6.2%); 444149 pairs, 11907 s, 26.8 s per 1000 pairs"
+     }
+    ],
+    "deviations": [
+     "The registered estimate of about 2 hours for the reranker was exceeded: 11907 s of reranker time (about 3.3 h; 14 grids computed in one run, 0 read from file) because the CPU was shared with other jobs",
+     "A unit of the section reading is identified by its path prefix up to its deepest unit element; path elements are matched to sections.json headings by number and title",
+     "The contrast of the note without a target uses the mean over the 13 notes with a target as background; its Otsu split is read with the match on the high side"
+    ],
+    "observations": [
+     "Scratch recomputation with a separate script sharing no function with the notebook: reranker mean AUC 0.8321406443 equals the notebook value, difference 0.0 in every note; baseline mean AUC 0.6374352629 against 0.6374405208, largest per-note difference 6.8e-05, caused by float64 cosine cost in the scratch script against the float32 cost_matrix of the package",
+     "docdistance 1.1.32 during the run",
+     "The contrast of r_i does not exceed r_i on this fixture (0.8231 vs 0.8321)",
+     "Two notes gain little: 779193 (+0.0074; the baseline ranks its target unit first, the reranker third) and 759583 (+0.0460; best target unit at rank 4)",
+     "Result file written to reports/E19-relevance/results/A.json (full per-note table included there)"
+    ],
+    "not_verified": [
+     "No second annotator; labels are section-level, so relevant statements outside a target section count as negatives",
+     "Reranker time depends on the load of the shared CPU and is not a benchmark",
+     "Only the nearest-cost and reranker AUC were recomputed independently; the section reading, Otsu splits and bootstrap were not"
+    ]
+   }
+  },
+  {
+   "label": "verify:A",
+   "result": {
+    "key": "E19-A",
+    "verified": true,
+    "findings": [
+     {
+      "severity": "minor",
+      "claim": "The notebook on disk is not the file that the execution wrote: it was changed about 2 minutes after nbconvert finished. Materiality: none for the verdict - every code-cell output equals the metrics file written during the run and my recomputation.",
+      "evidence": "logs/E19-real-document-reranker.log: '[NbConvertApp] Writing 234302 bytes' (log mtime 10:11:37 +0200; metrics file 10:11:28). The notebook now holds 237116 characters (268112 bytes), mtime 10:13:58 - 2814 characters more. Execution counts are 1 to 18 in order and there are 0 error outputs. The added text is most likely the closing Conclusions markdown cell (cell 38), which cites run numbers. Remedy: EDIT - state in the result's deviations that the conclusions cell was written after the execution, or execute again from the stored grids (seconds, 14 grids read from file) so that the log matches the file."
+     },
+     {
+      "severity": "minor",
+      "claim": "The conclusions cell states one fact that no output shows: 'on a CPU shared with other jobs (load average 25 to 50)'. Materiality: none - it concerns the reported time, which carries no bar.",
+      "evidence": "Cell 38, bullet 'Cost'. The string 'load average' occurs once in the notebook, only in that markdown cell; no code cell measures the load and the log does not hold it. Remedy: EDIT - remove the load figures or mark them as an observation of the executor outside the notebook."
+     },
+     {
+      "severity": "minor",
+      "claim": "The bar-clause values of E19-H95 are printed before the gate line. Materiality: none - the gate depends only on the baseline and its boolean is fixed before the bar code runs.",
+      "evidence": "Cell 21 (execution 10) prints the summary table with reranker 'mean diff +0.1947' and 'notes > 0 13/13'. The gate is read in cell 23 (execution 11): `H95_KILLED = bool(BASE_MEAN >= BATCH_GATE_AUC)`; the bar is applied in cell 25: `VERDICT = \"Killed-at-gate\" if H95_KILLED else (\"Confirmed\" if BAR_MET else \"Refuted\")`. The primer asks for 'gates printed with their numbers before any bar'. The ladder has all three registered outcomes and the gate was read as registered (0.6374 against 0.95). Remedy: EDIT - print the gate before the summary table in a later run; no verdict moves."
+     },
+     {
+      "severity": "minor",
+      "claim": "Outside the registered text: 113 of the 883 scored statements are heading lines. With them left out the gain is smaller but both clauses still hold. Materiality: none for the registered verdict; it is a reading the ledger entry of E19-H95 can carry, as the entries of E19-H93 and E19-H94 do.",
+      "evidence": "My script: without heading lines the baseline mean AUC is 0.6876, the reranker 0.8453, mean difference +0.1577, above 0 in 12 of 13 notes (registered reading: +0.1947, 13 of 13). Remedy: DEFER - no change to the notebook; the orchestrator can record the number as outside the registered text."
+     }
+    ],
+    "corrected": [],
+    "recomputed": "Script /tmp/claude-1000/-home-lab-workspace-learning-projects-docdistance/48fccd81-2e03-4952-88be-100e909f2767/scratchpad/e19-verify/v.py, sharing no function with the notebook (pairwise-count AUC, float64 cosine cost from embed_statements, labels from labels.json, units by walking the parent tree of sections.json, own Otsu). Fixture: 18 of 18 sha256 equal the registration. Label counts and hard-negative counts equal the metrics file for all 13 notes; no statement is both positive and neutral. Baseline mean AUC 0.637435 (notebook 0.637441, largest per-note difference 6.8e-05; my nearest costs differ from data/interim/E19/baseline-costs.npz by at most 3.1e-06). Reranker mean AUC 0.832141 (notebook 0.8321406, per-note difference 0.0). Mean difference +0.194705, 13 of 13 above 0; smallest gains 779193 +0.0075 and 759583 +0.0460. Bootstrap (seed 0, 10000) [+0.14398, +0.24344]. Contrast mean AUC 0.823116 (difference 0.0 per note). Hard-negative AUC 0.6304 and 0.8187. Otsu mean balanced accuracy 0.6846, fixed cutoff 0.5835. Note without target: Otsu share 0.0328, fixed 0.0227; 13-note means 0.0845 and 0.0621. Section reading: 49 units, 8 under 5 statements, 33 to 36 ranked units per note; best-target ranks equal the notebook for all 13 notes and all 3 scores; top-3 hits 5, 12, 12. Stored grids: shape (note statements, 883) for all 14 notes; a new score_grid call on 18 pairs differs from the stored values by at most 1.3e-04. Nulls: r_i of other notes on a note's labels gives mean AUC 0.4756 and statement length 0.5111, so the bar could fail.",
+    "notes": "VERDICT: SHIP. E19-H95 Confirmed stands: gate 0.6374 < 0.95 read as registered; clauses coded as `mean_diff >= 0.03` and `n_above_0 >= 10` with `diff > 0`, values +0.1947 and 13. Checks 1 to 11: (1) the hash assert is in cell 9 and the label assert in cell 13, both before the baseline of cell 17; labels follow the rule. (3) no bar, label rule or parameter moved; no control clause is registered. (4) every number of the result is in the outputs and in the metrics file; total 11906.9 s, 26.808 s per 1000 pairs. (6) every mean runs over TARGET_IDS (13); the contrast background is `[RERANK_R[b] for b in TARGET_IDS if b != nid]`, so the note without a target is in no mean and no background. (7) the unit reading equals my tree-walk implementation. (8) 0 error outputs; the log shows the nbconvert write, and the file was changed afterwards (finding 1). (9), (10) hold except the load-average sentence. (11) git status lists the same 30 entries as at the start; the notebook's files are its notebook, metrics file, reports/E19-relevance/results/A.json and the git-ignored log and grid file. The package tree changed during the run (src/docdistance/pipeline.py mtime 08:42 +0200, run from about 06:52 to 10:11); my recomputation on the later tree reads equal values. I did not execute the notebook and did not recompute the full 444149-pair grid."
+   }
+  }
+ ]
+}
